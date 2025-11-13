@@ -1,0 +1,153 @@
+<% title = "Painel Admin - BotSimples"; %>
+
+<main class="p-6 space-y-10 animate-fadeIn">
+  <!-- === Toast de feedback === -->
+  <div id="toast" class="fixed bottom-4 right-4 bg-neutral-900 text-white px-4 py-2 rounded-lg border-l-4 border-hot-primary opacity-0 transition-all duration-300"></div>
+
+  <!-- === Planos === -->
+  <section>
+    <h1 class="text-2xl font-semibold text-hot-primary">📦 Planos</h1>
+    <div class="panel mt-4 overflow-x-auto">
+      <table class="min-w-full text-sm">
+        <thead>
+          <tr class="bg-neutral-800 text-left">
+            <th class="p-3">Nome</th>
+            <th class="p-3">Preço</th>
+            <th class="p-3">Descrição</th>
+            <th class="p-3">Entregável</th>
+            <th class="p-3">Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% (planos || []).forEach(plan => { %>
+          <tr class="odd:bg-neutral-900/40 hover:bg-neutral-800/50 transition">
+            <td class="p-3"><input id="name_<%= plan._id %>" value="<%= plan.name %>" class="input w-full"></td>
+            <td class="p-3"><input id="price_<%= plan._id %>" value="<%= plan.price %>" class="input w-full"></td>
+            <td class="p-3"><input id="desc_<%= plan._id %>" value="<%= plan.description %>" class="input w-full"></td>
+            <td class="p-3"><input id="deliverable_<%= plan._id %>" value="<%= plan.deliverable || '' %>" class="input w-full"></td>
+            <td class="p-3 flex gap-2">
+              <button class="btn" onclick="salvarPlano('<%= plan._id %>')">💾</button>
+              <button class="btn" onclick="excluirPlano('<%= plan._id %>')">🗑️</button>
+            </td>
+          </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Criar novo plano -->
+    <div class="panel mt-6 p-4">
+      <h3 class="font-medium mb-3">➕ Criar novo plano</h3>
+      <div class="grid md:grid-cols-4 gap-3">
+        <input id="novoNome" placeholder="Nome" class="input">
+        <input id="novoPreco" placeholder="Preço" class="input">
+        <input id="novoDesc" placeholder="Descrição" class="input">
+        <input id="novoDeliver" placeholder="Entregável (link ou texto)" class="input">
+      </div>
+      <button class="btn mt-3" onclick="criarPlano()">Criar</button>
+    </div>
+  </section>
+
+  <!-- === API PIX === -->
+  <section>
+    <h2 class="text-xl font-semibold text-hot-primary">💳 API PIX (Gateways)</h2>
+    <div class="panel mt-4 overflow-x-auto">
+      <table class="min-w-full text-sm">
+        <thead>
+          <tr class="bg-neutral-800 text-left">
+            <th class="p-3">Nome</th>
+            <th class="p-3">Client ID</th>
+            <th class="p-3">Client Secret</th>
+            <th class="p-3">Token</th>
+            <th class="p-3">Ativo</th>
+            <th class="p-3">Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% (gateways || []).forEach(gw => { %>
+          <tr class="odd:bg-neutral-900/40 hover:bg-neutral-800/50 transition">
+            <td class="p-3"><%= gw.name %></td>
+            <td class="p-3"><input id="id_<%= gw._id %>" value="<%= gw.clientId || '' %>" class="input w-full"></td>
+            <td class="p-3"><input id="secret_<%= gw._id %>" value="<%= gw.clientSecret || '' %>" class="input w-full"></td>
+            <td class="p-3"><input id="token_<%= gw._id %>" value="<%= gw.token || '' %>" class="input w-full"></td>
+            <td class="p-3"><%= gw.active ? '🟢' : '🔴' %></td>
+            <td class="p-3 flex gap-2">
+              <button class="btn" onclick="salvarGateway('<%= gw._id %>')">💾</button>
+              <button class="btn" onclick="ativarGateway('<%= gw._id %>')">⚡</button>
+            </td>
+          </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Criar novo gateway -->
+    <div class="panel mt-6 p-4">
+      <h3 class="font-medium mb-3">➕ Criar novo Gateway</h3>
+      <div class="grid md:grid-cols-4 gap-3">
+        <input id="novoGatewayNome" placeholder="Nome (ex: WiinPay)" class="input">
+        <input id="novoGatewayClientId" placeholder="Client ID" class="input">
+        <input id="novoGatewaySecret" placeholder="Client Secret" class="input">
+        <input id="novoGatewayToken" placeholder="Token (opcional)" class="input">
+      </div>
+      <button class="btn mt-3" onclick="criarGateway()">Criar</button>
+    </div>
+  </section>
+</main>
+
+<script>
+const showToast = (msg, ok = true) => {
+  const el = document.getElementById("toast");
+  if (!el) return;
+  el.textContent = msg;
+  el.style.opacity = "1";
+  el.style.borderLeftColor = ok ? "#ffb400" : "#ff5555";
+  setTimeout(() => { el.style.opacity = "0"; }, 2200);
+};
+
+async function criarPlano(){
+  const payload = {
+    name: novoNome.value, price: novoPreco.value, description: novoDesc.value, deliverable: novoDeliver.value,
+  };
+  const res = await fetch('/admin/planos',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+  if(res.ok){ showToast('✅ Plano criado!'); location.reload(); } else showToast('❌ Erro ao criar', false);
+}
+async function salvarPlano(id){
+  const payload = {
+    name: document.getElementById(`name_${id}`).value,
+    price: document.getElementById(`price_${id}`).value,
+    description: document.getElementById(`desc_${id}`).value,
+    deliverable: document.getElementById(`deliverable_${id}`).value,
+  };
+  const res = await fetch('/admin/planos/'+id,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+  showToast(res.ok ? '✅ Plano salvo!' : '❌ Erro ao salvar', res.ok);
+}
+async function excluirPlano(id){
+  if(!confirm('Excluir este plano?')) return;
+  const res = await fetch('/admin/planos/'+id,{method:'DELETE'});
+  if(res.ok){ showToast('🗑️ Plano excluído'); location.reload(); }
+}
+async function criarGateway(){
+  const payload = {
+    name: novoGatewayNome.value,
+    clientId: novoGatewayClientId.value,
+    clientSecret: novoGatewaySecret.value,
+    token: novoGatewayToken.value,
+  };
+  const res = await fetch('/admin/gateways',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+  if(res.ok){ showToast('✅ Gateway criado!'); location.reload(); } else showToast('❌ Erro ao criar', false);
+}
+async function salvarGateway(id){
+  const payload = {
+    clientId: document.getElementById(`id_${id}`).value,
+    clientSecret: document.getElementById(`secret_${id}`).value,
+    token: document.getElementById(`token_${id}`).value,
+  };
+  const res = await fetch('/admin/gateways/'+id,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+  showToast(res.ok ? '✅ Gateway salvo!' : '❌ Erro ao salvar', res.ok);
+}
+async function ativarGateway(id){
+  const res = await fetch('/admin/gateways/ativar/'+id,{method:'POST'});
+  if(res.ok){ showToast('✅ Gateway ativado!'); setTimeout(()=>location.reload(),600); }
+}
+</script>
