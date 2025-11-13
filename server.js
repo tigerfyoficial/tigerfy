@@ -1,5 +1,5 @@
 const express = require("express");
-const mongoose = require("mongoose");
+// const mongoose = require("mongoose");  // ❌ removido
 const session = require("express-session");
 const path = require("path");
 const compression = require("compression");
@@ -41,28 +41,23 @@ app.use(expressLayouts);
 // Public
 app.use(express.static(path.join(__dirname, "public")));
 
-// Mongo
-mongoose
-  .connect(process.env.MONGO_URI)
-  .then(() => console.log("MongoDB conectado!"))
-  .catch((err) => console.error("Erro MongoDB:", err));
+// ❌ Mongo totalmente removido (não conecta nada aqui)
 
 // Rotas
 app.use("/", require("./routes/auth"));
 app.use("/", require("./routes/dashboard"));
-app.use("/", require("./routes/offers"));   // 👈 AGORA ESSA É A ROTA DE BOTS/OFERTAS
+app.use("/", require("./routes/offers"));   // rota de bots/ofertas
 app.use("/", require("./routes/api_pix"));
-
-// (REMOVIDO) ❌ NÃO EXISTE MAIS
-// app.use("/", require("./routes/bots"));
 
 // 404
 app.use((req, res) => {
   res.status(404).render("404", { title: "404 - TigerFy" });
 });
 
-// Start
+// Start (modo local; Vercel entra no passo 2)
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, () =>
   console.log(`🚀 TigerFy rodando! Porta ${PORT}`)
 );
+
+module.exports = app; // manter export para compat futura
