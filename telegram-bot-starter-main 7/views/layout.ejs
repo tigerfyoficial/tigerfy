@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= title %> | TigerFy</title>
+
+  <link rel="stylesheet" href="/css/theme.gold.css" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <style>
+    body {
+      margin: 0;
+      color: #fff;
+      font-family: "Inter", sans-serif;
+      -webkit-font-smoothing: antialiased;
+      background-color: #050505;
+      background-image:
+        radial-gradient(circle at 0 0, rgba(255, 204, 0, 0.18) 0, transparent 55%),
+        radial-gradient(circle at 100% 0, rgba(255, 204, 0, 0.09) 0, transparent 55%),
+        radial-gradient(circle at 50% 100%, rgba(255, 204, 0, 0.11) 0, transparent 55%),
+        radial-gradient(circle, rgba(255, 204, 0, 0.12) 1px, transparent 0);
+      background-repeat: no-repeat, no-repeat, no-repeat, repeat;
+      background-size: auto, auto, auto, 4px 4px;
+      display: flex;
+    }
+
+    html, body {
+      background-color: #050505;
+    }
+
+    /* remove tema claro/escuro */
+    .theme-toggle,
+    #themeToggle,
+    .mode-toggle {
+      display: none !important;
+    }
+
+    /* sidebar */
+    .sidebar {
+      width: 250px;
+      background: #050505;
+      border-right: 1px solid rgba(255, 204, 0, 0.08);
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      position: fixed;
+      left: 0;
+      top: 0;
+      z-index: 10;
+    }
+
+    .sidebar-header {
+      padding: 26px 22px 18px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-mark {
+      width: 42px;
+      height: 42px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .logo-mark svg {
+      width: 42px;
+      height: 42px;
+    }
+
+    .brand-name {
+      font-family: "Poppins", sans-serif;
+      font-size: 1.35rem;
+      font-weight: 700;
+      background: linear-gradient(90deg, #ffcc00, #d4a100);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .menu {
+      display: flex;
+      flex-direction: column;
+      padding: 10px 20px 0;
+    }
+
+    .menu a {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 11px 18px;
+      border-radius: 10px;
+      text-decoration: none;
+      color: #b4b4b4;
+      font-weight: 500;
+      transition: 0.25s ease;
+      font-size: 0.95rem;
+    }
+
+    .menu a svg {
+      width: 19px;
+      height: 19px;
+      stroke: #b4b4b4;
+      stroke-width: 1.8;
+    }
+
+    .menu a:hover {
+      background: rgba(255, 204, 0, 0.08);
+      color: #ffcc00;
+    }
+
+    .menu a.active {
+      background: rgba(255, 204, 0, 0.14);
+      color: #fff;
+      font-weight: 600;
+      box-shadow: inset 0 0 14px rgba(255, 204, 0, 0.18);
+      position: relative;
+    }
+
+    .menu a.active::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 6px;
+      bottom: 6px;
+      width: 3px;
+      background: linear-gradient(#ffea70, #ffcc00, #d4a100);
+      border-radius: 2px;
+    }
+
+    .menu-divider {
+      height: 1px;
+      width: 100%;
+      margin: 18px 0;
+      background: linear-gradient(to right,
+        transparent,
+        rgba(255, 204, 0, 0.25),
+        transparent);
+    }
+
+    .menu-bottom {
+      margin-top: auto;
+      padding: 22px 26px 24px;
+    }
+
+    .menu-bottom a {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: #ffcc00;
+      font-weight: 600;
+      font-size: 0.95rem;
+      text-decoration: none;
+      opacity: 0.85;
+      transition: opacity 0.2s;
+    }
+
+    .main-content {
+      margin-left: 250px;
+      padding: 40px;
+      min-height: 100vh;
+      width: 100%;
+      box-sizing: border-box;
+      animation: fadeIn 0.25s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    /* Loader removido */
+    #loaderBox { display:none !important; }
+  </style>
+</head>
+
+<body>
+  <div id="loaderBox"></div>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+
+      <div class="logo-mark">
+        <svg viewBox="0 0 58 58" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="29" cy="29" r="27" stroke="#FFCC00" stroke-width="3"/>
+          <path d="M20.5 34C20.5 28 24 23 29 23C34 23 37.5 28 37.5 34"
+                stroke="#FFCC00" stroke-width="3" stroke-linecap="round"/>
+          <path d="M23 28C23 26 24.5 24.5 26.5 24.5"
+                stroke="#FFCC00" stroke-width="3" stroke-linecap="round"/>
+          <path d="M35 28C35 26 33.5 24.5 31.5 24.5"
+                stroke="#FFCC00" stroke-width="3" stroke-linecap="round"/>
+          <circle cx="25.5" cy="31.5" r="1.5" fill="#FFCC00"/>
+          <circle cx="32.5" cy="31.5" r="1.5" fill="#FFCC00"/>
+        </svg>
+      </div>
+
+      <div class="brand-name">TigerFy</div>
+    </div>
+
+    <nav class="menu">
+      <a href="/deck" class="<%= active === 'deck' ? 'active' : '' %>">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path d="M3 3h7v7H3V3zm11 0h7v4h-7V3zm0 8h7v10h-7V11zM3 14h7v7H3v-7z"
+                stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+        Dashboard
+      </a>
+
+      <a href="/bots" class="<%= active === 'bots' ? 'active' : '' %>">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path d="M3 6a2 2 0 012-2h5l2 2h7a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V6z"
+                stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+        Ofertas
+      </a>
+
+      <a href="/api_pix" class="<%= active === 'api_pix' ? 'active' : '' %>">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path d="M16 18l6-6-6-6M8 6l-6 6 6 6"
+                stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+        Adquirentes
+      </a>
+
+      <div class="menu-divider"></div>
+
+      <a href="/perfil" class="<%= active === 'perfil' ? 'active' : '' %>">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 
+              1.79-4 4 1.79 4 4 4zm0 2c-4.42 
+              0-8 1.79-8 4v2h16v-2c0-2.21-3.58-4-8-4z"
+              stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+        Perfil
+      </a>
+
+      <a href="/conquistas" class="<%= active === 'conquistas' ? 'active' : '' %>">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <path d="M8 4h8v3a4 4 0 01-4 4 4 4 0 01-4-4V4z" stroke-width="1.8"
+                stroke-linecap="round" stroke-linejoin="round" />
+          <path d="M6 4h12" stroke-width="1.8" stroke-linecap="round" />
+          <path d="M9 15h6" stroke-width="1.8" stroke-linecap="round" />
+          <path d="M10 19h4" stroke-width="1.8" stroke-linecap="round" />
+          <path d="M5 7a3 3 0 003 3" stroke-width="1.5" stroke-linecap="round" />
+          <path d="M19 7a3 3 0 01-3 3" stroke-width="1.5" stroke-linecap="round" />
+        </svg>
+        Conquistas
+      </a>
+
+      <a href="https://wa.me/5543999562213?text=Olá!%20Preciso%20de%20ajuda%20no%20TigerFy⚡" target="_blank">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path d="M12 20.5c4.694 0 8.5-3.806 8.5-8.5S16.694 
+          3.5 12 3.5 3.5 7.306 3.5 12c0 1.293.293 2.517.818 
+          3.607L3 21l5.548-1.414A8.468 8.468 0 0012 20.5z"
+          stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+        Suporte
+      </a>
+    </nav>
+
+    <div class="menu-bottom">
+      <a href="/logout">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path d="M15 12H3m0 
+          0l4-4m-4 4l4 4m8-8h5a2 2 0 012 2v6a2 2 0 01-2 
+          2h-5" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+        Sair
+      </a>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <%- body %>
+  </main>
+</body>
+</html>

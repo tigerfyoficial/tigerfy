@@ -1,0 +1,88 @@
+<div class="success-wrapper">
+  <div class="success-card">
+    <h1>✅ Cadastro enviado com sucesso!</h1>
+    <p class="subtitle">Seu acesso será liberado após aprovação do administrador.</p>
+
+    <a href="<%= whatsapp %>" target="_blank" class="btn-whatsapp">
+      💬 Enviar mensagem de aprovação
+    </a>
+
+    <div class="divider"></div>
+
+    <a href="/login" class="btn-back">Voltar ao Login</a>
+  </div>
+</div>
+
+<style>
+  body {
+    font-family: "Inter", sans-serif;
+    background: radial-gradient(circle at center, #0d0d0d 0%, #000 100%);
+    color: #fff;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .success-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+  }
+
+  .success-card {
+    background: #111;
+    border-radius: 16px;
+    padding: 40px 50px;
+    width: 400px;
+    text-align: center;
+    box-shadow: 0 0 40px rgba(255, 204, 0, 0.08);
+  }
+
+  .success-card h1 {
+    color: #ffcc00;
+    font-size: 22px;
+    font-weight: 800;
+    margin-bottom: 10px;
+  }
+
+  .subtitle {
+    color: #aaa;
+    font-size: 14px;
+    margin-bottom: 30px;
+  }
+
+  .btn-whatsapp {
+    display: inline-block;
+    width: 100%;
+    background: #25d366;
+    color: #fff;
+    font-weight: 700;
+    padding: 12px;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: 0.3s;
+  }
+
+  .btn-whatsapp:hover {
+    background: #20b857;
+  }
+
+  .divider {
+    height: 1px;
+    background: #222;
+    margin: 25px 0;
+  }
+
+  .btn-back {
+    color: #ffcc00;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14px;
+  }
+
+  .btn-back:hover {
+    text-decoration: underline;
+  }
+</style>
