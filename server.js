@@ -65,6 +65,7 @@ app.use("/", require("./routes/api_pix"));       // adquirentes
 app.use("/", require("./routes/health_supa"));   // /health-supa e /health
 app.use("/", require("./routes/perfil"));       // /perfil
 app.use("/", require("./routes/conquistas"));   // /conquistas
+app.use("/", require("./routes/aliases"));
 
 /* -------- Favicon (evita 404 nos logs) -------- */
 app.get("/favicon.ico", (_req, res) => res.status(204).end());
