@@ -1,12 +1,6 @@
-const mongoose = require("mongoose");
-
-const AdminSchema = new mongoose.Schema(
-  {
-    username: { type: String, required: true, unique: true },
-    email: { type: String, required: true, unique: true },
-    password: { type: String, required: true }
-  },
-  { timestamps: true }
-);
-
-module.exports = mongoose.model("Admin", AdminSchema);
+const { makeMemModel } = require("./_mem");
+const Admin = makeMemModel([
+  // seed opcional:
+  // { _id: "seed_admin", email: "admin@admin.com", password: "$2b$..." }
+]);
+module.exports = Admin;
