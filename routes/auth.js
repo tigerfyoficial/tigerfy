@@ -15,8 +15,8 @@ router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
-    const ADMIN_PASS  = process.env.ADMIN_PASS;
+    const ADMIN_EMAIL = (process.env.ADMIN_EMAIL || "").trim();
+    const ADMIN_PASS  = (process.env.ADMIN_PASS  || "").trim();
 
     if (!ADMIN_EMAIL || !ADMIN_PASS) {
       return res.render("login", {
@@ -34,9 +34,11 @@ router.post("/login", async (req, res) => {
       });
     }
 
-    // sessão leve
+    // cria sessão
     req.session.user = { id: "admin", email: ADMIN_EMAIL };
-    return res.redirect("/deck");
+
+    // 303 força GET no próximo passo (pós-POST)
+    return res.redirect(303, "/deck");
   } catch (err) {
     console.error("Erro login:", err);
     return res.render("login", {
@@ -47,10 +49,8 @@ router.post("/login", async (req, res) => {
   }
 });
 
-// GET /register (opcional: manter desabilitado por enquanto)
-router.get("/register", (req, res) => {
-  return res.redirect("/login");
-});
+// GET /register -> desativado por enquanto
+router.get("/register", (req, res) => res.redirect("/login"));
 
 // GET /logout
 router.get("/logout", (req, res) => {
