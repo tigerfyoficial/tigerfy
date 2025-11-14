@@ -20,7 +20,7 @@ function mapOffer(row) {
   };
 }
 
-/* LISTA => /ofertas */
+/* LISTA MINIMALISTA => /ofertas */
 router.get("/ofertas", authGuard, async (req, res) => {
   try {
     const owner = req.session.userId;
@@ -33,14 +33,14 @@ router.get("/ofertas", authGuard, async (req, res) => {
     if (error) console.warn("[ofertas] select error:", error.message);
     const offers = (data || []).map(mapOffer);
 
-    return res.render("bots", {
+    return res.render("offers_list", {
       title: "Minhas Ofertas - TigerFy",
       offers,
       active: "ofertas",
     });
   } catch (err) {
     console.error("Erro carregar ofertas:", err);
-    return res.render("bots", {
+    return res.render("offers_list", {
       title: "Minhas Ofertas - TigerFy",
       offers: [],
       active: "ofertas",
@@ -56,7 +56,7 @@ router.get("/ofertas/criar", authGuard, (_req, res) => {
   });
 });
 
-/* CRIAR (POST) => /ofertas/criar  → redireciona /ofertas/gerenciar?id=... */
+/* CRIAR (POST) => /ofertas/criar  → redireciona para painel exclusivo */
 router.post("/ofertas/criar", authGuard, async (req, res) => {
   try {
     const owner = req.session.userId;
@@ -81,125 +81,87 @@ router.post("/ofertas/criar", authGuard, async (req, res) => {
       return res.redirect("/ofertas");
     }
 
-    return res.redirect(`/ofertas/gerenciar?id=${data.id}`);
+    return res.redirect(`/ofertas/painel/${data.id}`);
   } catch (err) {
     console.error("Erro criar oferta:", err);
     return res.redirect("/ofertas");
   }
 });
 
-/* GERENCIAR => /ofertas/gerenciar?id=... */
-router.get("/ofertas/gerenciar", authGuard, async (req, res) => {
+/* BACKWARD-COMPAT: /ofertas/gerenciar?id=... → redireciona para o painel novo */
+router.get("/ofertas/gerenciar", authGuard, (req, res) => {
+  const id = req.query.id;
+  if (!id) return res.redirect("/ofertas");
+  return res.redirect(`/ofertas/painel/${id}`);
+});
+
+/* PAINEL EXCLUSIVO PREMIUM => /ofertas/painel/:id */
+router.get("/ofertas/painel/:id", authGuard, async (req, res) => {
   try {
     const owner = req.session.userId;
-    const selectedId = req.query.id || null;
+    const { id } = req.params;
 
-    const { data: listData, error: listErr } = await supabase
+    const { data, error } = await supabase
       .from("offers")
       .select("id, owner, name, bot_type, tracking_type, status, telegram_username, bot_token, created_at")
+      .eq("id", id)
       .eq("owner", owner)
-      .order("created_at", { ascending: false });
+      .single();
 
-    if (listErr) console.warn("[ofertas] list error:", listErr.message);
-    const offers = (listData || []).map(mapOffer);
-
-    let selectedOffer = null;
-    if (selectedId) {
-      const { data: sel, error: selErr } = await supabase
-        .from("offers")
-        .select("id, owner, name, bot_type, tracking_type, status, telegram_username, bot_token, created_at")
-        .eq("id", selectedId)
-        .eq("owner", owner)
-        .single();
-
-      if (selErr && selErr.code !== "PGRST116") {
-        console.warn("[ofertas] selected error:", selErr.message);
-      }
-      if (sel) selectedOffer = mapOffer(sel);
+    if (error || !data) {
+      console.warn("[ofertas] painel not found/denied:", error?.message);
+      return res.redirect("/ofertas");
     }
 
-    return res.render("bots_manage", {
-      title: "Gerenciar Ofertas - TigerFy",
-      offers,
-      selectedOffer,
+    const offer = mapOffer(data);
+
+    return res.render("offer_panel", {
+      title: `${offer.name} — Painel da Oferta - TigerFy`,
+      offer,
       active: "ofertas",
     });
   } catch (err) {
-    console.error("Erro manage:", err);
-    return res.render("bots_manage", {
-      title: "Gerenciar Ofertas - TigerFy",
-      offers: [],
-      selectedOffer: null,
-      active: "ofertas",
-    });
+    console.error("Erro painel:", err);
+    return res.redirect("/ofertas");
   }
 });
 
-/* -----------------------------------------
-   Helper para atualizar token/username
------------------------------------------ */
-async function updateOfferToken(owner, id, botToken, telegramUsername) {
-  const { data: exists, error: getErr } = await supabase
-    .from("offers")
-    .select("id, owner")
-    .eq("id", id)
-    .eq("owner", owner)
-    .single();
-
-  if (getErr || !exists) {
-    return { ok: false, error: getErr || new Error("not_found_or_not_owner") };
-  }
-
-  const newStatus = botToken ? "ativo" : "incompleto";
-
-  const { error: updErr } = await supabase
-    .from("offers")
-    .update({
-      bot_token: botToken || null,
-      telegram_username: telegramUsername || null,
-      status: newStatus,
-    })
-    .eq("id", id)
-    .eq("owner", owner);
-
-  if (updErr) return { ok: false, error: updErr };
-  return { ok: true };
-}
-
-/* SALVAR TOKEN => /ofertas/:id/token */
+/* SALVAR TOKEN (continua igual, mas redireciona para o painel novo) */
 router.post("/ofertas/:id/token", authGuard, async (req, res) => {
   try {
     const owner = req.session.userId;
     const { id } = req.params;
     const { botToken, telegramUsername } = req.body;
 
-    await updateOfferToken(owner, id, botToken, telegramUsername);
-    return res.redirect(`/ofertas/gerenciar?id=${id}`);
+    const { data: exists, error: getErr } = await supabase
+      .from("offers")
+      .select("id, owner")
+      .eq("id", id)
+      .eq("owner", owner)
+      .single();
+
+    if (getErr || !exists) {
+      console.warn("[ofertas] token denied (owner mismatch)");
+      return res.redirect("/ofertas");
+    }
+
+    const newStatus = botToken ? "ativo" : "incompleto";
+
+    const { error: updErr } = await supabase
+      .from("offers")
+      .update({
+        bot_token: botToken || null,
+        telegram_username: telegramUsername || null,
+        status: newStatus,
+      })
+      .eq("id", id)
+      .eq("owner", owner);
+
+    if (updErr) console.error("[ofertas] update token error:", updErr.message);
+
+    return res.redirect(`/ofertas/painel/${id}`);
   } catch (err) {
     console.error("Erro salvar token:", err);
-    return res.redirect("/ofertas");
-  }
-});
-
-/* ALIAS compatível com o front antigo => /bots/:id/token */
-router.post("/bots/:id/token", authGuard, async (req, res) => {
-  try {
-    const owner = req.session.userId;
-    const { id } = req.params;
-
-    // aceita vários nomes de campo (garante compatibilidade)
-    const botToken =
-      req.body.botToken || req.body.token || req.body.bot_token || null;
-    const telegramUsername =
-      req.body.telegramUsername ||
-      req.body.username ||
-      req.body.telegram_username ||
-      null;
-
-    await updateOfferToken(owner, id, botToken, telegramUsername);
-    return res.redirect(`/ofertas/gerenciar?id=${id}`);
-  } catch (err) {
-    console.error("Erro salvar token via alias /bots/:id/token:", err);
     return res.redirect("/ofertas");
   }
 });
