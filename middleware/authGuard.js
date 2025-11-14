@@ -1,7 +1,6 @@
-// middleware/authGuard.js
-module.exports = (req, res, next) => {
-  if (!req.session.user) {
-    return res.redirect("/login");
-  }
+module.exports = function (req, res, next) {
+  const logged = !!(req.session && (req.session.user || req.session.userId));
+  if (!logged) return res.redirect("/login");
+  res.locals.user = req.session.user || { _id: req.session.userId };
   next();
 };
