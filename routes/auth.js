@@ -1,23 +1,22 @@
-// routes/auth.js — versão mínima SEM redirects em /login
 const express = require("express");
 const router = express.Router();
 
-// GET /login → só renderiza a view (sem redirecionar)
+// GET /login → renderiza a página
 router.get("/login", (req, res) => {
-  // Se sua view é views/login.ejs, deixe "login"
-  // Se for outra pasta, ajuste o caminho aqui.
+  // se quiser, se já tiver logado pode ir ao dashboard:
+  // if (req.session?.user) return res.redirect("/dashboard");
   res.status(200).render("login", { title: "Login - TigerFy" });
 });
 
-// POST /login → placeholder (vamos ligar ao Supabase depois)
+// POST /login → (placeholder) cria sessão e vai pro dashboard
 router.post("/login", async (req, res) => {
-  // TODO: validar user no Supabase e criar sessão
-  // Por enquanto, só segue para o dashboard para não travar a navegação.
-  req.session.user = { id: "dev", email: req.body.email || "dev@local" };
+  const email = (req.body?.email || "").trim();
+  // TODO: validar no Supabase depois
+  req.session.user = { id: "dev", email: email || "dev@local" };
   return res.redirect("/dashboard");
 });
 
-// GET /logout → encerra sessão e volta ao login
+// GET /logout → destrói sessão
 router.get("/logout", (req, res) => {
   req.session.destroy(() => res.redirect("/login"));
 });
