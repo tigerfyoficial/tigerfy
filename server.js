@@ -1,69 +1,63 @@
 const express = require("express");
-const session = require("express-session");
 const path = require("path");
 const compression = require("compression");
 const helmet = require("helmet");
 const morgan = require("morgan");
 const expressLayouts = require("express-ejs-layouts");
+const cookieSession = require("cookie-session");
 require("dotenv").config();
 
 const app = express();
 
-/* ---------- Middlewares base ---------- */
+// Middlewares básicos
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(compression());
 app.use(helmet());
 app.use(morgan("tiny"));
-app.use("/", require("./routes/health_supa"));
 
+// Sessão via cookie (compatível com serverless)
 app.use(
-  session({
-    secret: process.env.SESSION_SECRET || "tigerfy_secret",
-    resave: false,
-    saveUninitialized: false,
+  cookieSession({
+    name: "tigerfy.sess",
+    keys: [process.env.SESSION_SECRET || "tigerfy_secret"],
+    secure: process.env.NODE_ENV === "production", // true na Vercel (https)
+    httpOnly: true,
+    sameSite: "lax",
+    maxAge: 7 * 24 * 60 * 60 * 1000 // 7 dias
   })
 );
 
-// evita erro de view esperando "active"
+// Evita erro de 'active undefined' nos templates
 app.use((req, res, next) => {
   res.locals.active = "";
   next();
 });
 
-/* ---------- EJS + Layout ---------- */
+// EJS + Layout
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 app.set("layout", "layout");
 app.use(expressLayouts);
 
-/* ---------- Static ---------- */
+// Arquivos estáticos
 app.use(express.static(path.join(__dirname, "public")));
 
-/* ---------- Health & favicon (evita 500/timeout) ---------- */
-app.get("/health", (req, res) => res.status(200).send("ok"));
-app.get(["/favicon.ico", "/favicon.png"], (req, res) => res.status(204).end());
-
-/* ---------- Login curto-circuitado (encerra 302 infinito) ---------- */
-app.get("/login", (req, res) => {
-  return res.render("login", { title: "Login" });
-});
-
-/* ---------- Home -> /login ---------- */
+// Home -> login (ajuste se preferir /deck)
 app.get("/", (req, res) => res.redirect("/login"));
 
-/* ---------- Rotas ---------- */
+// Rotas
 app.use("/", require("./routes/auth"));
 app.use("/", require("./routes/dashboard"));
 app.use("/", require("./routes/offers"));
 app.use("/", require("./routes/api_pix"));
 
-/* ---------- 404 ---------- */
+// 404
 app.use((req, res) => {
   res.status(404).render("404", { title: "404 - TigerFy" });
 });
 
-/* ---------- Export para Vercel ---------- */
+// Export compatível com Vercel
 if (process.env.VERCEL) {
   module.exports = app;
 } else {
