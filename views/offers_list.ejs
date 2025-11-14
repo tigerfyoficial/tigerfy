@@ -1,0 +1,91 @@
+<%- include('partials/visual_hottrack') %>
+
+<div class="tiger-offers-list">
+  <div class="list-header">
+    <div>
+      <h1>Minhas Ofertas</h1>
+      <p>Lista simples e objetiva das suas ofertas. Clique para abrir o painel premium da oferta.</p>
+    </div>
+    <a href="/ofertas/criar" class="btn-primary">Criar nova oferta</a>
+  </div>
+
+  <div class="list-grid">
+    <% if (!offers || offers.length === 0) { %>
+      <div class="empty">
+        <h3>Você ainda não tem ofertas</h3>
+        <p>Crie sua primeira oferta para começar.</p>
+        <a href="/ofertas/criar" class="btn-primary small">Criar oferta</a>
+      </div>
+    <% } else { %>
+      <% offers.forEach(function(o){ %>
+        <a class="offer-card" href="/ofertas/painel/<%= o._id %>">
+          <div class="card-top">
+            <h3><%= o.name %></h3>
+            <span class="status <%= o.status %>">
+              <% if (o.status === 'ativo') { %>Ativo<% } %>
+              <% if (o.status === 'incompleto') { %>Incompleto<% } %>
+              <% if (o.status === 'erro') { %>Erro<% } %>
+            </span>
+          </div>
+
+          <div class="meta">
+            <span>ID: <%= String(o._id).slice(-6) %></span>
+            <span>Bot: 
+              <% if (o.botType === 'bot_padrao') { %>Padrão<% } else if (o.botType === 'bot_fluxo_wiin') { %>Fluxo (Wiinbot)<% } else { %>Fluxo (Manychat)<% } %>
+            </span>
+            <span>Track: 
+              <% if (o.trackingType === 'fb_pixel') { %>Facebook Pixel<% } else if (o.trackingType === 'utmify_utmify_pixel') { %>UTMify + UTMify Pixel<% } else if (o.trackingType === 'utmify_fb_pixel') { %>UTMify + Pixel FB<% } else { %>Track próprio<% } %>
+            </span>
+          </div>
+          <span class="go">›</span>
+        </a>
+      <% }) %>
+    <% } %>
+  </div>
+</div>
+
+<style>
+  .tiger-offers-list{
+    padding:60px 80px 100px 130px;
+    max-width:calc(100vw - 120px);
+    margin:0 auto;
+    color:#fff;
+  }
+  .list-header{
+    display:flex; align-items:center; justify-content:space-between; margin-bottom:18px;
+  }
+  .list-header h1{ margin:0 0 6px; font-size:2rem; color:#ffcc00; }
+  .list-header p{ margin:0; color:#b4b4b4; font-size:.95rem; }
+
+  .list-grid{
+    display:grid; gap:12px;
+    grid-template-columns:repeat(auto-fill, minmax(280px, 1fr));
+  }
+  .offer-card{
+    position:relative;
+    display:block; text-decoration:none; color:#fff;
+    background:rgba(0,0,0,0.70);
+    border:1px solid rgba(255,204,0,0.12);
+    border-radius:16px; padding:14px;
+    transition:.2s;
+  }
+  .offer-card:hover{ border-color:#ffcc00; box-shadow:0 0 16px rgba(255,204,0,0.3); }
+  .card-top{ display:flex; align-items:center; justify-content:space-between; gap:8px; }
+  .card-top h3{ margin:0; font-size:1rem; }
+  .status{ font-size:.75rem; padding:3px 7px; border-radius:999px; }
+  .status.ativo{ background:rgba(0,255,120,0.16); color:#4fff9a; }
+  .status.incompleto{ background:rgba(255,196,0,0.16); color:#ffdd66; }
+  .status.erro{ background:rgba(255,0,76,0.16); color:#ff6b9e; }
+
+  .meta{
+    display:flex; gap:10px; flex-wrap:wrap; margin-top:8px;
+    font-size:.78rem; color:#c9c9c9;
+  }
+  .go{ position:absolute; right:12px; bottom:10px; opacity:.6; font-size:1.4rem; }
+  .empty{ text-align:center; padding:30px 16px; background:rgba(0,0,0,0.70); border:1px solid rgba(255,204,0,0.12); border-radius:16px; }
+  .btn-primary.small{ padding:8px 16px; font-size:.85rem; }
+  .btn-primary{
+    border:none; border-radius:10px; padding:10px 22px; font-weight:600; cursor:pointer; text-decoration:none;
+    background:linear-gradient(90deg,#ffcc00,#d4a100); color:#1a1300; box-shadow:0 0 12px rgba(255,204,0,0.4); font-size:.95rem;
+  }
+</style>
