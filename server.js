@@ -9,20 +9,22 @@ require("dotenv").config();
 
 const app = express();
 
+/* -------- Vercel/Proxy -------- */
+app.set("trust proxy", 1); // garante secure cookies atrás de proxy
+
 /* -------- Middlewares básicos -------- */
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(compression());
 app.use(
   helmet({
-    // Mantém o front funcionando (EJS inline, assets locais)
     contentSecurityPolicy: false,
     crossOriginEmbedderPolicy: false,
   })
 );
 app.use(morgan("tiny"));
 
-/* -------- Sessão (necessária para req.session.userId) -------- */
+/* -------- Sessão (req.session.userId) -------- */
 app.use(
   session({
     secret: process.env.SESSION_SECRET || "tigerfy_secret",
@@ -37,7 +39,7 @@ app.use(
   })
 );
 
-/* -------- Locais globais para as views (evita active undefined) -------- */
+/* -------- Locais globais para as views -------- */
 app.use((req, res, next) => {
   res.locals.active = "";
   res.locals.userEmail = req.session?.userEmail || null;
@@ -56,13 +58,13 @@ app.use(express.static(path.join(__dirname, "public")));
 /* -------- Rotas -------- */
 app.get("/", (_req, res) => res.redirect("/login"));
 
-app.use("/", require("./routes/auth"));         // login/register/logout (Supabase)
-app.use("/", require("./routes/dashboard"));    // deck
-app.use("/", require("./routes/offers"));       // bots/ofertas
-app.use("/", require("./routes/api_pix"));      // adquirentes
-app.use("/", require("./routes/health_supa"));  // /health-supa para diagnosticar Supabase
+app.use("/", require("./routes/auth"));          // login/register/logout (Supabase)
+app.use("/", require("./routes/dashboard"));     // deck
+app.use("/", require("./routes/offers"));        // bots/ofertas
+app.use("/", require("./routes/api_pix"));       // adquirentes
+app.use("/", require("./routes/health_supa"));   // /health-supa e /health
 
-/* -------- Favicon (evita 404 spam em logs) -------- */
+/* -------- Favicon (evita 404 nos logs) -------- */
 app.get("/favicon.ico", (_req, res) => res.status(204).end());
 app.get("/favicon.png", (_req, res) => res.status(204).end());
 
@@ -71,9 +73,7 @@ app.use((req, res) => {
   res.status(404).render("404", { title: "404 - TigerFy" });
 });
 
-/* -------- Export / Start --------
-   Em Vercel (serverless) apenas exportamos o app.
-   Em local, subimos o server normalmente. */
+/* -------- Export / Start -------- */
 if (process.env.VERCEL) {
   module.exports = app;
 } else {
