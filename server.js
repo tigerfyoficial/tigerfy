@@ -1,5 +1,4 @@
 const express = require("express");
-// const mongoose = require("mongoose");  // ❌ removido
 const session = require("express-session");
 const path = require("path");
 const compression = require("compression");
@@ -41,7 +40,8 @@ app.use(expressLayouts);
 // Public
 app.use(express.static(path.join(__dirname, "public")));
 
-// ❌ Mongo totalmente removido (não conecta nada aqui)
+// --- HOME: redireciona para login (ou mude para '/dashboard' se preferir)
+app.get("/", (req, res) => res.redirect("/login"));
 
 // Rotas
 app.use("/", require("./routes/auth"));
@@ -54,10 +54,12 @@ app.use((req, res) => {
   res.status(404).render("404", { title: "404 - TigerFy" });
 });
 
-// Start (modo local; Vercel entra no passo 2)
-const PORT = process.env.PORT || 10000;
-app.listen(PORT, () =>
-  console.log(`🚀 TigerFy rodando! Porta ${PORT}`)
-);
+// --- Start (compatível com Vercel: não dar listen em serverless)
+if (process.env.VERCEL) {
+  module.exports = app; // Vercel importa o app via api/index.js
+} else {
+  const PORT = process.env.PORT || 10000;
+  app.listen(PORT, () => console.log(`🚀 TigerFy rodando! Porta ${PORT}`));
+}
 
-module.exports = app; // manter export para compat futura
+module.exports = app; // mantém export para uso externo
