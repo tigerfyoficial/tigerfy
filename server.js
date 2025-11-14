@@ -9,6 +9,9 @@ require("dotenv").config();
 
 const app = express();
 
+// Vercel/Proxies: necessário para cookies "secure"
+app.set("trust proxy", 1);
+
 // Middlewares básicos
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -16,19 +19,19 @@ app.use(compression());
 app.use(helmet());
 app.use(morgan("tiny"));
 
-// Sessão via cookie (compatível com serverless)
+// Sessão via cookie (persistente no browser)
 app.use(
   cookieSession({
     name: "tigerfy.sess",
     keys: [process.env.SESSION_SECRET || "tigerfy_secret"],
-    secure: process.env.NODE_ENV === "production", // true na Vercel (https)
+    secure: process.env.NODE_ENV === "production", // HTTPS na Vercel
     httpOnly: true,
     sameSite: "lax",
-    maxAge: 7 * 24 * 60 * 60 * 1000 // 7 dias
+    maxAge: 7 * 24 * 60 * 60 * 1000
   })
 );
 
-// Evita erro de 'active undefined' nos templates
+// Variáveis globais para EJS
 app.use((req, res, next) => {
   res.locals.active = "";
   next();
@@ -43,7 +46,7 @@ app.use(expressLayouts);
 // Arquivos estáticos
 app.use(express.static(path.join(__dirname, "public")));
 
-// Home -> login (ajuste se preferir /deck)
+// Home -> login
 app.get("/", (req, res) => res.redirect("/login"));
 
 // Rotas
@@ -51,6 +54,14 @@ app.use("/", require("./routes/auth"));
 app.use("/", require("./routes/dashboard"));
 app.use("/", require("./routes/offers"));
 app.use("/", require("./routes/api_pix"));
+
+// (Opcional) Diagnóstico temporário — remover depois
+app.get("/whoami", (req, res) => {
+  res.json({
+    hasSession: !!req.session,
+    session: req.session || null
+  });
+});
 
 // 404
 app.use((req, res) => {
