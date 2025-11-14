@@ -1,102 +1,264 @@
 <%- include('partials/visual_hottrack') %>
 
 <div class="tiger-offer-panel">
-  <div class="panel-header">
-    <div>
+  <!-- BREADCRUMB -->
+  <div class="breadcrumb">
+    <a href="/ofertas">Minhas Ofertas</a>
+    <span>›</span>
+    <span class="crumb-now"><%= offer.name %></span>
+  </div>
+
+  <!-- HEADER -->
+  <header class="panel-header">
+    <div class="title-side">
       <h1><%= offer.name %></h1>
-      <p>ID: <%= offer._id %></p>
+      <p>ID: <%= offer.id %></p>
     </div>
-    <span class="status <%= offer.status %>">
-      <% if (offer.status === 'ativo') { %>Ativo<% } %>
-      <% if (offer.status === 'incompleto') { %>Incompleto<% } %>
-      <% if (offer.status === 'erro') { %>Erro<% } %>
-    </span>
-  </div>
 
-  <!-- INFO RÁPIDA -->
-  <div class="quick-info">
-    <div class="qi-card">
-      <h4>Tipo de Bot</h4>
-      <p><%= offer.botType === 'bot_padrao' ? 'Bot padrão — fluxo clássico.' : offer.botType %></p>
+    <div class="status-pill <%= offer.status %>">
+      <%= offer.status === 'ativo' ? 'Ativo' : (offer.status === 'incompleto' ? 'Incompleto' : 'Erro') %>
     </div>
-    <div class="qi-card">
-      <h4>Traqueamento</h4>
-      <p>
-        <% if (offer.trackingType === 'fb_pixel') { %>Facebook Pixel nativo<% } %>
-        <% if (offer.trackingType === 'utmify_utmify_pixel') { %>UTMify + UTMify Pixel<% } %>
-        <% if (offer.trackingType === 'utmify_fb_pixel') { %>UTMify + Pixel Facebook<% } %>
-        <% if (offer.trackingType === 'track_proprio') { %>Track próprio<% } %>
-      </p>
+  </header>
+
+  <!-- BOT IDENTIDADE / AÇÕES -->
+  <section class="bot-identity">
+    <form class="identity-form" method="POST" action="/ofertas/<%= offer.id %>/token">
+      <div class="identity-grid">
+        <div class="field">
+          <label>Username do Bot (sem @)</label>
+          <input
+            type="text"
+            name="telegramUsername"
+            id="telegramUsername"
+            placeholder="seu_bot_exemplo_bot"
+            value="<%= (offer.telegramUsername || '').replace(/^@/,'') %>"
+            autocomplete="off"
+          />
+        </div>
+
+        <div class="field">
+          <label>Token do Bot</label>
+          <input
+            type="text"
+            name="botToken"
+            id="botToken"
+            placeholder="123456789:AAEJx2m9_______"
+            value="<%= offer.botToken || '' %>"
+            autocomplete="off"
+          />
+        </div>
+
+        <div class="actions">
+          <button type="submit" class="btn-primary">Salvar Configurações</button>
+          <button type="button" class="btn-ghost" data-action="quick-test">Teste rápido</button>
+          <button type="button" class="btn-ghost" data-action="open-logs">Logs</button>
+        </div>
+      </div>
+    </form>
+  </section>
+
+  <!-- GRID PRINCIPAL -->
+  <section class="panel-grid">
+
+    <!-- COPY PRINCIPAL -->
+    <div class="card xl" id="card-copy">
+      <div class="card-head">
+        <h3>Copy principal</h3>
+        <div class="card-actions">
+          <button type="button" class="btn-ghost" data-action="add-media">Adicionar mídia (link Telegram)</button>
+        </div>
+      </div>
+      <div class="copy-grid">
+        <div class="copy-left">
+          <label>Mensagem inicial (/start)</label>
+          <textarea placeholder="Escreva a mensagem de boas-vindas, CTAs, etc."></textarea>
+          <div class="inline-help">Suporta texto longo. A mídia será anexada via link do Telegram.</div>
+        </div>
+        <div class="copy-right">
+          <div class="preview">
+            <div class="preview-head">Preview</div>
+            <div class="preview-body muted">Nenhuma mídia carregada. Adicione um link para pré-visualizar aqui.</div>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="qi-card">
-      <h4>Bot</h4>
-      <p>
-        <%= offer.telegramUsername ? '@' + offer.telegramUsername.replace(/^@/, '') : 'Sem username' %><br/>
-        <small><%= offer.botToken ? 'Token conectado' : 'Token não conectado' %></small>
-      </p>
+
+    <!-- ORDERBUMP -->
+    <div class="card lg" id="card-orderbump">
+      <div class="card-head">
+        <h3>Orderbump</h3>
+        <button type="button" class="btn-ghost" data-modal="orderbump-new">Adicionar orderbump</button>
+      </div>
+      <div class="list empty">
+        <div class="empty-msg">Nenhum orderbump. Clique em “Adicionar orderbump”.</div>
+      </div>
     </div>
-  </div>
 
-  <!-- MÓDULOS (cards) -->
-  <div class="modules-grid">
-    <!-- BÁSICOS -->
-    <a class="module-card" href="#">
-      <h3>Copy principal</h3>
-      <p>Mensagem inicial com ou sem mídia (por link do Telegram).</p>
-    </a>
-    <a class="module-card" href="#">
-      <h3>Orderbump</h3>
-      <p>Adicione orderbumps ilimitados.</p>
-    </a>
-    <a class="module-card" href="#">
-      <h3>Upsell</h3>
-      <p>Ofertas de pós-compra.</p>
-    </a>
-    <a class="module-card" href="#">
-      <h3>Downsell</h3>
-      <p>Recuperação com preço alternativo.</p>
-    </a>
-    <a class="module-card" href="#">
-      <h3>Remarketing</h3>
-      <p>Mensagens inteligentes por segmento.</p>
-    </a>
-    <a class="module-card" href="#">
-      <h3>Disparo / Follow-up</h3>
-      <p>Sequências automáticas.</p>
-    </a>
-    <a class="module-card" href="#">
-      <h3>API PIX</h3>
-      <p>Checkout automático via gateways.</p>
-    </a>
-    <a class="module-card" href="#">
-      <h3>Entregável</h3>
-      <p>Configurar link/arquivo após pagamento.</p>
-    </a>
+    <!-- UPSELL -->
+    <div class="card md" id="card-upsell">
+      <div class="card-head">
+        <h3>Upsell</h3>
+        <button type="button" class="btn-ghost" data-modal="upsell-edit">Configurar</button>
+      </div>
+      <div class="ghost-box">Ofertas de pós-compra com CTA dedicado.</div>
+    </div>
 
-    <!-- INOVAÇÕES -->
-    <a class="module-card subtle" href="#">
-      <h3>Randomizador</h3>
-      <p>Preparado para UTMify futuramente.</p>
-    </a>
-    <a class="module-card subtle" href="#">
-      <h3>Auto-excluir</h3>
-      <p>Apagar mensagem após X segundos.</p>
-    </a>
-    <a class="module-card subtle" href="#">
-      <h3>Duplo/Triplo Orderbump</h3>
-      <p>Estratégias avançadas de conversão.</p>
-    </a>
-    <a class="module-card subtle" href="#">
-      <h3>Cloaker de bot</h3>
-      <p>Anti-cópia com caracteres aleatórios.</p>
-    </a>
-  </div>
+    <!-- DOWNSELL -->
+    <div class="card md" id="card-downsell">
+      <div class="card-head">
+        <h3>Downsell</h3>
+        <button type="button" class="btn-ghost" data-modal="downsell-edit">Configurar</button>
+      </div>
+      <div class="ghost-box">Recuperação com preço alternativo e regras.</div>
+    </div>
 
-  <div class="panel-actions">
-    <a href="/ofertas" class="btn-secondary">Voltar</a>
+    <!-- REMARKETING / FOLLOW-UP -->
+    <div class="card lg" id="card-remarketing">
+      <div class="card-head">
+        <h3>Remarketing / Follow-up</h3>
+        <button type="button" class="btn-ghost" data-modal="remarketing-flow">Adicionar fluxo</button>
+      </div>
+      <div class="flow-list empty">
+        <div class="empty-msg">Nenhum fluxo criado. Crie agendamentos por segmento.</div>
+      </div>
+    </div>
+
+    <!-- API PIX -->
+    <div class="card lg" id="card-api">
+      <div class="card-head">
+        <h3>API PIX</h3>
+        <div class="card-actions">
+          <button type="button" class="btn-ghost" data-action="test-pix">Testar conexão</button>
+        </div>
+      </div>
+      <div class="api-grid">
+        <div class="field">
+          <label>Gateway Token</label>
+          <input type="text" placeholder="Cole o token da API do gateway" />
+        </div>
+        <div class="field">
+          <label>Chave PIX / Seller Key</label>
+          <input type="text" placeholder="Sua chave PIX ou credencial do seller" />
+        </div>
+        <div class="console">
+          <div class="console-head">Retornos / Logs</div>
+          <div class="console-body muted">Sem testes executados.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ENTREGÁVEL -->
+    <div class="card md" id="card-entregavel">
+      <div class="card-head">
+        <h3>Entregável</h3>
+        <button type="button" class="btn-ghost" data-action="preview-link">Preview</button>
+      </div>
+      <div class="field">
+        <label>Link pós-pagamento</label>
+        <input type="url" placeholder="https://exemplo.com/obrigado?valor=..." />
+      </div>
+      <div class="field two">
+        <div>
+          <label>Validade (dias) – opcional</label>
+          <input type="number" min="0" placeholder="0 = sem expiração" />
+        </div>
+        <div>
+          <label>Observações internas</label>
+          <input type="text" placeholder="Notas visíveis só para você" />
+        </div>
+      </div>
+    </div>
+
+    <!-- FERRAMENTAS AVANÇADAS TIGERFY -->
+    <div class="card xl advanced" id="card-advanced">
+      <div class="card-head">
+        <h3>Ferramentas Avançadas TigerFy</h3>
+      </div>
+
+      <div class="advanced-grid">
+        <!-- Randomizador -->
+        <div class="adv-item">
+          <div class="adv-title">
+            <span>Randomizador</span>
+            <label class="switch">
+              <input type="checkbox" id="adv-randomizer">
+              <span></span>
+            </label>
+          </div>
+          <div class="adv-body">
+            <div class="field two">
+              <div>
+                <label>Prefixo</label>
+                <input type="text" placeholder="Ex: zx" />
+              </div>
+              <div>
+                <label>Sufixo</label>
+                <input type="text" placeholder="Ex: 99" />
+              </div>
+            </div>
+            <div class="inline-help">Preparado para integrar UTMify futuramente.</div>
+          </div>
+        </div>
+
+        <!-- Auto-excluir -->
+        <div class="adv-item">
+          <div class="adv-title">
+            <span>Auto-excluir mensagens</span>
+            <label class="switch">
+              <input type="checkbox" id="adv-autodelete">
+              <span></span>
+            </label>
+          </div>
+          <div class="adv-body">
+            <div class="field" style="max-width:220px">
+              <label>Excluir após (segundos)</label>
+              <input type="number" min="5" step="5" placeholder="Ex: 60" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Duplo/Triplo OB -->
+        <div class="adv-item">
+          <div class="adv-title">
+            <span>Duplo/Triplo Orderbump</span>
+            <div class="toggles">
+              <label class="check">
+                <input type="checkbox" id="adv-double-ob"> <i></i> Duplo
+              </label>
+              <label class="check">
+                <input type="checkbox" id="adv-triple-ob"> <i></i> Triplo
+              </label>
+            </div>
+          </div>
+          <div class="adv-body">
+            <div class="inline-help">Expande lógicas de conversão com bumps encadeados.</div>
+          </div>
+        </div>
+
+        <!-- Cloaker -->
+        <div class="adv-item">
+          <div class="adv-title">
+            <span>Cloaker de bot (anti-cópia)</span>
+            <label class="switch">
+              <input type="checkbox" id="adv-cloaker">
+              <span></span>
+            </label>
+          </div>
+          <div class="adv-body">
+            <div class="inline-help">Gera caracteres aleatórios quando o conteúdo é copiado.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <div class="footer-actions">
+    <a class="btn-secondary" href="/ofertas">Voltar</a>
   </div>
 </div>
 
+<!-- ========= STYLES ========= -->
 <style>
   .tiger-offer-panel{
     padding:60px 80px 100px 130px;
@@ -105,93 +267,133 @@
     color:#fff;
   }
 
-  .panel-header{
-    display:flex;
-    align-items:flex-start;
-    justify-content:space-between;
-    gap:16px;
-    margin-bottom:18px;
-  }
-  .panel-header h1{
-    margin:0 0 6px;
-    font-size:2rem;
-    color:#ffcc00;
-  }
-  .panel-header p{ margin:0; color:#b4b4b4; font-size:.95rem; }
+  .breadcrumb{display:flex;gap:8px;align-items:center;margin-bottom:10px;color:#bdbdbd;font-size:.9rem}
+  .breadcrumb a{color:#d9d9d9;text-decoration:none}
+  .breadcrumb a:hover{color:#fff}
+  .crumb-now{color:#ffcc00}
 
-  .status{
-    align-self:flex-start;
-    font-size:.85rem;
-    padding:6px 10px;
-    border-radius:999px;
-    background:rgba(255,255,255,0.06);
-  }
-  .status.ativo{ background:rgba(0,255,120,0.16); color:#4fff9a; }
-  .status.incompleto{ background:rgba(255,196,0,0.16); color:#ffdd66; }
-  .status.erro{ background:rgba(255,0,76,0.16); color:#ff6b9e; }
+  .panel-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+  .panel-header h1{margin:0 0 4px;font-size:1.9rem;color:#ffcc00}
+  .panel-header p{margin:0;color:#8f8f8f;font-size:.9rem}
 
-  .quick-info{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-    gap:12px;
-    margin-bottom:16px;
-  }
-  .qi-card{
-    background:rgba(255,255,255,0.03);
-    border-radius:12px;
-    padding:12px 12px;
-    border:1px solid rgba(255,204,0,0.10);
-  }
-  .qi-card h4{ margin:0 0 4px; font-size:.9rem; color:#ffcc00; }
-  .qi-card p{ margin:0; font-size:.9rem; color:#ddd; }
+  .status-pill{border-radius:999px;padding:6px 12px;font-weight:600;border:1px solid rgba(255,204,0,.2)}
+  .status-pill.ativo{background:rgba(0,255,120,.16);color:#4fff9a;border-color:rgba(0,255,120,.35)}
+  .status-pill.incompleto{background:rgba(255,196,0,.16);color:#ffdd66}
+  .status-pill.erro{background:rgba(255,0,76,.16);color:#ff6b9e}
 
-  .modules-grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
-    gap:12px;
+  .bot-identity{
+    background:rgba(0,0,0,.7);border:1px solid rgba(255,204,0,.12);
+    border-radius:18px;padding:16px 16px 14px;margin-bottom:18px
   }
-  .module-card{
-    display:block;
-    text-decoration:none;
-    color:#fff;
-    background:rgba(0,0,0,0.70);
-    border:1px solid rgba(255,204,0,0.12);
-    border-radius:14px;
-    padding:14px 14px;
-    transition:.2s;
+  .identity-grid{display:grid;grid-template-columns:1fr 1fr auto;gap:12px;align-items:end}
+  .field label{display:block;font-size:.85rem;margin:0 0 6px}
+  .field input, .field textarea, .field select{
+    width:100%;padding:10px 12px;border-radius:10px;background:rgba(255,255,255,.03);
+    border:1px solid rgba(255,255,255,.16);color:#fff;font-size:.95rem;outline:none
   }
-  .module-card:hover{
-    border-color:rgba(255,204,0,0.35);
-    box-shadow:0 0 16px rgba(255,204,0,0.35);
+  .field input:focus, .field textarea:focus{
+    border-color:#ffcc00;box-shadow:0 0 0 1px rgba(255,204,0,.25)
   }
-  .module-card h3{
-    margin:0 0 6px;
-    font-size:1rem;
-    color:#ffcc00;
-  }
-  .module-card p{
-    margin:0;
-    color:#cfcfcf;
-    font-size:.92rem;
-  }
-  .module-card.subtle{
-    background:rgba(255,255,255,0.03);
-  }
+  .actions{display:flex;gap:10px}
+  .btn-primary{border:none;border-radius:10px;padding:10px 18px;font-weight:700;cursor:pointer;
+    background:linear-gradient(90deg,#ffcc00,#d4a100);color:#1a1300;box-shadow:0 0 12px rgba(255,204,0,.45)}
+  .btn-secondary{display:inline-flex;align-items:center;gap:8px;text-decoration:none;
+    border-radius:10px;padding:10px 18px;background:rgba(255,255,255,.06);color:#ddd}
+  .btn-ghost{border:1px solid rgba(255,255,255,.14);background:transparent;color:#e9e9e9;
+    padding:9px 14px;border-radius:10px;cursor:pointer}
+  .btn-ghost:hover{border-color:rgba(255,204,0,.45);color:#fff}
 
-  .panel-actions{
-    margin-top:18px;
-    display:flex;
-    justify-content:flex-end;
+  .panel-grid{
+    display:grid;gap:14px;grid-template-columns:repeat(12,1fr)
   }
-  .btn-secondary{
-    background:rgba(255,255,255,0.06);
-    color:#ddd;
-    border:none;
-    border-radius:10px;
-    padding:10px 18px;
-    font-weight:600;
-    cursor:pointer;
-    text-decoration:none;
+  .card{
+    background:rgba(0,0,0,.7);border:1px solid rgba(255,204,0,.12);border-radius:18px;padding:14px
   }
-  .btn-secondary:hover{ background:rgba(255,255,255,0.10); }
+  .card .card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+  .card h3{margin:0;font-size:1.05rem;color:#ffcc00}
+  .card .ghost-box{border:1px dashed rgba(255,255,255,.18);border-radius:12px;padding:14px;color:#cfcfcf}
+  .card .empty .empty-msg{color:#b4b4b4}
+
+  .xl{grid-column:span 12}
+  .lg{grid-column:span 8}
+  .md{grid-column:span 4}
+
+  /* Copy grid */
+  .copy-grid{display:grid;grid-template-columns:1fr 420px;gap:12px}
+  .copy-left textarea{min-height:140px;resize:vertical}
+  .inline-help{margin-top:6px;color:#a9a9a9;font-size:.85rem}
+  .preview{border:1px solid rgba(255,204,0,.16);border-radius:12px;overflow:hidden}
+  .preview-head{padding:10px 12px;background:rgba(255,204,0,.08);font-weight:600}
+  .preview-body{padding:14px}
+  .muted{color:#bdbdbd}
+
+  /* API PIX */
+  .api-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .console{grid-column:span 2;border:1px solid rgba(255,255,255,.12);border-radius:12px;overflow:hidden}
+  .console-head{padding:10px 12px;background:rgba(255,255,255,.06);font-weight:600}
+  .console-body{padding:12px;min-height:60px}
+
+  /* Entregável */
+  .field.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+  /* Advanced Tools */
+  .advanced{border-color:rgba(255,204,0,.22);box-shadow:0 0 22px rgba(255,204,0,.06)}
+  .advanced-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .adv-item{border:1px solid rgba(255,204,0,.12);border-radius:14px;padding:12px}
+  .adv-title{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;font-weight:700}
+  .switch{position:relative;width:46px;height:26px;display:inline-block}
+  .switch input{display:none}
+  .switch span{position:absolute;inset:0;background:#333;border-radius:999px;transition:.2s}
+  .switch span:after{content:"";position:absolute;width:20px;height:20px;border-radius:50%;background:#bbb;top:3px;left:3px;transition:.2s}
+  .switch input:checked + span{background:#ffcc00}
+  .switch input:checked + span:after{left:23px;background:#1a1300}
+  .check{display:inline-flex;align-items:center;gap:8px}
+  .check input{appearance:none;width:16px;height:16px;border:1px solid rgba(255,255,255,.5);border-radius:4px}
+  .check input:checked{background:#ffcc00;border-color:#ffcc00}
+  .check i{display:none}
+
+  .footer-actions{margin-top:16px;display:flex;justify-content:flex-end}
+  @media (max-width:1100px){
+    .identity-grid{grid-template-columns:1fr}
+    .copy-grid{grid-template-columns:1fr}
+    .api-grid{grid-template-columns:1fr}
+    .advanced-grid{grid-template-columns:1fr}
+    .lg{grid-column:span 12}
+    .md{grid-column:span 12}
+  }
 </style>
+
+<!-- ========= SCRIPTS ========= -->
+<script>
+  // garantir username sem '@'
+  const tg = document.getElementById('telegramUsername');
+  if (tg){
+    tg.addEventListener('blur',()=>{ tg.value = tg.value.replace(/^@+/,''); });
+  }
+
+  // placeholders de ações
+  document.addEventListener('click', (e)=>{
+    const a = e.target.closest('[data-action],[data-modal]');
+    if(!a) return;
+
+    if(a.dataset.action === 'quick-test'){
+      alert('Teste rápido: em breve chamaremos um endpoint para pingar o bot e validar o token.');
+    }
+    if(a.dataset.action === 'open-logs'){
+      alert('Logs: esta caixa abrirá um painel lateral com eventos.');
+    }
+    if(a.dataset.action === 'test-pix'){
+      const box = document.querySelector('#card-api .console-body');
+      if(box){ box.textContent = 'Testando conexão com o gateway... OK (mock)'; }
+    }
+    if(a.dataset.action === 'preview-link'){
+      alert('Preview do entregável: abrirá em nova aba/iframe (mock).');
+    }
+
+    // modais (mock)
+    if(a.dataset.modal){
+      const name = a.dataset.modal;
+      alert('Abrir modal: '+name+' (UI premium a conectar no backend depois)');
+    }
+  });
+</script>
