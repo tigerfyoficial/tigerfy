@@ -1,0 +1,237 @@
+/* ===============================
+   ⚡ TIGERFY — THEME.GOLD CLEAN VERSION
+   =============================== */
+
+/* 🎨 VARIÁVEIS BASE */
+:root {
+  --bg-color: #0a0a0a;
+  --text-color: #ffffff;
+  --muted-color: #b4b4b4;
+  --accent-color: #ffcc00;
+  --card-bg: rgba(18, 18, 18, 0.85);
+  --card-border: rgba(255, 204, 0, 0.12);
+  --input-bg: #111;
+  --hover-bg: rgba(255, 204, 0, 0.08);
+  --glow: 0 0 12px rgba(255, 204, 0, 0.25);
+}
+
+/* ☀️ MODO CLARO AJUSTADO */
+[data-theme="light"] {
+  --bg-color: #f6f6f6;
+  --text-color: #141414;
+  --muted-color: #4c4c4c;
+  --accent-color: #c29d00;
+  --card-bg: #ffffff;
+  --card-border: rgba(0, 0, 0, 0.06);
+  --input-bg: #f3f3f3;
+  --hover-bg: rgba(0, 0, 0, 0.04);
+  --glow: 0 0 8px rgba(0, 0, 0, 0.08);
+}
+
+/* ===============================
+   BASE
+   =============================== */
+body {
+  background: var(--bg-color);
+  color: var(--text-color);
+  font-family: "Inter", sans-serif;
+  font-smooth: always;
+  -webkit-font-smoothing: antialiased;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+h1, h2, h3 {
+  color: var(--accent-color);
+  font-weight: 700;
+  margin: 0;
+  transition: color 0.3s;
+}
+
+/* ===============================
+   CARDS E BLOCOS
+   =============================== */
+.card,
+.box,
+.stats-container {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: var(--glow);
+  transition: background 0.3s, border 0.3s, box-shadow 0.3s;
+}
+
+.card:hover,
+.box:hover {
+  background: var(--hover-bg);
+  box-shadow: 0 0 18px rgba(255, 204, 0, 0.25);
+}
+
+/* ===============================
+   BOTÕES
+   =============================== */
+button,
+.btn {
+  background: linear-gradient(90deg, var(--accent-color), #b38f00);
+  border: none;
+  color: #000;
+  font-weight: 700;
+  border-radius: 8px;
+  cursor: pointer;
+  padding: 10px 18px;
+  box-shadow: 0 0 10px rgba(255, 204, 0, 0.2);
+  transition: transform 0.2s ease, filter 0.2s ease, box-shadow 0.2s ease;
+}
+
+button:hover,
+.btn:hover {
+  filter: brightness(1.15);
+  transform: translateY(-1px);
+  box-shadow: 0 0 14px rgba(255, 204, 0, 0.4);
+}
+
+/* ===============================
+   INPUTS E FORM ELEMENTS
+   =============================== */
+input, select, textarea {
+  background: var(--input-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  color: var(--text-color);
+  padding: 10px 12px;
+  font-size: 0.95rem;
+  transition: background 0.25s, border 0.25s, color 0.25s;
+}
+
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 2px rgba(255, 204, 0, 0.15);
+}
+
+/* ===============================
+   LINKS
+   =============================== */
+a {
+  color: var(--accent-color);
+  text-decoration: none;
+  transition: color 0.25s;
+}
+a:hover {
+  color: #ffd84d;
+}
+
+/* ===============================
+   TABELAS
+   =============================== */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  color: var(--text-color);
+  font-size: 0.9rem;
+}
+
+th, td {
+  padding: 10px;
+  text-align: left;
+  border-bottom: 1px solid var(--card-border);
+}
+
+thead tr {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+[data-theme="light"] thead tr {
+  background: rgba(0, 0, 0, 0.02);
+}
+
+/* ===============================
+   ANIMAÇÕES DE ENTRADA
+   =============================== */
+.fade-in {
+  animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===============================
+   UTILITÁRIOS
+   =============================== */
+.text-muted { color: var(--muted-color); }
+.text-accent { color: var(--accent-color); }
+
+.hidden { display: none !important; }
+
+hr {
+  border: none;
+  height: 1px;
+  background: var(--card-border);
+  margin: 25px 0;
+}
+
+/* ===============================
+   FIX: Fundo claro/escuro harmonizado
+   =============================== */
+[data-theme="light"] body {
+  background: #fafafa !important;
+  color: #111 !important;
+}
+
+[data-theme="light"] .card,
+[data-theme="light"] .box,
+[data-theme="light"] .stats-container,
+[data-theme="light"] table,
+[data-theme="light"] thead tr {
+  background: #ffffff !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+  color: #111 !important;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="light"] h1,
+[data-theme="light"] h2,
+[data-theme="light"] h3 {
+  color: #c29d00 !important;
+}
+
+[data-theme="light"] th,
+[data-theme="light"] td {
+  background: #fff !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05) !important;
+  color: #333 !important;
+}
+
+[data-theme="light"] button,
+[data-theme="light"] .btn {
+  color: #000 !important;
+  background: linear-gradient(90deg, #ffd700, #b38f00) !important;
+}
+
+[data-theme="light"] .sidebar {
+  background: rgba(255, 255, 255, 0.92) !important;
+  border-right: 1px solid rgba(0, 0, 0, 0.08) !important;
+}
+
+[data-theme="light"] .menu a {
+  color: #444 !important;
+}
+
+[data-theme="light"] .menu a.active {
+  background: rgba(255, 204, 0, 0.12) !important;
+  color: #000 !important;
+  box-shadow: inset 0 0 8px rgba(255, 204, 0, 0.15);
+}
+
+[data-theme="light"] .menu a.active::before {
+  background: linear-gradient(to bottom, #ffcc00, #d4a100) !important;
+}
+
+[data-theme="light"] .stats-container,
+[data-theme="light"] .tabela-pagamentos,
+[data-theme="light"] .box {
+  background: #fff !important;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+}

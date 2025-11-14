@@ -1,0 +1,82 @@
+<div class="fade-in">
+  <h1 class="text-2xl font-semibold text-blue-400 mb-8 flex items-center">
+    <i class="fa-solid fa-box-open mr-2"></i> Ofertas
+  </h1>
+
+  <!-- Painel de criação -->
+  <div class="bg-[#111827] border border-gray-800 rounded-2xl p-6 shadow-md mb-10 w-full max-w-3xl mx-auto">
+    <h3 class="text-gray-300 font-medium mb-4 text-center">Criar nova oferta</h3>
+
+    <form id="formOferta" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <input id="nomeOferta" name="username" placeholder="Nome da oferta" required
+        class="bg-[#0f172a] border border-gray-700 rounded-lg px-4 py-2 text-sm text-gray-200 focus:border-blue-400 outline-none transition-all" />
+      <input id="tokenOferta" name="token" placeholder="Token do bot" required
+        class="bg-[#0f172a] border border-gray-700 rounded-lg px-4 py-2 text-sm text-gray-200 focus:border-blue-400 outline-none transition-all" />
+      <input id="webhookOferta" name="note" placeholder="Webhook (opcional)"
+        class="bg-[#0f172a] border border-gray-700 rounded-lg px-4 py-2 text-sm text-gray-200 focus:border-blue-400 outline-none transition-all" />
+
+      <div class="col-span-1 md:col-span-3 text-center mt-2">
+        <button type="submit"
+          class="bg-gradient-to-r from-blue-500 to-sky-400 px-6 py-2 rounded-lg font-semibold text-white shadow-md hover:shadow-blue-500/40 hover:scale-[1.03] transition-all">
+          Criar Oferta
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Painel de listagem -->
+  <div class="bg-[#111827] border border-gray-800 rounded-2xl p-6 shadow-md w-full overflow-x-auto">
+    <table class="w-full text-sm text-gray-300 text-center">
+      <thead class="border-b border-gray-800 text-gray-400 uppercase tracking-wide">
+        <tr>
+          <th class="py-2">Nome</th>
+          <th class="py-2">Token</th>
+          <th class="py-2">Webhook</th>
+          <th class="py-2">Ações</th>
+        </tr>
+      </thead>
+      <tbody id="tabelaOfertas">
+        <% if (bots && bots.length > 0) { %>
+          <% bots.forEach(bot => { %>
+            <tr class="hover:bg-[#1e293b] transition-all">
+              <td class="py-3"><%= bot.username %></td>
+              <td class="py-3 text-gray-400 truncate max-w-xs"><%= bot.token %></td>
+              <td class="py-3 text-gray-400"><%= bot.note || "–" %></td>
+              <td class="py-3">
+                <form action="/bots/delete/<%= bot._id %>" method="POST" onsubmit="return confirm('Deseja excluir esta oferta?')">
+                  <button class="text-red-400 hover:text-red-300 transition-all">
+                    <i class="fa-solid fa-trash-can"></i>
+                  </button>
+                </form>
+              </td>
+            </tr>
+          <% }) %>
+        <% } else { %>
+          <tr><td colspan="4" class="text-gray-500 py-4">Nenhuma oferta criada ainda.</td></tr>
+        <% } %>
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    document.querySelector("#formOferta").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const data = {
+        username: nomeOferta.value,
+        token: tokenOferta.value,
+        note: webhookOferta.value
+      };
+      const res = await fetch('/bots/add', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(data)
+      });
+      if (res.ok) {
+        alert('✅ Oferta criada com sucesso!');
+        location.reload();
+      } else {
+        alert('❌ Erro ao criar oferta');
+      }
+    });
+  </script>
+</div>

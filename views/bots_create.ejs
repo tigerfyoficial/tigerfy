@@ -1,0 +1,254 @@
+<%- include('partials/visual_hottrack') %>
+
+<div class="tiger-offer-create">
+  <div class="offer-create-header">
+    <h1>Criar nova oferta</h1>
+    <p>Defina o nome da oferta, tipo de bot e traqueamento. Você poderá editar tudo depois.</p>
+  </div>
+
+  <form action="/bots/create" method="POST" class="offer-create-form">
+    <!-- Nome da oferta -->
+    <div class="field-group">
+      <label for="name">Nome da Oferta <span>*</span></label>
+      <input
+        type="text"
+        id="name"
+        name="name"
+        required
+        placeholder="Ex: Mundo Oculto VIP, Carona VIP, TeleBots Premium..."
+        autocomplete="off"
+      />
+    </div>
+
+    <!-- Tipo de Bot -->
+    <div class="field-group">
+      <label>Tipo de Bot</label>
+      <p class="small-helper">Escolha o estilo de automação que essa oferta vai usar.</p>
+
+      <input type="hidden" name="botType" id="botTypeInput" value="bot_padrao"/>
+
+      <div class="pill-row" data-group="botType">
+        <button type="button" class="pill active" data-value="bot_padrao">
+          <span class="pill-title">Bot Padrão</span>
+          <span class="pill-sub">Estilo Astron, Apex, Flexion — fluxo clássico.</span>
+        </button>
+
+        <button type="button" class="pill disabled" disabled>
+          <span class="pill-title">Bot Fluxo (Wiinbot)</span>
+          <span class="pill-tag">Em breve</span>
+        </button>
+
+        <button type="button" class="pill disabled" disabled>
+          <span class="pill-title">Bot Fluxo (Manychat)</span>
+          <span class="pill-tag">Em breve</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Traqueamento -->
+    <div class="field-group">
+      <label>Traqueamento</label>
+      <p class="small-helper">Defina como essa oferta será rastreada nas campanhas.</p>
+
+      <input type="hidden" name="trackingType" id="trackingTypeInput" value="fb_pixel"/>
+
+      <div class="pill-row" data-group="trackingType">
+        <button type="button" class="pill active" data-value="fb_pixel">
+          <span class="pill-title">Facebook Pixel nativo</span>
+        </button>
+
+        <button type="button" class="pill" data-value="utmify_utmify_pixel">
+          <span class="pill-title">UTMify + UTMify Pixel</span>
+        </button>
+
+        <button type="button" class="pill" data-value="utmify_fb_pixel">
+          <span class="pill-title">UTMify + Pixel Facebook</span>
+        </button>
+
+        <button type="button" class="pill" data-value="track_proprio">
+          <span class="pill-title">Track próprio</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Botão final -->
+    <div class="actions">
+      <a href="/bots" class="btn-secondary">Voltar</a>
+      <button type="submit" class="btn-primary big">Criar oferta</button>
+    </div>
+  </form>
+</div>
+
+<style>
+  .tiger-offer-create{
+    padding:60px 80px 100px 130px;
+    transform:scale(0.9) translateX(-38px);
+    transform-origin:top center;
+    max-width:calc(100vw - 120px);
+    margin:0 auto;
+    color:#fff;
+  }
+
+  .offer-create-header{
+    max-width:640px;
+    margin-bottom:32px;
+  }
+  .offer-create-header h1{
+    font-size:2.1rem;
+    color:#ffcc00;
+    margin:0 0 8px;
+  }
+  .offer-create-header p{
+    margin:0;
+    color:#b4b4b4;
+    font-size:.95rem;
+  }
+
+  .offer-create-form{
+    background:rgba(0,0,0,0.65);
+    border-radius:20px;
+    padding:28px 26px 24px;
+    border:1px solid rgba(255,204,0,0.15);
+    box-shadow:0 0 40px rgba(0,0,0,0.6);
+    max-width:880px;
+  }
+
+  .field-group{
+    margin-bottom:22px;
+  }
+  .field-group label{
+    display:block;
+    font-size:.95rem;
+    font-weight:600;
+    margin-bottom:6px;
+  }
+  .field-group label span{
+    color:#ffcc00;
+  }
+  .small-helper{
+    font-size:.8rem;
+    color:#8c8c8c;
+    margin:0 0 8px;
+  }
+
+  .field-group input[type="text"]{
+    width:100%;
+    padding:10px 12px;
+    border-radius:10px;
+    border:1px solid rgba(255,204,0,0.3);
+    background:rgba(255,255,255,0.02);
+    color:#fff;
+    outline:none;
+    font-size:.95rem;
+  }
+  .field-group input[type="text"]:focus{
+    border-color:#ffcc00;
+    box-shadow:0 0 0 1px rgba(255,204,0,0.2);
+  }
+
+  .pill-row{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+  }
+
+  .pill{
+    flex:1;
+    min-width:210px;
+    background:rgba(255,255,255,0.03);
+    border-radius:14px;
+    border:1px solid rgba(255,255,255,0.04);
+    padding:10px 12px;
+    text-align:left;
+    cursor:pointer;
+    transition:.25s;
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+  }
+  .pill .pill-title{
+    font-size:.9rem;
+    font-weight:600;
+  }
+  .pill .pill-sub{
+    font-size:.78rem;
+    color:#9d9d9d;
+  }
+  .pill .pill-tag{
+    font-size:.75rem;
+    color:#ffcc00;
+  }
+
+  .pill.active{
+    border-color:#ffcc00;
+    background:radial-gradient(circle at top left,#fff7bf,#ffcc00 40%,#a87600 100%);
+    color:#1a1300;
+    box-shadow:0 0 18px rgba(255,204,0,0.4);
+  }
+  .pill.disabled{
+    opacity:.4;
+    cursor:not-allowed;
+  }
+  .pill:not(.active):hover:not(.disabled){
+    border-color:rgba(255,204,0,0.4);
+    background:rgba(255,255,255,0.06);
+  }
+
+  .actions{
+    margin-top:24px;
+    display:flex;
+    justify-content:flex-end;
+    gap:12px;
+  }
+  .btn-primary,
+  .btn-secondary{
+    border:none;
+    border-radius:10px;
+    padding:10px 22px;
+    font-weight:600;
+    cursor:pointer;
+    text-decoration:none;
+    font-size:.95rem;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .btn-primary.big{
+    padding:12px 26px;
+    background:linear-gradient(90deg,#ffcc00,#d4a100);
+    color:#1a1300;
+    box-shadow:0 0 16px rgba(255,204,0,0.45);
+  }
+  .btn-secondary{
+    background:rgba(255,255,255,0.06);
+    color:#ddd;
+  }
+  .btn-secondary:hover{
+    background:rgba(255,255,255,0.1);
+  }
+</style>
+
+<script>
+  // lógica dos "pills" para botType e trackingType
+  document.addEventListener('DOMContentLoaded', () => {
+    function setupPillGroup(groupName, hiddenInputId){
+      const group = document.querySelector(`.pill-row[data-group="${groupName}"]`);
+      if(!group) return;
+      const hiddenInput = document.getElementById(hiddenInputId);
+      group.addEventListener('click', (e) => {
+        const btn = e.target.closest('.pill');
+        if(!btn || btn.classList.contains('disabled')) return;
+
+        group.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+        btn.classList.add('active');
+        const value = btn.getAttribute('data-value');
+        if(hiddenInput && value){
+          hiddenInput.value = value;
+        }
+      });
+    }
+
+    setupPillGroup('botType', 'botTypeInput');
+    setupPillGroup('trackingType', 'trackingTypeInput');
+  });
+</script>
