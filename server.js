@@ -58,14 +58,15 @@ app.use(express.static(path.join(__dirname, "public")));
 /* -------- Rotas -------- */
 app.get("/", (_req, res) => res.redirect("/login"));
 
-app.use("/", require("./routes/auth"));          // login/register/logout (Supabase)
-app.use("/", require("./routes/dashboard"));     // deck
-app.use("/", require("./routes/offers"));        // bots/ofertas
-app.use("/", require("./routes/api_pix"));       // adquirentes
-app.use("/", require("./routes/health_supa"));   // /health-supa e /health
-app.use("/", require("./routes/perfil"));       // /perfil
-app.use("/", require("./routes/conquistas"));   // /conquistas
-app.use("/", require("./routes/aliases"));
+app.get("/", (_req, res) => res.redirect("/dashboard")); // opcional; se prefere /login, mantenha
+
+app.use("/", require("./routes/auth"));         // login/register/logout
+app.use("/", require("./routes/dashboard"));    // /dashboard
+app.use("/", require("./routes/offers"));       // /ofertas, /ofertas/criar, /ofertas/gerenciar
+app.use("/", require("./routes/api_pix"));      // /adquirentes
+app.use("/", require("./routes/perfil"));       // /perfil   (aquele que já criamos)
+app.use("/", require("./routes/conquistas"));   // /conquistas (aquele que já criamos)
+app.use("/", require("./routes/aliases"));      // redirecionamentos antigos
 
 /* -------- Favicon (evita 404 nos logs) -------- */
 app.get("/favicon.ico", (_req, res) => res.status(204).end());
