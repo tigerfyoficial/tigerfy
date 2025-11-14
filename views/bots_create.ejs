@@ -15,7 +15,7 @@
         id="name"
         name="name"
         required
-        placeholder="Ex: Mundo Oculto VIP, Carona VIP, TeleBots Premium..."
+        placeholder="Ex: Mundo Oculto, VIP Premium, VIP Flix..."
         autocomplete="off"
       />
     </div>
@@ -34,7 +34,7 @@
         </button>
 
         <button type="button" class="pill disabled" disabled>
-          <span class="pill-title">Bot Fluxo (Wiinbot)</span>
+          <span class="pill-title">Bot Fluxo </span>
           <span class="pill-tag">Em breve</span>
         </button>
 
@@ -54,7 +54,7 @@
 
       <div class="pill-row" data-group="trackingType">
         <button type="button" class="pill active" data-value="fb_pixel">
-          <span class="pill-title">Facebook Pixel nativo</span>
+          <span class="pill-title">Facebook Pixel </span>
         </button>
 
         <button type="button" class="pill" data-value="utmify_utmify_pixel">
@@ -66,7 +66,7 @@
         </button>
 
         <button type="button" class="pill" data-value="track_proprio">
-          <span class="pill-title">Track próprio</span>
+          <span class="pill-title">Track Próprio</span>
         </button>
       </div>
     </div>
@@ -80,21 +80,23 @@
 </div>
 
 <style>
-  /* ====== Layout e centralização (mesmo padrão do manage) ====== */
   .tiger-offer-create{
-    padding:60px 80px 100px 130px;     /* compensa a sidebar, igual outras telas */
+    padding:60px 80px 100px 130px;
+    transform:scale(0.9) translateX(-38px);
+    transform-origin:top center;
     max-width:calc(100vw - 120px);
     margin:0 auto;
     color:#fff;
   }
+
   .offer-create-header{
-    max-width:880px;
-    margin:0 auto 24px auto;           /* centraliza header */
+    max-width:640px;
+    margin-bottom:32px;
   }
   .offer-create-header h1{
-    font-size:2rem;
+    font-size:2.1rem;
     color:#ffcc00;
-    margin:0 0 6px;
+    margin:0 0 8px;
   }
   .offer-create-header p{
     margin:0;
@@ -102,96 +104,141 @@
     font-size:.95rem;
   }
 
-  /* ====== Card principal (mesmo “vidro”/borda do painel) ====== */
+  /* Card com contraste um pouco maior */
   .offer-create-form{
-    background:rgba(0,0,0,0.70);
-    border-radius:18px;
-    padding:22px 20px 20px;
-    border:1px solid rgba(255,204,0,0.12);
+    background:rgba(0,0,0,0.78);
+    border-radius:20px;
+    padding:28px 26px 24px;
+    border:1px solid rgba(255,204,0,0.16);
     box-shadow:0 0 40px rgba(0,0,0,0.6);
     max-width:880px;
-    margin:0 auto;                     /* centraliza o card */
   }
 
-  /* ====== Campos ====== */
-  .field-group{ margin-bottom:18px; }
+  .field-group{
+    margin-bottom:22px;
+  }
   .field-group label{
     display:block;
     font-size:.95rem;
     font-weight:600;
     margin-bottom:6px;
   }
-  .field-group label span{ color:#ffcc00; }
+  .field-group label span{
+    color:#ffcc00;
+  }
+
+  /* Legibilidade dos helpers */
   .small-helper{
     font-size:.8rem;
-    color:#8c8c8c;
+    color:#c9c9c9;
     margin:0 0 8px;
   }
+
+  /* Inputs mais visíveis */
   .field-group input[type="text"]{
     width:100%;
     padding:10px 12px;
     border-radius:10px;
-    border:1px solid rgba(255,255,255,0.16);
-    background:rgba(255,255,255,0.03);
+    border:1px solid rgba(255,255,255,0.22);
+    background:rgba(255,255,255,0.06);
     color:#fff;
     outline:none;
     font-size:.95rem;
-    transition:border-color .2s, box-shadow .2s;
+  }
+  .field-group input[type="text"]::placeholder{
+    color:rgba(255,255,255,0.65);
   }
   .field-group input[type="text"]:focus{
     border-color:#ffcc00;
-    box-shadow:0 0 0 1px rgba(255,204,0,0.2);
+    box-shadow:0 0 0 2px rgba(255,204,0,0.28);
   }
 
-  /* ====== Pills ====== */
-  .pill-row{ display:flex; flex-wrap:wrap; gap:10px; }
+  .pill-row{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+  }
+
+  /* Pills inativas com mais contraste */
   .pill{
     flex:1;
     min-width:210px;
-    background:rgba(255,255,255,0.03);
+    background:rgba(255,255,255,0.05);
     border-radius:14px;
-    border:1px solid rgba(255,255,255,0.04);
+    border:1px solid rgba(255,255,255,0.10);
     padding:10px 12px;
     text-align:left;
     cursor:pointer;
     transition:.25s;
-    display:flex; flex-direction:column; gap:4px;
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+    color:#eaeaea;
   }
-  .pill .pill-title{ font-size:.9rem; font-weight:600; }
-  .pill .pill-sub{ font-size:.78rem; color:#9d9d9d; }
-  .pill .pill-tag{ font-size:.75rem; color:#ffcc00; }
-  .pill.active{
-    border-color:#ffcc00;
-    background:radial-gradient(circle at top left,#fff4b0,#ffcc00 45%,#8a5a16 100%);
-    color:#1a1300;
-    box-shadow:0 0 16px rgba(255,204,0,0.4);
+  .pill .pill-title{
+    font-size:.9rem;
+    font-weight:600;
   }
-  .pill.disabled{ opacity:.4; cursor:not-allowed; }
-  .pill:not(.active):hover:not(.disabled){
-    border-color:rgba(255,204,0,0.3);
-    background:rgba(255,255,255,0.06);
+  .pill .pill-sub{
+    font-size:.78rem;
+    color:#c4c4c4;
+  }
+  .pill .pill-tag{
+    font-size:.75rem;
+    color:#ffcc00;
   }
 
-  /* ====== Ações ====== */
-  .actions{ margin-top:20px; display:flex; justify-content:flex-end; gap:12px; }
-  .btn-primary, .btn-secondary{
-    border:none; border-radius:10px; padding:10px 22px;
-    font-weight:600; cursor:pointer; text-decoration:none;
-    font-size:.95rem; display:inline-flex; align-items:center; justify-content:center;
+  .pill.disabled{
+    opacity:.4;
+    cursor:not-allowed;
+  }
+  .pill:not(.active):hover:not(.disabled){
+    border-color:rgba(255,204,0,0.45);
+    background:rgba(255,255,255,0.10);
+  }
+
+  /* Pill ativa com texto escuro (legível no amarelo) */
+  .pill.active{
+    border-color:#ffcc00;
+    background:radial-gradient(circle at top left,#fff7bf,#ffcc00 45%,#8a5a16 100%);
+    color:#111;
+    box-shadow:0 0 18px rgba(255,204,0,0.55);
+  }
+  .pill.active .pill-title{ color:#111; }
+  .pill.active .pill-sub{ color:#2b2100; }
+
+  .actions{
+    margin-top:24px;
+    display:flex;
+    justify-content:flex-end;
+    gap:12px;
+  }
+  .btn-primary,
+  .btn-secondary{
+    border:none;
+    border-radius:10px;
+    padding:10px 22px;
+    font-weight:600;
+    cursor:pointer;
+    text-decoration:none;
+    font-size:.95rem;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
   }
   .btn-primary.big{
     padding:12px 26px;
     background:linear-gradient(90deg,#ffcc00,#d4a100);
     color:#1a1300;
-    box-shadow:0 0 12px rgba(255,204,0,0.45);
+    box-shadow:0 0 16px rgba(255,204,0,0.45);
   }
-  .btn-secondary{ background:rgba(255,255,255,0.06); color:#ddd; }
-  .btn-secondary:hover{ background:rgba(255,255,255,0.1); }
-
-  /* ====== Responsivo ====== */
-  @media (max-width: 980px){
-    .tiger-offer-create{ padding:50px 18px 80px 18px; }
-    .offer-create-form{ padding:18px; }
+  /* “Voltar” mais legível */
+  .btn-secondary{
+    background:rgba(255,255,255,0.12);
+    color:#fff;
+  }
+  .btn-secondary:hover{
+    background:rgba(255,255,255,0.18);
   }
 </style>
 
