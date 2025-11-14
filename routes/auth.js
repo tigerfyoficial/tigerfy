@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const { supabase } = require("../lib/supabase");
 
 // GET /login
 router.get("/login", (req, res) => {
@@ -10,51 +11,112 @@ router.get("/login", (req, res) => {
   });
 });
 
-// POST /login
+// POST /login → Supabase Auth
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    const ADMIN_EMAIL = (process.env.ADMIN_EMAIL || "").trim();
-    const ADMIN_PASS  = (process.env.ADMIN_PASS  || "").trim();
-
-    if (!ADMIN_EMAIL || !ADMIN_PASS) {
+    if (!email || !password) {
       return res.render("login", {
         title: "Login - TigerFy",
-        message: "Admin não configurado. Defina ADMIN_EMAIL e ADMIN_PASS na Vercel.",
+        message: "Preencha e-mail e senha.",
         layout: false
       });
     }
 
-    if (email !== ADMIN_EMAIL || password !== ADMIN_PASS) {
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+
+    if (error || !data?.user) {
       return res.render("login", {
         title: "Login - TigerFy",
-        message: "E-mail ou senha inválidos",
+        message: "E-mail ou senha inválidos.",
         layout: false
       });
     }
 
-    // cria sessão
-    req.session.user = { id: "admin", email: ADMIN_EMAIL };
+    // sessão no nosso cookie (compatível com Vercel)
+    req.session.user = {
+      id: data.user.id,
+      email: data.user.email
+    };
 
-    // 303 força GET no próximo passo (pós-POST)
+    // pós-POST → 303 para /deck
     return res.redirect(303, "/deck");
   } catch (err) {
     console.error("Erro login:", err);
     return res.render("login", {
       title: "Login - TigerFy",
-      message: "Erro inesperado ao entrar",
+      message: "Erro inesperado ao entrar.",
       layout: false
     });
   }
 });
 
-// GET /register -> desativado por enquanto
-router.get("/register", (req, res) => res.redirect("/login"));
+// GET /register (opcional)
+router.get("/register", (req, res) => {
+  // se não quiser permitir cadastro público, redirecione:
+  // return res.redirect("/login");
+
+  // Se quiser manter a tela de registro existente, certifique-se que o EJS tem name="email" e name="password"
+  res.render("register", {
+    title: "Registrar - TigerFy",
+    message: "",
+    layout: false
+  });
+});
+
+// POST /register → cria usuário no Supabase Auth
+router.post("/register", async (req, res) => {
+  try {
+    const { email, password, username } = req.body;
+
+    if (!email || !password) {
+      return res.render("register", {
+        title: "Registrar - TigerFy",
+        message: "Informe e-mail e senha.",
+        layout: false
+      });
+    }
+
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password
+      // Você pode salvar `username` depois em uma tabela "profiles" se quiser.
+    });
+
+    if (error) {
+      return res.render("register", {
+        title: "Registrar - TigerFy",
+        message: error.message || "Erro ao registrar.",
+        layout: false
+      });
+    }
+
+    // Se confirmação de e-mail estiver DESLIGADA, o user já entra
+    if (data?.user) {
+      req.session.user = { id: data.user.id, email: data.user.email };
+      return res.redirect(303, "/deck");
+    }
+
+    // Se confirmação estiver LIGADA:
+    return res.render("login", {
+      title: "Login - TigerFy",
+      message: "Verifique seu e-mail para confirmar a conta e depois faça login.",
+      layout: false
+    });
+  } catch (err) {
+    console.error("Erro register:", err);
+    return res.render("register", {
+      title: "Registrar - TigerFy",
+      message: "Erro inesperado ao registrar.",
+      layout: false
+    });
+  }
+});
 
 // GET /logout
 router.get("/logout", (req, res) => {
-  req.session = null; // cookie-session limpa assim
+  req.session = null; // limpa cookie
   res.redirect("/login");
 });
 
