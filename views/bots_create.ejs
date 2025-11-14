@@ -34,7 +34,7 @@
         </button>
 
         <button type="button" class="pill disabled" disabled>
-          <span class="pill-title">Bot Fluxo </span>
+          <span class="pill-title">Bot Fluxo</span>
           <span class="pill-tag">Em breve</span>
         </button>
 
@@ -54,7 +54,7 @@
 
       <div class="pill-row" data-group="trackingType">
         <button type="button" class="pill active" data-value="fb_pixel">
-          <span class="pill-title">Facebook Pixel </span>
+          <span class="pill-title">Facebook Pixel</span>
         </button>
 
         <button type="button" class="pill" data-value="utmify_utmify_pixel">
@@ -80,18 +80,16 @@
 </div>
 
 <style>
+  /* ===== Centralização (sem deslocar pra esquerda) ===== */
   .tiger-offer-create{
-    padding:60px 80px 100px 130px;
-    transform:scale(0.9) translateX(-38px);
-    transform-origin:top center;
+    padding:60px 80px 100px 130px;     /* compensa a sidebar */
     max-width:calc(100vw - 120px);
     margin:0 auto;
     color:#fff;
   }
-
   .offer-create-header{
-    max-width:640px;
-    margin-bottom:32px;
+    max-width:880px;
+    margin:0 auto 24px auto;           /* header centralizado */
   }
   .offer-create-header h1{
     font-size:2.1rem;
@@ -104,7 +102,7 @@
     font-size:.95rem;
   }
 
-  /* Card com contraste um pouco maior */
+  /* ===== Card principal com mais contraste ===== */
   .offer-create-form{
     background:rgba(0,0,0,0.78);
     border-radius:20px;
@@ -112,29 +110,25 @@
     border:1px solid rgba(255,204,0,0.16);
     box-shadow:0 0 40px rgba(0,0,0,0.6);
     max-width:880px;
+    margin:0 auto;                     /* centraliza o card */
   }
 
-  .field-group{
-    margin-bottom:22px;
-  }
+  /* ===== Campos ===== */
+  .field-group{ margin-bottom:22px; }
   .field-group label{
     display:block;
     font-size:.95rem;
     font-weight:600;
     margin-bottom:6px;
   }
-  .field-group label span{
-    color:#ffcc00;
-  }
+  .field-group label span{ color:#ffcc00; }
 
-  /* Legibilidade dos helpers */
   .small-helper{
     font-size:.8rem;
-    color:#c9c9c9;
+    color:#c9c9c9;                     /* mais legível */
     margin:0 0 8px;
   }
 
-  /* Inputs mais visíveis */
   .field-group input[type="text"]{
     width:100%;
     padding:10px 12px;
@@ -144,6 +138,7 @@
     color:#fff;
     outline:none;
     font-size:.95rem;
+    transition:border-color .2s, box-shadow .2s;
   }
   .field-group input[type="text"]::placeholder{
     color:rgba(255,255,255,0.65);
@@ -153,13 +148,8 @@
     box-shadow:0 0 0 2px rgba(255,204,0,0.28);
   }
 
-  .pill-row{
-    display:flex;
-    flex-wrap:wrap;
-    gap:10px;
-  }
-
-  /* Pills inativas com mais contraste */
+  /* ===== Pills: contraste melhor + ativo legível ===== */
+  .pill-row{ display:flex; flex-wrap:wrap; gap:10px; }
   .pill{
     flex:1;
     min-width:210px;
@@ -170,34 +160,19 @@
     text-align:left;
     cursor:pointer;
     transition:.25s;
-    display:flex;
-    flex-direction:column;
-    gap:4px;
+    display:flex; flex-direction:column; gap:4px;
     color:#eaeaea;
   }
-  .pill .pill-title{
-    font-size:.9rem;
-    font-weight:600;
-  }
-  .pill .pill-sub{
-    font-size:.78rem;
-    color:#c4c4c4;
-  }
-  .pill .pill-tag{
-    font-size:.75rem;
-    color:#ffcc00;
-  }
+  .pill .pill-title{ font-size:.9rem; font-weight:600; }
+  .pill .pill-sub{ font-size:.78rem; color:#c4c4c4; }
+  .pill .pill-tag{ font-size:.75rem; color:#ffcc00; }
 
-  .pill.disabled{
-    opacity:.4;
-    cursor:not-allowed;
-  }
+  .pill.disabled{ opacity:.4; cursor:not-allowed; }
   .pill:not(.active):hover:not(.disabled){
     border-color:rgba(255,204,0,0.45);
     background:rgba(255,255,255,0.10);
   }
 
-  /* Pill ativa com texto escuro (legível no amarelo) */
   .pill.active{
     border-color:#ffcc00;
     background:radial-gradient(circle at top left,#fff7bf,#ffcc00 45%,#8a5a16 100%);
@@ -207,24 +182,12 @@
   .pill.active .pill-title{ color:#111; }
   .pill.active .pill-sub{ color:#2b2100; }
 
-  .actions{
-    margin-top:24px;
-    display:flex;
-    justify-content:flex-end;
-    gap:12px;
-  }
-  .btn-primary,
-  .btn-secondary{
-    border:none;
-    border-radius:10px;
-    padding:10px 22px;
-    font-weight:600;
-    cursor:pointer;
-    text-decoration:none;
-    font-size:.95rem;
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
+  /* ===== Ações ===== */
+  .actions{ margin-top:24px; display:flex; justify-content:flex-end; gap:12px; }
+  .btn-primary, .btn-secondary{
+    border:none; border-radius:10px; padding:10px 22px;
+    font-weight:600; cursor:pointer; text-decoration:none;
+    font-size:.95rem; display:inline-flex; align-items:center; justify-content:center;
   }
   .btn-primary.big{
     padding:12px 26px;
@@ -232,13 +195,13 @@
     color:#1a1300;
     box-shadow:0 0 16px rgba(255,204,0,0.45);
   }
-  /* “Voltar” mais legível */
-  .btn-secondary{
-    background:rgba(255,255,255,0.12);
-    color:#fff;
-  }
-  .btn-secondary:hover{
-    background:rgba(255,255,255,0.18);
+  .btn-secondary{ background:rgba(255,255,255,0.12); color:#fff; }
+  .btn-secondary:hover{ background:rgba(255,255,255,0.18); }
+
+  /* ===== Responsivo ===== */
+  @media (max-width: 980px){
+    .tiger-offer-create{ padding:50px 18px 80px 18px; }
+    .offer-create-form{ padding:18px; }
   }
 </style>
 
