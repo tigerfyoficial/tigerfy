@@ -15,6 +15,7 @@ app.use(express.json());
 app.use(compression());
 app.use(helmet());
 app.use(morgan("tiny"));
+app.use("/", require("./routes/health_supa"));
 
 app.use(
   session({
