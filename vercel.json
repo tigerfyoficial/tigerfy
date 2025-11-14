@@ -1,12 +1,10 @@
 {
   "version": 2,
   "functions": {
-    "api/index.js": {
-      "runtime": "nodejs20.x"
-    }
+    "api/*.js": { "runtime": "nodejs20.x" }
   },
   "routes": [
-    { "src": "/health-supa", "dest": "/api/index.js" },
+    { "src": "/favicon\\.(ico|png)", "status": 204 },
     { "src": "/(.*)", "dest": "/api/index.js" }
   ]
 }
