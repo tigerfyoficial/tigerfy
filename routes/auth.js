@@ -1,28 +1,51 @@
 const express = require("express");
 const router = express.Router();
-const Admin = require("../models/Admin");
 const bcrypt = require("bcrypt");
+
+/**
+ * Login temporário sem DB:
+ * Configure no Vercel/locally:
+ *  - ADMIN_EMAIL
+ *  - ADMIN_PASS           (senha em texto)  OU
+ *  - ADMIN_PASS_BCRYPT    (hash bcrypt da senha)
+ */
 
 // ===== LOGIN (GET) =====
 router.get("/login", (req, res) => {
-  // sem layout global aqui – tela limpa de login
   res.render("login", {
     title: "Login - TigerFy",
     message: "",
-    layout: false,
+    layout: false, // mantém tela limpa de login
   });
 });
 
 // ===== LOGIN (POST) =====
 router.post("/login", async (req, res) => {
   try {
-    // campos que vêm do <form> do login.ejs
-    const { email, password } = req.body;
+    const { email, password } = req.body || {};
+    const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "";
+    const PASS_PLAIN = process.env.ADMIN_PASS || "";
+    const PASS_HASH = process.env.ADMIN_PASS_BCRYPT || "";
 
-    // procura pelo e-mail cadastrado
-    const admin = await Admin.findOne({ email });
+    if (!email || !password) {
+      return res.render("login", {
+        title: "Login - TigerFy",
+        message: "Preencha e-mail e senha.",
+        layout: false,
+      });
+    }
 
-    if (!admin) {
+    if (!ADMIN_EMAIL || (!PASS_PLAIN && !PASS_HASH)) {
+      return res.render("login", {
+        title: "Login - TigerFy",
+        message: "Credenciais do admin não configuradas (ADMIN_EMAIL e ADMIN_PASS/ADMIN_PASS_BCRYPT).",
+        layout: false,
+      });
+    }
+
+    // valida e-mail
+    const emailOk = email.trim().toLowerCase() === ADMIN_EMAIL.trim().toLowerCase();
+    if (!emailOk) {
       return res.render("login", {
         title: "Login - TigerFy",
         message: "E-mail não encontrado",
@@ -30,8 +53,15 @@ router.post("/login", async (req, res) => {
       });
     }
 
-    const valid = await bcrypt.compare(password, admin.password);
-    if (!valid) {
+    // valida senha (bcrypt se houver hash; senão, texto puro)
+    let passOk = false;
+    if (PASS_HASH) {
+      passOk = await bcrypt.compare(password, PASS_HASH);
+    } else {
+      passOk = password === PASS_PLAIN;
+    }
+
+    if (!passOk) {
       return res.render("login", {
         title: "Login - TigerFy",
         message: "Senha incorreta",
@@ -39,8 +69,14 @@ router.post("/login", async (req, res) => {
       });
     }
 
-    // logou com sucesso
-    req.session.userId = admin._id;
+    // sessão mínima
+    req.session.user = {
+      id: "admin",
+      email: ADMIN_EMAIL,
+      name: "Admin",
+    };
+
+    // redireciona para onde já estava no seu fluxo
     return res.redirect("/deck");
   } catch (err) {
     console.error("Erro login:", err);
@@ -54,53 +90,27 @@ router.post("/login", async (req, res) => {
 
 // ===== REGISTER (GET) =====
 router.get("/register", (req, res) => {
+  // Mantém a página para não quebrar links/tema, mas avisa que está desligado
   res.render("register", {
     title: "Registrar - TigerFy",
-    message: "",
+    message: "Cadastro temporariamente desativado.",
     layout: false,
   });
 });
 
 // ===== REGISTER (POST) =====
 router.post("/register", async (req, res) => {
-  try {
-    const { username, email, password } = req.body;
-
-    const exists = await Admin.findOne({ email });
-    if (exists) {
-      return res.render("register", {
-        title: "Registrar - TigerFy",
-        message: "E-mail já cadastrado",
-        layout: false,
-      });
-    }
-
-    const hash = await bcrypt.hash(password, 10);
-
-    const admin = await Admin.create({
-      username,
-      email,
-      password: hash,
-    });
-
-    req.session.userId = admin._id;
-
-    return res.redirect("/deck");
-  } catch (err) {
-    console.error("Erro register:", err);
-    res.render("register", {
-      title: "Registrar - TigerFy",
-      message: "Erro ao registrar",
-      layout: false,
-    });
-  }
+  // Sem DB por enquanto — retorna mensagem mantendo layout
+  return res.render("register", {
+    title: "Registrar - TigerFy",
+    message: "Cadastro temporariamente desativado.",
+    layout: false,
+  });
 });
 
 // ===== LOGOUT =====
 router.get("/logout", (req, res) => {
-  req.session.destroy(() => {
-    res.redirect("/login");
-  });
+  req.session.destroy(() => res.redirect("/login"));
 });
 
 module.exports = router;
