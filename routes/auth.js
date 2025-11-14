@@ -121,3 +121,13 @@ router.get("/logout", (req, res) => {
 });
 
 module.exports = router;
+
+// TEMP: debug de envs (remover depois)
+router.get("/__envcheck", (req, res) => {
+  res.json({
+    hasAdminEmail: Boolean(process.env.ADMIN_EMAIL),
+    hasAdminPass: Boolean(process.env.ADMIN_PASS),
+    env: process.env.VERCEL_ENV || "unknown"
+  });
+});
+
