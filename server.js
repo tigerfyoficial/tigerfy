@@ -6,36 +6,29 @@ const compression = require("compression");
 const helmet = require("helmet");
 const morgan = require("morgan");
 const expressLayouts = require("express-ejs-layouts");
+const authGate = require("./middleware/authGuard");
 require("dotenv").config();
 
 const app = express();
 
-// Confiança no proxy (Vercel) p/ headers corretos
-app.set("trust proxy", 1);
-
-// Middlewares base
+// Middlewares
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(compression());
 app.use(helmet());
 app.use(morgan("tiny"));
 
-// Sessão (MemoryStore temporária; ok p/ agora)
+// Sessão (MemoryStore só para dev — depois trocamos por cookie/redis)
 app.use(
   session({
     secret: process.env.SESSION_SECRET || "tigerfy_secret",
     resave: false,
     saveUninitialized: false,
-    cookie: {
-      httpOnly: true,
-      sameSite: "lax",
-      // secure: true // habilite quando usar domínio com HTTPS e proxy configurado
-    },
   })
 );
 
-// Evita "active undefined" nos EJS
-app.use((req, res, next) => {
+// EVITA ERRO "active undefined"
+app.use((_, res, next) => {
   res.locals.active = "";
   next();
 });
@@ -46,41 +39,36 @@ app.set("views", path.join(__dirname, "views"));
 app.set("layout", "layout");
 app.use(expressLayouts);
 
-// Arquivos estáticos
+// Public
 app.use(express.static(path.join(__dirname, "public")));
 
-// --- Rotas utilitárias
-app.get("/health", (_req, res) => res.status(200).send("ok"));
-app.get("/", (_req, res) => res.redirect("/login"));
+// Health e Debug
+app.get("/health", (_, res) => res.json({ ok: true, at: new Date().toISOString() }));
+app.get("/debug", (req, res) =>
+  res.json({ at: new Date().toISOString(), user: req.session?.user || null })
+);
 
-// --- Gate de autenticação apenas para áreas privadas
-const authGate = (req, res, next) => {
-  // já autenticado → segue
-  if (req.session && req.session.user) return next();
-  // sempre liberar login e health
-  if (req.path === "/login" || req.path === "/health") return next();
-  return res.redirect("/login");
-};
+// HOME -> /login
+app.get("/", (_, res) => res.redirect("/login"));
 
-// --- Rotas
-// públicas
-app.use("/", require("./routes/auth"));          // /login (GET/POST), /logout
+// ROTAS PÚBLICAS primeiro
+app.use("/", require("./routes/auth"));
 
-// privadas
+// ROTAS PRIVADAS com gate
 app.use("/", authGate, require("./routes/dashboard"));
 app.use("/", authGate, require("./routes/offers"));
 app.use("/", authGate, require("./routes/api_pix"));
 
-// 404 (deixe por último)
-app.use((req, res) => {
-  res.status(404).render("404", { title: "404 - TigerFy" });
-});
+// Favicon “no-op” para não poluir logs
+app.get(["/favicon.ico", "/favicon.png"], (_, res) => res.status(204).end());
 
-// --- Execução: Vercel importa o app; local dá listen
+// 404
+app.use((_, res) => res.status(404).render("404", { title: "404 - TigerFy" }));
+
+// Export para Vercel
 if (process.env.VERCEL) {
   module.exports = app;
 } else {
   const PORT = process.env.PORT || 10000;
   app.listen(PORT, () => console.log(`🚀 TigerFy rodando! Porta ${PORT}`));
 }
-
