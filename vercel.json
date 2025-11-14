@@ -1,7 +1,12 @@
 {
-  "functions": { "api/index.js": { "runtime": "nodejs18.x" } },
+  "version": 2,
+  "functions": {
+    "api/index.js": {
+      "runtime": "nodejs20.x"
+    }
+  },
   "routes": [
-    { "src": "/health", "dest": "/api/index.js" },
-    { "src": "/.*", "dest": "/api/index.js" }
+    { "src": "/health-supa", "dest": "/api/index.js" },
+    { "src": "/(.*)", "dest": "/api/index.js" }
   ]
 }
