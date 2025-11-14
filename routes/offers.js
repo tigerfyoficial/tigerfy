@@ -49,7 +49,6 @@ router.post("/bots/create", authGuard, async (req, res) => {
     const owner = req.session.userId;
     const { name, botType, trackingType } = req.body;
 
-    // valores default para manter compatibilidade visual/fluxo antigo
     const payload = {
       owner,
       name: name || "",
@@ -62,7 +61,6 @@ router.post("/bots/create", authGuard, async (req, res) => {
 
     if (error) {
       console.error("[offers] erro insert:", error.message);
-      // mantém UX: volta para a lista mesmo em falha (como fazia com redirect)
       return res.redirect("/bots");
     }
 
@@ -71,6 +69,14 @@ router.post("/bots/create", authGuard, async (req, res) => {
     console.error("Erro criar oferta:", err);
     return res.redirect("/bots");
   }
+});
+
+/* MANAGE (placeholder visual, sem lógica de edição ainda) */
+router.get("/bots/manage", authGuard, (req, res) => {
+  return res.render("bots_manage", {
+    title: "Gerenciar Oferta - TigerFy",
+    active: "bots",
+  });
 });
 
 module.exports = router;
