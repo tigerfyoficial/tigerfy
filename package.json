@@ -23,9 +23,9 @@
     "morgan": "^1.10.0",
     "serverless-http": "^3.2.0"
   },
-  "engines": {
-    "node": ">=18"
-  },
+"engines": {
+  "node": "20.x"
+},
   "keywords": ["tigerfy","painel","bot","telegram","saas","express","ejs"],
   "author": "Gustavo Sykes",
   "license": "MIT"
