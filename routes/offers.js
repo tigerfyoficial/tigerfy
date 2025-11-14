@@ -1,51 +1,75 @@
+// routes/offers.js
 const express = require("express");
 const router = express.Router();
-const Offer = require("../models/Offer");
 
-function auth(req, res, next) {
-  if (!req.session.userId) return res.redirect("/login");
-  next();
-}
+const authGuard = require("../middleware/authGuard");
+const { supabase } = require("../lib/supabase");
 
-router.get("/bots", auth, async (req, res) => {
+// LISTA DE OFERTAS
+router.get("/bots", authGuard, async (req, res) => {
   try {
-    const offers = await Offer.find({ owner: req.session.userId }).sort({
-      createdAt: -1,
-    });
+    const owner = req.session.userId;
 
-    res.render("bots", {
+    const { data, error } = await supabase
+      .from("offers")
+      .select("id, owner, name, bot_type, tracking_type, status, created_at")
+      .eq("owner", owner)
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      console.warn("[offers] erro select:", error.message);
+    }
+
+    return res.render("bots", {
       title: "Minhas Ofertas - TigerFy",
-      offers,
+      offers: data || [],
       active: "bots",
     });
   } catch (err) {
     console.error("Erro carregar ofertas:", err);
-    res.status(500).send("Erro ao carregar ofertas.");
+    return res.render("bots", {
+      title: "Minhas Ofertas - TigerFy",
+      offers: [],
+      active: "bots",
+    });
   }
 });
 
-router.get("/bots/create", auth, (req, res) => {
-  res.render("bots_create", {
+// TELA DE CRIAÇÃO
+router.get("/bots/create", authGuard, (_req, res) => {
+  return res.render("bots_create", {
     title: "Criar Oferta - TigerFy",
     active: "bots",
   });
 });
 
-router.post("/bots/create", auth, async (req, res) => {
+// CRIAR OFERTA
+router.post("/bots/create", authGuard, async (req, res) => {
   try {
+    const owner = req.session.userId;
     const { name, botType, trackingType } = req.body;
 
-    await Offer.create({
-      owner: req.session.userId,
-      name,
-      botType,
-      trackingType,
-    });
+    // valores default para manter compatibilidade visual/fluxo antigo
+    const payload = {
+      owner,
+      name: name || "",
+      bot_type: botType || "bot_padrao",
+      tracking_type: trackingType || "fb_pixel",
+      status: "incompleto",
+    };
 
-    res.redirect("/bots");
+    const { error } = await supabase.from("offers").insert([payload]);
+
+    if (error) {
+      console.error("[offers] erro insert:", error.message);
+      // mantém UX: volta para a lista mesmo em falha (como fazia com redirect)
+      return res.redirect("/bots");
+    }
+
+    return res.redirect("/bots");
   } catch (err) {
     console.error("Erro criar oferta:", err);
-    res.send("Erro ao criar oferta.");
+    return res.redirect("/bots");
   }
 });
 
