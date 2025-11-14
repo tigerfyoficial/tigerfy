@@ -7,14 +7,32 @@
       <p style="color:#ff6b6b;font-size:13px;margin-bottom:10px;"><%= message %></p>
     <% } %>
 
-    <form method="POST" action="/login" class="login-form">
+    <!-- Mantém o tema; só acrescentei autocomplete e um id na <form> -->
+    <form id="loginForm" method="POST" action="/login" class="login-form" autocomplete="on">
       <label for="email">E-mail</label>
-      <input type="email" id="email" name="email" placeholder="Digite seu e-mail" required />
+      <input
+        type="email"
+        id="email"
+        name="email"
+        placeholder="Digite seu e-mail"
+        inputmode="email"
+        autocomplete="username"
+        required
+        autofocus
+        value="<%= typeof email !== 'undefined' ? email : '' %>"
+      />
 
       <label for="pass">Senha</label>
-      <input type="password" id="pass" name="password" placeholder="Digite sua senha" required />
+      <input
+        type="password"
+        id="pass"
+        name="password"
+        placeholder="Digite sua senha"
+        autocomplete="current-password"
+        required
+      />
 
-      <button type="submit" class="btn-login">Entrar na Plataforma</button>
+      <button type="submit" id="btnLogin" class="btn-login">Entrar na Plataforma</button>
     </form>
 
     <div class="divider"></div>
@@ -130,3 +148,18 @@
     text-decoration: underline;
   }
 </style>
+
+<script>
+  // Evita duplo submit e dá um feedback mínimo sem mexer no tema
+  (function () {
+    const form = document.getElementById('loginForm');
+    const btn = document.getElementById('btnLogin');
+    if (!form || !btn) return;
+
+    form.addEventListener('submit', function () {
+      btn.disabled = true;
+      btn.setAttribute('aria-busy', 'true');
+      // não previne o submit: deixa o POST seguir
+    });
+  })();
+</script>
