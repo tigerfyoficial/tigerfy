@@ -2,24 +2,21 @@
 const express = require("express");
 const router = express.Router();
 
-// GET /login -> renderiza a view de login
+// GET /login
 router.get("/login", (req, res) => {
-  // se já logado, manda pro dashboard
-  if (req.session && req.session.user) return res.redirect("/dashboard");
-  return res.render("login", { title: "Login - TigerFy" });
+  if (req.session?.user) return res.redirect("/dashboard");
+  return res.render("login", { title: "Login - TigerFy", error: null });
 });
 
-// POST /login -> autenticação dummy temporária (ajuste depois)
+// POST /login (temporário, sem DB)
 router.post("/login", (req, res) => {
   const { email, password } = req.body || {};
-  // TODO: trocar por validação real (Supabase etc.)
   if (!email || !password) {
     return res.status(400).render("login", {
       title: "Login - TigerFy",
       error: "Informe email e senha.",
     });
   }
-  // salva sessão simples
   req.session.user = { email };
   return res.redirect("/dashboard");
 });
