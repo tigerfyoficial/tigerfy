@@ -135,6 +135,37 @@ router.get("/ofertas/gerenciar", authGuard, async (req, res) => {
   }
 });
 
+/* -----------------------------------------
+   Helper para atualizar token/username
+----------------------------------------- */
+async function updateOfferToken(owner, id, botToken, telegramUsername) {
+  const { data: exists, error: getErr } = await supabase
+    .from("offers")
+    .select("id, owner")
+    .eq("id", id)
+    .eq("owner", owner)
+    .single();
+
+  if (getErr || !exists) {
+    return { ok: false, error: getErr || new Error("not_found_or_not_owner") };
+  }
+
+  const newStatus = botToken ? "ativo" : "incompleto";
+
+  const { error: updErr } = await supabase
+    .from("offers")
+    .update({
+      bot_token: botToken || null,
+      telegram_username: telegramUsername || null,
+      status: newStatus,
+    })
+    .eq("id", id)
+    .eq("owner", owner);
+
+  if (updErr) return { ok: false, error: updErr };
+  return { ok: true };
+}
+
 /* SALVAR TOKEN => /ofertas/:id/token */
 router.post("/ofertas/:id/token", authGuard, async (req, res) => {
   try {
@@ -142,35 +173,33 @@ router.post("/ofertas/:id/token", authGuard, async (req, res) => {
     const { id } = req.params;
     const { botToken, telegramUsername } = req.body;
 
-    const { data: exists, error: getErr } = await supabase
-      .from("offers")
-      .select("id, owner")
-      .eq("id", id)
-      .eq("owner", owner)
-      .single();
-
-    if (getErr || !exists) {
-      console.warn("[ofertas] token denied (owner mismatch)");
-      return res.redirect("/ofertas");
-    }
-
-    const newStatus = botToken ? "ativo" : "incompleto";
-
-    const { error: updErr } = await supabase
-      .from("offers")
-      .update({
-        bot_token: botToken || null,
-        telegram_username: telegramUsername || null,
-        status: newStatus,
-      })
-      .eq("id", id)
-      .eq("owner", owner);
-
-    if (updErr) console.error("[ofertas] update token error:", updErr.message);
-
+    await updateOfferToken(owner, id, botToken, telegramUsername);
     return res.redirect(`/ofertas/gerenciar?id=${id}`);
   } catch (err) {
     console.error("Erro salvar token:", err);
+    return res.redirect("/ofertas");
+  }
+});
+
+/* ALIAS compatível com o front antigo => /bots/:id/token */
+router.post("/bots/:id/token", authGuard, async (req, res) => {
+  try {
+    const owner = req.session.userId;
+    const { id } = req.params;
+
+    // aceita vários nomes de campo (garante compatibilidade)
+    const botToken =
+      req.body.botToken || req.body.token || req.body.bot_token || null;
+    const telegramUsername =
+      req.body.telegramUsername ||
+      req.body.username ||
+      req.body.telegram_username ||
+      null;
+
+    await updateOfferToken(owner, id, botToken, telegramUsername);
+    return res.redirect(`/ofertas/gerenciar?id=${id}`);
+  } catch (err) {
+    console.error("Erro salvar token via alias /bots/:id/token:", err);
     return res.redirect("/ofertas");
   }
 });
