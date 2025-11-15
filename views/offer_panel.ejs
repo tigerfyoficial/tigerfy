@@ -291,24 +291,83 @@
     .tf-offer-panel{ padding:40px 18px 80px 18px; }
     .tf-header{ flex-direction:column; align-items:flex-start; gap:10px; }
   }
+
+  /* ------ ADIÇÕES CIRÚRGICAS (UX/feedback) ------ */
+
+  /* Destaque sutil da etapa atual (não muda layout) */
+  #tfStepName{ text-shadow:0 0 10px rgba(255,204,0,0.12); }
+
+  /* Popover de etapas (apenas quando aberto via JS) */
+  .tf-step-popover{
+    position:absolute;
+    background:linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.06));
+    border:1px solid rgba(255,255,255,0.16);
+    border-radius:12px; box-shadow:0 18px 40px rgba(0,0,0,0.45);
+    backdrop-filter:blur(6px);
+    min-width:220px; max-height:320px; overflow:auto; z-index:1500;
+    opacity:0; transform:translateY(6px) scale(0.98);
+    transition:opacity .16s ease, transform .16s ease;
+  }
+  .tf-step-popover[data-open="1"]{ opacity:1; transform:translateY(0) scale(1); }
+  .tf-step-popover .itm{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:10px 12px; cursor:pointer; user-select:none;
+    color:#eaeaea; border-bottom:1px solid rgba(255,255,255,0.06);
+  }
+  .tf-step-popover .itm:last-child{ border-bottom:0; }
+  .tf-step-popover .itm:hover{ background:rgba(255,255,255,0.06); }
+  .tf-step-popover .badge{
+    font-size:.78rem; padding:3px 8px; border-radius:999px;
+    border:1px solid rgba(255,204,0,0.35);
+    background:rgba(255,204,0,0.08); color:#ffdb4d;
+  }
+  .tf-step-chip{ position:relative; } /* âncora */
+
+  /* Micro animações do modal (sem mudar estrutura) */
+  .tf-modal-backdrop{ opacity:0; transition:opacity .18s ease; }
+  .tf-modal-backdrop:not([hidden]){ opacity:1; }
+  .tf-modal{ transform:translateY(8px) scale(.98); opacity:0; transition:transform .18s ease, opacity .18s ease; }
+  .tf-modal-backdrop:not([hidden]) .tf-modal{ transform:translateY(0) scale(1); opacity:1; }
+
+  /* Radios com highlight suave */
+  .tf-radio{ transition:background .15s ease; border-radius:10px; padding:6px 8px; }
+  .tf-radio:hover{ background:rgba(255,255,255,0.05); }
+  .tf-radio input:checked + span{ color:#fff; text-shadow:0 0 10px rgba(255,204,0,0.18); }
 </style>
 
 <script>
 (function(){
-  // Dados do EJS para JS
+  // Dados do EJS -> JS
   var offer = <%- JSON.stringify(offer || null) %>;
   var steps = <%- JSON.stringify(steps || []) %>;
   var currentStep = <%- JSON.stringify(currentStep || null) %>;
 
-  // --- Garantir que o chip da etapa mostra a etapa atual (sem mudar estilo)
-  try {
+  /* ------- Atualiza chip e breadcrumb (sem alterar visual) ------- */
+  try{
     var chip = document.getElementById('tfStepName');
-    if (chip && currentStep) {
+    if (chip && currentStep){
       chip.textContent = currentStep.name || ('Etapa ' + (currentStep.stepNo || ''));
     }
-  } catch(_) {}
+  }catch(_){}
 
-  // --- Tabs principais: exibe subtabs apenas na "Principal" (mesmo comportamento)
+  function escapeHtml(s){ return (s || "").replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  (function buildBreadcrumb(){
+    var bc = document.getElementById('tfBreadcrumb'); if (!bc) return;
+    var offerName = (offer && offer.name) ? offer.name : 'Nome da Oferta';
+    var offerHref = offer ? ("/ofertas/painel/" + offer.id) : "/ofertas";
+    var items = [];
+    items.push('<a href="/ofertas">Minhas Ofertas</a>');
+    items.push('<span>›</span>');
+    items.push('<a href="'+ offerHref +'">'+ escapeHtml(offerName) +'</a>');
+    if (currentStep && currentStep.id){
+      items.push('<span>›</span>');
+      var stepUrl = offerHref + "?stepId=" + encodeURIComponent(currentStep.id);
+      items.push('<a href="'+ stepUrl +'">'+ escapeHtml(currentStep.name || ('Etapa ' + (currentStep.stepNo||''))) +'</a>');
+    }
+    bc.innerHTML = items.join('');
+  })();
+
+  /* ------- Tabs principais (comportamento original) ------- */
   var mainTabs = document.querySelectorAll('.tf-tabs .tab');
   var subTabsWrap = document.getElementById('subtabs-principal');
   mainTabs.forEach(function(btn){
@@ -321,55 +380,35 @@
   });
   if (subTabsWrap) subTabsWrap.style.display = 'flex';
 
-  // --- Breadcrumb clicável (sem alterar visual)
-  function escapeHtml(s){ return (s || "").replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-  (function buildBreadcrumb(){
-    var bc = document.getElementById('tfBreadcrumb'); if (!bc) return;
-    var offerName = (offer && offer.name) ? offer.name : 'Nome da Oferta';
-    var offerHref = offer ? ("/ofertas/painel/" + offer.id) : "/ofertas";
-    var items = [];
-    items.push('<a href="/ofertas">Minhas Ofertas</a>');
-    items.push('<span>›</span>');
-    items.push('<a href="'+ offerHref +'">'+ escapeHtml(offerName) +'</a>');
-    if (currentStep && currentStep.id) {
-      items.push('<span>›</span>');
-      var stepUrl = offerHref + "?stepId=" + encodeURIComponent(currentStep.id);
-      items.push('<a href="'+ stepUrl +'">'+ escapeHtml(currentStep.name || ('Etapa ' + (currentStep.stepNo||''))) +'</a>');
-    }
-    bc.innerHTML = items.join('');
-  })();
-
-  // --- Toast minimalista (overlay discreto, Premium)
+  /* ------- Toast Premium (discreto) ------- */
   function showToast(type, text){
     var wrap = document.createElement('div');
     wrap.style.position='fixed'; wrap.style.inset='0';
     wrap.style.display='flex'; wrap.style.alignItems='center'; wrap.style.justifyContent='center';
     wrap.style.background='rgba(0,0,0,0.35)'; wrap.style.backdropFilter='blur(2px)';
-    wrap.style.zIndex='2000';
+    wrap.style.zIndex='2000'; wrap.style.opacity='0'; wrap.style.transition='opacity .16s ease';
 
     var card = document.createElement('div');
     card.style.padding='14px 18px'; card.style.borderRadius='12px';
     card.style.border='1px solid rgba(255,204,0,0.35)';
     card.style.boxShadow='0 10px 30px rgba(0,0,0,0.45)';
-    card.style.background = (type==='error')
-      ? 'linear-gradient(90deg,#2a0000,#3a0000)'
-      : 'linear-gradient(90deg,#ffcc00,#d4a100)';
+    card.style.background = (type==='error') ? 'linear-gradient(90deg,#2a0000,#3a0000)' : 'linear-gradient(90deg,#ffcc00,#d4a100)';
     card.style.color = (type==='error') ? '#ffd5d5' : '#171300';
     card.style.fontWeight='800'; card.style.letterSpacing='.3px';
     card.textContent = text || (type==='error' ? 'Falhou' : 'Salvo!');
-    wrap.appendChild(card);
-    document.body.appendChild(wrap);
-    setTimeout(function(){ wrap.remove(); }, 1400);
+    wrap.appendChild(card); document.body.appendChild(wrap);
+    requestAnimationFrame(function(){ wrap.style.opacity='1'; });
+    setTimeout(function(){ wrap.style.opacity='0'; setTimeout(function(){ wrap.remove(); },160); }, 1400);
   }
 
-  // --- Estado do botão (loading → salvo)
+  /* ------- Botão salvar: loading + salvo ------- */
   function setButtonLoading(btn, isLoading){
     if (!btn) return;
     if (isLoading){
       btn.disabled = true;
       if (!btn.dataset._txt) btn.dataset._txt = btn.textContent;
       btn.textContent = 'Salvando…';
-      btn.style.filter='brightness(1.02)'; // leve glow
+      btn.style.filter='brightness(1.02)';
       btn.style.boxShadow='0 6px 22px rgba(255,204,0,0.35)';
     } else {
       btn.disabled = false;
@@ -379,12 +418,59 @@
   }
   function flashSaved(btn){
     if (!btn) return;
-    const old = btn.textContent;
     btn.textContent = 'Salvo!';
     setTimeout(function(){ btn.textContent = btn.dataset._txt || 'Salvar Alterações'; }, 1100);
   }
 
-  // --- Criar Etapa (sempre INSERT; nunca sobrescreve)
+  /* ------- Popover de etapas no chip (UX mais óbvia) ------- */
+  (function stepsPopover(){
+    var chipStrong = document.getElementById('tfStepName');
+    var chipWrap = chipStrong ? chipStrong.closest('.tf-step-chip') : null;
+    var pop=null, outside=null;
+
+    function openPop(){
+      if (!chipWrap || !steps || !steps.length) return;
+      if (pop) closePop();
+      pop = document.createElement('div');
+      pop.className = 'tf-step-popover';
+
+      var rect = chipWrap.getBoundingClientRect();
+      pop.style.top = (rect.bottom + window.scrollY + 8) + 'px';
+      pop.style.left = (rect.left + window.scrollX) + 'px';
+
+      steps.forEach(function(s){
+        var row = document.createElement('div');
+        row.className = 'itm';
+        var name = s.name || ('Etapa ' + (s.stepNo || s.step_no || ''));
+        row.innerHTML = '<span>'+ name +'</span>' + (currentStep && currentStep.id === s.id ? '<span class="badge">Atual</span>' : '');
+        row.addEventListener('click', function(){
+          window.location.href = '/ofertas/painel/' + offer.id + '?stepId=' + encodeURIComponent(s.id);
+        });
+        pop.appendChild(row);
+      });
+
+      document.body.appendChild(pop);
+      requestAnimationFrame(function(){ pop.setAttribute('data-open','1'); });
+
+      outside = function(ev){
+        if (!pop) return;
+        if (!pop.contains(ev.target) && !chipWrap.contains(ev.target)) closePop();
+      };
+      document.addEventListener('mousedown', outside);
+      window.addEventListener('resize', closePop);
+      window.addEventListener('scroll', closePop, true);
+    }
+    function closePop(){
+      if (!pop) return;
+      pop.remove(); pop=null;
+      document.removeEventListener('mousedown', outside);
+      window.removeEventListener('resize', closePop);
+      window.removeEventListener('scroll', closePop, true);
+    }
+    if (chipWrap) chipWrap.addEventListener('click', function(){ if(pop) closePop(); else openPop(); });
+  })();
+
+  /* ------- Modal "Nova etapa" com micro animações ------- */
   var stepModal = document.getElementById('stepModal');
   var openBtn = document.getElementById('btnCreateStep');
   var closeBtn = document.getElementById('btnCloseModal');
@@ -393,77 +479,86 @@
   var nameInput = document.getElementById('inpStepName');
 
   if (stepModal) stepModal.setAttribute('hidden','');
-  function closeModal(){ if(stepModal){ stepModal.setAttribute('hidden',''); document.removeEventListener('keydown',escToClose); } }
   function escToClose(e){ if(e.key==='Escape') closeModal(); }
   function openModal(){
-    if(!stepModal) return;
-    // sugestão de nome com base no maior stepNo
+    if (!stepModal) return;
     var nextNo = 1;
-    if (Array.isArray(steps) && steps.length){ nextNo = Math.max.apply(null, steps.map(function(s){return Number(s.stepNo||0)})) + 1; }
+    if (Array.isArray(steps) && steps.length){
+      nextNo = Math.max.apply(null, steps.map(function(s){ return Number(s.stepNo||s.step_no||0); })) + 1;
+    }
     if (nameInput) nameInput.value = 'Etapa ' + nextNo;
-    stepModal.removeAttribute('hidden'); nameInput && nameInput.focus();
+    stepModal.removeAttribute('hidden');
+    nameInput && nameInput.focus();
     document.addEventListener('keydown', escToClose);
+  }
+  function closeModal(){
+    if (!stepModal) return;
+    stepModal.setAttribute('hidden','');
+    document.removeEventListener('keydown', escToClose);
   }
   if (openBtn) openBtn.addEventListener('click', openModal);
   if (closeBtn) closeBtn.addEventListener('click', closeModal);
   if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
-  if (stepModal){
-    stepModal.addEventListener('click', function(e){ if (e.target === stepModal) closeModal(); });
-  }
+  if (stepModal){ stepModal.addEventListener('click', function(e){ if (e.target === stepModal) closeModal(); }); }
 
+  // Radios: highlight suave ao trocar
+  Array.prototype.forEach.call(document.querySelectorAll('input[name="dupMode"]'), function(r){
+    r.addEventListener('change', function(){
+      document.querySelectorAll('.tf-radio').forEach(function(lbl){ lbl.style.background='transparent'; });
+      var p = r.closest('.tf-radio'); if (p) p.style.background='rgba(255,255,255,0.05)';
+    });
+  });
+
+  // Criar Etapa → sempre INSERT (backend garante), redireciona pra nova
   if (confirmBtn){
     confirmBtn.addEventListener('click', async function(){
       var dupVal = document.querySelector('input[name="dupMode"]:checked')?.value || '0';
       var stepName = (nameInput?.value || '').trim();
-      // fallback nome
       if (!stepName){
-        var nextNo = 1;
-        if (Array.isArray(steps) && steps.length){ nextNo = Math.max.apply(null, steps.map(function(s){return Number(s.stepNo||0)})) + 1; }
-        stepName = 'Etapa ' + nextNo;
+        var n = 1;
+        if (Array.isArray(steps) && steps.length){
+          n = Math.max.apply(null, steps.map(function(s){ return Number(s.stepNo||s.step_no||0); })) + 1;
+        }
+        stepName = 'Etapa ' + n;
       }
-      try {
-        const r = await fetch('/ofertas/' + encodeURIComponent(offer.id) + '/etapas', {
-          method:'POST', headers:{'Content-Type':'application/json'},
+      try{
+        var r = await fetch('/ofertas/' + encodeURIComponent(offer.id) + '/etapas', {
+          method:'POST',
+          headers:{ 'Content-Type':'application/json' },
           body: JSON.stringify({
             name: stepName,
             duplicate: dupVal === '1',
             fromStepId: (dupVal === '1' && currentStep && currentStep.id) ? currentStep.id : null
           })
         });
-        const js = await r.json();
+        var js = await r.json();
         if (!js || !js.ok) throw new Error('create_failed');
-        // redireciona direto para a nova etapa criada
         window.location.href = '/ofertas/painel/' + offer.id + '?stepId=' + encodeURIComponent(js.step.id);
-      } catch(e){
+      }catch(e){
         console.error(e);
         showToast('error','Não foi possível criar a etapa.');
       }
     });
   }
 
-  // --- Salvar Alterações (PATCH settings/nome da etapa atual)
+  /* ------- Salvar Alterações: loading + toast ------- */
   var saveBtn = document.getElementById('btnSaveAll');
   if (saveBtn){
     saveBtn.addEventListener('click', async function(){
-      // pegue daqui o que você estiver editando no painel (mantive genérico):
-      // se você já guarda um rascunho global, use-o:
-      var draftSettings = (window.tfDraftSettings && typeof window.tfDraftSettings === 'object')
-        ? window.tfDraftSettings
-        : {}; // TODO: preencha conforme seus campos reais
-
+      var draftSettings = (window.tfDraftSettings && typeof window.tfDraftSettings === 'object') ? window.tfDraftSettings : {};
       try{
         setButtonLoading(saveBtn, true);
-        const r = await fetch('/ofertas/' + encodeURIComponent(offer.id) + '/etapas/' + encodeURIComponent(currentStep.id), {
-          method:'PATCH', headers:{'Content-Type':'application/json'},
+        var resp = await fetch('/ofertas/' + encodeURIComponent(offer.id) + '/etapas/' + encodeURIComponent(currentStep.id), {
+          method:'PATCH', headers:{ 'Content-Type':'application/json' },
           body: JSON.stringify({ settings: draftSettings })
         });
-        const js = await r.json();
+        var js = await resp.json();
         if (!js || !js.ok) throw new Error('patch_failed');
         flashSaved(saveBtn);
-        showToast('success','Configurações da ' + (js.step.name || 'etapa') + ' salvas com sucesso.');
+        showToast('success','Etapa salva com sucesso.');
       }catch(e){
         console.error(e);
-        showToast('error','Não foi possível salvar. Tente novamente em alguns segundos.');
+        showToast('error','Não foi possível salvar. Tente novamente.');
       }finally{
         setButtonLoading(saveBtn, false);
       }
