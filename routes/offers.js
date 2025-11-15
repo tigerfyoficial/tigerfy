@@ -151,44 +151,29 @@ router.get("/ofertas/painel/:id", authGuard, async (req, res) => {
   }
 });
 
-/* ---------- Criar etapa (sempre INSERT, nunca sobrescreve) ---------- */
+// CRIAR ETAPA — sempre INSERT, nunca sobrescreve
 router.post("/ofertas/:id/etapas", authGuard, async (req, res) => {
   try {
     const owner = req.session.userId;
     const { id: offerId } = req.params;
     const { name, duplicate, fromStepId } = req.body || {};
 
-    // Confere owner da oferta
     const offerRes = await Steps.getOfferByIdForOwner(offerId, owner);
     if (offerRes.error || !offerRes.data) {
       return res.status(403).json({ ok: false, error: "forbidden" });
     }
 
-    // Usa mutateStep se existir; senão, mantém createStep atual
-    let createRes;
-    if (typeof Steps.mutateStep === "function") {
-      createRes = await Steps.mutateStep({
-        mode: duplicate ? "duplicateFromCurrent" : "createFromScratch",
-        offerId,
-        ownerId: owner,
-        name: (name || "").trim(),
-        fromStepId: duplicate ? (fromStepId || null) : null,
-      });
-    } else {
-      createRes = await Steps.createStep({
-        offerId,
-        name: (name || "").trim(),
-        duplicate: !!duplicate,
-        fromStepId: duplicate ? (fromStepId || null) : null,
-      });
-    }
+    const fn = typeof Steps.mutateStep === "function" ? Steps.mutateStep : Steps.createStep;
+    const params = (fn === Steps.mutateStep)
+      ? { mode: duplicate ? "duplicateFromCurrent" : "createFromScratch", offerId, ownerId: owner, name: (name || "").trim(), fromStepId: duplicate ? (fromStepId || null) : null }
+      : { offerId, ownerId: owner, name: (name || "").trim(), duplicate: !!duplicate, fromStepId: duplicate ? (fromStepId || null) : null };
 
-    if (createRes.error || !createRes.data) {
-      console.error("[steps] insert error:", createRes.error?.message || createRes.error);
+    const created = await fn(params);
+    if (created.error || !created.data) {
+      console.error("[steps] insert error:", created.error);
       return res.status(500).json({ ok: false, error: "insert_failed" });
     }
-
-    return res.json({ ok: true, step: mapStep(createRes.data) });
+    return res.json({ ok: true, step: created.data });
   } catch (err) {
     console.error("Erro criar etapa:", err);
     return res.status(500).json({ ok: false, error: "server_error" });
