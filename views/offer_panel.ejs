@@ -1,429 +1,368 @@
 <%- include('partials/visual_hottrack') %>
 
-<div class="tf-offer-panel">
+<div class="tiger-offer-panel">
 
-  <!-- Breadcrumb dinâmico (clicável) -->
-  <nav class="tf-breadcrumb" id="tfBreadcrumb">
-    <!-- preenchido via script para manter o mesmo visual -->
-  </nav>
+  <!-- Breadcrumb (clicável via script) -->
+  <nav id="tfBreadcrumb" class="tf-breadcrumb"></nav>
 
-  <!-- Header: Título + Etapas (à esquerda) | Salvar (à direita) -->
-  <header class="tf-header">
-    <div class="tf-header-left">
-      <h1 class="tf-offer-title" id="offerTitle"><%= offer?.name || 'Nome da Oferta' %></h1>
+  <!-- Título + Etapa atual + Criar etapa / Salvar -->
+  <div class="tf-title-row">
+    <div class="tf-title-left">
+      <h1 class="tf-offer-title"><%= (offer && offer.name) ? offer.name : 'Nome da Oferta' %></h1>
 
       <div class="tf-step-inline">
-        <span class="tf-step-chip">Etapa: <strong id="tfStepName"><%= (currentStep && currentStep.name) ? currentStep.name : 'Etapa 1' %></strong></span>
-        <button type="button" id="btnCreateStep" class="tf-btn tf-btn-small">Criar etapa</button>
+        <span class="tf-step-chip">
+          Etapa: <%= (currentStep && currentStep.name) ? currentStep.name : 'Etapa 1' %>
+        </span>
+        <button id="btnCreateStep" type="button" class="tf-btn tf-btn-ghost">Criar etapa</button>
       </div>
     </div>
 
-    <div class="tf-header-right">
-      <button type="button" class="tf-btn tf-btn-primary" id="btnSaveAll">Salvar Alterações</button>
+    <div class="tf-title-right">
+      <button id="btnSaveAll" type="button" class="tf-btn tf-btn-primary">Salvar Alterações</button>
     </div>
-  </header>
+  </div>
 
   <!-- Abas principais -->
-  <div class="tf-tabs">
-    <button class="tab active" data-tab="principal">
-      <!-- dashboard icon -->
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="2"></rect><rect x="14" y="3" width="7" height="7" rx="2"></rect><rect x="14" y="14" width="7" height="7" rx="2"></rect><rect x="3" y="14" width="7" height="7" rx="2"></rect></svg>
-      Principal
+  <div class="tf-tabs tf-tabs-main">
+    <button class="tab active" data-tab="principal" type="button" aria-selected="true">
+      <!-- dashboard/layout -->
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <rect x="3" y="3" width="7" height="7" rx="2"></rect>
+        <rect x="14" y="3" width="7" height="7" rx="2"></rect>
+        <rect x="14" y="14" width="7" height="7" rx="2"></rect>
+        <rect x="3" y="14" width="7" height="7" rx="2"></rect>
+      </svg>
+      <span>Principal</span>
     </button>
-    <button class="tab" data-tab="contingencia">
-      <!-- shield -->
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"></path></svg>
-      Contingência de Bots
+
+    <button class="tab" data-tab="contingencia" type="button" aria-selected="false">
+      <!-- shield/bot -->
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M12 2l7 4v5c0 5-3.5 9-7 11-3.5-2-7-6-7-11V6l7-4z"></path>
+        <circle cx="12" cy="12" r="2"></circle>
+      </svg>
+      <span>Contingência de Bots</span>
     </button>
-    <button class="tab" data-tab="tracking">
+
+    <button class="tab" data-tab="traqueamento" type="button" aria-selected="false">
       <!-- target -->
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15A1.65 1.65 0 0 0 21 13.35 8 8 0 0 0 12 4a8 8 0 0 0-8 9.35A1.65 1.65 0 0 0 5.6 15"></path></svg>
-      Traqueamento
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="8"></circle>
+        <path d="M12 2v4M12 18v4M2 12h4M18 12h4"></path>
+        <circle cx="12" cy="12" r="2"></circle>
+      </svg>
+      <span>Traqueamento</span>
     </button>
-    <button class="tab" data-tab="relatorios">
-      <!-- chart -->
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"></path><path d="M19 17V7"></path><path d="M13 17V3"></path><path d="M7 17v-7"></path></svg>
-      Fluxo de Relatórios
+
+    <button class="tab" data-tab="relatorios" type="button" aria-selected="false">
+      <!-- chart line -->
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M3 3v18h18"></path>
+        <path d="M7 15l4-4 3 3 5-6"></path>
+      </svg>
+      <span>Fluxo de Relatórios</span>
     </button>
   </div>
 
-  <!-- Abas secundárias (visíveis apenas quando Principal estiver ativo) -->
-  <div class="tf-subtabs" id="subtabs-principal">
-    <button class="subtab active" data-subtab="front">
-      <!-- chat bubble -->
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h8"></path><path d="M17 8h.01"></path><path d="M19 4v6h6"></path></svg>
-      Front
+  <!-- Abas secundárias (só quando Principal) -->
+  <div id="subtabs-principal" class="tf-tabs tf-tabs-sub" style="display:flex;">
+    <button class="tab active" data-sub="front" type="button" aria-selected="true">
+      <!-- chat/message -->
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M21 15a4 4 0 0 1-4 4H7l-4 4V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"></path>
+      </svg>
+      <span>Front</span>
     </button>
-    <button class="subtab" data-subtab="orderbump" disabled>
-      <!-- cart plus -->
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6h15l-1.5 9h-12z"></path><path d="M6 6l-1-3H2"></path><circle cx="9" cy="20" r="1"></circle><circle cx="18" cy="20" r="1"></circle><path d="M12 10h4"></path></svg>
-      OrderBump (em breve)
+
+    <button class="tab disabled" data-sub="orderbump" type="button" aria-disabled="true">
+      <!-- tag plus -->
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
+        <path d="M7 7h6"></path>
+        <path d="M10 4v6"></path>
+      </svg>
+      <span>OrderBump (em breve)</span>
     </button>
-    <button class="subtab" data-subtab="upsell" disabled>
-      <!-- trend up -->
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17l6-6 4 4 8-8"></path></svg>
-      Upsell (em breve)
+
+    <button class="tab disabled" data-sub="upsell" type="button" aria-disabled="true">
+      <!-- arrow up -->
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M12 19V5"></path>
+        <path d="M5 12l7-7 7 7"></path>
+      </svg>
+      <span>Upsell (em breve)</span>
     </button>
-    <button class="subtab" data-subtab="downsell" disabled>
-      <!-- trend down -->
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 7l-6 6-4-4-8 8"></path></svg>
-      Downsell (em breve)
+
+    <button class="tab disabled" data-sub="downsell" type="button" aria-disabled="true">
+      <!-- arrow down -->
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M12 5v14"></path>
+        <path d="M19 12l-7 7-7-7"></path>
+      </svg>
+      <span>Downsell (em breve)</span>
     </button>
-    <button class="subtab" data-subtab="pix">
-      <!-- grid qr -->
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="14" width="7" height="7" rx="1"></rect><rect x="3" y="14" width="7" height="7" rx="1"></rect></svg>
-      Mensagem PIX
+
+    <button class="tab" data-sub="pix" type="button" aria-selected="false">
+      <!-- payment/qr -->
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <rect x="3" y="3" width="7" height="7" rx="1.5"></rect>
+        <rect x="14" y="3" width="7" height="7" rx="1.5"></rect>
+        <rect x="3" y="14" width="7" height="7" rx="1.5"></rect>
+        <path d="M17 14v7M14 17h7"></path>
+      </svg>
+      <span>Mensagem PIX</span>
     </button>
-    <button class="subtab" data-subtab="disparos" disabled>
+
+    <button class="tab disabled" data-sub="disparos" type="button" aria-disabled="true">
       <!-- paper plane -->
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 2L11 13"></path><path d="M22 2l-7 20-4-9-9-4 20-7z"></path></svg>
-      Disparos (em breve)
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M22 2L11 13"></path>
+        <path d="M22 2l-7 20-4-9-9-4 20-7z"></path>
+      </svg>
+      <span>Disparos (em breve)</span>
     </button>
   </div>
 
-  <!-- Área de conteúdo (placeholder) -->
-  <section class="tf-content-placeholder"></section>
+  <!-- Área de conteúdo (vazia por enquanto; apenas estrutura de navegação nesta etapa) -->
+  <div class="tf-content">
+    <div class="tf-content-card">
+      <!-- Conteúdo dos cards será adicionado depois -->
+    </div>
+  </div>
 </div>
 
-<!-- Modal "Nova etapa" -->
-<div class="tf-modal-backdrop" id="stepModal" hidden>
-  <div class="tf-modal">
-    <div class="tf-modal-head">
-      <h3>Nova etapa</h3>
-      <button type="button" class="tf-modal-close" id="btnCloseModal" aria-label="Fechar">✕</button>
+<!-- Modal: Nova Etapa -->
+<div id="stepModal" class="tf-modal" hidden>
+  <div class="tf-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="stepModalTitle">
+    <div class="tf-modal-header">
+      <h3 id="stepModalTitle" class="tf-modal-title">Nova etapa</h3>
+      <button id="btnCloseModal" type="button" class="tf-modal-close" aria-label="Fechar">×</button>
     </div>
 
     <div class="tf-modal-body">
-      <div class="tf-field">
-        <label for="inpStepName">Nome da etapa</label>
-        <input type="text" id="inpStepName" placeholder="Ex.: Etapa 2, Upsell Bot de Taxa, Funil Pós-Compra" />
-      </div>
+      <label for="inpStepName" class="tf-label">Nome da etapa</label>
+      <input id="inpStepName" type="text" class="tf-input"
+             placeholder="Etapa 2 • Upsell Bot de Taxa • Funil Pós-Compra" />
+
+      <div class="tf-divider"></div>
 
       <div class="tf-radio-group">
-        <span class="tf-radio-title">Configurações iniciais</span>
         <label class="tf-radio">
-          <input type="radio" name="dupMode" value="0" checked />
+          <input type="radio" name="dupMode" value="0" checked>
           <span>Criar etapa do zero</span>
         </label>
+
         <label class="tf-radio">
-          <input type="radio" name="dupMode" value="1" />
+          <input type="radio" name="dupMode" value="1">
           <span>Duplicar configurações da etapa atual (sem relatórios)</span>
         </label>
       </div>
     </div>
 
-    <div class="tf-modal-actions">
-      <button type="button" class="tf-btn" id="btnCancelStep">Cancelar</button>
-      <button type="button" class="tf-btn tf-btn-primary" id="btnConfirmStep">Criar etapa</button>
+    <div class="tf-modal-footer">
+      <button id="btnCancelStep" type="button" class="tf-btn tf-btn-ghost">Cancelar</button>
+      <button id="btnConfirmStep" type="button" class="tf-btn tf-btn-primary">Criar etapa</button>
     </div>
   </div>
 </div>
 
-<style>
-  :root{
-    --bg:#0b0b0b;
-    --panel:rgba(255,255,255,0.04);
-    --panel-strong:rgba(255,255,255,0.06);
-    --border:rgba(255,255,255,0.12);
-    --muted:#b8b8b8;
-    --text:#ffffff;
-    --accent:#ffcc00;
-    --accent-dim:#d4a100;
-    --shadow:0 8px 24px rgba(0,0,0,0.45);
-    --radius:14px;
-  }
-
-  .tf-offer-panel{
-    color:var(--text);
-    padding:60px 80px 100px 130px;
-    max-width:1200px;
-    margin:0 auto;
-  }
-
-  .tf-breadcrumb{
-    display:flex; align-items:center; gap:8px;
-    color:var(--muted);
-    font-size:.9rem;
-    margin-bottom:10px;
-  }
-  .tf-breadcrumb a{
-    color:var(--muted); text-decoration:none;
-  }
-  .tf-breadcrumb a:hover{ color:#e0e0e0; }
-
-  .tf-header{
-    display:flex; align-items:flex-start; justify-content:space-between;
-    gap:16px; margin-bottom:18px;
-  }
-  .tf-header-left{ display:flex; align-items:center; gap:14px; flex-wrap:wrap; }
-  .tf-offer-title{
-    margin:0; font-size:1.75rem; letter-spacing:.3px;
-    background:linear-gradient(90deg,#fff,#d8d8d8);
-    -webkit-background-clip:text; background-clip:text; color:transparent;
-  }
-
-  .tf-step-inline{ display:flex; align-items:center; gap:8px; }
-  .tf-step-chip{
-    display:inline-flex; align-items:center; gap:6px;
-    padding:6px 10px; border-radius:999px;
-    background:var(--panel); border:1px solid var(--border);
-    font-size:.85rem; color:#ddd;
-  }
-
-  .tf-btn{
-    appearance:none; border:1px solid var(--border);
-    background:var(--panel-strong); color:#eee;
-    padding:9px 14px; border-radius:10px; cursor:pointer;
-    font-weight:600; box-shadow:var(--shadow);
-    transition:.2s ease;
-  }
-  .tf-btn:hover{ border-color:rgba(255,255,255,0.2); background:rgba(255,255,255,0.08); }
-  .tf-btn:active{ transform:translateY(1px); }
-  .tf-btn-small{ padding:7px 10px; font-size:.85rem; border-radius:999px; }
-  .tf-btn-primary{
-    background:linear-gradient(90deg,var(--accent),var(--accent-dim));
-    color:#171300; border:1px solid rgba(255,204,0,0.35);
-    box-shadow:0 6px 22px rgba(255,204,0,0.25);
-  }
-  .tf-btn-primary:hover{ filter:brightness(1.02); }
-
-  .tf-tabs{
-    display:flex; gap:8px; flex-wrap:wrap; margin:16px 0 10px 0; justify-content:center;
-  }
-  .tf-tabs .tab{
-    display:inline-flex; align-items:center; gap:8px;
-    padding:9px 14px; border-radius:999px; border:1px solid var(--border);
-    background:var(--panel); color:#dedede; font-weight:600; font-size:.92rem;
-    cursor:pointer; transition:.2s;
-  }
-  .tf-tabs .tab:hover{ background:rgba(255,255,255,0.07); }
-  .tf-tabs .tab.active{
-    background:rgba(255,255,255,0.10);
-    border-color:rgba(255,255,255,0.22);
-    color:#fff;
-  }
-
-  .tf-subtabs{
-    display:flex; gap:8px; flex-wrap:wrap; justify-content:center; margin-bottom:18px;
-  }
-  .tf-subtabs .subtab{
-    display:inline-flex; align-items:center; gap:8px;
-    padding:7px 12px; border-radius:999px; border:1px solid var(--border);
-    background:var(--panel); color:#dcdcdc; font-weight:600; font-size:.9rem;
-    cursor:pointer; transition:.2s;
-  }
-  .tf-subtabs .subtab[disabled]{ opacity:.45; cursor:not-allowed; }
-  .tf-subtabs .subtab:not([disabled]):hover{ background:rgba(255,255,255,0.07); }
-  .tf-subtabs .subtab.active{
-    background:rgba(255,255,255,0.10);
-    border-color:rgba(255,255,255,0.22);
-    color:#fff;
-  }
-
-  .tf-content-placeholder{
-    min-height:360px;
-    border:1px dashed rgba(255,255,255,0.12);
-    border-radius:var(--radius);
-    background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
-    box-shadow:var(--shadow);
-  }
-
-  /* Modal */
-  .tf-modal-backdrop{
-    position:fixed; inset:0; background:rgba(0,0,0,0.55);
-    display:flex; align-items:center; justify-content:center;
-    padding:20px; z-index:1000;
-  }
-  .tf-modal-backdrop[hidden]{ display:none !important; }
-
-  .tf-modal{
-    width:100%; max-width:560px;
-    background:linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.04));
-    border:1px solid var(--border);
-    border-radius:16px; box-shadow:0 14px 42px rgba(0,0,0,0.55);
-    backdrop-filter: blur(6px);
-  }
-  .tf-modal-head{
-    display:flex; align-items:center; justify-content:space-between;
-    padding:16px 16px 10px 16px;
-    border-bottom:1px solid rgba(255,255,255,0.09);
-  }
-  .tf-modal-head h3{ margin:0; font-size:1.05rem; color:#fff; }
-  .tf-modal-close{
-    background:transparent; border:0; color:#ccc; cursor:pointer; font-size:16px; padding:4px;
-  }
-  .tf-modal-close:hover{ color:#fff; }
-
-  .tf-modal-body{ padding:16px; display:flex; flex-direction:column; gap:14px; }
-  .tf-field label{
-    display:block; font-weight:600; margin-bottom:6px; color:#efefef; font-size:.92rem;
-  }
-  .tf-field input[type="text"]{
-    width:100%; padding:10px 12px; border-radius:10px;
-    background:rgba(255,255,255,0.06); color:#fff;
-    border:1px solid rgba(255,255,255,0.16); outline:none;
-    font-size:.95rem;
-  }
-  .tf-field input[type="text"]::placeholder{ color:#bfbfbf; }
-  .tf-field input[type="text"]:focus{
-    border-color:rgba(255,204,0,0.6);
-    box-shadow:0 0 0 2px rgba(255,204,0,0.20);
-  }
-
-  .tf-radio-group{ display:flex; flex-direction:column; gap:8px; }
-  .tf-radio-title{ font-size:.9rem; color:#e8e8e8; font-weight:600; margin-bottom:4px; }
-  .tf-radio{ display:flex; align-items:center; gap:8px; color:#cfcfcf; }
-  .tf-radio input{ transform:translateY(1px); }
-
-  .tf-modal-actions{
-    display:flex; align-items:center; justify-content:flex-end; gap:10px;
-    padding:12px 16px 16px 16px; border-top:1px solid rgba(255,255,255,0.09);
-  }
-
-  @media (max-width: 980px){
-    .tf-offer-panel{ padding:40px 18px 80px 18px; }
-    .tf-header{ flex-direction:column; align-items:flex-start; gap:10px; }
-  }
-</style>
+<!-- Toast host (discreto, premium) -->
+<div id="tfToastHost" style="position:fixed; top:18px; left:0; right:0; display:flex; justify-content:center; pointer-events:none; z-index:1200;"></div>
 
 <script>
-  (function(){
-    // Dados EJS -> JS
-    var offer = <%- JSON.stringify(offer || null) %>;
-    var steps = <%- JSON.stringify(steps || []) %>;
-    var currentStep = <%- JSON.stringify(currentStep || null) %>;
+(function(){
+  var offer = <%- JSON.stringify(offer || null) %>;
+  var steps = <%- JSON.stringify(steps || []) %>;
+  var currentStep = <%- JSON.stringify(currentStep || null) %>;
 
-    // -------- Tabs principais: mantém subtabs visíveis só em "Principal"
-    var mainTabs = document.querySelectorAll('.tf-tabs .tab');
-    var subTabsWrap = document.getElementById('subtabs-principal');
-    mainTabs.forEach(function(btn){
-      btn.addEventListener('click', function(){
-        mainTabs.forEach(function(b){ b.classList.remove('active'); });
-        btn.classList.add('active');
-        var isPrincipal = btn.dataset.tab === 'principal';
-        if(subTabsWrap){ subTabsWrap.style.display = isPrincipal ? 'flex' : 'none'; }
-      });
+  /* ---------- Tabs principais ---------- */
+  var mainTabs = document.querySelectorAll('.tf-tabs-main .tab');
+  var subTabsWrap = document.getElementById('subtabs-principal');
+  mainTabs.forEach(function(btn){
+    btn.addEventListener('click', function(){
+      mainTabs.forEach(function(b){ b.classList.remove('active'); b.setAttribute('aria-selected','false'); });
+      btn.classList.add('active');
+      btn.setAttribute('aria-selected','true');
+      var isPrincipal = btn.dataset.tab === 'principal';
+      if(subTabsWrap){ subTabsWrap.style.display = isPrincipal ? 'flex' : 'none'; }
     });
-    if(subTabsWrap){ subTabsWrap.style.display = 'flex'; } // estado inicial
+  });
+  if(subTabsWrap){ subTabsWrap.style.display = 'flex'; }
 
-    // -------- Breadcrumb clicável
-    function buildBreadcrumb() {
-      var bc = document.getElementById('tfBreadcrumb');
-      if (!bc) return;
+  /* ---------- Breadcrumb clicável ---------- */
+  function escapeHtml(s){ return (s || "").replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function buildBreadcrumb(){
+    var bc = document.getElementById('tfBreadcrumb');
+    if (!bc) return;
+    var offerName = (offer && offer.name) ? offer.name : 'Nome da Oferta';
+    var offerHref = offer ? ("/ofertas/painel/" + offer.id) : "/ofertas";
+    var parts = [];
+    parts.push('<a href="/ofertas">Minhas Ofertas</a>');
+    parts.push('<span>›</span>');
+    parts.push('<a href="'+ offerHref +'">'+ escapeHtml(offerName) +'</a>');
+    if (currentStep && currentStep.id){
+      parts.push('<span>›</span>');
+      parts.push('<a href="'+ offerHref + '?stepId=' + encodeURIComponent(currentStep.id) +'">Etapa: '+ escapeHtml(currentStep.name) +'</a>');
+    }
+    bc.innerHTML = parts.join('');
+  }
+  buildBreadcrumb();
 
-      var offerName = (offer && offer.name) ? offer.name : 'Nome da Oferta';
-      var offerHref = offer ? ("/ofertas/painel/" + offer.id) : "/ofertas";
+  /* ---------- Modal "Criar etapa" (abre só no clique) ---------- */
+  var modal = document.getElementById('stepModal');
+  var openBtn = document.getElementById('btnCreateStep');
+  var closeBtn = document.getElementById('btnCloseModal');
+  var cancelBtn = document.getElementById('btnCancelStep');
+  var confirmBtn = document.getElementById('btnConfirmStep');
+  var nameInput = document.getElementById('inpStepName');
 
-      var items = [];
-      // "Minhas Ofertas"
-      items.push('<a href="/ofertas">Minhas Ofertas</a>');
-      // "Nome da oferta" (leva pra root da oferta)
-      items.push('<span>›</span>');
-      items.push('<a href="'+ offerHref +'">'+ escapeHtml(offerName) +'</a>');
+  if (modal) modal.setAttribute('hidden','');
 
-      // "Etapa X" (se existir etapa atual)
-      if (currentStep && currentStep.id) {
-        items.push('<span>›</span>');
-        var stepUrl = offerHref + "?stepId=" + encodeURIComponent(currentStep.id);
-        items.push('<a href="'+ stepUrl +'">'+ escapeHtml(currentStep.name) +'</a>');
+  function escToClose(e){ if (e.key === 'Escape') closeModal(); }
+  function openModal(){
+    if (!modal) return;
+    var nextNo = 1;
+    if (Array.isArray(steps) && steps.length){
+      var max = Math.max.apply(null, steps.map(s => Number(s.stepNo || 0)));
+      nextNo = isNaN(max) ? 1 : (max + 1);
+    }
+    if (nameInput) nameInput.value = 'Etapa ' + nextNo;
+    modal.removeAttribute('hidden');
+    nameInput && nameInput.focus();
+    document.addEventListener('keydown', escToClose);
+  }
+  function closeModal(){
+    if (!modal) return;
+    modal.setAttribute('hidden','');
+    document.removeEventListener('keydown', escToClose);
+  }
+  if (openBtn) openBtn.addEventListener('click', openModal);
+  if (closeBtn) closeBtn.addEventListener('click', closeModal);
+  if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
+  if (modal){
+    modal.addEventListener('click', function(e){ if (e.target === modal) closeModal(); });
+  }
+
+  if (confirmBtn){
+    confirmBtn.addEventListener('click', async function(){
+      var dupValue = document.querySelector('input[name="dupMode"]:checked')?.value || '0';
+      var stepName = (nameInput?.value || '').trim();
+      if (!stepName){
+        var n = 1;
+        if (Array.isArray(steps) && steps.length){
+          var max = Math.max.apply(null, steps.map(s => Number(s.stepNo || 0)));
+          n = isNaN(max) ? 1 : (max + 1);
+        }
+        stepName = 'Etapa ' + n;
       }
 
-      bc.innerHTML = items.join('');
-    }
+      try {
+        const resp = await fetch('/ofertas/' + encodeURIComponent(offer.id) + '/etapas', {
+          method: 'POST',
+          headers: { 'Content-Type':'application/json' },
+          body: JSON.stringify({
+            name: stepName,
+            duplicate: dupValue === '1',
+            fromStepId: (dupValue === '1' && currentStep && currentStep.id) ? currentStep.id : null
+          })
+        });
+        const js = await resp.json();
+        if (!js || !js.ok) throw new Error('Falha ao criar etapa');
 
-    function escapeHtml(s){
-      return (s || "").replace(/</g,'&lt;').replace(/>/g,'&gt;');
-    }
-
-    buildBreadcrumb();
-
-    // -------- Modal "Criar etapa"
-    var modal = document.getElementById('stepModal');
-    var openBtn = document.getElementById('btnCreateStep');
-    var closeBtn = document.getElementById('btnCloseModal');
-    var cancelBtn = document.getElementById('btnCancelStep');
-    var confirmBtn = document.getElementById('btnConfirmStep');
-    var nameInput = document.getElementById('inpStepName');
-
-    // Garante fechado no load
-    if (modal) { modal.setAttribute('hidden', ''); }
-    function escToClose(e){ if (e.key === 'Escape') closeModal(); }
-
-    function openModal(){
-      if (!modal) return;
-      // Sugestão de nome: próximo número
-      var nextNo = 1;
-      if (Array.isArray(steps) && steps.length) {
-        var max = Math.max.apply(null, steps.map(s => Number(s.stepNo || 0)));
-        nextNo = isNaN(max) ? 1 : (max + 1);
+        // Redireciona para a nova etapa (uuid exclusivo)
+        window.location.href = '/ofertas/painel/' + offer.id + '?stepId=' + encodeURIComponent(js.step.id);
+      } catch (e) {
+        console.error(e);
+        showToast("Não foi possível criar a etapa. Tente novamente.", "error");
       }
-      if (nameInput) nameInput.value = 'Etapa ' + nextNo;
-      modal.removeAttribute('hidden');
-      nameInput && nameInput.focus();
-      document.addEventListener('keydown', escToClose);
+    });
+  }
+
+  /* ---------- Botão "Salvar Alterações" com feedback premium ---------- */
+  var btnSave = document.getElementById('btnSaveAll');
+  function setBtnLoading(b){
+    if (!btnSave) return;
+    if (b){
+      btnSave.dataset.label = btnSave.textContent;
+      btnSave.textContent = 'Salvando…';
+      btnSave.disabled = true;
+    }else{
+      if (btnSave.dataset.label) btnSave.textContent = btnSave.dataset.label;
+      btnSave.disabled = false;
+    }
+  }
+
+  if (btnSave){
+    btnSave.addEventListener('click', async function(){
+      if (!currentStep || !currentStep.id) return;
+
+      // Aqui futuramente vamos coletar settings reais. Por ora, persistência mínima:
+      const payload = {
+        name: currentStep.name,
+        settings: Object.assign({}, currentStep.settings || {}, {
+          savedAt: new Date().toISOString()
+        })
+      };
+
+      try {
+        setBtnLoading(true);
+        const resp = await fetch('/ofertas/' + encodeURIComponent(offer.id) + '/etapas/' + encodeURIComponent(currentStep.id) + '/save', {
+          method: 'POST',
+          headers: { 'Content-Type':'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const js = await resp.json();
+        if (!js || !js.ok) throw new Error('save_failed');
+
+        currentStep = js.step || currentStep;
+
+        showToast('Configurações da ' + (currentStep.name || 'Etapa') + ' salvas com sucesso.', 'success');
+        btnSave.textContent = 'Salvo!';
+        setTimeout(() => setBtnLoading(false), 900);
+      } catch (e) {
+        console.error(e);
+        setBtnLoading(false);
+        showToast('Não foi possível salvar. Tente novamente.', 'error');
+      }
+    });
+  }
+
+  /* ---------- Toast minimalista ---------- */
+  function showToast(msg, type){
+    var host = document.getElementById('tfToastHost');
+    if (!host) return;
+    var node = document.createElement('div');
+    node.textContent = msg;
+    node.style.pointerEvents = 'auto';
+    node.style.maxWidth = '720px';
+    node.style.padding = '10px 14px';
+    node.style.margin = '0 12px';
+    node.style.borderRadius = '12px';
+    node.style.border = '1px solid rgba(255,255,255,0.14)';
+    node.style.backdropFilter = 'blur(6px)';
+    node.style.fontWeight = '600';
+    node.style.boxShadow = '0 8px 24px rgba(0,0,0,0.35)';
+    node.style.transition = 'opacity .2s ease';
+    node.style.opacity = '0';
+
+    if (type === 'success'){
+      node.style.background = 'linear-gradient(180deg, rgba(60, 220, 130, 0.15), rgba(255,255,255,0.05))';
+      node.style.color = '#e9ffee';
+    } else if (type === 'error'){
+      node.style.background = 'linear-gradient(180deg, rgba(255, 80, 80, 0.18), rgba(255,255,255,0.05))';
+      node.style.color = '#ffe9e9';
+    } else {
+      node.style.background = 'linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.04))';
+      node.style.color = '#f1f1f1';
     }
 
-    function closeModal(){
-      if (!modal) return;
-      modal.setAttribute('hidden','');
-      document.removeEventListener('keydown', escToClose);
-    }
-
-    if (openBtn) openBtn.addEventListener('click', openModal);
-    if (closeBtn) closeBtn.addEventListener('click', closeModal);
-    if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
-    if (modal){
-      modal.addEventListener('click', function(e){
-        if (e.target === modal) closeModal();
-      });
-    }
-
-    if (confirmBtn){
-      confirmBtn.addEventListener('click', async function(){
-        var dupValue = document.querySelector('input[name="dupMode"]:checked')?.value || '0';
-        var stepName = (nameInput?.value || '').trim();
-        if (!stepName) {
-          // fallback nome
-          var n = 1;
-          if (Array.isArray(steps) && steps.length) {
-            var max = Math.max.apply(null, steps.map(s => Number(s.stepNo || 0)));
-            n = isNaN(max) ? 1 : (max + 1);
-          }
-          stepName = 'Etapa ' + n;
-        }
-
-        try {
-          // POST real no backend
-          var resp = await fetch('/ofertas/' + encodeURIComponent(offer.id) + '/etapas', {
-            method: 'POST',
-            headers: { 'Content-Type':'application/json' },
-            body: JSON.stringify({
-              name: stepName,
-              duplicate: dupValue === '1',
-              fromStepId: (dupValue === '1' && currentStep && currentStep.id) ? currentStep.id : null
-            })
-          });
-          var js = await resp.json();
-          if (!js || !js.ok) throw new Error('Falha ao criar etapa');
-
-          // Redireciona para a etapa criada
-          var url = '/ofertas/painel/' + offer.id + '?stepId=' + encodeURIComponent(js.step.id);
-          window.location.href = url;
-        } catch (e) {
-          console.error(e);
-          // Fallback (degrada com GET legacy)
-          var u = new URL(window.location.href);
-          var n = 1;
-          if (Array.isArray(steps) && steps.length) {
-            var max = Math.max.apply(null, steps.map(s => Number(s.stepNo || 0)));
-            n = isNaN(max) ? 1 : (max + 1);
-          }
-          u.searchParams.set('etapa', String(n));
-          u.searchParams.set('step', stepName);
-          u.searchParams.set('dup', dupValue);
-          window.location.href = u.toString();
-        }
-      });
-    }
-  })();
+    host.appendChild(node);
+    requestAnimationFrame(() => { node.style.opacity = '1'; });
+    setTimeout(() => {
+      node.style.opacity = '0';
+      setTimeout(() => { host.removeChild(node); }, 220);
+    }, 1800);
+  }
+})();
 </script>
