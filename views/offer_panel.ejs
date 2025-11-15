@@ -1,569 +1,173 @@
 <%- include('partials/visual_hottrack') %>
 
-<main class="tiger-offer">
-  <!-- Breadcrumb / Título -->
-  <div class="tf-breadcrumb">
-    <a href="/ofertas">Minhas Ofertas</a>
-    <span>›</span>
-    <span><%= (offer && offer.name) ? offer.name : 'Oferta' %></span>
-  </div>
-
-  <div class="tf-title-row">
-    <h1><%= (offer && offer.name) ? offer.name : 'Oferta' %></h1>
-    <div class="tf-actions">
-      <span class="pill <%= (offer && offer.status) === 'ativo' ? '' : 'warn' %>">
-        <%= (offer && offer.status) === 'ativo' ? 'Ativo' : 'Incompleto' %>
-      </span>
-      <button class="btn ghost" id="btnTest">Teste Rápido</button>
-      <button class="btn ghost" id="btnLogs">Logs</button>
-      <button class="btn primary" id="btnSaveAll" type="button">Salvar Configurações</button>
+<main class="tiger-offer-shell">
+  <!-- BREADCRUMB + TÍTULO + AÇÃO -->
+  <header class="tf-header">
+    <div class="tf-head-left">
+      <nav class="tf-breadcrumb">
+        <a href="/ofertas">Minhas Ofertas</a>
+        <span>›</span>
+        <span><%= (offer && offer.name) ? offer.name : 'Nome da Oferta' %></span>
+      </nav>
+      <h1 class="tf-offer-title"><%= (offer && offer.name) ? offer.name : 'Nome da Oferta' %></h1>
     </div>
-  </div>
 
-  <!-- Abas principais -->
-  <div class="tf-tabs" id="tabsTop">
+    <div class="tf-head-right">
+      <button type="button" class="btn primary" id="btnSaveAll">Salvar Alterações</button>
+    </div>
+  </header>
+
+  <!-- ABAS PRINCIPAIS -->
+  <div class="tf-tabs">
     <button class="tab active" data-tab="principal">Principal</button>
-    <button class="tab" data-tab="tracking">Tracking</button>
-    <button class="tab" data-tab="redir">Redirecionadores</button>
-    <button class="tab" data-tab="contingencia">Contingência</button>
-    <button class="tab" data-tab="cloaker">Cloaker</button>
+    <button class="tab" data-tab="contingencia">Contingência de Bots</button>
+    <button class="tab" data-tab="tracking">Traqueamento</button>
+    <button class="tab" data-tab="reports">Fluxo de Relatórios</button>
   </div>
 
-  <!-- ====== TAB: PRINCIPAL ====== -->
-  <section class="tabpane show" id="tab-principal">
-    <!-- Sub-abas -->
-    <div class="tf-subtabs" id="subTabs">
-      <button class="subtab active" data-sub="front">Front</button>
-      <button class="subtab" data-sub="bump">OrderBump <small>(em breve)</small></button>
-      <button class="subtab" data-sub="upsell">Upsell <small>(em breve)</small></button>
-      <button class="subtab" data-sub="downsell">Downsell <small>(em breve)</small></button>
-      <button class="subtab" data-sub="disparo">Disparo <small>(em breve)</small></button>
-      <button class="subtab" data-sub="pix">Mensagem Pix</button>
-    </div>
+  <!-- ABAS SECUNDÁRIAS (visíveis apenas quando "Principal" estiver ativa) -->
+  <div class="tf-subtabs" id="subtabs-principal">
+    <button class="subtab active">Front</button>
+    <button class="subtab">OrderBump</button>
+    <button class="subtab">Upsell</button>
+    <button class="subtab">Downsell</button>
+    <button class="subtab">Mensagem PIX</button>
+    <button class="subtab">Disparos</button>
+  </div>
 
-    <!-- ===== SUB: FRONT ===== -->
-    <div class="subpane show" id="sub-front">
-      <div class="grid-2">
-        <!-- Coluna esquerda: card único (mensagem/CTA/mídias) -->
-        <section class="card deep">
-          <div class="card-head">
-            <div class="title">
-              <span class="dot"></span>
-              <h3>Mensagem Principal (/start)</h3>
-            </div>
-            <p class="hint">Mensagem inicial enviada ao usuário no <code>/start</code>.</p>
-          </div>
-
-          <label class="label">Conteúdo da Mensagem</label>
-          <textarea class="input area" id="front_copy" placeholder="Escreva sua mensagem de boas-vindas. Suporte a variáveis no futuro (ex.: [[nome]])."></textarea>
-
-          <div class="line"></div>
-
-          <div class="row">
-            <div class="col">
-              <label class="label">Mídias atuais</label>
-              <div class="media-list empty" id="front_media">Nenhuma mídia anexada</div>
-            </div>
-            <div class="col right">
-              <button class="btn sm" id="btnAddMediaFront" type="button">Inserir mídia (link Telegram)</button>
-            </div>
-          </div>
-
-          <div class="line"></div>
-
-          <div class="split">
-            <h4 class="label" style="margin:0">Botão de Ação (CTA)</h4>
-            <label class="switch">
-              <input type="checkbox" id="cta_enabled">
-              <span></span>
-            </label>
-          </div>
-
-          <div class="grid-3">
-            <div>
-              <label class="label">Texto da chamada (opcional)</label>
-              <input class="input" id="cta_text" placeholder="Ex: Cansado de perder tempo? Clique abaixo para garantir sua vaga agora mesmo!">
-            </div>
-            <div>
-              <label class="label">Texto do botão</label>
-              <input class="input" id="cta_btn" placeholder="Ex: QUERO MINHA VAGA AGORA">
-            </div>
-            <div>
-              <label class="label">Auto-deletar</label>
-              <div class="inline">
-                <label class="switch">
-                  <input type="checkbox" id="front_autodel">
-                  <span></span>
-                </label>
-                <input class="input xs" id="front_autodel_secs" type="number" min="0" placeholder="Delay (s)">
-              </div>
-            </div>
-          </div>
-
-          <div class="grid-3 slim" style="margin-top:8px">
-            <div>
-              <label class="label">Entregável (após pagamento)</label>
-              <input class="input" id="front_entregavel" placeholder="https://link-do-entregavel">
-            </div>
-            <div></div>
-            <div class="actions r">
-              <button class="btn primary" type="button" id="saveFront">Salvar</button>
-            </div>
-          </div>
-        </section>
-
-        <!-- Coluna direita: planos & botões -->
-        <aside class="card side">
-          <div class="card-head">
-            <div class="title">
-              <span class="dot"></span>
-              <h3>Planos &amp; Botões</h3>
-            </div>
-            <div class="inline">
-              <button class="btn xs" id="btnCreateRedirect" type="button">Criar Redirect</button>
-              <button class="btn xs" id="btnCreatePlan" type="button">Criar Plano</button>
-            </div>
-          </div>
-
-          <div class="plans" id="plansList">
-            <% var pList = (typeof plans !== 'undefined' && Array.isArray(plans)) ? plans : []; %>
-            <% if (pList.length === 0) { %>
-              <div class="soon">Nenhum plano cadastrado ainda.</div>
-            <% } %>
-            <% pList.forEach(function(p){ %>
-              <div class="plan" data-id="<%= p.id %>">
-                <div class="p-l">
-                  <strong><%= p.name %></strong>
-                  <span>Valor: R$ <%= (p.price/100).toFixed(2) %> • Duração: <%= p.duration_days %> dias</span>
-                </div>
-                <div class="p-r">
-                  <button class="btn xs" data-act="edit">Editar</button>
-                  <button class="btn xs danger" data-act="del">Excluir</button>
-                </div>
-              </div>
-              <div class="plan plan-body expanded" data-body-for="<%= p.id %>" style="display:none">
-                <label class="label">Entregável deste plano</label>
-                <input class="input" placeholder="URL do entregável (enviado após pagamento)" value="<%= p.deliver_url || '' %>">
-                <div class="actions r"><button class="btn sm primary" data-act="save-deliver">Salvar</button></div>
-              </div>
-            <% }) %>
-          </div>
-        </aside>
-      </div>
-    </div>
-
-    <!-- ===== SUB: BUMP (EM BREVE) ===== -->
-    <div class="subpane" id="sub-bump">
-      <section class="card"><div class="soon">OrderBump ficará aqui (estrutura minimalista — em breve).</div></section>
-    </div>
-
-    <!-- ===== SUB: UPSELL (EM BREVE) ===== -->
-    <div class="subpane" id="sub-upsell">
-      <section class="card"><div class="soon">Upsell ficará aqui (estrutura minimalista — em breve).</div></section>
-    </div>
-
-    <!-- ===== SUB: DOWNSELL (EM BREVE) ===== -->
-    <div class="subpane" id="sub-downsell">
-      <section class="card"><div class="soon">Downsell ficará aqui (estrutura minimalista — em breve).</div></section>
-    </div>
-
-    <!-- ===== SUB: DISPARO (EM BREVE) ===== -->
-    <div class="subpane" id="sub-disparo">
-      <section class="card"><div class="soon">Disparo/Follow-up ficará aqui (estrutura minimalista — em breve).</div></section>
-    </div>
-
-    <!-- ===== SUB: MENSAGEM PIX ===== -->
-    <div class="subpane" id="sub-pix">
-      <div class="grid-2">
-        <section class="card deep">
-          <div class="card-head">
-            <div class="title">
-              <span class="dot"></span>
-              <h3>Mensagem do Pix</h3>
-            </div>
-            <p class="hint">Use variáveis: <code>[[pix]]</code>, <code>[[valor]]</code>, <code>[[nome]]</code>, <code>[[plano]]</code>.</p>
-          </div>
-
-          <label class="label">Conteúdo</label>
-          <textarea class="input area" id="pix_copy" placeholder="Ex: Pronto! Copie o código Pix abaixo e pague: [[pix]]. Valor: [[valor]]."></textarea>
-
-          <div class="line"></div>
-
-          <div class="row">
-            <div class="col">
-              <label class="label">Mídias</label>
-              <div class="media-list empty" id="pix_media">Nenhuma mídia anexada</div>
-            </div>
-            <div class="col right">
-              <button class="btn sm" id="btnAddMediaPix" type="button">Inserir mídia (link Telegram)</button>
-            </div>
-          </div>
-
-          <div class="grid-3 slim" style="margin-top:8px">
-            <div>
-              <label class="label">Auto-deletar</label>
-              <div class="inline">
-                <label class="switch">
-                  <input type="checkbox" id="pix_autodel">
-                  <span></span>
-                </label>
-                <input class="input xs" id="pix_autodel_secs" type="number" min="0" placeholder="Delay (s)">
-              </div>
-            </div>
-            <div></div>
-            <div class="actions r">
-              <button class="btn primary" type="button" id="savePix">Salvar</button>
-            </div>
-          </div>
-        </section>
-
-        <aside class="card side">
-          <div class="card-head">
-            <div class="title">
-              <span class="dot"></span>
-              <h3>Referências</h3>
-            </div>
-          </div>
-          <p class="tiny">Variáveis válidas:</p>
-          <ul class="tiny" style="margin-top:6px;line-height:1.6">
-            <li><code>[[pix]]</code> — código Copia e Cola</li>
-            <li><code>[[valor]]</code> — valor do pedido</li>
-            <li><code>[[nome]]</code> — nome do usuário</li>
-            <li><code>[[plano]]</code> — nome do plano</li>
-          </ul>
-        </aside>
-      </div>
-    </div>
-  </section>
-
-  <!-- ====== TAB: TRACKING ====== -->
-  <section class="tabpane" id="tab-tracking">
-    <section class="card deep">
-      <div class="card-head">
-        <div class="title">
-          <span class="dot"></span>
-          <h3>Configuração de Tracking</h3>
-        </div>
-        <p class="hint">Escolha o método e preencha apenas os campos necessários.</p>
-      </div>
-
-      <div class="grid-3">
-        <div class="card" style="background:var(--surface-2)">
-          <label class="label">Modo de rastreamento</label>
-          <div class="radios inline" id="trackModes">
-            <label class="radio"><input type="radio" name="tmode" value="fb_pixel" checked> <span></span> Facebook Pixel</label>
-            <label class="radio"><input type="radio" name="tmode" value="utmify_fb"> <span></span> UTMify + FB Pixel</label>
-            <label class="radio"><input type="radio" name="tmode" value="utmify_utmify"> <span></span> UTMify + UTMify Pixel</label>
-          </div>
-        </div>
-
-        <div class="card" id="boxFb" style="background:var(--surface-2)">
-          <label class="label">Facebook Pixel ID</label>
-          <input class="input" id="fb_id" placeholder="Ex: 1234567890">
-        </div>
-
-        <div class="card" id="boxUtmify" style="display:none;background:var(--surface-2)">
-          <label class="label">UTMify Pixel ID</label>
-          <input class="input" id="utmify_id" placeholder="Ex: UTM-XXXX">
-        </div>
-      </div>
-
-      <div class="actions r" style="margin-top:14px">
-        <button class="btn primary" id="saveTracking" type="button">Salvar Tracking</button>
-      </div>
-    </section>
-  </section>
-
-  <!-- ====== TAB: REDIRECIONADORES ====== -->
-  <section class="tabpane" id="tab-redir">
-    <section class="card deep">
-      <div class="card-head">
-        <div class="title">
-          <span class="dot"></span>
-          <h3>Redirecionadores de Bot</h3>
-        </div>
-        <div class="inline">
-          <button class="btn sm" id="btnAddBot" type="button">Cadastrar novo bot</button>
-          <p class="tiny">Máximo recomendado: 2 ativos</p>
-        </div>
-      </div>
-
-      <div class="mini-grid" id="botsGrid">
-        <% var bList = (typeof bots !== 'undefined' && Array.isArray(bots)) ? bots : []; %>
-        <% if (bList.length === 0) { %>
-          <div class="mini ghost-state" style="grid-column:1 / -1">Nenhum bot cadastrado ainda.</div>
-        <% } %>
-        <% bList.forEach(function(b){ %>
-          <div class="mini" data-bot="<%= b.id %>">
-            <div class="mini-top">
-              <strong>@<%= (b.username || 'seubot') %></strong>
-              <label class="switch">
-                <input type="checkbox" class="bot-active" <%= b.active ? 'checked' : '' %>>
-                <span></span>
-              </label>
-            </div>
-            <div class="tiny">Token</div>
-            <input class="input" value="<%= b.token_masked || '' %>" placeholder="Token do BotFather">
-            <div class="actions" style="margin-top:8px">
-              <button class="btn xs" data-act="dup">Duplicar</button>
-              <button class="btn xs danger" data-act="del">Excluir</button>
-            </div>
-          </div>
-        <% }) %>
-      </div>
-    </section>
-  </section>
-
-  <!-- ====== TAB: CONTINGÊNCIA ====== -->
-  <section class="tabpane" id="tab-contingencia">
-    <section class="card deep">
-      <div class="card-head">
-        <div class="title">
-          <span class="dot"></span>
-          <h3>Contingência de Bots</h3>
-        </div>
-        <p class="hint">Tokens reservas e rotinas de fallback para alta disponibilidade.</p>
-      </div>
-
-      <div class="grid-3">
-        <div class="ghost">
-          <div class="ghost-title">Token reserva (1)</div>
-          <p class="ghost-text">Usado automaticamente se o principal falhar.</p>
-          <input class="input" placeholder="Token reserva 1">
-        </div>
-        <div class="ghost">
-          <div class="ghost-title">Token reserva (2)</div>
-          <p class="ghost-text">Failover em cascata.</p>
-          <input class="input" placeholder="Token reserva 2">
-        </div>
-        <div class="ghost">
-          <div class="ghost-title">Duplicar bot atual</div>
-          <p class="ghost-text">Cria um clone do bot com novo token/username.</p>
-          <button class="btn sm" type="button" id="btnDupNow">Duplicar Bot</button>
-        </div>
-      </div>
-
-      <div class="actions r" style="margin-top:14px">
-        <button class="btn primary" type="button">Salvar Contingência</button>
-      </div>
-    </section>
-  </section>
-
-  <!-- ====== TAB: CLOAKER ====== -->
-  <section class="tabpane" id="tab-cloaker">
-    <section class="card deep">
-      <div class="card-head">
-        <div class="title">
-          <span class="dot"></span>
-          <h3>Cloaker Anti-Clone</h3>
-        </div>
-        <p class="hint">Impede clonagem automática; adiciona caracteres aleatórios ao copiar mensagens.</p>
-      </div>
-
-      <div class="inline" style="justify-content:space-between">
-        <label class="switch">
-          <input type="checkbox" id="cloaker_enabled">
-          <span></span>
-        </label>
-        <button class="btn primary" id="saveCloaker" type="button">Salvar</button>
-      </div>
-    </section>
-  </section>
+  <!-- Área reservada (vazia por enquanto) -->
+  <section class="tf-placeholder"></section>
 </main>
 
 <style>
   :root{
-    --bg-0:#0a0a0a;--surface-1:#0f0f0f;--surface-2:#131313;--surface-3:#161616;
-    --line-1:#1f1f1f;--line-2:#242424;
-    --text-1:#f2f2f2;--text-2:#b7b7b7;--text-3:#8a8a8a;
-    --accent:#ffcc00;
+    /* Paleta TigerFy Premium (dark, minimalista) */
+    --bg-0:#0a0a0a;
+    --surface-1:#0f0f0f;
+    --surface-2:#131313;
+    --line-1:#1e1e1e;
+    --line-2:#262626;
+    --text-1:#f2f2f2;
+    --text-2:#b6b6b6;
+    --text-3:#8a8a8a;
+    --accent:#ffcc00;       /* dourado */
+    --accent-soft:#d4ad15;  /* dourado suave (quase sem brilho) */
   }
-  .tiger-offer{max-width:1200px;margin:0 auto;padding:20px 16px 64px;color:var(--text-1)}
-  .tf-breadcrumb{display:flex;gap:8px;color:var(--text-3);font-size:.9rem;margin-bottom:8px}
-  .tf-breadcrumb a{color:var(--text-3)}
-  .tf-title-row{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:14px}
-  .tf-title-row h1{font-size:1.6rem;margin:0}
-  .tf-actions{display:flex;gap:8px;align-items:center}
-  .pill{padding:6px 10px;border-radius:999px;font-size:.8rem;border:1px solid var(--line-1);background:var(--surface-2);color:#cfeadf}
-  .pill.warn{color:#ffe28a}
 
-  .btn{border:1px solid var(--line-1);background:var(--surface-2);padding:10px 14px;border-radius:12px;color:var(--text-1);transition:background .15s,border-color .15s,transform .05s}
+  .tiger-offer-shell{
+    max-width:1160px;
+    margin:0 auto;
+    padding:24px 16px 72px;
+    color:var(--text-1);
+  }
+
+  /* Cabeçalho */
+  .tf-header{
+    display:flex;
+    align-items:flex-end;
+    justify-content:space-between;
+    gap:16px;
+    margin-bottom:18px;
+  }
+  .tf-head-left{min-width:0}
+  .tf-breadcrumb{
+    display:flex;gap:8px;align-items:center;
+    color:var(--text-3);font-size:.92rem;margin-bottom:6px;
+  }
+  .tf-breadcrumb a{color:var(--text-3);text-decoration:none}
+  .tf-breadcrumb a:hover{color:var(--text-2)}
+  .tf-offer-title{
+    margin:0;
+    font-size:1.8rem;
+    letter-spacing:.2px;
+    font-weight:700;
+    background:linear-gradient(180deg,#fff 20%, #e6e6e6 70%, #bbb 100%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    filter:drop-shadow(0 0 0 transparent);
+  }
+
+  /* Botão principal */
+  .btn{
+    border:1px solid var(--line-1);
+    background:var(--surface-2);
+    color:var(--text-1);
+    padding:10px 14px;border-radius:12px;
+    transition:background .15s,border-color .15s,transform .05s;
+  }
   .btn:hover{background:#151515;border-color:var(--line-2)}
+  .btn.primary{
+    background:linear-gradient(180deg,#171717,#121212);
+    border-color:#2a2a2a;
+  }
+  .btn.primary:hover{background:#161616;border-color:#343434}
   .btn:active{transform:translateY(1px)}
-  .btn.primary{background:#181818;border-color:#2a2a2a}
-  .btn.primary:hover{background:#1b1b1b;border-color:#303030}
-  .btn.ghost{background:transparent}
-  .btn.ghost:hover{background:#141414}
-  .btn.danger{border-color:#3a2020;background:#191111}
-  .btn.danger:hover{border-color:#4a2a2a;background:#1c1212}
-  .btn.sm{padding:8px 10px;font-size:.85rem;border-radius:10px}
-  .btn.xs{padding:6px 8px;font-size:.8rem;border-radius:9px}
 
-  .tf-tabs,.tf-subtabs{display:flex;gap:8px;margin:10px 0 16px}
-  .tab,.subtab{padding:8px 12px;border-radius:10px;border:1px solid var(--line-1);background:#101010;font-size:.9rem;color:var(--text-2)}
-  .tab:hover,.subtab:hover{background:#131313;border-color:var(--line-2);color:var(--text-1)}
-  .tab.active,.subtab.active{background:#141414;border-color:#2a2a2a;color:var(--text-1)}
-  .tabpane{display:none}
-  .tabpane.show{display:block}
-  .subpane{display:none}
-  .subpane.show{display:block}
+  /* Abas principais */
+  .tf-tabs{
+    display:flex;gap:10px;justify-content:center;
+    margin:10px 0 12px;
+  }
+  .tab{
+    appearance:none;cursor:pointer;
+    padding:10px 14px;border-radius:999px;
+    background:#101010;border:1px solid var(--line-1);
+    color:var(--text-2);font-size:.95rem;
+    transition:background .15s,border-color .15s,color .15s;
+  }
+  .tab:hover{background:#131313;border-color:var(--line-2);color:var(--text-1)}
+  .tab.active{
+    background:#141414;border-color:#333;
+    color:var(--text-1);position:relative;
+  }
+  .tab.active::after{
+    content:"";position:absolute;left:12px;right:12px;bottom:-6px;height:2px;
+    background:linear-gradient(90deg,transparent,var(--accent-soft),transparent);
+    opacity:.9;border-radius:2px;
+  }
 
-  .grid-2{display:grid;grid-template-columns:2fr 1fr;gap:24px}
-  .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-  .grid-3.slim{gap:12px}
+  /* Abas secundárias (chips menores) */
+  .tf-subtabs{
+    display:flex;gap:8px;justify-content:center;
+    margin:6px 0 18px;
+  }
+  .subtab{
+    padding:8px 12px;border-radius:999px;
+    background:#0f0f0f;border:1px solid var(--line-1);
+    color:var(--text-2);font-size:.9rem;cursor:pointer;
+    transition:background .15s,border-color .15s,color .15s;
+  }
+  .subtab:hover{background:#131313;border-color:var(--line-2);color:var(--text-1)}
+  .subtab.active{background:#141414;border-color:#303030;color:var(--text-1)}
 
-  .card{border:1px solid var(--line-1);background:var(--surface-1);border-radius:18px;padding:16px;box-shadow:0 8px 24px rgba(0,0,0,.35)}
-  .card.side{position:sticky;top:84px;height:fit-content;background:var(--surface-2)}
-  .card-head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:12px}
-  .card-head .title{display:flex;align-items:center;gap:8px}
-  .card-head .title h3{margin:0;font-size:1.05rem}
-  .dot{width:8px;height:8px;border-radius:50%;background:var(--accent);opacity:.7;box-shadow:none}
+  /* Placeholder da área de conteúdo (só para dar respiro) */
+  .tf-placeholder{
+    height:220px;
+    border:1px dashed var(--line-2);
+    border-radius:18px;
+    background:var(--surface-1);
+  }
 
-  .hint{color:var(--text-3);font-size:.9rem;margin:0}
-  .label{font-size:.9rem;margin:8px 0 6px;color:#e5e5e5}
-  .input{width:100%;background:#0e0e0e;border:1px solid #1b1b1b;border-radius:12px;padding:10px 12px;color:var(--text-1)}
-  .input::placeholder{color:#6f6f6f}
-  .input.area{min-height:140px}
-  .input.xs{max-width:140px}
-  .row{display:flex;align-items:end;justify-content:space-between;gap:12px}
-  .col.right{text-align:right}
-  .split{display:flex;align-items:center;justify-content:space-between;margin-top:8px}
-  .line{height:1px;background:linear-gradient(90deg,transparent,#202020,transparent);margin:14px 0}
-  .media-list.empty{padding:10px;border:1px dashed #252525;border-radius:12px;color:var(--text-3);background:#0d0d0d}
-  .inline{display:flex;align-items:center;gap:10px}
-  .actions{margin-top:12px;display:flex;gap:8px}
-  .actions.r{justify-content:flex-end}
-  code{background:#121212;border:1px solid #1d1d1d;border-radius:6px;padding:2px 6px}
-
-  .plans{display:flex;flex-direction:column;gap:10px}
-  .plan{border:1px solid var(--line-1);background:var(--surface-2);border-radius:14px;padding:10px 10px 10px 12px;display:flex;align-items:center;justify-content:space-between}
-  .plans .plan:nth-child(even){background:var(--surface-3)}
-  .plan.expanded{flex-direction:column;align-items:stretch;gap:10px}
-  .p-l{display:flex;flex-direction:column}
-  .p-l strong{font-size:.95rem;color:#eaeaea}
-  .p-l span{color:var(--text-3);font-size:.85rem}
-  .p-r{display:flex;gap:6px}
-  .plan-body{border-top:1px dashed #262626;padding-top:10px}
-
-  .soon{padding:28px;text-align:center;color:var(--text-3);background:#101010;border:1px dashed #232323;border-radius:14px}
-  .radios{gap:10px}
-  .radio{display:flex;align-items:center;gap:8px;font-size:.95rem;color:var(--text-2)}
-  .radio input{transform:translateY(1px)}
-  .mini-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:6px}
-  .mini{border:1px solid var(--line-1);background:var(--surface-2);border-radius:14px;padding:12px}
-  .mini:hover{background:#151515;border-color:var(--line-2)}
-  .mini-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
-  .mini.ghost-state{display:flex;align-items:center;justify-content:center;color:var(--text-3);background:#101010}
-  .tiny{font-size:.8rem;color:var(--text-3)}
-
-  .ghost{border:1px dashed #262626;border-radius:14px;padding:12px;background:#101010}
-  .ghost-title{font-weight:600;margin-bottom:4px}
-  .ghost-text{color:var(--text-3);font-size:.9rem;margin:0 0 8px}
-
-  .switch{position:relative;display:inline-flex;width:44px;height:24px}
-  .switch input{display:none}
-  .switch span{position:absolute;inset:0;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:999px;transition:.2s}
-  .switch span:after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#474747;transition:.2s}
-  .switch input:checked+span{background:#222;border-color:#3a3a3a}
-  .switch input:checked+span:after{left:23px;background:#8d8d8d}
-  @media (max-width:1080px){.grid-2{grid-template-columns:1fr}.mini-grid{grid-template-columns:1fr}}
+  /* Responsivo */
+  @media (max-width:900px){
+    .tf-header{flex-direction:column;align-items:flex-start}
+    .tf-head-right{width:100%;display:flex;justify-content:flex-end}
+  }
 </style>
 
 <script>
-  function toast(msg){console.log('TigerFy:', msg)}
-
-  // Tabs principais
-  var tabsTop = document.querySelectorAll('#tabsTop .tab');
-  var panes = {
-    principal: document.querySelector('#tab-principal'),
-    tracking: document.querySelector('#tab-tracking'),
-    redir: document.querySelector('#tab-redir'),
-    contingencia: document.querySelector('#tab-contingencia'),
-    cloaker: document.querySelector('#tab-cloaker'),
-  };
-  tabsTop.forEach(function(btn){
-    btn.addEventListener('click', function(){
-      tabsTop.forEach(function(b){ b.classList.remove('active'); });
-      btn.classList.add('active');
-      var key = btn.dataset.tab;
-      Object.values(panes).forEach(function(p){ p.classList.remove('show'); });
-      panes[key].classList.add('show');
+  // Alterna visibilidade das subtabs: só aparecem quando "Principal" está ativa.
+  (function(){
+    var mainTabs = document.querySelectorAll('.tf-tabs .tab');
+    var subTabsWrap = document.getElementById('subtabs-principal');
+    mainTabs.forEach(function(btn){
+      btn.addEventListener('click', function(){
+        mainTabs.forEach(function(b){ b.classList.remove('active'); });
+        btn.classList.add('active');
+        var isPrincipal = btn.dataset.tab === 'principal';
+        if(subTabsWrap){ subTabsWrap.style.display = isPrincipal ? 'flex' : 'none'; }
+      });
     });
-  });
-
-  // Subtabs (Principal)
-  var subBtns = document.querySelectorAll('#subTabs .subtab');
-  var subPanes = {
-    front: document.querySelector('#sub-front'),
-    bump: document.querySelector('#sub-bump'),
-    upsell: document.querySelector('#sub-upsell'),
-    downsell: document.querySelector('#sub-downsell'),
-    disparo: document.querySelector('#sub-disparo'),
-    pix: document.querySelector('#sub-pix'),
-  };
-  subBtns.forEach(function(btn){
-    btn.addEventListener('click', function(){
-      subBtns.forEach(function(b){ b.classList.remove('active'); });
-      btn.classList.add('active');
-      var key = btn.dataset.sub;
-      Object.values(subPanes).forEach(function(p){ p.classList.remove('show'); });
-      subPanes[key].classList.add('show');
-    });
-  });
-
-  // Tracking radios
-  var trackModes = document.getElementById('trackModes');
-  var boxFb = document.getElementById('boxFb');
-  var boxUtmify = document.getElementById('boxUtmify');
-  trackModes.addEventListener('change', function(){
-    var val = document.querySelector('input[name="tmode"]:checked').value;
-    boxFb.style.display = (val === 'fb_pixel' || val === 'utmify_fb') ? '' : 'none';
-    boxUtmify.style.display = (val === 'utmify_fb' || val === 'utmify_utmify') ? '' : 'none';
-  });
-
-  // Planos expand/collapse
-  document.getElementById('plansList')?.addEventListener('click', function(e){
-    var act = e.target && e.target.dataset ? e.target.dataset.act : null;
-    var plan = e.target && e.target.closest ? e.target.closest('.plan') : null;
-    if(!act || !plan) return;
-    var id = plan.dataset.id;
-    var body = document.querySelector('.plan-body[data-body-for="'+id+'"]');
-    if(act==='edit'){ body.style.display = (body.style.display==='none' || body.style.display==='') ? '' : 'none'; }
-    if(act==='del'){ toast('Excluir plano '+id); }
-    if(act==='save-deliver'){ toast('Entregável salvo'); }
-  });
-
-  // Mídias – prompts simples
-  document.getElementById('btnAddMediaFront')?.addEventListener('click', function(){
-    var url = prompt('Cole o link da mídia (arquivo no Telegram):');
-    if(url){ document.getElementById('front_media').textContent = url; toast('Mídia adicionada'); }
-  });
-  document.getElementById('btnAddMediaPix')?.addEventListener('click', function(){
-    var url = prompt('Cole o link da mídia (arquivo no Telegram):');
-    if(url){ document.getElementById('pix_media').textContent = url; toast('Mídia adicionada'); }
-  });
-
-  // Redirecionadores – máximo 2 ativos
-  document.getElementById('botsGrid')?.addEventListener('change', function(e){
-    if(!(e.target && e.target.classList && e.target.classList.contains('bot-active'))) return;
-    var all = Array.from(document.querySelectorAll('.bot-active'));
-    var count = all.filter(function(i){ return i.checked; }).length;
-    if(count>2){
-      e.target.checked = false;
-      toast('Máximo recomendado: 2 bots ativos.');
-    }
-  });
-
-  // Ações (stubs)
-  document.getElementById('saveFront')?.addEventListener('click', function(){ toast('Front salvo (UI)'); });
-  document.getElementById('savePix')?.addEventListener('click', function(){ toast('Mensagem Pix salva (UI)'); });
-  document.getElementById('saveTracking')?.addEventListener('click', function(){ toast('Tracking salvo (UI)'); });
-  document.getElementById('saveCloaker')?.addEventListener('click', function(){ toast('Cloaker salvo (UI)'); });
-  document.getElementById('btnSaveAll')?.addEventListener('click', function(){ toast('Configurações salvas (UI)'); });
-  document.getElementById('btnCreatePlan')?.addEventListener('click', function(){ toast('Criar plano (UI)'); });
-  document.getElementById('btnCreateRedirect')?.addEventListener('click', function(){ toast('Criar redirect (UI)'); });
-  document.getElementById('btnAddBot')?.addEventListener('click', function(){ toast('Cadastrar novo bot (UI)'); });
-  document.getElementById('btnDupNow')?.addEventListener('click', function(){ toast('Duplicar bot (UI)'); });
-  document.getElementById('btnTest')?.addEventListener('click', function(){ toast('Disparo de teste (UI)'); });
-  document.getElementById('btnLogs')?.addEventListener('click', function(){ toast('Abrir logs (UI)'); });
+    // Estado inicial
+    if(subTabsWrap){ subTabsWrap.style.display = 'flex'; }
+  })();
 </script>
