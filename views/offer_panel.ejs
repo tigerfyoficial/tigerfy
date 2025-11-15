@@ -1,552 +1,591 @@
 <%- include('partials/visual_hottrack') %>
 
-<div class="tf-offer">
+<div class="tgf-wrap">
   <!-- breadcrumb + header -->
-  <nav class="tf-bc">
-    <a href="/ofertas">Minhas Ofertas</a> <span>›</span> <span><%= offer.name %></span>
+  <nav class="tgf-bc">
+    <a href="/ofertas">Minhas Ofertas</a><span>›</span><span><%= offer.name %></span>
   </nav>
 
-  <header class="tf-head">
+  <header class="tgf-header">
     <div>
       <h1><%= offer.name %></h1>
-      <p>ID: <%= offer.id %></p>
+      <p class="muted">ID: <%= offer.id %></p>
     </div>
-    <span class="tf-status <%= offer.status %>">
-      <%= offer.status === 'ativo' ? 'Ativo' : (offer.status === 'incompleto' ? 'Incompleto' : 'Erro') %>
-    </span>
+    <span class="badge <%= offer.status %>"><%= offer.status === 'ativo' ? 'Ativo' : (offer.status==='incompleto'?'Incompleto':'Erro') %></span>
   </header>
 
-  <!-- identidade do bot (mínima, sempre visível) -->
-  <section class="tf-id">
-    <form method="POST" action="/ofertas/<%= offer.id %>/token" class="tf-id-grid" id="formIdentity">
-      <div class="tf-field">
+  <!-- identidade do bot (compacta, proporção Supabase) -->
+  <section class="card id-card">
+    <form method="POST" action="/ofertas/<%= offer.id %>/token" class="id-grid" id="formIdentity">
+      <div class="field">
         <label>Username (sem @)</label>
         <input type="text" name="telegramUsername" id="botUser" value="<%= (offer.telegramUsername||'').replace(/^@/,'') %>" placeholder="seu_bot_exemplo_bot">
       </div>
-      <div class="tf-field">
+      <div class="field">
         <label>Token do Bot</label>
         <input type="text" name="botToken" id="botToken" value="<%= offer.botToken||'' %>" placeholder="123:AAAA...">
       </div>
-      <button class="tf-btn tf-btn-primary">Salvar</button>
-      <button type="button" class="tf-btn tf-btn-ghost" id="dupBot">Duplicar bot</button>
+      <div class="id-actions">
+        <button class="btn btn-primary">Salvar</button>
+        <button type="button" class="btn btn-ghost" id="dupBot">Duplicar bot</button>
+      </div>
     </form>
   </section>
 
-  <!-- TABS / CAIXINHAS -->
-  <div class="tf-tabs">
+  <!-- TABS -->
+  <div class="tabs">
     <button class="tab active" data-tab="box-bot">Bot</button>
     <button class="tab" data-tab="box-redirect">Redirecionador</button>
     <button class="tab" data-tab="box-track">Traqueamento</button>
-    <button class="tab" data-tab="box-cloak">Cloaker Anti-Clone</button>
+    <button class="tab" data-tab="box-cloak">Cloaker</button>
   </div>
 
-  <!-- 📦 1 — BOT (tudo aqui, mas minimalista) -->
-  <section class="tf-box show" id="box-bot">
-    <!-- separadores leves e cards compactos -->
-    <!-- Copy principal -->
-    <article class="tf-card">
-      <div class="tf-card-h">
+  <!-- 📦 BOT -->
+  <section id="box-bot" class="box show">
+    <!-- grid vertical com respiro e 3D leve -->
+    <!-- COPY + PLANOS -->
+    <article class="card">
+      <div class="card-h">
         <div>
-          <h3>Copy principal</h3>
-          <p class="muted">Mensagem enviada no <code>/start</code>.</p>
+          <h3>Copy inicial</h3>
+          <p class="muted">Mensagem enviada no <code>/start</code>. Vincule um plano base.</p>
         </div>
         <div class="row gap8">
-          <button class="tf-btn tf-btn-ghost" data-insert="#copyMedia">Inserir mídia (Telegram)</button>
-          <button class="tf-btn tf-btn-primary" data-save="copy">Salvar</button>
+          <button type="button" class="btn btn-ghost" data-insert="#copyMedia">Inserir mídia (Telegram)</button>
+          <button type="button" class="btn btn-primary" data-save="copy">Salvar</button>
         </div>
       </div>
 
       <div class="grid2">
-        <div class="tf-field">
+        <div class="field">
           <label>Mensagem</label>
-          <textarea id="copyText" placeholder="Escreva a mensagem de boas-vindas, CTA, etc."></textarea>
+          <textarea id="copyText" placeholder="Escreva a mensagem principal…"></textarea>
         </div>
-        <aside class="tf-mini">
-          <div class="tf-field">
-            <label>Plano vinculado (ID)</label>
-            <input id="copyPlan" type="text" placeholder="ex.: 5129">
+
+        <aside class="mini-col">
+          <div class="field">
+            <label>Plano base</label>
+            <select id="copyPlan"></select>
           </div>
-          <div class="tf-field">
-            <label>Valor (R$)</label>
-            <input id="copyPrice" type="text" placeholder="11,90">
+          <div class="mini-pair">
+            <div class="field">
+              <label>Valor (R$)</label>
+              <input id="copyPrice" type="text" placeholder="11,90">
+            </div>
+            <div class="field">
+              <label>Duração (dias)</label>
+              <input id="copyDays" type="number" min="0" placeholder="30">
+            </div>
           </div>
-          <div class="tf-field">
+          <div class="field">
             <label>Mídia (link Telegram)</label>
             <input id="copyMedia" type="url" placeholder="https://t.me/...">
           </div>
-          <div class="tf-row-compact">
-            <div class="tf-field tiny">
-              <label>Entregável</label>
-              <input id="copyDeliver" type="url" placeholder="https://obrigado...">
-            </div>
-            <div class="tf-field tiny switch-row">
-              <label>Auto-deletar</label>
-              <label class="tf-switch">
-                <input id="copyDelOn" type="checkbox"><span></span>
-              </label>
-              <input id="copyDelSec" class="sec" type="number" min="0" placeholder="seg" disabled>
-            </div>
-          </div>
         </aside>
+      </div>
+
+      <!-- PLANOS: mini-cards minimalistas -->
+      <div class="subhead">
+        <span>Planos</span>
+        <button type="button" class="btn btn-primary" id="addPlan">+ Adicionar plano</button>
+      </div>
+      <div id="plans" class="plan-list"><!-- cards gerados via JS --></div>
+    </article>
+
+    <!-- CTA (opcional) -->
+    <article class="card slim">
+      <div class="card-h">
+        <h3>Botão de CTA (opcional)</h3>
+        <div class="row gap8">
+          <button type="button" class="btn btn-ghost" data-insert="#ctaMedia">Inserir mídia (Telegram)</button>
+          <button type="button" class="btn btn-primary" data-save="cta">Salvar</button>
+        </div>
+      </div>
+      <div class="grid3">
+        <div class="field"><label>Nome</label><input id="ctaName" type="text" placeholder="QUERO MINHA VAGA"></div>
+        <div class="field"><label>Link</label><input id="ctaLink" type="url" placeholder="https://..."></div>
+        <div class="field"><label>Mídia</label><input id="ctaMedia" type="url" placeholder="https://t.me/..."></div>
       </div>
     </article>
 
-    <!-- CTA opcional -->
-    <article class="tf-card">
-      <div class="tf-card-h">
-        <div><h3>Botão de CTA (opcional)</h3></div>
+    <!-- ORDERBUMP (ilimitados) -->
+    <article class="card">
+      <div class="card-h">
+        <h3>OrderBump</h3>
         <div class="row gap8">
-          <button class="tf-btn tf-btn-ghost" data-insert="#ctaMedia">Inserir mídia (Telegram)</button>
-          <button class="tf-btn tf-btn-primary" data-save="cta">Salvar</button>
+          <button type="button" class="btn btn-primary" id="addOB">+ Adicionar</button>
         </div>
       </div>
 
-      <div class="grid3">
-        <div class="tf-field"><label>Nome</label><input id="ctaName" type="text" placeholder="QUERO MINHA VAGA"></div>
-        <div class="tf-field"><label>Link</label><input id="ctaLink" type="url" placeholder="https://..."></div>
-        <div class="tf-field"><label>Mídia (opcional)</label><input id="ctaMedia" type="url" placeholder="https://t.me/..."></div>
-      </div>
-
-      <div class="tf-row-compact">
-        <div class="tf-field tiny"><label>Entregável</label><input id="ctaDeliver" type="url" placeholder="https://obrigado..."></div>
-        <div class="tf-field tiny switch-row"><label>Auto-deletar</label><label class="tf-switch"><input id="ctaDelOn" type="checkbox"><span></span></label><input id="ctaDelSec" class="sec" type="number" min="0" placeholder="seg" disabled></div>
-      </div>
-    </article>
-
-    <!-- OrderBump (ilimitados, listagem minimal com aceitar preview) -->
-    <article class="tf-card">
-      <div class="tf-card-h">
-        <div><h3>OrderBump</h3><p class="muted">Cards minimalistas; <b>Aceitar ou Não</b> para simular preço final.</p></div>
-        <div class="row gap8"><button class="tf-btn tf-btn-primary" id="addOB">+ Adicionar</button></div>
-      </div>
-
-      <div class="tf-field tiny" style="max-width:260px">
-        <label>Preço do front (R$)</label>
-        <input id="frontPrice" type="text" placeholder="11,90">
+      <div class="field slim w240">
+        <label>Plano base (preço do front)</label>
+        <select id="frontPlan"></select>
       </div>
 
       <div id="obList" class="ob-list"></div>
 
-      <div class="tf-total">
-        <span>Valor final simulado:</span>
-        <strong id="sumTotal">R$ 0,00</strong>
+      <div class="total-bar">
+        <span>Valor final:</span><strong id="sumTotal">R$ 0,00</strong>
       </div>
     </article>
 
-    <!-- Upsell -->
-    <article class="tf-card">
-      <div class="tf-card-h">
-        <div><h3>Upsell</h3></div>
-        <div class="row gap8">
-          <button class="tf-btn tf-btn-ghost" data-insert="#upMedia">Inserir mídia (Telegram)</button>
-          <button class="tf-btn tf-btn-primary" data-save="upsell">Salvar</button>
+    <!-- UPS / DOWN -->
+    <div class="grid2">
+      <article class="card slim">
+        <div class="card-h">
+          <h3>Upsell</h3>
+          <div class="row gap8">
+            <button type="button" class="btn btn-ghost" data-insert="#upMedia">Inserir mídia</button>
+            <button type="button" class="btn btn-primary" data-save="upsell">Salvar</button>
+          </div>
         </div>
-      </div>
+        <div class="grid3">
+          <div class="field"><label>Plano</label><select id="upPlan"></select></div>
+          <div class="field"><label>Valor (R$)</label><input id="upPrice" type="text" placeholder="29,90"></div>
+          <div class="field"><label>Mídia</label><input id="upMedia" type="url" placeholder="https://t.me/..."></div>
+        </div>
+        <div class="field"><label>Copy</label><textarea id="upCopy" placeholder="Mensagem do upsell…"></textarea></div>
+      </article>
 
-      <div class="grid3">
-        <div class="tf-field"><label>Título</label><input id="upTitle" type="text" placeholder="Oferta Premium X"></div>
-        <div class="tf-field"><label>Plano (ID)</label><input id="upPlan" type="text" placeholder="5131"></div>
-        <div class="tf-field"><label>Valor (R$)</label><input id="upPrice" type="text" placeholder="29,90"></div>
+      <article class="card slim">
+        <div class="card-h">
+          <h3>Downsell</h3>
+          <div class="row gap8">
+            <button type="button" class="btn btn-ghost" data-insert="#downMedia">Inserir mídia</button>
+            <button type="button" class="btn btn-primary" data-save="downsell">Salvar</button>
+          </div>
+        </div>
+        <div class="grid3">
+          <div class="field"><label>Plano</label><select id="downPlan"></select></div>
+          <div class="field"><label>Valor (R$)</label><input id="downPrice" type="text" placeholder="19,90"></div>
+          <div class="field"><label>Mídia</label><input id="downMedia" type="url" placeholder="https://t.me/..."></div>
+        </div>
+        <div class="field"><label>Copy</label><textarea id="downCopy" placeholder="Mensagem do downsell…"></textarea></div>
+      </article>
+    </div>
+
+    <!-- PIX (apenas texto + variáveis) -->
+    <article class="card slim">
+      <div class="card-h">
+        <div>
+          <h3>Mensagens PIX</h3>
+          <p class="muted">Use variáveis: <code>[[pix]]</code> <code>[[valor]]</code> <code>[[plano]]</code></p>
+        </div>
+        <div class="row gap8">
+          <button type="button" class="btn btn-ghost" data-insert="#pixMedia">Inserir mídia</button>
+          <button type="button" class="btn btn-primary" data-save="pix">Salvar</button>
+        </div>
       </div>
       <div class="grid2">
-        <div class="tf-field"><label>Copy</label><textarea id="upCopy" placeholder="Benefícios, urgência, CTA..."></textarea></div>
-        <div class="tf-mini">
-          <div class="tf-field"><label>Mídia</label><input id="upMedia" type="url" placeholder="https://t.me/..."></div>
-          <div class="tf-field tiny"><label>Entregável</label><input id="upDeliver" type="url" placeholder="https://obrigado..."></div>
-          <div class="tf-field tiny switch-row"><label>Auto-deletar</label><label class="tf-switch"><input id="upDelOn" type="checkbox"><span></span></label><input id="upDelSec" class="sec" type="number" min="0" placeholder="seg" disabled></div>
-        </div>
+        <div class="field"><label>Mensagem</label><textarea id="pixText" placeholder="Ex.: Copie e pague: [[pix]]"></textarea></div>
+        <div class="field"><label>Mídia (link Telegram)</label><input id="pixMedia" type="url" placeholder="https://t.me/..."></div>
       </div>
     </article>
 
-    <!-- Downsell -->
-    <article class="tf-card">
-      <div class="tf-card-h">
-        <div><h3>Downsell</h3></div>
-        <div class="row gap8">
-          <button class="tf-btn tf-btn-ghost" data-insert="#downMedia">Inserir mídia (Telegram)</button>
-          <button class="tf-btn tf-btn-primary" data-save="downsell">Salvar</button>
-        </div>
-      </div>
-
-      <div class="grid3">
-        <div class="tf-field"><label>Título</label><input id="downTitle" type="text" placeholder="Oferta Alternativa Y"></div>
-        <div class="tf-field"><label>Plano (ID)</label><input id="downPlan" type="text" placeholder="5130"></div>
-        <div class="tf-field"><label>Valor (R$)</label><input id="downPrice" type="text" placeholder="19,90"></div>
+    <!-- ENTREGÁVEL (separado e pequeno) -->
+    <article class="card tiny">
+      <div class="card-h">
+        <h3>Entregável (pós-pagamento)</h3>
+        <button type="button" class="btn btn-primary" data-save="deliver">Salvar</button>
       </div>
       <div class="grid2">
-        <div class="tf-field"><label>Copy</label><textarea id="downCopy" placeholder="Benefícios, condição, CTA..."></textarea></div>
-        <div class="tf-mini">
-          <div class="tf-field"><label>Mídia</label><input id="downMedia" type="url" placeholder="https://t.me/..."></div>
-          <div class="tf-field tiny"><label>Entregável</label><input id="downDeliver" type="url" placeholder="https://obrigado..."></div>
-          <div class="tf-field tiny switch-row"><label>Auto-deletar</label><label class="tf-switch"><input id="downDelOn" type="checkbox"><span></span></label><input id="downDelSec" class="sec" type="number" min="0" placeholder="seg" disabled></div>
-        </div>
+        <div class="field"><label>URL</label><input id="deliverUrl" type="url" placeholder="https://obrigado..."></div>
+        <div class="field w180"><label>Expira (dias)</label><input id="deliverDays" type="number" min="0" placeholder="0 = sem expirar"></div>
       </div>
     </article>
 
-    <!-- Mensagem do PIX (suporta [[pix]] [[valor]] [[nome]]) -->
-    <article class="tf-card">
-      <div class="tf-card-h">
-        <div><h3>Mensagem do PIX</h3><p class="muted">Use variáveis entre colchetes: <code>[[pix]]</code>, <code>[[valor]]</code>, <code>[[nome]]</code>.</p></div>
+    <!-- FOLLOW-UP (compacto) -->
+    <article class="card slim">
+      <div class="card-h">
+        <h3>Disparo / Follow-up</h3>
         <div class="row gap8">
-          <button class="tf-btn tf-btn-ghost" data-insert="#pixMedia">Inserir mídia (Telegram)</button>
-          <button class="tf-btn tf-btn-primary" data-save="pix">Salvar</button>
+          <button type="button" class="btn btn-ghost" data-insert="#fupMedia">Inserir mídia</button>
+          <button type="button" class="btn btn-primary" data-save="follow">Salvar</button>
         </div>
       </div>
-
-      <div class="grid2">
-        <div class="tf-field"><label>Mensagem</label><textarea id="pixText" placeholder="Ex.: Pague com PIX: [[pix]]"></textarea></div>
-        <div class="tf-mini">
-          <div class="tf-field"><label>Mídia</label><input id="pixMedia" type="url" placeholder="https://t.me/..."></div>
-          <div class="tf-field tiny"><label>Entregável</label><input id="pixDeliver" type="url" placeholder="https://obrigado..."></div>
-          <div class="tf-field tiny switch-row"><label>Auto-deletar</label><label class="tf-switch"><input id="pixDelOn" type="checkbox"><span></span></label><input id="pixDelSec" class="sec" type="number" min="0" placeholder="seg" disabled></div>
-        </div>
-      </div>
-    </article>
-
-    <!-- Disparo / Follow-up -->
-    <article class="tf-card">
-      <div class="tf-card-h">
-        <div><h3>Disparo / Follow-up</h3></div>
-        <div class="row gap8">
-          <button class="tf-btn tf-btn-ghost" data-insert="#fupMedia">Inserir mídia (Telegram)</button>
-          <button class="tf-btn tf-btn-primary" data-save="follow">Salvar</button>
-        </div>
-      </div>
-
       <div class="grid3">
-        <div class="tf-field"><label>Agendamento</label>
+        <div class="field"><label>Agendamento</label>
           <select id="fupWhen"><option value="1h">1h</option><option value="6h">6h</option><option value="24h" selected>24h</option><option value="3d">3 dias</option></select>
         </div>
-        <div class="tf-field"><label>Condição</label>
+        <div class="field"><label>Condição</label>
           <select id="fupCond"><option value="nao_pagou" selected>Não pagou</option><option value="abandonou">Abandonou</option><option value="pagou">Pagou</option></select>
         </div>
-        <div class="tf-field"><label>Mídia</label><input id="fupMedia" type="url" placeholder="https://t.me/..."></div>
+        <div class="field"><label>Mídia</label><input id="fupMedia" type="url" placeholder="https://t.me/..."></div>
       </div>
+      <div class="field"><label>Copy</label><textarea id="fupCopy" placeholder="Mensagem de follow-up…"></textarea></div>
+    </article>
 
-      <div class="grid2">
-        <div class="tf-field"><label>Copy</label><textarea id="fupCopy" placeholder="Mensagem de follow-up..."></textarea></div>
-        <div class="tf-mini">
-          <div class="tf-field tiny"><label>Entregável</label><input id="fupDeliver" type="url" placeholder="https://obrigado..."></div>
-          <div class="tf-field tiny switch-row"><label>Auto-deletar</label><label class="tf-switch"><input id="fupDelOn" type="checkbox"><span></span></label><input id="fupDelSec" class="sec" type="number" min="0" placeholder="seg" disabled></div>
+    <!-- AUTO-DELETE (switch simples, regra global suave) -->
+    <article class="card tiny">
+      <div class="card-h">
+        <h3>Auto-deletar mensagens</h3>
+        <button type="button" class="btn btn-primary" data-save="autodel">Salvar</button>
+      </div>
+      <div class="grid3">
+        <div class="field switch-field">
+          <label>Ativar</label>
+          <label class="switch"><input id="adOn" type="checkbox"><span></span></label>
+        </div>
+        <div class="field w180"><label>Delay (seg)</label><input id="adSec" type="number" min="0" placeholder="0"></div>
+        <div class="field">
+          <label>Regra</label>
+          <select id="adRule">
+            <option value="next">Ao clicar no próximo botão</option>
+            <option value="newstart">Ao enviar /start novamente</option>
+          </select>
         </div>
       </div>
     </article>
   </section>
 
-  <!-- 📦 2 — REDIRECIONADOR -->
-  <section class="tf-box" id="box-redirect">
-    <article class="tf-card">
-      <div class="tf-card-h">
+  <!-- 📦 REDIRECIONADOR -->
+  <section id="box-redirect" class="box">
+    <article class="card">
+      <div class="card-h">
         <div>
           <h3>Redirecionador</h3>
-          <p class="muted">Cadastre múltiplos bots. Ative no máximo <b>2</b> para balancear tráfego.</p>
+          <p class="muted">Cadastre múltiplos bots. Ative no máximo 2.</p>
         </div>
         <div class="row gap8">
-          <button class="tf-btn tf-btn-primary" id="addBotRow">+ Cadastrar bot</button>
-          <button class="tf-btn tf-btn-ghost" data-save="redirect">Salvar ativos</button>
+          <button type="button" class="btn btn-primary" id="addBotRow">+ Cadastrar bot</button>
+          <button type="button" class="btn btn-ghost" data-save="redirect">Salvar ativos</button>
         </div>
       </div>
 
-      <div id="redirList" class="redir-list">
-        <!-- linhas de bots -->
-      </div>
+      <div id="redirList" class="redir-list"><!-- mini cards --></div>
     </article>
   </section>
 
-  <!-- 📦 3 — TRAQUEAMENTO -->
-  <section class="tf-box" id="box-track">
-    <article class="tf-card">
-      <div class="tf-card-h">
-        <div><h3>Traqueamento</h3><p class="muted">Escolha o modo e preencha IDs. Área isolada para evitar confusão.</p></div>
-        <button class="tf-btn tf-btn-primary" data-save="track">Salvar</button>
+  <!-- 📦 TRAQUEAMENTO -->
+  <section id="box-track" class="box">
+    <article class="card">
+      <div class="card-h">
+        <h3>Traqueamento</h3>
+        <button type="button" class="btn btn-primary" data-save="track">Salvar</button>
       </div>
 
-      <div class="tf-trackseg">
+      <div class="seg">
         <label><input type="radio" name="trk" value="fb" checked><span>Facebook Pixel</span></label>
         <label><input type="radio" name="trk" value="utm_fb"><span>UTMify + Facebook Pixel</span></label>
         <label><input type="radio" name="trk" value="utm_utm"><span>UTMify + UTMify Pixel</span></label>
       </div>
 
-      <div class="grid3" id="trackFields">
-        <div class="tf-field trk-fb"><label>Facebook Pixel ID</label><input id="fbPixelId" type="text" placeholder="XXXXXXXXXXXXXXX"></div>
+      <div class="track-grid">
+        <div class="field t-fb"><label>Facebook Pixel ID</label><input id="fbPixelId" type="text" placeholder="XXXXXXXXXXXXXXX"></div>
 
-        <div class="tf-field trk-utm"><label>UTMify Project / Site</label><input id="utmProject" type="text" placeholder="meu-site"></div>
-        <div class="tf-field trk-utm"><label>UTMify Pixel ID</label><input id="utmPixel" type="text" placeholder="utm-xxxx"></div>
+        <div class="field t-utm"><label>UTMify Project / Site</label><input id="utmProject" type="text" placeholder="meu-site"></div>
+        <div class="field t-utm"><label>UTMify Pixel ID</label><input id="utmPixel" type="text" placeholder="utm-xxxx"></div>
       </div>
     </article>
   </section>
 
-  <!-- 📦 4 — CLOAKER -->
-  <section class="tf-box" id="box-cloak">
-    <article class="tf-card subtle">
-      <div class="tf-card-h">
-        <div><h3>Cloaker Anti-Clone</h3><p class="muted">Em breve — adiciona ruído invisível ao copiar para evitar clonagem.</p></div>
-        <label class="tf-switch">
-          <input id="cloakOn" type="checkbox" disabled><span></span>
-        </label>
+  <!-- 📦 CLOAKER -->
+  <section id="box-cloak" class="box">
+    <article class="card tiny subtle">
+      <div class="card-h">
+        <h3>Cloaker Anti-Clone</h3>
+        <div class="row gap8">
+          <label class="switch"><input id="cloakOn" type="checkbox" disabled><span></span></label>
+          <span class="muted">Em breve — ruído invisível ao copiar para evitar clonagem.</span>
+        </div>
       </div>
     </article>
   </section>
 
-  <div class="tf-bottom">
-    <a class="tf-btn tf-btn-secondary" href="/ofertas">Voltar</a>
+  <div class="footer-actions">
+    <a href="/ofertas" class="btn btn-secondary">Voltar</a>
   </div>
 </div>
 
 <style>
   :root{
-    --gold:#ffcc00; --gold2:#d4a100; --bg:#0a0a0a; --card:rgba(12,12,12,.80);
-    --muted:#a9a9a9; --line:rgba(255,204,0,.12); --line2:rgba(255,255,255,.10);
-    --shadow:0 12px 48px rgba(0,0,0,.55); --glow:0 0 32px rgba(255,204,0,.06);
+    --bg:#0b0b0b; --card:#0f0f0f; --muted:#a7a7a7; --line:rgba(255,255,255,.08);
+    --gold:#ffcc00; --gold2:#d4a100; --ring:rgba(255,204,0,.18);
+    --shadow:0 20px 60px rgba(0,0,0,.55); --glow:0 0 40px rgba(255,204,0,.07);
   }
-  .tf-offer{max-width:1120px;margin:0 auto;padding:56px 18px 90px;color:#fff}
-  .tf-bc{display:flex;gap:8px;color:#bbb;margin-bottom:10px}
-  .tf-bc a{color:#ddd;text-decoration:none}.tf-bc a:hover{color:#fff}
-  .tf-head{display:flex;justify-content:space-between;align-items:end;margin-bottom:14px}
-  .tf-head h1{margin:0;color:var(--gold);font-size:2rem}
-  .tf-head p{margin:4px 0 0;color:#8c8c8c}
-  .tf-status{padding:6px 12px;border-radius:999px;border:1px solid var(--line)}
-  .tf-status.ativo{background:rgba(0,255,120,.14);color:#51ff9e;border-color:rgba(0,255,120,.32)}
-  .tf-status.incompleto{background:rgba(255,204,0,.12);color:#ffd86a}
-
-  .tf-id{background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow),var(--glow);padding:12px 12px;margin-bottom:14px}
-  .tf-id-grid{display:grid;grid-template-columns:1fr 1fr auto auto;gap:10px;align-items:end}
-  .row{display:flex;align-items:center}.gap8{gap:8px}
-
-  .tf-tabs{display:flex;gap:8px;margin:12px 0 8px}
-  .tf-tabs .tab{border:1px solid var(--line2);background:rgba(255,255,255,.03);color:#e9e9e9;padding:10px 14px;border-radius:12px;cursor:pointer}
-  .tf-tabs .tab.active{background:linear-gradient(90deg,var(--gold),var(--gold2));color:#1a1300;border:none;box-shadow:0 0 14px rgba(255,204,0,.35)}
-
-  .tf-box{display:none}.tf-box.show{display:block}
-  .tf-card{background:radial-gradient(1200px 300px at -10% -20%,rgba(255,204,0,.05),transparent 45%),var(--card);
-           border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow),var(--glow);padding:14px;margin-bottom:12px}
-  .tf-card.subtle{background:rgba(255,255,255,.05)}
-  .tf-card-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
-  .tf-card-h h3{margin:0;color:var(--gold);font-size:1.05rem}
+  .tgf-wrap{max-width:1128px;margin:0 auto;padding:56px 18px 90px;color:#fff}
+  .tgf-bc{display:flex;gap:8px;color:#bfbfbf;margin-bottom:12px}
+  .tgf-bc a{color:#e4e4e4;text-decoration:none}.tgf-bc a:hover{color:#fff}
+  .tgf-header{display:flex;justify-content:space-between;align-items:end;margin-bottom:14px}
+  .tgf-header h1{margin:0;color:var(--gold);font-size:1.9rem}
   .muted{color:#a8a8a8}
+  .badge{padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.03)}
+  .badge.ativo{background:rgba(0,255,150,.12);border-color:rgba(0,255,150,.25);color:#66ffc9}
 
-  .tf-field label{display:block;margin-bottom:6px;font-size:.9rem;color:#eaeaea}
-  .tf-field input,.tf-field textarea,.tf-field select{
-    width:100%;border-radius:12px;border:1px solid var(--line2);
-    background:rgba(255,255,255,.03);color:#fff;padding:11px 12px;outline:none;
-    box-shadow:inset 0 0 0 1px rgba(255,255,255,.02)}
-  .tf-field textarea{min-height:120px;resize:vertical}
-  .tf-field input:focus,.tf-field textarea:focus,.tf-field select:focus{
-    border-color:var(--gold); box-shadow:0 0 0 1px rgba(255,204,0,.22), inset 0 0 0 1px rgba(255,204,0,.06)
+  .card{
+    background: radial-gradient(1200px 300px at -10% -20%, rgba(255,204,0,.05), transparent 48%), var(--card);
+    border:1px solid var(--line); border-radius:16px; box-shadow:var(--shadow),var(--glow);
+    padding:16px; margin-bottom:12px;
   }
-  .tf-mini{display:flex;flex-direction:column;gap:10px}
-  .tf-row-compact{display:flex;gap:10px;align-items:end}
-  .tf-field.tiny{min-width:240px}
-  .switch-row{display:flex;gap:8px;align-items:center}
-  .sec{width:90px}
+  .card.slim{padding:14px}
+  .card.tiny{padding:12px}
+  .card.subtle{background:rgba(255,255,255,.05)}
+  .card-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+  .card-h h3{margin:0;font-weight:700;font-size:1.02rem;color:#f7e8b0}
+  .subhead{display:flex;justify-content:space-between;align-items:center;margin-top:10px;margin-bottom:6px;color:#e5e5e5}
+  .row{display:flex;align-items:center}
+  .gap8{gap:8px}
+
+  .id-card{padding:12px}
+  .id-grid{display:grid;grid-template-columns:1fr 1fr auto;gap:10px;align-items:end}
+  .id-actions{display:flex;gap:8px}
+
+  .tabs{display:flex;gap:8px;margin:12px 0 8px}
+  .tab{border:1px solid var(--line);background:rgba(255,255,255,.03);color:#eaeaea;padding:10px 14px;border-radius:12px;cursor:pointer}
+  .tab.active{background:linear-gradient(90deg,var(--gold),var(--gold2));color:#1a1300;border:none;box-shadow:0 0 14px rgba(255,204,0,.35)}
+  .box{display:none}.box.show{display:block}
+
+  .field label{display:block;margin:0 0 6px 2px;font-size:.88rem;color:#e9e9e9}
+  .field input,.field textarea,.field select{
+    width:100%;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.03);
+    color:#fff;padding:10px 12px;outline:none;box-shadow:inset 0 0 0 1px rgba(255,255,255,.02)
+  }
+  .field textarea{min-height:110px;resize:vertical}
+  .field input:focus,.field textarea:focus,.field select:focus{
+    border-color:var(--gold); box-shadow:0 0 0 2px var(--ring), inset 0 0 0 1px rgba(255,255,255,.06)
+  }
+  .mini-col{display:flex;flex-direction:column;gap:10px}
+  .mini-pair{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .w180{max-width:180px}.w240{max-width:240px}
 
   .grid2{display:grid;grid-template-columns:1fr 420px;gap:12px}
   .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
 
-  .tf-btn{border:1px solid var(--line2);background:transparent;color:#eaeaea;padding:10px 14px;border-radius:12px;cursor:pointer}
-  .tf-btn:hover{border-color:rgba(255,255,255,.26)}
-  .tf-btn-primary{border:none;background:linear-gradient(90deg,var(--gold),var(--gold2));color:#1a1300;font-weight:700;box-shadow:0 0 12px rgba(255,204,0,.35)}
-  .tf-btn-secondary{background:rgba(255,255,255,.06);text-decoration:none}
-  .tf-btn-ghost{background:transparent;border:1px solid var(--line);color:#e9e9e9}
+  .btn{border:1px solid var(--line);background:transparent;color:#e9e9e9;padding:10px 14px;border-radius:12px;cursor:pointer}
+  .btn:hover{border-color:rgba(255,255,255,.22)}
+  .btn-primary{border:none;background:linear-gradient(90deg,var(--gold),var(--gold2));color:#1a1300;font-weight:700;box-shadow:0 0 12px rgba(255,204,0,.35)}
+  .btn-secondary{background:rgba(255,255,255,.06);text-decoration:none}
+  .btn-ghost{background:transparent;border:1px solid rgba(255,255,255,.14);color:#e9e9e9}
 
-  /* Orderbump list */
+  /* mini cards de plano */
+  .plan-list{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .plan{display:grid;grid-template-columns:1fr 110px 100px 100px auto;gap:8px;align-items:center;
+        padding:10px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.03)}
+  .plan .status{opacity:.85}
+  .plan .act{display:flex;gap:8px;justify-content:flex-end}
+
+  /* orderbump minimal */
   .ob-list{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-  .ob{background:rgba(255,255,255,.03);border:1px solid var(--line2);border-radius:16px;padding:10px}
+  .ob{padding:10px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.03)}
   .ob .bar{display:flex;gap:8px;justify-content:flex-end;margin-top:8px}
-  .tf-total{display:flex;justify-content:flex-end;gap:8px;border-top:1px dashed rgba(255,255,255,.08);margin-top:8px;padding-top:10px}
+  .total-bar{display:flex;justify-content:flex-end;gap:10px;border-top:1px dashed rgba(255,255,255,.08);padding-top:10px;margin-top:10px}
 
-  /* Redirector */
-  .redir-list{display:flex;flex-direction:column;gap:8px}
-  .redir-row{display:grid;grid-template-columns:28px 230px 1fr 160px 120px;gap:8px;align-items:center;background:rgba(255,255,255,.03);border:1px solid var(--line2);border-radius:14px;padding:8px}
-  .redir-row .idx{opacity:.7}
-  .active-tag{padding:6px 10px;border-radius:999px;border:1px solid var(--line2);background:rgba(255,255,255,.06)}
+  /* redirecionador: mini cards com muito espaço negativo */
+  .redir-list{display:flex;flex-direction:column;gap:10px}
+  .redir-row{display:grid;grid-template-columns:26px 220px 1fr 120px auto;gap:10px;align-items:center;
+             padding:10px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.03)}
+  .redir-row .idx{opacity:.65}
+  .active-chip{padding:6px 10px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.06)}
 
-  /* Tracking segmented */
-  .tf-trackseg{display:flex;gap:8px;background:rgba(255,255,255,.04);padding:6px;border-radius:12px;border:1px solid var(--line2);margin-bottom:10px}
-  .tf-trackseg label{display:flex;gap:8px;align-items:center;padding:8px 10px;border-radius:10px;cursor:pointer}
-  .tf-trackseg input{appearance:none;width:14px;height:14px;border:1px solid rgba(255,255,255,.6);border-radius:50%}
-  .tf-trackseg input:checked{background:var(--gold);border-color:var(--gold)}
-  .tf-trackseg span{color:#eaeaea}
+  /* tracking segmented, estilo Supabase */
+  .seg{display:flex;gap:8px;background:rgba(255,255,255,.04);padding:6px;border-radius:12px;border:1px solid var(--line);margin-bottom:10px}
+  .seg label{display:flex;gap:8px;align-items:center;padding:8px 10px;border-radius:10px;cursor:pointer}
+  .seg input{appearance:none;width:14px;height:14px;border:1px solid rgba(255,255,255,.65);border-radius:50%}
+  .seg input:checked{background:var(--gold);border-color:var(--gold)}
+  .seg span{color:#eaeaea}
+  .track-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .t-utm{display:none}
 
-  /* switch */
-  .tf-switch{position:relative;display:inline-block;width:46px;height:26px}
-  .tf-switch input{display:none}
-  .tf-switch span{position:absolute;inset:0;background:#2b2b2b;border-radius:999px;transition:.2s;border:1px solid var(--line2)}
-  .tf-switch span:after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#bfbfbf;transition:.2s}
-  .tf-switch input:checked+span{background:var(--gold)}
-  .tf-switch input:checked+span:after{left:23px;background:#1a1300}
+  /* switch moderno alinhado */
+  .switch{position:relative;display:inline-block;width:46px;height:26px}
+  .switch input{display:none}
+  .switch span{position:absolute;inset:0;background:#2b2b2b;border:1px solid var(--line);border-radius:999px;transition:.2s}
+  .switch span:after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;background:#cfcfcf;border-radius:50%;transition:.2s}
+  .switch input:checked+span{background:var(--gold)}
+  .switch input:checked+span:after{left:23px;background:#1a1300}
+  .switch-field{display:flex;align-items:center;gap:12px}
 
-  .tf-bottom{display:flex;justify-content:flex-end;margin-top:16px}
+  .footer-actions{display:flex;justify-content:flex-end;margin-top:14px}
 
   @media (max-width:1040px){
     .grid2{grid-template-columns:1fr}
     .grid3{grid-template-columns:1fr}
+    .plan-list{grid-template-columns:1fr}
     .ob-list{grid-template-columns:1fr}
-    .tf-id-grid{grid-template-columns:1fr}
-    .redir-row{grid-template-columns:28px 1fr}
+    .id-grid{grid-template-columns:1fr}
+    .redir-row{grid-template-columns:26px 1fr}
   }
 </style>
 
 <script>
-  // --- helpers básicos
-  const $ = (q,ctx=document)=>ctx.querySelector(q);
-  const $$ = (q,ctx=document)=>Array.from(ctx.querySelectorAll(q));
-  const money = (v)=> {
-    const n = (''+v).replace(/[^\d,\.]/g,'').replace(',','.');
-    const f = parseFloat(n||'0')||0; return f;
-  };
-  const brl = (n)=> n.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+  // helpers
+  const $=(q,c=document)=>c.querySelector(q); const $$=(q,c=document)=>Array.from(c.querySelectorAll(q));
+  const mParse=v=>{const x=(''+v).replace(/[^\d,\.]/g,'').replace(',','.'); return parseFloat(x||'0')||0;}
+  const brl=n=>n.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
 
-  // normaliza username sem @
-  $('#botUser')?.addEventListener('blur', e => e.target.value = e.target.value.replace(/^@+/,''));
+  // tabs
+  $$('.tabs .tab').forEach(b=>b.addEventListener('click',()=>{
+    $$('.tabs .tab').forEach(x=>x.classList.remove('active')); b.classList.add('active');
+    const id=b.dataset.tab; $$('.box').forEach(x=>x.classList.remove('show')); $('#'+id)?.classList.add('show');
+  }));
 
-  // alterna abas
-  $$('.tf-tabs .tab').forEach(btn=>{
-    btn.addEventListener('click',()=>{
-      $$('.tf-tabs .tab').forEach(b=>b.classList.remove('active'));
-      btn.classList.add('active');
-      const id = btn.dataset.tab;
-      $$('.tf-box').forEach(b=>b.classList.remove('show'));
-      $('#'+id)?.classList.add('show');
-    });
-  });
+  // normaliza username
+  $('#botUser')?.addEventListener('blur',e=>e.target.value=e.target.value.replace(/^@+/,''));
 
   // inserir mídia via prompt
   document.addEventListener('click',e=>{
-    const b = e.target.closest('[data-insert]');
-    if(!b) return;
-    const target = $(b.dataset.insert);
-    const url = prompt('Cole o link da mídia do Telegram:');
-    if(url && target) target.value = url;
+    const t=e.target.closest('[data-insert]'); if(!t) return;
+    const el=$(t.dataset.insert); const url=prompt('Cole o link da mídia do Telegram:');
+    if(url && el) el.value=url;
   });
 
-  // habilita/desabilita seconds dos auto-delete
-  function wireAutoDelete(rowOn,rowSec){
-    const on = $(rowOn), sec = $(rowSec);
-    if(!on || !sec) return;
-    const toggle = ()=> sec.disabled = !on.checked;
-    on.addEventListener('change',toggle); toggle();
+  // ====== PLANOS (mini-cards) ======
+  const plansEl=$('#plans'); const planSelects=['#copyPlan','#frontPlan','#upPlan','#downPlan'].map(s=>$(s));
+  function planOptionsHTML(){ return $$('.plan').map(p=>{
+      const name=$('.p-name',p).value||'Sem nome';
+      const val=$('.p-price',p).value||'0,00';
+      const days=$('.p-days',p).value||'0';
+      const id = p.dataset.pid||name;
+      return `<option value="${id}" data-price="${val}" data-days="${days}">${name}</option>`;
+    }).join(''); }
+  function refillPlanSelects(){
+    const html=planOptionsHTML(); planSelects.forEach(sel=>{ if(sel){ const cur=sel.value; sel.innerHTML=html; if(cur) sel.value=cur; }});
+    syncPriceFromPlan('#copyPlan','#copyPrice','#copyDays');
+    syncPriceFromPlan('#frontPlan',null,null,true);
+    syncPriceFromPlan('#upPlan','#upPrice',null);
+    syncPriceFromPlan('#downPlan','#downPrice',null);
+    recalcTotal();
   }
-  wireAutoDelete('#copyDelOn','#copyDelSec');
-  wireAutoDelete('#ctaDelOn','#ctaDelSec');
-  wireAutoDelete('#upDelOn','#upDelSec');
-  wireAutoDelete('#downDelOn','#downDelSec');
-  wireAutoDelete('#pixDelOn','#pixDelSec');
-  wireAutoDelete('#fupDelOn','#fupDelSec');
+  function syncPriceFromPlan(selQ,priceQ,daysQ,onlyFront=false){
+    const sel=$(selQ); if(!sel) return;
+    const opt=sel.selectedOptions[0]; if(!opt) return;
+    const price=(opt.dataset.price||'0,00'); const days=(opt.dataset.days||'0');
+    if(priceQ) $(priceQ).value=price;
+    if(daysQ) $(daysQ).value=days;
+    if(onlyFront){ /* nothing to write, just recalc later */ }
+  }
+  planSelects.forEach(sel=> sel&&sel.addEventListener('change',()=>{
+    if(sel.id==='copyPlan') syncPriceFromPlan('#copyPlan','#copyPrice','#copyDays');
+    if(sel.id==='frontPlan') recalcTotal();
+    if(sel.id==='upPlan') syncPriceFromPlan('#upPlan','#upPrice');
+    if(sel.id==='downPlan') syncPriceFromPlan('#downPlan','#downPrice');
+  }));
 
-  // valida PIX [[pix]] (aceita ((pix)) também)
-  function hasPixVar(t){ return /(\[\[pix\]\]|\(\(pix\)\))/i.test(t||''); }
-
-  // salvar mocks
-  document.addEventListener('click', e=>{
-    const s = e.target.closest('[data-save]');
-    if(!s) return;
-    const tp = s.dataset.save;
-
-    if(tp==='pix'){
-      const txt = $('#pixText')?.value||'';
-      if(!hasPixVar(txt)){ alert('A mensagem do PIX deve conter [[pix]] (ou ((pix))).'); return; }
-    }
-    s.disabled = true; const prev = s.textContent; s.textContent = 'Salvo ✓';
-    setTimeout(()=>{ s.disabled=false; s.textContent=prev; },900);
-    // aqui você chama fetch('/api/...',{method:'POST',body:...})
+  function addPlanCard(data={}){
+    const card=document.createElement('div'); card.className='plan';
+    card.dataset.pid = data.id || `p_${Date.now()}`;
+    card.innerHTML=`
+      <input class="p-name" type="text" placeholder="Nome do plano" value="${data.name||''}">
+      <input class="p-price" type="text" placeholder="11,90" value="${data.price||''}">
+      <input class="p-days" type="number" min="0" placeholder="30" value="${data.days||''}">
+      <select class="p-status">
+        <option value="ativo"${data.status==='ativo'?' selected':''}>Ativo</option>
+        <option value="inativo"${data.status==='inativo'?' selected':''}>Inativo</option>
+      </select>
+      <div class="act">
+        <button class="btn btn-ghost" data-del>Excluir</button>
+      </div>`;
+    plansEl.appendChild(card);
+  }
+  $('#addPlan')?.addEventListener('click',()=>{ addPlanCard(); refillPlanSelects(); });
+  plansEl?.addEventListener('click',e=>{
+    if(e.target.matches('[data-del]')){ e.target.closest('.plan')?.remove(); refillPlanSelects(); }
   });
+  plansEl?.addEventListener('input',()=>refillPlanSelects());
 
-  // ------- OrderBump (lista minimal + simulação) -------
-  const obList = $('#obList');
+  // inicial: um plano de exemplo se não houver
+  if(!plansEl.children.length){ addPlanCard({name:'MENSAL',price:'11,90',days:'30',status:'ativo'}); }
+  refillPlanSelects();
+
+  // ====== ORDERBUMP ======
+  const obList=$('#obList');
   function recalcTotal(){
-    let total = money($('#frontPrice')?.value||0);
-    $$('.ob').forEach(card=>{
+    const frontSel=$('#frontPlan'); let total=0;
+    if(frontSel && frontSel.selectedOptions[0]){
+      total = mParse(frontSel.selectedOptions[0].dataset.price||0);
+    }
+    $$('.ob',obList).forEach(card=>{
       if($('.acc',card)?.checked){
-        total += money($('.price',card)?.value||0);
+        total += mParse($('.price',card)?.value||0);
       }
     });
     $('#sumTotal').textContent = brl(total);
   }
   function addOBCard(){
-    const idx = $$('.ob').length+1;
-    const el = document.createElement('div');
-    el.className='ob';
-    el.innerHTML = `
+    const node=document.createElement('div'); node.className='ob';
+    node.innerHTML=`
       <div class="grid3">
-        <div class="tf-field"><label>Título</label><input class="title" type="text" placeholder="Bump ${idx}"></div>
-        <div class="tf-field"><label>Plano (ID)</label><input class="plan" type="text" placeholder="51xx"></div>
-        <div class="tf-field"><label>Valor (R$)</label><input class="price" type="text" placeholder="8,90"></div>
+        <div class="field"><label>Plano</label><select class="plan"></select></div>
+        <div class="field"><label>Valor (R$)</label><input class="price" type="text" placeholder="8,90"></div>
+        <div class="field switch-field"><label>Aceitar</label><label class="switch"><input class="acc" type="checkbox"><span></span></label></div>
       </div>
-      <div class="grid3">
-        <div class="tf-field"><label>Copy</label><input class="copy" type="text" placeholder="Texto curto do bump"></div>
-        <div class="tf-field"><label>Mídia (Telegram)</label><input class="media" type="url" placeholder="https://t.me/..."></div>
-        <div class="tf-field"><label>Aceitar?</label>
-          <label class="tf-switch"><input class="acc" type="checkbox"><span></span></label>
-        </div>
-      </div>
+      <div class="field"><label>Copy</label><input class="copy" type="text" placeholder="Texto curto…"></div>
       <div class="bar">
-        <button class="tf-btn tf-btn-ghost" data-rm>Remover</button>
-        <button class="tf-btn tf-btn-primary" data-save="ob">Salvar</button>
+        <button class="btn btn-ghost" data-rm>Remover</button>
+        <button class="btn btn-primary" data-save="ob">Salvar</button>
       </div>`;
-    obList.appendChild(el);
-  }
-  $('#addOB')?.addEventListener('click', addOBCard);
-  obList?.addEventListener('input', e=>{
-    if(e.target.classList.contains('price') || e.target.classList.contains('acc') || e.target.id==='frontPrice'){
+    obList.appendChild(node);
+    // popular planos
+    const sel=$('.plan',node); sel.innerHTML=planOptionsHTML();
+    sel.addEventListener('change',()=>{
+      const opt=sel.selectedOptions[0]; $('.price',node).value = opt?.dataset.price||'';
       recalcTotal();
-    }
-  });
-  obList?.addEventListener('click', e=>{
-    if(e.target.matches('[data-rm]')){
-      e.target.closest('.ob')?.remove(); recalcTotal();
-    }
-    if(e.target.matches('[data-save="ob"]')){
-      const b = e.target; b.disabled=true; const t=b.textContent; b.textContent='Salvo ✓';
-      setTimeout(()=>{b.disabled=false;b.textContent=t;},900);
-    }
-  });
-  $('#frontPrice')?.addEventListener('input', recalcTotal);
-  addOBCard(); // inicia com 1 card suave
-  recalcTotal();
-
-  // ------- Redirecionador: até 2 ativos -------
-  const redirList = $('#redirList');
-  function activeCount(){ return $$('.redir-row .act input:checked', redirList).length; }
-  function enforceActiveLimit(changed){
-    if(activeCount()>2){ changed.checked=false; alert('Ative no máximo 2 bots.'); }
+    });
+    $('.acc',node).addEventListener('change',recalcTotal);
+    $('.price',node).addEventListener('input',recalcTotal);
   }
-  function addRedirRow(user='', token=''){
-    const idx = $$('.redir-row', redirList).length+1;
-    const row = document.createElement('div');
-    row.className='redir-row';
-    row.innerHTML = `
+  $('#addOB')?.addEventListener('click',addOBCard);
+  obList?.addEventListener('click',e=>{
+    if(e.target.matches('[data-rm]')){ e.target.closest('.ob')?.remove(); recalcTotal(); }
+    if(e.target.matches('[data-save="ob"]')){ const b=e.target; b.disabled=true; const t=b.textContent; b.textContent='Salvo ✓'; setTimeout(()=>{b.disabled=false;b.textContent=t;},900); }
+  });
+  addOBCard(); recalcTotal();
+
+  // ====== TRACKING (mostrar campos conforme escolha) ======
+  function updateTrack(){
+    const v=$('input[name="trk"]:checked')?.value;
+    $$('.t-fb').forEach(e=>e.style.display=(v==='fb'||v==='utm_fb')?'block':'none');
+    $$('.t-utm').forEach(e=>e.style.display=(v==='utm_fb'||v==='utm_utm')?'block':'none');
+  }
+  $$('.seg input').forEach(r=>r.addEventListener('change',updateTrack)); updateTrack();
+
+  // ====== REDIRECIONADOR (máx 2 ativos) ======
+  const redirList=$('#redirList');
+  function activeCount(){ return $$('.redir-row input[type="checkbox"]:checked',redirList).length; }
+  function enforceLimit(chk){ if(activeCount()>2){ chk.checked=false; alert('Ative no máximo 2 bots.'); } }
+  function addRedirRow(user='',token=''){
+    const row=document.createElement('div'); row.className='redir-row';
+    const idx=$$('.redir-row',redirList).length+1;
+    row.innerHTML=`
       <div class="idx">#${idx}</div>
-      <div class="tf-field"><label>Username</label><input type="text" value="${user}"></div>
-      <div class="tf-field"><label>Token</label><input type="text" value="${token}"></div>
-      <div class="act"><label>Ativo</label> <label class="tf-switch"><input type="checkbox"><span></span></label></div>
-      <button class="tf-btn tf-btn-ghost" data-rm>Remover</button>`;
+      <div class="field"><label>Username</label><input type="text" value="${user}"></div>
+      <div class="field"><label>Token</label><input type="text" value="${token}"></div>
+      <div class="field switch-field">
+        <label>Ativo</label>
+        <label class="switch"><input type="checkbox"><span></span></label>
+      </div>
+      <button class="btn btn-ghost" data-del>Remover</button>`;
     redirList.appendChild(row);
-    $('input[type="checkbox"]', row).addEventListener('change', e=>enforceActiveLimit(e.target));
+    $('input[type="checkbox"]',row).addEventListener('change',e=>enforceLimit(e.target));
   }
-  $('#addBotRow')?.addEventListener('click', ()=>addRedirRow());
+  $('#addBotRow')?.addEventListener('click',()=>addRedirRow());
+  redirList?.addEventListener('click',e=>{ if(e.target.matches('[data-del]')) e.target.closest('.redir-row')?.remove(); });
 
-  // duplicar bot a partir da identidade
-  $('#dupBot')?.addEventListener('click', ()=>{
-    const u = $('#botUser')?.value||''; const t = $('#botToken')?.value||'';
-    if(!u || !t){ alert('Preencha Username e Token para duplicar.'); return; }
-    addRedirRow(u,t);
-    // aqui você pode chamar POST /ofertas/:id/bots/duplicate
+  // Duplica bot atual para redirecionador
+  $('#dupBot')?.addEventListener('click',()=>{
+    const u=$('#botUser')?.value||''; const t=$('#botToken')?.value||'';
+    if(!u || !t){ alert('Preencha Username e Token do bot atual.'); return; }
+    addRedirRow(u.replace(/^@+/,''),t);
   });
 
-  // inicia redir com 1 (se já tiver user/token no topo)
-  if(('<%= (offer.telegramUsername||"") %>' || '<%= (offer.botToken||"") %>').length){
+  // se já houver user/token, cria uma entrada
+  if(('<%= (offer.telegramUsername||"") %>'||'<%= (offer.botToken||"") %>').length){
     addRedirRow('<%= (offer.telegramUsername||"").replace(/^@/,"") %>','<%= offer.botToken||"" %>');
-  } else {
-    addRedirRow();
   }
 
-  // tracking fields show/hide
-  function updateTrackFields(){
-    const mode = $('input[name="trk"]:checked')?.value;
-    $$('.trk-fb').forEach(el=> el.style.display = (mode==='fb' || mode==='utm_fb') ? 'block' : 'none');
-    $$('.trk-utm').forEach(el=> el.style.display = (mode==='utm_fb' || mode==='utm_utm') ? 'block' : 'none');
-  }
-  $$('.tf-trackseg input').forEach(r=> r.addEventListener('change', updateTrackFields));
-  updateTrackFields();
+  // ====== PIX: validar variável obrigatória [[pix]] ======
+  function hasPixVar(s){ return /\[\[pix\]\]/i.test(s||''); }
+  document.addEventListener('click',e=>{
+    const b=e.target.closest('[data-save]'); if(!b) return;
+    if(b.dataset.save==='pix'){
+      if(!hasPixVar($('#pixText')?.value)){ alert('A mensagem do PIX deve conter [[pix]].'); return; }
+    }
+    b.disabled=true; const t=b.textContent; b.textContent='Salvo ✓'; setTimeout(()=>{b.disabled=false;b.textContent=t;},900);
+  });
+
+  // auto-delete enable/disable seconds
+  $('#adOn')?.addEventListener('change',e=>{ $('#adSec').disabled=!e.target.checked; }); $('#adSec').disabled=!$('#adOn')?.checked;
+
+  // preço da copy acompanha plano
+  $('#copyPlan')?.addEventListener('change',()=>syncPriceFromPlan('#copyPlan','#copyPrice','#copyDays'));
 </script>
