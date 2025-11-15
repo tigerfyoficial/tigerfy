@@ -4,8 +4,9 @@ const router = express.Router();
 
 const authGuard = require("../middleware/authGuard");
 const { supabase } = require("../lib/supabase");
+const Steps = require("../lib/steps");
 
-/* ---------- Helpers ---------- */
+/* ---------- Mappers ---------- */
 function mapOffer(row) {
   return {
     _id: row.id,
@@ -20,7 +21,6 @@ function mapOffer(row) {
     createdAt: row.created_at,
   };
 }
-
 function mapStep(row) {
   return {
     id: row.id,
@@ -29,11 +29,13 @@ function mapStep(row) {
     stepNo: row.step_no,
     duplicated: row.duplicated,
     duplicatedFrom: row.duplicated_from || null,
+    settings: row.settings || {},
     createdAt: row.created_at,
+    updatedAt: row.updated_at,
   };
 }
 
-/* ---------- LISTA MINIMALISTA => /ofertas ---------- */
+/* ---------- /ofertas (lista) ---------- */
 router.get("/ofertas", authGuard, async (req, res) => {
   try {
     const owner = req.session.userId;
@@ -61,15 +63,11 @@ router.get("/ofertas", authGuard, async (req, res) => {
   }
 });
 
-/* ---------- CRIAR (GET) => /ofertas/criar ---------- */
+/* ---------- Criar oferta (GET/POST) ---------- */
 router.get("/ofertas/criar", authGuard, (_req, res) => {
-  return res.render("bots_create", {
-    title: "Criar Oferta - TigerFy",
-    active: "ofertas",
-  });
+  return res.render("bots_create", { title: "Criar Oferta - TigerFy", active: "ofertas" });
 });
 
-/* ---------- CRIAR (POST) => /ofertas/criar → redireciona painel ---------- */
 router.post("/ofertas/criar", authGuard, async (req, res) => {
   try {
     const owner = req.session.userId;
@@ -101,92 +99,41 @@ router.post("/ofertas/criar", authGuard, async (req, res) => {
   }
 });
 
-/* ---------- BACKWARD: /ofertas/gerenciar?id=... → painel novo ---------- */
+/* ---------- Compat: /ofertas/gerenciar → painel ---------- */
 router.get("/ofertas/gerenciar", authGuard, (req, res) => {
   const id = req.query.id;
   if (!id) return res.redirect("/ofertas");
   return res.redirect(`/ofertas/painel/${id}`);
 });
 
-/* ---------- Util: garante etapa 1 se não existir ---------- */
-async function ensureFirstStep(offerId) {
-  // existe alguma etapa?
-  const { data: stepsExist, error: seErr } = await supabase
-    .from("offer_steps")
-    .select("id")
-    .eq("offer_id", offerId)
-    .limit(1);
-
-  if (seErr) {
-    console.warn("[steps] check first error:", seErr.message);
-    return null;
-  }
-  if (stepsExist && stepsExist.length > 0) return null;
-
-  // cria Etapa 1
-  const { data: inserted, error: insErr } = await supabase
-    .from("offer_steps")
-    .insert([{ offer_id: offerId, name: "Etapa 1", step_no: 1, duplicated: false }])
-    .select("*")
-    .single();
-
-  if (insErr) {
-    console.warn("[steps] create first error:", insErr.message);
-    return null;
-  }
-  return inserted;
-}
-
-/* ---------- Painel Exclusivo: /ofertas/painel/:id ---------- */
+/* ---------- Painel da oferta ---------- */
 router.get("/ofertas/painel/:id", authGuard, async (req, res) => {
   try {
     const owner = req.session.userId;
     const { id: offerId } = req.params;
-    const stepId = req.query.stepId || null; // id real da etapa (uuid)
-    const etapaNum = req.query.etapa ? parseInt(req.query.etapa, 10) : null; // legado (número)
+    const stepId = req.query.stepId || null;
+    const etapaNum = req.query.etapa ? parseInt(req.query.etapa, 10) : null;
 
-    // 1) Confere oferta pertence ao user
-    const { data: offerRow, error: offErr } = await supabase
-      .from("offers")
-      .select("id, owner, name, bot_type, tracking_type, status, telegram_username, bot_token, created_at")
-      .eq("id", offerId)
-      .eq("owner", owner)
-      .single();
+    // Oferta do usuário
+    const offerRes = await Steps.getOfferByIdForOwner(offerId, owner);
+    if (offerRes.error || !offerRes.data) return res.redirect("/ofertas");
+    const offer = mapOffer(offerRes.data);
 
-    if (offErr || !offerRow) {
-      console.warn("[ofertas] painel not found/denied:", offErr?.message);
-      return res.redirect("/ofertas");
-    }
-    const offer = mapOffer(offerRow);
+    // Garante Etapa 1
+    await Steps.ensureFirstStep(offer.id);
 
-    // 2) Garante ao menos a Etapa 1
-    await ensureFirstStep(offer.id);
+    // Todas as etapas
+    const stepsRes = await Steps.listSteps(offer.id);
+    const steps = (stepsRes.data || []).map(mapStep);
 
-    // 3) Carrega todas as etapas da oferta
-    const { data: stepsData, error: stErr } = await supabase
-      .from("offer_steps")
-      .select("*")
-      .eq("offer_id", offer.id)
-      .order("step_no", { ascending: true });
-
-    if (stErr) {
-      console.warn("[steps] fetch error:", stErr.message);
-    }
-
-    const steps = (stepsData || []).map(mapStep);
-
-    // 4) Descobre etapa atual:
+    // Etapa atual
     let currentStep = null;
-
     if (stepId) {
       currentStep = steps.find(s => s.id === stepId) || null;
     } else if (etapaNum && !isNaN(etapaNum)) {
       currentStep = steps.find(s => s.stepNo === etapaNum) || null;
     }
-    if (!currentStep) {
-      // padrão: menor step_no
-      currentStep = steps.length ? steps[0] : null;
-    }
+    if (!currentStep) currentStep = steps.length ? steps[0] : null;
 
     return res.render("offer_panel", {
       title: `${offer.name} — Painel da Oferta - TigerFy`,
@@ -201,74 +148,76 @@ router.get("/ofertas/painel/:id", authGuard, async (req, res) => {
   }
 });
 
-/* ---------- Criar Etapa (POST JSON) ----------
-   body: { name: string, duplicate: boolean, fromStepId?: uuid }
------------------------------------------------- */
+/* ---------- Criar etapa (sempre INSERT, nunca sobrescreve) ---------- */
 router.post("/ofertas/:id/etapas", authGuard, async (req, res) => {
   try {
     const owner = req.session.userId;
     const { id: offerId } = req.params;
     const { name, duplicate, fromStepId } = req.body || {};
 
-    // 1) owner da oferta
-    const { data: off, error: offErr } = await supabase
-      .from("offers")
-      .select("id, owner")
-      .eq("id", offerId)
-      .eq("owner", owner)
-      .single();
-
-    if (offErr || !off) {
+    // Confere owner da oferta
+    const offerRes = await Steps.getOfferByIdForOwner(offerId, owner);
+    if (offerRes.error || !offerRes.data) {
       return res.status(403).json({ ok: false, error: "forbidden" });
     }
 
-    // 2) descobre o próximo step_no
-    const { data: last, error: lastErr } = await supabase
-      .from("offer_steps")
-      .select("step_no")
-      .eq("offer_id", offerId)
-      .order("step_no", { ascending: false })
-      .limit(1);
-
-    if (lastErr) {
-      console.warn("[steps] lastErr:", lastErr.message);
-    }
-    const nextNo = last && last.length ? (Number(last[0].step_no) + 1) : 1;
-
-    // 3) insere a etapa
-    const payload = {
-      offer_id: offerId,
-      name: (name || "").trim() || `Etapa ${nextNo}`,
-      step_no: nextNo,
-      duplicated: !!duplicate,
-      duplicated_from: duplicate && fromStepId ? fromStepId : null,
-    };
-
-    const { data: inserted, error: insErr } = await supabase
-      .from("offer_steps")
-      .insert([payload])
-      .select("*")
-      .single();
-
-    if (insErr || !inserted) {
-      console.error("[steps] insert error:", insErr?.message);
+    const createRes = await Steps.createStep({
+      offerId,
+      name,
+      duplicate: !!duplicate,
+      fromStepId: duplicate ? (fromStepId || null) : null,
+    });
+    if (createRes.error || !createRes.data) {
+      console.error("[steps] insert error:", createRes.error?.message || createRes.error);
       return res.status(500).json({ ok: false, error: "insert_failed" });
     }
 
-    // (Futuro: se duplicate==true, copiar configs aqui)
-    // Por ora, apenas marcamos duplicated e duplicated_from.
-
-    return res.json({
-      ok: true,
-      step: mapStep(inserted),
-    });
+    return res.json({ ok: true, step: mapStep(createRes.data) });
   } catch (err) {
     console.error("Erro criar etapa:", err);
     return res.status(500).json({ ok: false, error: "server_error" });
   }
 });
 
-/* ---------- SALVAR TOKEN (inalterado; redireciona painel novo) ---------- */
+/* ---------- Salvar alterações da etapa (settings / nome) ---------- */
+router.post("/ofertas/:id/etapas/:stepId/save", authGuard, async (req, res) => {
+  try {
+    const owner = req.session.userId;
+    const { id: offerId, stepId } = req.params;
+    const { name, settings } = req.body || {};
+
+    // Confere owner da oferta
+    const offerRes = await Steps.getOfferByIdForOwner(offerId, owner);
+    if (offerRes.error || !offerRes.data) {
+      return res.status(403).json({ ok: false, error: "forbidden" });
+    }
+
+    // Confere step pertence à oferta
+    const stepRes = await Steps.getStepById({ offerId, stepId });
+    if (stepRes.error || !stepRes.data) {
+      return res.status(404).json({ ok: false, error: "step_not_found" });
+    }
+
+    // Atualiza (apenas meta / settings por enquanto)
+    const updRes = await Steps.updateStep({
+      offerId,
+      stepId,
+      name: typeof name === "string" ? name : undefined,
+      settings: settings && typeof settings === "object" ? settings : undefined,
+    });
+    if (updRes.error || !updRes.data) {
+      console.error("[steps] update error:", updRes.error?.message || updRes.error);
+      return res.status(500).json({ ok: false, error: "update_failed" });
+    }
+
+    return res.json({ ok: true, step: mapStep(updRes.data) });
+  } catch (err) {
+    console.error("Erro salvar etapa:", err);
+    return res.status(500).json({ ok: false, error: "server_error" });
+  }
+});
+
+/* ---------- Salvar token (inalterado) ---------- */
 router.post("/ofertas/:id/token", authGuard, async (req, res) => {
   try {
     const owner = req.session.userId;
@@ -282,14 +231,10 @@ router.post("/ofertas/:id/token", authGuard, async (req, res) => {
       .eq("owner", owner)
       .single();
 
-    if (getErr || !exists) {
-      console.warn("[ofertas] token denied (owner mismatch)");
-      return res.redirect("/ofertas");
-    }
+    if (getErr || !exists) return res.redirect("/ofertas");
 
     const newStatus = botToken ? "ativo" : "incompleto";
-
-    const { error: updErr } = await supabase
+    await supabase
       .from("offers")
       .update({
         bot_token: botToken || null,
@@ -298,8 +243,6 @@ router.post("/ofertas/:id/token", authGuard, async (req, res) => {
       })
       .eq("id", id)
       .eq("owner", owner);
-
-    if (updErr) console.error("[ofertas] update token error:", updErr.message);
 
     return res.redirect(`/ofertas/painel/${id}`);
   } catch (err) {
