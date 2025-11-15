@@ -5,14 +5,14 @@
   <div class="tf-breadcrumb">
     <a href="/ofertas">Minhas Ofertas</a>
     <span>›</span>
-    <span><%= offer?.name || 'Oferta' %></span>
+    <span><%= (offer && offer.name) ? offer.name : 'Oferta' %></span>
   </div>
 
   <div class="tf-title-row">
-    <h1><%= offer?.name || 'Oferta' %></h1>
+    <h1><%= (offer && offer.name) ? offer.name : 'Oferta' %></h1>
     <div class="tf-actions">
-      <span class="pill <%= offer?.status === 'ativo' ? '' : 'warn' %>">
-        <%= offer?.status === 'ativo' ? 'Ativo' : 'Incompleto' %>
+      <span class="pill <%= (offer && offer.status) === 'ativo' ? '' : 'warn' %>">
+        <%= (offer && offer.status) === 'ativo' ? 'Ativo' : 'Incompleto' %>
       </span>
       <button class="btn ghost" id="btnTest">Teste Rápido</button>
       <button class="btn ghost" id="btnLogs">Logs</button>
@@ -126,11 +126,11 @@
           </div>
 
           <div class="plans" id="plansList">
-            <% const plans = (typeof plans !== 'undefined' && Array.isArray(plans)) ? plans : []; %>
-            <% if (plans.length === 0) { %>
+            <% var pList = (typeof plans !== 'undefined' && Array.isArray(plans)) ? plans : []; %>
+            <% if (pList.length === 0) { %>
               <div class="soon">Nenhum plano cadastrado ainda.</div>
             <% } %>
-            <% (plans || []).forEach(function(p){ %>
+            <% pList.forEach(function(p){ %>
               <div class="plan" data-id="<%= p.id %>">
                 <div class="p-l">
                   <strong><%= p.name %></strong>
@@ -289,14 +289,14 @@
       </div>
 
       <div class="mini-grid" id="botsGrid">
-        <% const bots = (typeof bots !== 'undefined' && Array.isArray(bots)) ? bots : []; %>
-        <% if (bots.length === 0) { %>
+        <% var bList = (typeof bots !== 'undefined' && Array.isArray(bots)) ? bots : []; %>
+        <% if (bList.length === 0) { %>
           <div class="mini ghost-state" style="grid-column:1 / -1">Nenhum bot cadastrado ainda.</div>
         <% } %>
-        <% (bots || []).forEach(function(b){ %>
+        <% bList.forEach(function(b){ %>
           <div class="mini" data-bot="<%= b.id %>">
             <div class="mini-top">
-              <strong>@<%= (b.username||'seubot') %></strong>
+              <strong>@<%= (b.username || 'seubot') %></strong>
               <label class="switch">
                 <input type="checkbox" class="bot-active" <%= b.active ? 'checked' : '' %>>
                 <span></span>
@@ -371,10 +371,6 @@
   </section>
 </main>
 
-<!-- ===============================
-     TIGERFY — ESTILO PREMIUM MINIMAL
-     (contraste, alternância, sem hover dourado)
-=============================== -->
 <style>
   :root{
     --bg-0:#0a0a0a;--surface-1:#0f0f0f;--surface-2:#131313;--surface-3:#161616;
@@ -474,31 +470,30 @@
 </style>
 
 <script>
-  // Util quick-toast
   function toast(msg){console.log('TigerFy:', msg)}
 
   // Tabs principais
-  const tabsTop = document.querySelectorAll('#tabsTop .tab');
-  const panes = {
+  var tabsTop = document.querySelectorAll('#tabsTop .tab');
+  var panes = {
     principal: document.querySelector('#tab-principal'),
     tracking: document.querySelector('#tab-tracking'),
     redir: document.querySelector('#tab-redir'),
     contingencia: document.querySelector('#tab-contingencia'),
     cloaker: document.querySelector('#tab-cloaker'),
   };
-  tabsTop.forEach(btn=>{
-    btn.addEventListener('click', ()=>{
-      tabsTop.forEach(b=>b.classList.remove('active'));
+  tabsTop.forEach(function(btn){
+    btn.addEventListener('click', function(){
+      tabsTop.forEach(function(b){ b.classList.remove('active'); });
       btn.classList.add('active');
-      const key = btn.dataset.tab;
-      Object.values(panes).forEach(p=>p.classList.remove('show'));
+      var key = btn.dataset.tab;
+      Object.values(panes).forEach(function(p){ p.classList.remove('show'); });
       panes[key].classList.add('show');
-    })
+    });
   });
 
   // Subtabs (Principal)
-  const subBtns = document.querySelectorAll('#subTabs .subtab');
-  const subPanes = {
+  var subBtns = document.querySelectorAll('#subTabs .subtab');
+  var subPanes = {
     front: document.querySelector('#sub-front'),
     bump: document.querySelector('#sub-bump'),
     upsell: document.querySelector('#sub-upsell'),
@@ -506,69 +501,69 @@
     disparo: document.querySelector('#sub-disparo'),
     pix: document.querySelector('#sub-pix'),
   };
-  subBtns.forEach(btn=>{
-    btn.addEventListener('click', ()=>{
-      subBtns.forEach(b=>b.classList.remove('active'));
+  subBtns.forEach(function(btn){
+    btn.addEventListener('click', function(){
+      subBtns.forEach(function(b){ b.classList.remove('active'); });
       btn.classList.add('active');
-      const key = btn.dataset.sub;
-      Object.values(subPanes).forEach(p=>p.classList.remove('show'));
+      var key = btn.dataset.sub;
+      Object.values(subPanes).forEach(function(p){ p.classList.remove('show'); });
       subPanes[key].classList.add('show');
     });
   });
 
-  // Tracking radios: mostra/oculta caixas
-  const trackModes = document.getElementById('trackModes');
-  const boxFb = document.getElementById('boxFb');
-  const boxUtmify = document.getElementById('boxUtmify');
-  trackModes.addEventListener('change', ()=>{
-    const val = document.querySelector('input[name="tmode"]:checked').value;
+  // Tracking radios
+  var trackModes = document.getElementById('trackModes');
+  var boxFb = document.getElementById('boxFb');
+  var boxUtmify = document.getElementById('boxUtmify');
+  trackModes.addEventListener('change', function(){
+    var val = document.querySelector('input[name="tmode"]:checked').value;
     boxFb.style.display = (val === 'fb_pixel' || val === 'utmify_fb') ? '' : 'none';
     boxUtmify.style.display = (val === 'utmify_fb' || val === 'utmify_utmify') ? '' : 'none';
   });
 
-  // Alternância de planos: expand entrega
-  document.getElementById('plansList')?.addEventListener('click', (e)=>{
-    const act = e.target?.dataset?.act;
-    const plan = e.target?.closest('.plan');
+  // Planos expand/collapse
+  document.getElementById('plansList')?.addEventListener('click', function(e){
+    var act = e.target && e.target.dataset ? e.target.dataset.act : null;
+    var plan = e.target && e.target.closest ? e.target.closest('.plan') : null;
     if(!act || !plan) return;
-    const id = plan.dataset.id;
-    const body = document.querySelector(`.plan-body[data-body-for="${id}"]`);
-    if(act==='edit'){ body.style.display = body.style.display==='none' ? '' : 'none'; }
+    var id = plan.dataset.id;
+    var body = document.querySelector('.plan-body[data-body-for="'+id+'"]');
+    if(act==='edit'){ body.style.display = (body.style.display==='none' || body.style.display==='') ? '' : 'none'; }
     if(act==='del'){ toast('Excluir plano '+id); }
     if(act==='save-deliver'){ toast('Entregável salvo'); }
   });
 
-  // Mídias — simples prompt
-  document.getElementById('btnAddMediaFront')?.addEventListener('click', ()=>{
-    const url = prompt('Cole o link da mídia (arquivo no Telegram):');
+  // Mídias – prompts simples
+  document.getElementById('btnAddMediaFront')?.addEventListener('click', function(){
+    var url = prompt('Cole o link da mídia (arquivo no Telegram):');
     if(url){ document.getElementById('front_media').textContent = url; toast('Mídia adicionada'); }
   });
-  document.getElementById('btnAddMediaPix')?.addEventListener('click', ()=>{
-    const url = prompt('Cole o link da mídia (arquivo no Telegram):');
+  document.getElementById('btnAddMediaPix')?.addEventListener('click', function(){
+    var url = prompt('Cole o link da mídia (arquivo no Telegram):');
     if(url){ document.getElementById('pix_media').textContent = url; toast('Mídia adicionada'); }
   });
 
-  // Redirecionadores — máximo 2 ativos
-  document.getElementById('botsGrid')?.addEventListener('change', (e)=>{
-    if(!e.target.classList.contains('bot-active')) return;
-    const all = Array.from(document.querySelectorAll('.bot-active'));
-    const count = all.filter(i=>i.checked).length;
+  // Redirecionadores – máximo 2 ativos
+  document.getElementById('botsGrid')?.addEventListener('change', function(e){
+    if(!(e.target && e.target.classList && e.target.classList.contains('bot-active'))) return;
+    var all = Array.from(document.querySelectorAll('.bot-active'));
+    var count = all.filter(function(i){ return i.checked; }).length;
     if(count>2){
       e.target.checked = false;
       toast('Máximo recomendado: 2 bots ativos.');
     }
   });
 
-  // Ações (stubs de salvamento local)
-  document.getElementById('saveFront')?.addEventListener('click', ()=>toast('Front salvo (UI)'));
-  document.getElementById('savePix')?.addEventListener('click', ()=>toast('Mensagem Pix salva (UI)'));
-  document.getElementById('saveTracking')?.addEventListener('click', ()=>toast('Tracking salvo (UI)'));
-  document.getElementById('saveCloaker')?.addEventListener('click', ()=>toast('Cloaker salvo (UI)'));
-  document.getElementById('btnSaveAll')?.addEventListener('click', ()=>toast('Configurações salvas (UI)'));
-  document.getElementById('btnCreatePlan')?.addEventListener('click', ()=>toast('Criar plano (UI)'));
-  document.getElementById('btnCreateRedirect')?.addEventListener('click', ()=>toast('Criar redirect (UI)'));
-  document.getElementById('btnAddBot')?.addEventListener('click', ()=>toast('Cadastrar novo bot (UI)'));
-  document.getElementById('btnDupNow')?.addEventListener('click', ()=>toast('Duplicar bot (UI)'));
-  document.getElementById('btnTest')?.addEventListener('click', ()=>toast('Disparo de teste (UI)'));
-  document.getElementById('btnLogs')?.addEventListener('click', ()=>toast('Abrir logs (UI)'));
+  // Ações (stubs)
+  document.getElementById('saveFront')?.addEventListener('click', function(){ toast('Front salvo (UI)'); });
+  document.getElementById('savePix')?.addEventListener('click', function(){ toast('Mensagem Pix salva (UI)'); });
+  document.getElementById('saveTracking')?.addEventListener('click', function(){ toast('Tracking salvo (UI)'); });
+  document.getElementById('saveCloaker')?.addEventListener('click', function(){ toast('Cloaker salvo (UI)'); });
+  document.getElementById('btnSaveAll')?.addEventListener('click', function(){ toast('Configurações salvas (UI)'); });
+  document.getElementById('btnCreatePlan')?.addEventListener('click', function(){ toast('Criar plano (UI)'); });
+  document.getElementById('btnCreateRedirect')?.addEventListener('click', function(){ toast('Criar redirect (UI)'); });
+  document.getElementById('btnAddBot')?.addEventListener('click', function(){ toast('Cadastrar novo bot (UI)'); });
+  document.getElementById('btnDupNow')?.addEventListener('click', function(){ toast('Duplicar bot (UI)'); });
+  document.getElementById('btnTest')?.addEventListener('click', function(){ toast('Disparo de teste (UI)'); });
+  document.getElementById('btnLogs')?.addEventListener('click', function(){ toast('Abrir logs (UI)'); });
 </script>
