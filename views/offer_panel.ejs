@@ -294,143 +294,181 @@
 </style>
 
 <script>
-  (function(){
-    // Dados EJS -> JS
-    var offer = <%- JSON.stringify(offer || null) %>;
-    var steps = <%- JSON.stringify(steps || []) %>;
-    var currentStep = <%- JSON.stringify(currentStep || null) %>;
+(function(){
+  // Dados do EJS para JS
+  var offer = <%- JSON.stringify(offer || null) %>;
+  var steps = <%- JSON.stringify(steps || []) %>;
+  var currentStep = <%- JSON.stringify(currentStep || null) %>;
 
-    // -------- Tabs principais: mantém subtabs visíveis só em "Principal"
-    var mainTabs = document.querySelectorAll('.tf-tabs .tab');
-    var subTabsWrap = document.getElementById('subtabs-principal');
-    mainTabs.forEach(function(btn){
-      btn.addEventListener('click', function(){
-        mainTabs.forEach(function(b){ b.classList.remove('active'); });
-        btn.classList.add('active');
-        var isPrincipal = btn.dataset.tab === 'principal';
-        if(subTabsWrap){ subTabsWrap.style.display = isPrincipal ? 'flex' : 'none'; }
-      });
+  // --- Garantir que o chip da etapa mostra a etapa atual (sem mudar estilo)
+  try {
+    var chip = document.getElementById('tfStepName');
+    if (chip && currentStep) {
+      chip.textContent = currentStep.name || ('Etapa ' + (currentStep.stepNo || ''));
+    }
+  } catch(_) {}
+
+  // --- Tabs principais: exibe subtabs apenas na "Principal" (mesmo comportamento)
+  var mainTabs = document.querySelectorAll('.tf-tabs .tab');
+  var subTabsWrap = document.getElementById('subtabs-principal');
+  mainTabs.forEach(function(btn){
+    btn.addEventListener('click', function(){
+      mainTabs.forEach(function(b){ b.classList.remove('active'); });
+      btn.classList.add('active');
+      var isPrincipal = btn.dataset.tab === 'principal';
+      if (subTabsWrap) subTabsWrap.style.display = isPrincipal ? 'flex' : 'none';
     });
-    if(subTabsWrap){ subTabsWrap.style.display = 'flex'; } // estado inicial
+  });
+  if (subTabsWrap) subTabsWrap.style.display = 'flex';
 
-    // -------- Breadcrumb clicável
-    function buildBreadcrumb() {
-      var bc = document.getElementById('tfBreadcrumb');
-      if (!bc) return;
-
-      var offerName = (offer && offer.name) ? offer.name : 'Nome da Oferta';
-      var offerHref = offer ? ("/ofertas/painel/" + offer.id) : "/ofertas";
-
-      var items = [];
-      // "Minhas Ofertas"
-      items.push('<a href="/ofertas">Minhas Ofertas</a>');
-      // "Nome da oferta" (leva pra root da oferta)
+  // --- Breadcrumb clicável (sem alterar visual)
+  function escapeHtml(s){ return (s || "").replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  (function buildBreadcrumb(){
+    var bc = document.getElementById('tfBreadcrumb'); if (!bc) return;
+    var offerName = (offer && offer.name) ? offer.name : 'Nome da Oferta';
+    var offerHref = offer ? ("/ofertas/painel/" + offer.id) : "/ofertas";
+    var items = [];
+    items.push('<a href="/ofertas">Minhas Ofertas</a>');
+    items.push('<span>›</span>');
+    items.push('<a href="'+ offerHref +'">'+ escapeHtml(offerName) +'</a>');
+    if (currentStep && currentStep.id) {
       items.push('<span>›</span>');
-      items.push('<a href="'+ offerHref +'">'+ escapeHtml(offerName) +'</a>');
-
-      // "Etapa X" (se existir etapa atual)
-      if (currentStep && currentStep.id) {
-        items.push('<span>›</span>');
-        var stepUrl = offerHref + "?stepId=" + encodeURIComponent(currentStep.id);
-        items.push('<a href="'+ stepUrl +'">'+ escapeHtml(currentStep.name) +'</a>');
-      }
-
-      bc.innerHTML = items.join('');
+      var stepUrl = offerHref + "?stepId=" + encodeURIComponent(currentStep.id);
+      items.push('<a href="'+ stepUrl +'">'+ escapeHtml(currentStep.name || ('Etapa ' + (currentStep.stepNo||''))) +'</a>');
     }
-
-    function escapeHtml(s){
-      return (s || "").replace(/</g,'&lt;').replace(/>/g,'&gt;');
-    }
-
-    buildBreadcrumb();
-
-    // -------- Modal "Criar etapa"
-    var modal = document.getElementById('stepModal');
-    var openBtn = document.getElementById('btnCreateStep');
-    var closeBtn = document.getElementById('btnCloseModal');
-    var cancelBtn = document.getElementById('btnCancelStep');
-    var confirmBtn = document.getElementById('btnConfirmStep');
-    var nameInput = document.getElementById('inpStepName');
-
-    // Garante fechado no load
-    if (modal) { modal.setAttribute('hidden', ''); }
-    function escToClose(e){ if (e.key === 'Escape') closeModal(); }
-
-    function openModal(){
-      if (!modal) return;
-      // Sugestão de nome: próximo número
-      var nextNo = 1;
-      if (Array.isArray(steps) && steps.length) {
-        var max = Math.max.apply(null, steps.map(s => Number(s.stepNo || 0)));
-        nextNo = isNaN(max) ? 1 : (max + 1);
-      }
-      if (nameInput) nameInput.value = 'Etapa ' + nextNo;
-      modal.removeAttribute('hidden');
-      nameInput && nameInput.focus();
-      document.addEventListener('keydown', escToClose);
-    }
-
-    function closeModal(){
-      if (!modal) return;
-      modal.setAttribute('hidden','');
-      document.removeEventListener('keydown', escToClose);
-    }
-
-    if (openBtn) openBtn.addEventListener('click', openModal);
-    if (closeBtn) closeBtn.addEventListener('click', closeModal);
-    if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
-    if (modal){
-      modal.addEventListener('click', function(e){
-        if (e.target === modal) closeModal();
-      });
-    }
-
-    if (confirmBtn){
-      confirmBtn.addEventListener('click', async function(){
-        var dupValue = document.querySelector('input[name="dupMode"]:checked')?.value || '0';
-        var stepName = (nameInput?.value || '').trim();
-        if (!stepName) {
-          // fallback nome
-          var n = 1;
-          if (Array.isArray(steps) && steps.length) {
-            var max = Math.max.apply(null, steps.map(s => Number(s.stepNo || 0)));
-            n = isNaN(max) ? 1 : (max + 1);
-          }
-          stepName = 'Etapa ' + n;
-        }
-
-        try {
-          // POST real no backend
-          var resp = await fetch('/ofertas/' + encodeURIComponent(offer.id) + '/etapas', {
-            method: 'POST',
-            headers: { 'Content-Type':'application/json' },
-            body: JSON.stringify({
-              name: stepName,
-              duplicate: dupValue === '1',
-              fromStepId: (dupValue === '1' && currentStep && currentStep.id) ? currentStep.id : null
-            })
-          });
-          var js = await resp.json();
-          if (!js || !js.ok) throw new Error('Falha ao criar etapa');
-
-          // Redireciona para a etapa criada
-          var url = '/ofertas/painel/' + offer.id + '?stepId=' + encodeURIComponent(js.step.id);
-          window.location.href = url;
-        } catch (e) {
-          console.error(e);
-          // Fallback (degrada com GET legacy)
-          var u = new URL(window.location.href);
-          var n = 1;
-          if (Array.isArray(steps) && steps.length) {
-            var max = Math.max.apply(null, steps.map(s => Number(s.stepNo || 0)));
-            n = isNaN(max) ? 1 : (max + 1);
-          }
-          u.searchParams.set('etapa', String(n));
-          u.searchParams.set('step', stepName);
-          u.searchParams.set('dup', dupValue);
-          window.location.href = u.toString();
-        }
-      });
-    }
+    bc.innerHTML = items.join('');
   })();
+
+  // --- Toast minimalista (overlay discreto, Premium)
+  function showToast(type, text){
+    var wrap = document.createElement('div');
+    wrap.style.position='fixed'; wrap.style.inset='0';
+    wrap.style.display='flex'; wrap.style.alignItems='center'; wrap.style.justifyContent='center';
+    wrap.style.background='rgba(0,0,0,0.35)'; wrap.style.backdropFilter='blur(2px)';
+    wrap.style.zIndex='2000';
+
+    var card = document.createElement('div');
+    card.style.padding='14px 18px'; card.style.borderRadius='12px';
+    card.style.border='1px solid rgba(255,204,0,0.35)';
+    card.style.boxShadow='0 10px 30px rgba(0,0,0,0.45)';
+    card.style.background = (type==='error')
+      ? 'linear-gradient(90deg,#2a0000,#3a0000)'
+      : 'linear-gradient(90deg,#ffcc00,#d4a100)';
+    card.style.color = (type==='error') ? '#ffd5d5' : '#171300';
+    card.style.fontWeight='800'; card.style.letterSpacing='.3px';
+    card.textContent = text || (type==='error' ? 'Falhou' : 'Salvo!');
+    wrap.appendChild(card);
+    document.body.appendChild(wrap);
+    setTimeout(function(){ wrap.remove(); }, 1400);
+  }
+
+  // --- Estado do botão (loading → salvo)
+  function setButtonLoading(btn, isLoading){
+    if (!btn) return;
+    if (isLoading){
+      btn.disabled = true;
+      if (!btn.dataset._txt) btn.dataset._txt = btn.textContent;
+      btn.textContent = 'Salvando…';
+      btn.style.filter='brightness(1.02)'; // leve glow
+      btn.style.boxShadow='0 6px 22px rgba(255,204,0,0.35)';
+    } else {
+      btn.disabled = false;
+      btn.textContent = btn.dataset._txt || 'Salvar Alterações';
+      btn.style.filter=''; btn.style.boxShadow='';
+    }
+  }
+  function flashSaved(btn){
+    if (!btn) return;
+    const old = btn.textContent;
+    btn.textContent = 'Salvo!';
+    setTimeout(function(){ btn.textContent = btn.dataset._txt || 'Salvar Alterações'; }, 1100);
+  }
+
+  // --- Criar Etapa (sempre INSERT; nunca sobrescreve)
+  var stepModal = document.getElementById('stepModal');
+  var openBtn = document.getElementById('btnCreateStep');
+  var closeBtn = document.getElementById('btnCloseModal');
+  var cancelBtn = document.getElementById('btnCancelStep');
+  var confirmBtn = document.getElementById('btnConfirmStep');
+  var nameInput = document.getElementById('inpStepName');
+
+  if (stepModal) stepModal.setAttribute('hidden','');
+  function closeModal(){ if(stepModal){ stepModal.setAttribute('hidden',''); document.removeEventListener('keydown',escToClose); } }
+  function escToClose(e){ if(e.key==='Escape') closeModal(); }
+  function openModal(){
+    if(!stepModal) return;
+    // sugestão de nome com base no maior stepNo
+    var nextNo = 1;
+    if (Array.isArray(steps) && steps.length){ nextNo = Math.max.apply(null, steps.map(function(s){return Number(s.stepNo||0)})) + 1; }
+    if (nameInput) nameInput.value = 'Etapa ' + nextNo;
+    stepModal.removeAttribute('hidden'); nameInput && nameInput.focus();
+    document.addEventListener('keydown', escToClose);
+  }
+  if (openBtn) openBtn.addEventListener('click', openModal);
+  if (closeBtn) closeBtn.addEventListener('click', closeModal);
+  if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
+  if (stepModal){
+    stepModal.addEventListener('click', function(e){ if (e.target === stepModal) closeModal(); });
+  }
+
+  if (confirmBtn){
+    confirmBtn.addEventListener('click', async function(){
+      var dupVal = document.querySelector('input[name="dupMode"]:checked')?.value || '0';
+      var stepName = (nameInput?.value || '').trim();
+      // fallback nome
+      if (!stepName){
+        var nextNo = 1;
+        if (Array.isArray(steps) && steps.length){ nextNo = Math.max.apply(null, steps.map(function(s){return Number(s.stepNo||0)})) + 1; }
+        stepName = 'Etapa ' + nextNo;
+      }
+      try {
+        const r = await fetch('/ofertas/' + encodeURIComponent(offer.id) + '/etapas', {
+          method:'POST', headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({
+            name: stepName,
+            duplicate: dupVal === '1',
+            fromStepId: (dupVal === '1' && currentStep && currentStep.id) ? currentStep.id : null
+          })
+        });
+        const js = await r.json();
+        if (!js || !js.ok) throw new Error('create_failed');
+        // redireciona direto para a nova etapa criada
+        window.location.href = '/ofertas/painel/' + offer.id + '?stepId=' + encodeURIComponent(js.step.id);
+      } catch(e){
+        console.error(e);
+        showToast('error','Não foi possível criar a etapa.');
+      }
+    });
+  }
+
+  // --- Salvar Alterações (PATCH settings/nome da etapa atual)
+  var saveBtn = document.getElementById('btnSaveAll');
+  if (saveBtn){
+    saveBtn.addEventListener('click', async function(){
+      // pegue daqui o que você estiver editando no painel (mantive genérico):
+      // se você já guarda um rascunho global, use-o:
+      var draftSettings = (window.tfDraftSettings && typeof window.tfDraftSettings === 'object')
+        ? window.tfDraftSettings
+        : {}; // TODO: preencha conforme seus campos reais
+
+      try{
+        setButtonLoading(saveBtn, true);
+        const r = await fetch('/ofertas/' + encodeURIComponent(offer.id) + '/etapas/' + encodeURIComponent(currentStep.id), {
+          method:'PATCH', headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({ settings: draftSettings })
+        });
+        const js = await r.json();
+        if (!js || !js.ok) throw new Error('patch_failed');
+        flashSaved(saveBtn);
+        showToast('success','Configurações da ' + (js.step.name || 'etapa') + ' salvas com sucesso.');
+      }catch(e){
+        console.error(e);
+        showToast('error','Não foi possível salvar. Tente novamente em alguns segundos.');
+      }finally{
+        setButtonLoading(saveBtn, false);
+      }
+    });
+  }
+})();
 </script>
+
