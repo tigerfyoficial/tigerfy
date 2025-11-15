@@ -1,278 +1,289 @@
 <%- include('partials/visual_hottrack') %>
 
-<main class="tiger-offer-shell">
-  <!-- BREADCRUMB + TÍTULO + ETAPAS + AÇÃO -->
+<div class="tf-offer-panel">
+
+  <!-- Breadcrumb dinâmico -->
+  <nav class="tf-breadcrumb" id="tfBreadcrumb">
+    <a href="/ofertas">Minhas Ofertas</a>
+    <span>›</span>
+    <span id="offerTitleBC"><%= offer?.name || 'Nome da Oferta' %></span>
+  </nav>
+
+  <!-- Header: Título + Etapas (à esquerda) | Salvar (à direita) -->
   <header class="tf-header">
-    <div class="tf-head-left">
-      <nav class="tf-breadcrumb" id="tfBreadcrumb">
-        <a href="/ofertas">Minhas Ofertas</a>
-        <span>›</span>
-        <span id="crumbDynamic"><%= (offer && offer.name) ? offer.name : 'Nome da Oferta' %></span>
-      </nav>
+    <div class="tf-header-left">
+      <h1 class="tf-offer-title" id="offerTitle"><%= offer?.name || 'Nome da Oferta' %></h1>
 
-      <div class="tf-title-row">
-        <h1 class="tf-offer-title" id="offerTitle">
-          <%= (offer && offer.name) ? offer.name : 'Nome da Oferta' %>
-        </h1>
-
-        <!-- CONTROLE DE ETAPAS (ao lado do título) -->
-        <div class="tf-steps-inline">
-          <span class="tf-step-chip">
-            <span class="muted">Etapa:</span>
-            <strong id="tfStepName">Etapa 1</strong>
-          </span>
-          <button type="button" class="chip-btn" id="btnCreateStep">
-            <!-- ícone plus -->
-            <svg class="ico" width="16" height="16" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M12 5v14M5 12h14"/>
-            </svg>
-            Criar etapa
-          </button>
-        </div>
+      <div class="tf-step-inline">
+        <span class="tf-step-chip">Etapa: <strong id="tfStepName">Etapa 1</strong></span>
+        <button type="button" id="btnCreateStep" class="tf-btn tf-btn-small">Criar etapa</button>
       </div>
     </div>
 
-    <div class="tf-head-right">
-      <button type="button" class="btn primary" id="btnSaveAll">Salvar Alterações</button>
+    <div class="tf-header-right">
+      <button type="button" class="tf-btn tf-btn-primary" id="btnSaveAll">Salvar Alterações</button>
     </div>
   </header>
 
-  <!-- ABAS PRINCIPAIS (mesma estrutura, agora com ícones) -->
+  <!-- Abas principais -->
   <div class="tf-tabs">
     <button class="tab active" data-tab="principal">
-      <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-        stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-        <rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/>
-        <rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>
-      </svg>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="2"></rect><rect x="14" y="3" width="7" height="7" rx="2"></rect><rect x="14" y="14" width="7" height="7" rx="2"></rect><rect x="3" y="14" width="7" height="7" rx="2"></rect></svg>
       Principal
     </button>
-
     <button class="tab" data-tab="contingencia">
-      <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-        stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M12 2l7 4v5c0 5-3.5 9-7 11-3.5-2-7-6-7-11V6l7-4z"/><!-- escudo -->
-      </svg>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"></path></svg>
       Contingência de Bots
     </button>
-
     <button class="tab" data-tab="tracking">
-      <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-        stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.6 4.6l2.1 2.1M17.3 17.3l2.1 2.1M19.4 4.6l-2.1 2.1M6.7 17.3l-2.1 2.1"/>
-      </svg>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15A1.65 1.65 0 0 0 21 13.35 8 8 0 0 0 12 4a8 8 0 0 0-8 9.35A1.65 1.65 0 0 0 5.6 15"></path></svg>
       Traqueamento
     </button>
-
-    <button class="tab" data-tab="reports">
-      <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-        stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M3 17l5-5 4 4 7-7"/><path d="M21 21H3V3"/>
-      </svg>
+    <button class="tab" data-tab="relatorios">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"></path><path d="M19 17V7"></path><path d="M13 17V3"></path><path d="M7 17v-7"></path></svg>
       Fluxo de Relatórios
     </button>
   </div>
 
-  <!-- ABAS SECUNDÁRIAS (visíveis apenas quando "Principal" estiver ativa) -->
+  <!-- Abas secundárias (visíveis apenas quando Principal estiver ativo) -->
   <div class="tf-subtabs" id="subtabs-principal">
-    <button class="subtab active">
-      <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-        stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v9z"/>
-      </svg>
+    <button class="subtab active" data-subtab="front">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h8"></path><path d="M17 8h.01"></path><path d="M19 4v6h6"></path></svg>
       Front
     </button>
-    <button class="subtab">
-      <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-        stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M20 7l-8 10-5-5"/><path d="M3 7h18" />
-      </svg>
-      OrderBump
+    <button class="subtab" data-subtab="orderbump" disabled>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6h15l-1.5 9h-12z"></path><path d="M6 6l-1-3H2"></path><circle cx="9" cy="20" r="1"></circle><circle cx="18" cy="20" r="1"></circle><path d="M12 10h4"></path></svg>
+      OrderBump (em breve)
     </button>
-    <button class="subtab">
-      <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-        stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M3 17l6-6 4 4 8-8"/><!-- trend up -->
-      </svg>
-      Upsell
+    <button class="subtab" data-subtab="upsell" disabled>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17l6-6 4 4 8-8"></path></svg>
+      Upsell (em breve)
     </button>
-    <button class="subtab">
-      <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-        stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M3 7l6 6 4-4 8 8"/><!-- trend down (espelhado visual simples) -->
-      </svg>
-      Downsell
+    <button class="subtab" data-subtab="downsell" disabled>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 7l-6 6-4-4-8 8"></path></svg>
+      Downsell (em breve)
     </button>
-    <button class="subtab">
-      <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-        stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-        <rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 7h10M7 12h10M7 17h5"/><!-- lista/qr feel -->
-      </svg>
+    <button class="subtab" data-subtab="pix">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="14" width="7" height="7" rx="1"></rect><rect x="3" y="14" width="7" height="7" rx="1"></rect></svg>
       Mensagem PIX
     </button>
-    <button class="subtab">
-      <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-        stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/>
-      </svg>
-      Disparos
+    <button class="subtab" data-subtab="disparos" disabled>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 2L11 13"></path><path d="M22 2l-7 20-4-9-9-4 20-7z"></path></svg>
+      Disparos (em breve)
     </button>
   </div>
 
-  <!-- Placeholder para conteúdo (mantemos vazio) -->
-  <section class="tf-placeholder"></section>
-</main>
+  <!-- Área de conteúdo (vazia por enquanto, apenas layout de navegação) -->
+  <section class="tf-content-placeholder">
+    <!-- Intencionalmente vazio: navegação pronta para receber os cards depois -->
+  </section>
+</div>
 
-<!-- MODAL: Criar Etapa -->
+<!-- Modal "Nova etapa" -->
 <div class="tf-modal-backdrop" id="stepModal" hidden>
-  <div class="tf-modal" role="dialog" aria-modal="true" aria-labelledby="stepModalTitle">
-    <div class="tf-modal-header">
-      <h3 id="stepModalTitle">Nova etapa</h3>
-      <button class="modal-close" id="btnCloseModal" aria-label="Fechar">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
-          stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M18 6L6 18M6 6l12 12"/>
-        </svg>
+  <div class="tf-modal">
+    <div class="tf-modal-head">
+      <h3>Nova etapa</h3>
+      <button type="button" class="tf-modal-close" id="btnCloseModal" aria-label="Fechar">
+        ✕
       </button>
     </div>
 
     <div class="tf-modal-body">
-      <label class="tf-label" for="inpStepName">Nome da etapa</label>
-      <input id="inpStepName" class="tf-input" type="text"
-        placeholder="Etapa 2, Upsell Bot de Taxa, Funil Pós-Compra..." />
-
-      <div class="sep"></div>
+      <div class="tf-field">
+        <label for="inpStepName">Nome da etapa</label>
+        <input type="text" id="inpStepName" placeholder="Ex.: Etapa 2, Upsell Bot de Taxa, Funil Pós-Compra" />
+      </div>
 
       <div class="tf-radio-group">
-        <label class="radio-row">
-          <input type="radio" name="dupMode" value="0" checked>
-          <span>
-            <strong>Criar etapa do zero</strong>
-            <small>Comece sem nenhuma configuração copiada.</small>
-          </span>
+        <span class="tf-radio-title">Configurações iniciais</span>
+        <label class="tf-radio">
+          <input type="radio" name="dupMode" value="0" checked />
+          <span>Criar etapa do zero</span>
         </label>
-        <label class="radio-row">
-          <input type="radio" name="dupMode" value="1">
-          <span>
-            <strong>Duplicar configurações da etapa atual</strong>
-            <small>Duplica mensagens, planos, bots, tracking etc. <b>Nunca</b> duplica relatórios.</small>
-          </span>
+        <label class="tf-radio">
+          <input type="radio" name="dupMode" value="1" />
+          <span>Duplicar configurações da etapa atual (sem relatórios)</span>
         </label>
       </div>
     </div>
 
     <div class="tf-modal-actions">
-      <button class="btn" id="btnCancelStep">Cancelar</button>
-      <button class="btn primary" id="btnConfirmStep">Criar etapa</button>
+      <button type="button" class="tf-btn" id="btnCancelStep">Cancelar</button>
+      <button type="button" class="tf-btn tf-btn-primary" id="btnConfirmStep">Criar etapa</button>
     </div>
   </div>
 </div>
 
 <style>
   :root{
-    --bg-0:#0a0a0a; --surface-1:#0f0f0f; --surface-2:#131313;
-    --line-1:#1e1e1e; --line-2:#262626;
-    --text-1:#f2f2f2; --text-2:#b6b6b6; --text-3:#8a8a8a;
+    --bg:#0b0b0b;
+    --panel:rgba(255,255,255,0.04);
+    --panel-strong:rgba(255,255,255,0.06);
+    --border:rgba(255,255,255,0.12);
+    --muted:#b8b8b8;
+    --text:#ffffff;
+    --accent:#ffcc00;
+    --accent-dim:#d4a100;
+    --shadow:0 8px 24px rgba(0,0,0,0.45);
+    --radius:14px;
   }
 
-  .tiger-offer-shell{max-width:1160px;margin:0 auto;padding:24px 16px 72px;color:var(--text-1);}
-  .tf-header{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:18px;}
-  .tf-head-left{min-width:0}
-  .tf-breadcrumb{display:flex;gap:8px;align-items:center;color:var(--text-3);font-size:.92rem;margin-bottom:6px;}
-  .tf-breadcrumb a{color:var(--text-3);text-decoration:none}
-  .tf-breadcrumb a:hover{color:var(--text-2)}
-  .tf-title-row{display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+  .tf-offer-panel{
+    color:var(--text);
+    padding:60px 80px 100px 130px; /* compensa sidebar */
+    max-width:1200px;
+    margin:0 auto;
+  }
+
+  .tf-breadcrumb{
+    display:flex; align-items:center; gap:8px;
+    color:var(--muted);
+    font-size:.9rem;
+    margin-bottom:10px;
+  }
+  .tf-breadcrumb a{
+    color:var(--muted); text-decoration:none;
+  }
+  .tf-breadcrumb a:hover{ color:#e0e0e0; }
+
+  .tf-header{
+    display:flex; align-items:flex-start; justify-content:space-between;
+    gap:16px; margin-bottom:18px;
+  }
+  .tf-header-left{
+    display:flex; align-items:center; gap:14px; flex-wrap:wrap;
+  }
   .tf-offer-title{
-    margin:0;font-size:1.8rem;letter-spacing:.2px;font-weight:700;
-    background:linear-gradient(180deg,#fff 20%, #e6e6e6 70%, #bbb 100%);
-    -webkit-background-clip:text;background-clip:text;color:transparent;
+    margin:0; font-size:1.75rem; letter-spacing:.3px;
+    background:linear-gradient(90deg,#fff,#d8d8d8);
+    -webkit-background-clip:text; background-clip:text; color:transparent;
   }
 
-  /* Etapas ao lado do título */
-  .tf-steps-inline{display:flex;align-items:center;gap:10px;}
+  .tf-step-inline{ display:flex; align-items:center; gap:8px; }
   .tf-step-chip{
-    display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;
-    background:#101010;border:1px solid var(--line-1);color:var(--text-2);font-size:.9rem;line-height:1;
-  }
-  .tf-step-chip .muted{color:var(--text-3);font-weight:500}
-  .chip-btn{
-    display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;
-    background:#101010;border:1px solid var(--line-1);color:var(--text-1);font-size:.92rem;
-    transition:background .15s,border-color .15s,transform .05s; cursor:pointer;
-  }
-  .chip-btn:hover{background:#141414;border-color:#303030}
-  .chip-btn .ico{width:16px;height:16px;display:block}
-
-  /* Botões padrão */
-  .btn{border:1px solid var(--line-1);background:var(--surface-2);color:var(--text-1);
-       padding:10px 14px;border-radius:12px;transition:background .15s,border-color .15s,transform .05s;}
-  .btn:hover{background:#151515;border-color:var(--line-2)}
-  .btn.primary{background:linear-gradient(180deg,#171717,#121212);border-color:#2a2a2a}
-  .btn.primary:hover{background:#161616;border-color:#343434}
-  .btn:active{transform:translateY(1px)}
-
-  /* Tabs (mesmo grid/posições, agora com ícones) */
-  .tf-tabs{display:flex;gap:10px;justify-content:center;margin:10px 0 12px}
-  .tab{
-    appearance:none;cursor:pointer;padding:10px 14px;border-radius:999px;background:#101010;
-    border:1px solid var(--line-1);color:var(--text-2);font-size:.95rem;display:inline-flex;align-items:center;gap:8px;
-    transition:background .15s,border-color .15s,color .15s;
-  }
-  .tab:hover{background:#131313;border-color:var(--line-2);color:var(--text-1)}
-  .tab.active{background:#141414;border-color:#333;color:var(--text-1);position:relative}
-  .tab .ico{width:16px;height:16px;display:block}
-  .tab.active::after{
-    content:"";position:absolute;left:12px;right:12px;bottom:-6px;height:2px;
-    background:#2a2a2a;border-radius:2px;opacity:.9;
+    display:inline-flex; align-items:center; gap:6px;
+    padding:6px 10px; border-radius:999px;
+    background:var(--panel); border:1px solid var(--border);
+    font-size:.85rem; color:#ddd;
   }
 
-  .tf-subtabs{display:flex;gap:8px;justify-content:center;margin:6px 0 18px}
-  .subtab{
-    padding:8px 12px;border-radius:999px;background:#0f0f0f;border:1px solid var(--line-1);
-    color:var(--text-2);font-size:.9rem;cursor:pointer;display:inline-flex;align-items:center;gap:8px;
-    transition:background .15s,border-color .15s,color .15s;
+  .tf-btn{
+    appearance:none; border:1px solid var(--border);
+    background:var(--panel-strong); color:#eee;
+    padding:9px 14px; border-radius:10px; cursor:pointer;
+    font-weight:600; box-shadow:var(--shadow);
+    transition:.2s ease;
   }
-  .subtab:hover{background:#131313;border-color:var(--line-2);color:var(--text-1)}
-  .subtab.active{background:#141414;border-color:#303030;color:var(--text-1)}
-  .subtab .ico{width:16px;height:16px;display:block}
+  .tf-btn:hover{ border-color:rgba(255,255,255,0.2); background:rgba(255,255,255,0.08); }
+  .tf-btn:active{ transform:translateY(1px); }
+  .tf-btn-small{ padding:7px 10px; font-size:.85rem; border-radius:999px; }
+  .tf-btn-primary{
+    background:linear-gradient(90deg,var(--accent),var(--accent-dim));
+    color:#171300; border:1px solid rgba(255,204,0,0.35);
+    box-shadow:0 6px 22px rgba(255,204,0,0.25);
+  }
+  .tf-btn-primary:hover{ filter:brightness(1.02); }
 
-  /* Placeholder */
-  .tf-placeholder{height:220px;border:1px dashed var(--line-2);border-radius:18px;background:var(--surface-1)}
+  .tf-tabs{
+    display:flex; gap:8px; flex-wrap:wrap; margin:16px 0 10px 0;
+    justify-content:center;
+  }
+  .tf-tabs .tab{
+    display:inline-flex; align-items:center; gap:8px;
+    padding:9px 14px; border-radius:999px; border:1px solid var(--border);
+    background:var(--panel); color:#dedede; font-weight:600; font-size:.92rem;
+    cursor:pointer; transition:.2s;
+  }
+  .tf-tabs .tab:hover{ background:rgba(255,255,255,0.07); }
+  .tf-tabs .tab.active{
+    background:rgba(255,255,255,0.10);
+    border-color:rgba(255,255,255,0.22);
+    color:#fff;
+  }
 
-  /* Modal */
+  .tf-subtabs{
+    display:flex; gap:8px; flex-wrap:wrap; justify-content:center;
+    margin-bottom:18px;
+  }
+  .tf-subtabs .subtab{
+    display:inline-flex; align-items:center; gap:8px;
+    padding:7px 12px; border-radius:999px; border:1px solid var(--border);
+    background:var(--panel); color:#dcdcdc; font-weight:600; font-size:.9rem;
+    cursor:pointer; transition:.2s;
+  }
+  .tf-subtabs .subtab[disabled]{ opacity:.45; cursor:not-allowed; }
+  .tf-subtabs .subtab:not([disabled]):hover{ background:rgba(255,255,255,0.07); }
+  .tf-subtabs .subtab.active{
+    background:rgba(255,255,255,0.10);
+    border-color:rgba(255,255,255,0.22);
+    color:#fff;
+  }
+
+  .tf-content-placeholder{
+    min-height:360px;
+    border:1px dashed rgba(255,255,255,0.12);
+    border-radius:var(--radius);
+    background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
+    box-shadow:var(--shadow);
+  }
+
+  /* ============= Modal ============= */
   .tf-modal-backdrop{
-    position:fixed;inset:0;background:rgba(0,0,0,.5);display:grid;place-items:center;z-index:50;
-    backdrop-filter:saturate(120%) blur(4px);
+    position:fixed; inset:0; background:rgba(0,0,0,0.55);
+    display:flex; align-items:center; justify-content:center;
+    padding:20px; z-index:1000;
   }
+  /* garante que [hidden] sempre esconda o modal */
+  .tf-modal-backdrop[hidden]{ display:none !important; }
+
   .tf-modal{
-    width:min(520px,92vw);background:#111;border:1px solid #262626;border-radius:16px;
-    box-shadow:0 10px 50px rgba(0,0,0,.45);padding:14px 14px 12px;
+    width:100%; max-width:560px;
+    background:linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.04));
+    border:1px solid var(--border);
+    border-radius:16px; box-shadow:0 14px 42px rgba(0,0,0,0.55);
+    backdrop-filter: blur(6px);
   }
-  .tf-modal-header{display:flex;align-items:center;justify-content:space-between;padding:6px 6px 8px 8px}
-  .tf-modal-header h3{margin:0;font-size:1.05rem;color:var(--text-1)}
-  .modal-close{background:transparent;border:1px solid var(--line-1);border-radius:10px;padding:6px;cursor:pointer;color:var(--text-2)}
-  .modal-close:hover{background:#151515;border-color:#303030;color:var(--text-1)}
-  .tf-modal-body{padding:8px}
-  .tf-label{display:block;font-size:.9rem;color:var(--text-2);margin-bottom:6px}
-  .tf-input{
-    width:100%;padding:10px 12px;border-radius:10px;border:1px solid #2a2a2a;background:#121212;
-    color:#fff;font-size:.96rem;outline:none;
+  .tf-modal-head{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:16px 16px 10px 16px;
+    border-bottom:1px solid rgba(255,255,255,0.09);
   }
-  .tf-input::placeholder{color:#8d8d8d}
-  .sep{height:12px}
-  .tf-radio-group{display:grid;gap:8px}
-  .radio-row{
-    display:flex;gap:10px;align-items:flex-start;padding:10px;border:1px solid #232323;border-radius:12px;background:#101010;
+  .tf-modal-head h3{ margin:0; font-size:1.05rem; color:#fff; }
+  .tf-modal-close{
+    background:transparent; border:0; color:#ccc; cursor:pointer; font-size:16px; padding:4px;
   }
-  .radio-row input{margin-top:3px}
-  .radio-row span{display:grid}
-  .radio-row strong{font-size:.95rem;color:#e9e9e9}
-  .radio-row small{font-size:.85rem;color:#9f9f9f}
-  .tf-modal-actions{display:flex;justify-content:flex-end;gap:10px;padding:10px 6px 4px}
-  @media (max-width:900px){
-    .tf-header{flex-direction:column;align-items:flex-start}
-    .tf-head-right{width:100%;display:flex;justify-content:flex-end}
+  .tf-modal-close:hover{ color:#fff; }
+
+  .tf-modal-body{ padding:16px; display:flex; flex-direction:column; gap:14px; }
+  .tf-field label{
+    display:block; font-weight:600; margin-bottom:6px; color:#efefef; font-size:.92rem;
+  }
+  .tf-field input[type="text"]{
+    width:100%; padding:10px 12px; border-radius:10px;
+    background:rgba(255,255,255,0.06); color:#fff;
+    border:1px solid rgba(255,255,255,0.16); outline:none;
+    font-size:.95rem;
+  }
+  .tf-field input[type="text"]::placeholder{ color:#bfbfbf; }
+  .tf-field input[type="text"]:focus{
+    border-color:rgba(255,204,0,0.6);
+    box-shadow:0 0 0 2px rgba(255,204,0,0.20);
+  }
+
+  .tf-radio-group{ display:flex; flex-direction:column; gap:8px; }
+  .tf-radio-title{ font-size:.9rem; color:#e8e8e8; font-weight:600; margin-bottom:4px; }
+  .tf-radio{ display:flex; align-items:center; gap:8px; color:#cfcfcf; }
+  .tf-radio input{ transform:translateY(1px); }
+
+  .tf-modal-actions{
+    display:flex; align-items:center; justify-content:flex-end; gap:10px;
+    padding:12px 16px 16px 16px; border-top:1px solid rgba(255,255,255,0.09);
+  }
+
+  @media (max-width: 980px){
+    .tf-offer-panel{ padding:40px 18px 80px 18px; }
+    .tf-header{ flex-direction:column; align-items:flex-start; gap:10px; }
   }
 </style>
 
@@ -302,9 +313,7 @@
     var stepNameEl = document.getElementById('tfStepName');
     if (stepNameEl) stepNameEl.textContent = computedStepName;
 
-    // Breadcrumb dinâmico:
-    // sem etapa -> Minhas Ofertas > Nome da oferta
-    // com etapa -> Minhas Ofertas > NOME_DA_OFERTA > NOME_DA_ETAPA
+    // Breadcrumb dinâmico
     var bc = document.getElementById('tfBreadcrumb');
     var offerTitleText = document.getElementById('offerTitle')?.textContent?.trim() || 'Nome da Oferta';
     var etapaParam = url.searchParams.get('etapa');
@@ -325,7 +334,7 @@
       }
     }
 
-    // -------- Modal "Criar etapa"
+    // -------- Modal "Criar etapa" (NÃO abrir automaticamente)
     var modal = document.getElementById('stepModal');
     var openBtn = document.getElementById('btnCreateStep');
     var closeBtn = document.getElementById('btnCloseModal');
@@ -333,21 +342,26 @@
     var confirmBtn = document.getElementById('btnConfirmStep');
     var nameInput = document.getElementById('inpStepName');
 
+    // Garante que, ao carregar, o modal esteja SEMPRE fechado
+    if (modal) { modal.setAttribute('hidden', ''); }
+
+    function escToClose(e){ if (e.key === 'Escape') closeModal(); }
+
     function openModal(){
       if (!modal) return;
       // sugestão de nome padrão
       var nextN = isNaN(currentStep) ? 2 : (currentStep + 1);
       if (nameInput) nameInput.value = 'Etapa ' + nextN;
-      modal.hidden = false;
+      modal.removeAttribute('hidden');     // abre
       nameInput && nameInput.focus();
       document.addEventListener('keydown', escToClose);
     }
+
     function closeModal(){
       if (!modal) return;
-      modal.hidden = true;
+      modal.setAttribute('hidden','');     // fecha
       document.removeEventListener('keydown', escToClose);
     }
-    function escToClose(e){ if (e.key === 'Escape') closeModal(); }
 
     if (openBtn) openBtn.addEventListener('click', openModal);
     if (closeBtn) closeBtn.addEventListener('click', closeModal);
