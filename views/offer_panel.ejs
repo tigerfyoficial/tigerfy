@@ -1,465 +1,510 @@
+<!-- views/offer_panel.ejs -->
 <%- include('partials/visual_hottrack') %>
 
-<div class="tf-wrap">
+<section class="tiger-offer">
   <!-- Header -->
-  <div class="tf-head">
-    <div>
-      <h1>Gerenciar Mensagens & Funis</h1>
-      <div class="tf-breadcrumb muted">Minhas Ofertas &rsaquo; <span class="gold"><%= offer.name %></span></div>
-    </div>
-    <a class="btn ghost" href="/ofertas">Voltar</a>
-  </div>
-
-  <!-- Abas SUPERIORES (sempre visíveis) -->
-  <nav class="tf-tabs" role="tablist" aria-label="Categorias">
-    <button class="tab is-active" data-tab="principal">Principal</button>
-    <button class="tab" data-tab="tracking">Tracking</button>
-    <button class="tab" data-tab="cloaker">Cloaker</button>
-  </nav>
-
-  <!-- ============================ PRINCIPAL ============================ -->
-  <section class="tab-panel" id="principal" aria-labelledby="Principal" role="tabpanel">
-    <!-- Abas internas (sempre visíveis) -->
-    <nav class="tf-subtabs" role="tablist" aria-label="Seções da oferta">
-      <button class="subtab is-active" data-subtab="front">Front</button>
-      <button class="subtab" data-subtab="bump" disabled>OrderBump (em breve)</button>
-      <button class="subtab" data-subtab="upsell" disabled>Upsell (em breve)</button>
-      <button class="subtab" data-subtab="downsell" disabled>Downsell (em breve)</button>
-      <button class="subtab" data-subtab="follow" disabled>Disparo (em breve)</button>
-      <button class="subtab" data-subtab="pix">Mensagem Pix</button>
+  <header class="tf-header">
+    <nav class="tf-breadcrumb">
+      <a href="/ofertas">Minhas Ofertas</a>
+      <span>/</span>
+      <span><%= offer?.name || 'Oferta' %></span>
     </nav>
 
-    <!-- ====== GRID 2 COLUNAS (Flexion) ====== -->
-    <div class="tf-grid">
-      <!-- COLUNA ESQUERDA — CARD ÚNICO (FRONT) -->
-      <section class="tf-left">
-        <article class="card card-lg subpanel" id="sub-front" role="region">
-          <header class="card-header">
-            <h3 class="card-title">Mensagem Principal (/start)</h3>
-            <p class="muted s">Texto inicial que o usuário recebe. Se o CTA estiver ativo, um botão é exibido ao final.</p>
-          </header>
+    <div class="tf-title-row">
+      <div>
+        <h1><%= offer?.name || 'Oferta' %></h1>
+        <p>ID: <%= offer?.id %></p>
+      </div>
 
-          <!-- Copy -->
-          <div class="field">
-            <label>Conteúdo da mensagem</label>
-            <textarea id="frontCopy" placeholder="Escreva a mensagem de boas-vindas…"></textarea>
-          </div>
-
-          <!-- Mídias -->
-          <div class="row media-row">
-            <div class="field grow">
-              <label>Mídias atuais</label>
-              <ul id="mediaList" class="media-list"><!-- preenchido via JS --></ul>
-            </div>
-            <button class="btn ghost" id="btnAddMedia" type="button">Inserir mídia (Telegram)</button>
-          </div>
-
-          <hr class="sep">
-
-          <!-- CTA -->
-          <div class="cta-head">
-            <h4>Botão de Ação (CTA)</h4>
-            <label class="switch">
-              <input id="ctaOn" type="checkbox">
-              <span></span>
-            </label>
-          </div>
-
-          <div class="field">
-            <label>Texto da Chamada (opcional)</label>
-            <input id="ctaHeadline" type="text" placeholder="Ex.: Garanta sua vaga agora mesmo.">
-          </div>
-
-          <div class="field">
-            <label>Texto do Botão</label>
-            <input id="ctaText" type="text" placeholder="QUERO MINHA VAGA">
-          </div>
-
-          <div class="actions">
-            <button class="btn primary" id="btnSaveFront" type="button">Salvar alterações</button>
-          </div>
-        </article>
-
-        <!-- COLUNA ESQUERDA — CARD ÚNICO (MENSAGEM PIX) -->
-        <article class="card card-lg subpanel is-hidden" id="sub-pix" role="region" aria-hidden="true">
-          <header class="card-header">
-            <h3 class="card-title">Mensagem do Pix</h3>
-            <p class="muted s">Mensagem enviada na etapa de pagamento. Suporta variáveis: <code>[[pix]]</code>, <code>[[valor]]</code>, <code>[[nome]]</code>.</p>
-          </header>
-
-          <div class="field">
-            <label>Mensagem do Pix</label>
-            <textarea id="pixCopy" placeholder="Ex.: Para concluir o pagamento, use o código [[pix]] (valor [[valor]])."></textarea>
-          </div>
-
-          <div class="row media-row">
-            <div class="field grow">
-              <label>Mídias atuais</label>
-              <ul id="pixMediaList" class="media-list"></ul>
-            </div>
-            <button class="btn ghost" id="btnAddPixMedia" type="button">Inserir mídia (Telegram)</button>
-          </div>
-
-          <div class="actions">
-            <button class="btn primary" id="btnSavePix" type="button">Salvar alterações</button>
-          </div>
-        </article>
-
-        <!-- Subpainéis “em breve” (placeholders elegantes) -->
-        <article class="card card-lg subpanel is-hidden" id="sub-bump" role="region" aria-hidden="true">
-          <header class="card-header">
-            <h3 class="card-title">OrderBump</h3>
-            <p class="muted s">Disponível em breve. Estrutura minimalista no padrão TigerFy.</p>
-          </header>
-        </article>
-
-        <article class="card card-lg subpanel is-hidden" id="sub-upsell" role="region" aria-hidden="true">
-          <header class="card-header">
-            <h3 class="card-title">Upsell</h3>
-            <p class="muted s">Disponível em breve.</p>
-          </header>
-        </article>
-
-        <article class="card card-lg subpanel is-hidden" id="sub-downsell" role="region" aria-hidden="true">
-          <header class="card-header">
-            <h3 class="card-title">Downsell</h3>
-            <p class="muted s">Disponível em breve.</p>
-          </header>
-        </article>
-
-        <article class="card card-lg subpanel is-hidden" id="sub-follow" role="region" aria-hidden="true">
-          <header class="card-header">
-            <h3 class="card-title">Disparo / Follow-up</h3>
-            <p class="muted s">Disponível em breve.</p>
-          </header>
-        </article>
-      </section>
-
-      <!-- COLUNA DIREITA — PLANOS & BOTÕES -->
-      <aside class="tf-right">
-        <article class="card">
-          <div class="card-header row-between">
-            <h3 class="card-title">Planos & Botões</h3>
-            <div class="row gap8">
-              <button class="btn ghost" id="btnCreateRedirect" type="button">Criar Redirect</button>
-              <button class="btn primary" id="btnAddPlan" type="button">+ Criar Plano</button>
-            </div>
-          </div>
-
-          <div id="plansList" class="plans-list"><!-- mini-cards via JS --></div>
-        </article>
-      </aside>
+      <div class="tf-actions">
+        <span class="pill <%= offer?.status === 'ativo' ? 'ok' : 'warn' %>">
+          <%= offer?.status === 'ativo' ? 'Ativo' : 'Incompleto' %>
+        </span>
+        <button type="button" class="btn ghost" data-action="test-quick">Teste Rápido</button>
+        <button type="button" class="btn ghost" data-action="view-logs">Logs</button>
+        <button type="button" class="btn primary" data-action="save-all" disabled>Salvar Configurações</button>
+      </div>
     </div>
-  </section>
 
-  <!-- ============================ TRACKING ============================ -->
-  <section class="tab-panel is-hidden" id="tracking" role="tabpanel" aria-hidden="true">
-    <div class="tf-single">
-      <article class="card card-lg">
-        <header class="card-header">
-          <h3 class="card-title">Tracking</h3>
-          <p class="muted s">Selecione o método de rastreamento. Campos aparecem somente quando necessário.</p>
-        </header>
-
-        <div class="field">
-          <label>Método</label>
-          <div class="radios">
-            <label class="radio"><input type="radio" name="trk" value="fb"> <span></span> Facebook Pixel</label>
-            <label class="radio"><input type="radio" name="trk" value="utm_fb"> <span></span> UTMify + Facebook Pixel</label>
-            <label class="radio"><input type="radio" name="trk" value="utm_utm"> <span></span> UTMify + UTMify Pixel</label>
-          </div>
-        </div>
-
-        <div class="grid-2">
-          <div class="field trk trk-fb is-hidden">
-            <label>Facebook Pixel ID</label>
-            <input type="text" placeholder="ex.: 1234567890">
-          </div>
-          <div class="field trk trk-utm is-hidden">
-            <label>UTMify Token</label>
-            <input type="text" placeholder="ex.: utm_xxxxxxxxx">
-          </div>
-          <div class="field trk trk-utm is-hidden">
-            <label>UTMify Pixel ID</label>
-            <input type="text" placeholder="ex.: utm_pixel_abc">
-          </div>
-        </div>
-
-        <hr class="sep">
-
-        <header class="card-header">
-          <h4 class="card-title">Redirecionador (Bots)</h4>
-          <p class="muted s">Cadastre quantos bots quiser. Ative até 2 simultaneamente.</p>
-        </header>
-
-        <div class="redir-actions">
-          <button class="btn primary" id="btnAddBot" type="button">+ Cadastrar Bot</button>
-        </div>
-
-        <div id="botsList" class="mini-list"><!-- mini-cards via JS --></div>
-
-        <div class="actions">
-          <button class="btn primary" type="button" id="btnSaveTracking">Salvar Tracking</button>
-        </div>
-      </article>
+    <!-- Abas principais (sempre visíveis) -->
+    <div class="tf-tabs" role="tablist" aria-label="Categorias">
+      <button class="tab active" data-tab="principal" role="tab">Principal</button>
+      <button class="tab" data-tab="tracking" role="tab">Tracking</button>
+      <button class="tab" data-tab="redirect" role="tab">Redirecionadores</button>
+      <button class="tab" data-tab="contingencia" role="tab">Contingência</button>
+      <button class="tab" data-tab="cloaker" role="tab">Cloaker</button>
     </div>
-  </section>
+  </header>
 
-  <!-- ============================ CLOAKER ============================ -->
-  <section class="tab-panel is-hidden" id="cloaker" role="tabpanel" aria-hidden="true">
-    <div class="tf-single">
-      <article class="card card-lg">
-        <header class="card-header row-between">
-          <div>
-            <h3 class="card-title">Cloaker Anti-Clone</h3>
-            <p class="muted s">Impeça clonagem automática adicionando caracteres aleatórios quando houver cópia das mensagens.</p>
+  <!-- === PRINCIPAL ====================================================== -->
+  <div class="tabpane show" id="principal" role="tabpanel">
+    <!-- Abas internas (sempre visíveis) -->
+    <div class="tf-subtabs" role="tablist" aria-label="Funcionalidades do bot">
+      <button class="subtab active" data-sub="front">Front</button>
+      <button class="subtab" data-sub="bump">OrderBump <small>(em breve)</small></button>
+      <button class="subtab" data-sub="upsell">Upsell <small>(em breve)</small></button>
+      <button class="subtab" data-sub="downsell">Downsell <small>(em breve)</small></button>
+      <button class="subtab" data-sub="followup">Disparo <small>(em breve)</small></button>
+      <button class="subtab" data-sub="pix">Mensagem Pix</button>
+    </div>
+
+    <!-- GRID FLEXION-LIKE: esquerda = card principal; direita = planos -->
+    <div class="grid-2">
+      <!-- COLUNA ESQUERDA — FRONT -->
+      <section class="card deep subpane show" id="sub-front">
+        <div class="card-head">
+          <div class="title">
+            <span class="dot"></span>
+            <h3>Mensagem Principal (/start)</h3>
           </div>
+          <p class="hint">Mensagem inicial enviada ao usuário no /start.</p>
+        </div>
+
+        <!-- Copy -->
+        <label class="label">Conteúdo da Mensagem</label>
+        <textarea class="input area" rows="8" placeholder="Escreva sua mensagem de boas-vindas. Suporte a variáveis no futuro (ex.: [[nome]])."></textarea>
+
+        <!-- Mídias -->
+        <div class="row">
+          <div class="col">
+            <label class="label">Mídias atuais</label>
+            <div class="media-list empty">Nenhuma mídia anexada</div>
+          </div>
+          <div class="col right">
+            <button class="btn ghost" type="button">Inserir mídia (link Telegram)</button>
+          </div>
+        </div>
+
+        <!-- CTA -->
+        <div class="split">
+          <div class="label">Botão de Ação (CTA)</div>
           <label class="switch">
-            <input id="cloakerOn" type="checkbox">
+            <input type="checkbox" id="ctaEnabled">
             <span></span>
           </label>
-        </header>
-        <div class="actions">
-          <button class="btn primary" type="button" id="btnSaveCloaker">Salvar</button>
         </div>
-      </article>
+
+        <div class="grid-2 slim">
+          <div>
+            <label class="label">Texto da chamada (opcional)</label>
+            <input class="input" placeholder="Ex.: Cansado de perder tempo? Clique abaixo para garantir sua vaga!">
+          </div>
+          <div>
+            <label class="label">Texto do botão</label>
+            <input class="input" placeholder="Ex.: QUERO MINHA VAGA AGORA">
+          </div>
+        </div>
+
+        <!-- Regras extras do FRONT -->
+        <div class="line"></div>
+        <div class="grid-3 slim">
+          <div>
+            <label class="label">Auto-deletar</label>
+            <div class="inline">
+              <label class="switch">
+                <input type="checkbox">
+                <span></span>
+              </label>
+              <input class="input xs" placeholder="Delay (s)">
+            </div>
+          </div>
+          <div>
+            <label class="label">Entregável (após pagamento)</label>
+            <input class="input" placeholder="https://link-do-entregavel.com">
+          </div>
+          <div>
+            <label class="label">Traqueamento</label>
+            <select class="input">
+              <option>Facebook Pixel</option>
+              <option>UTMify + Facebook Pixel</option>
+              <option>UTMify + UTMify Pixel</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="btn primary">Salvar alterações</button>
+        </div>
+      </section>
+
+      <!-- COLUNA DIREITA — PLANOS -->
+      <aside class="card side">
+        <div class="card-head">
+          <div class="title">
+            <span class="dot"></span>
+            <h3>Planos & Botões</h3>
+          </div>
+          <div class="right">
+            <button class="btn ghost sm">Criar Redirect</button>
+            <button class="btn primary sm">Criar Plano</button>
+          </div>
+        </div>
+
+        <!-- Lista de planos (mini cards) -->
+        <div class="plans">
+          <!-- Exemplo de mini-card. Substitua por loop dinâmico quando plugar DB -->
+          <div class="plan">
+            <div class="p-l">
+              <strong>MENSAL</strong>
+              <span>Valor: R$ 19,90 • Duração: 30 dias</span>
+            </div>
+            <div class="p-r">
+              <button class="btn ghost xs">Editar</button>
+              <button class="btn danger xs">Excluir</button>
+            </div>
+          </div>
+
+          <!-- VERSÃO EXPANDIDA COM ENTREGÁVEL POR PLANO -->
+          <div class="plan expanded">
+            <div class="p-l">
+              <strong>VITALÍCIO</strong>
+              <span>Valor: R$ 89,90 • Duração: ilimitado</span>
+            </div>
+            <div class="p-r">
+              <button class="btn ghost xs">Editar</button>
+              <button class="btn danger xs">Excluir</button>
+            </div>
+            <div class="plan-body">
+              <label class="label">Entregável deste plano</label>
+              <input class="input" placeholder="URL do entregável (enviado após pagamento confirmado)">
+              <div class="actions r">
+                <button class="btn primary xs">Salvar</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- estados vazios -->
+          <!-- <div class="empty">Nenhum plano criado ainda.</div> -->
+        </div>
+      </aside>
     </div>
-  </section>
-</div>
 
-<!-- ============================ ESTILO ============================ -->
+    <!-- SUB: PIX MESSAGE -->
+    <section class="card deep subpane" id="sub-pix">
+      <div class="card-head">
+        <div class="title">
+          <span class="dot"></span>
+          <h3>Mensagem do Pix</h3>
+        </div>
+        <p class="hint">Use variáveis entre colchetes: [[pix]] [[valor]] [[nome]] [[plano]].</p>
+      </div>
+
+      <textarea class="input area" rows="6" placeholder="Ex.: Copie o código Pix abaixo [[pix]] e conclua o pagamento de [[valor]]."></textarea>
+
+      <div class="row">
+        <div class="col"></div>
+        <div class="col right">
+          <button class="btn ghost" type="button">Inserir mídia (link Telegram)</button>
+        </div>
+      </div>
+
+      <div class="grid-3 slim">
+        <div>
+          <label class="label">Auto-deletar</label>
+          <div class="inline">
+            <label class="switch"><input type="checkbox"><span></span></label>
+            <input class="input xs" placeholder="Delay (s)">
+          </div>
+        </div>
+        <div>
+          <label class="label">Pré-visualização (futuro)</label>
+          <input class="input" disabled value="—">
+        </div>
+        <div></div>
+      </div>
+
+      <div class="actions">
+        <button class="btn primary">Salvar mensagem Pix</button>
+      </div>
+    </section>
+
+    <!-- SUB: PLACEHOLDERS EM BREVE -->
+    <section class="card subpane" id="sub-bump">
+      <div class="soon">OrderBump — em breve</div>
+    </section>
+    <section class="card subpane" id="sub-upsell">
+      <div class="soon">Upsell — em breve</div>
+    </section>
+    <section class="card subpane" id="sub-downsell">
+      <div class="soon">Downsell — em breve</div>
+    </section>
+    <section class="card subpane" id="sub-followup">
+      <div class="soon">Disparo / Follow-up — em breve</div>
+    </section>
+  </div>
+
+  <!-- === TRACKING ======================================================= -->
+  <div class="tabpane" id="tracking" role="tabpanel">
+    <section class="card deep">
+      <div class="card-head">
+        <div class="title">
+          <span class="dot"></span>
+          <h3>Tracking</h3>
+        </div>
+        <p class="hint">Escolha o método de rastreio. Campos aparecem conforme a seleção.</p>
+      </div>
+
+      <div class="grid-3 slim radios" id="trackRadios">
+        <label class="radio">
+          <input type="radio" name="track_mode" value="fb" checked>
+          <span></span> Facebook Pixel
+        </label>
+        <label class="radio">
+          <input type="radio" name="track_mode" value="utm_fb">
+          <span></span> UTMify + Facebook Pixel
+        </label>
+        <label class="radio">
+          <input type="radio" name="track_mode" value="utm_utm">
+          <span></span> UTMify + UTMify Pixel
+        </label>
+      </div>
+
+      <div class="grid-3 slim" id="trackFields">
+        <div data-for="fb utm_fb">
+          <label class="label">Facebook Pixel ID</label>
+          <input class="input" placeholder="ex.: 1234567890">
+        </div>
+        <div data-for="utm_fb utm_utm">
+          <label class="label">UTMify Project / Token</label>
+          <input class="input" placeholder="ex.: utmify_xxxxx">
+        </div>
+        <div data-for="utm_utm">
+          <label class="label">UTMify Pixel ID</label>
+          <input class="input" placeholder="ex.: UTM-PIX-ABC123">
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn primary">Salvar Tracking</button>
+      </div>
+    </section>
+  </div>
+
+  <!-- === REDIRECIONADORES ============================================== -->
+  <div class="tabpane" id="redirect" role="tabpanel">
+    <section class="card deep">
+      <div class="card-head">
+        <div class="title">
+          <span class="dot"></span>
+          <h3>Redirecionadores</h3>
+        </div>
+        <p class="hint">Gerencie os bots que podem responder por esta oferta. Recomendo no máximo 2 ativos.</p>
+      </div>
+
+      <div class="actions">
+        <button class="btn primary sm" type="button">Cadastrar novo bot</button>
+      </div>
+
+      <div class="mini-grid">
+        <!-- Mini-cards de bots (mock). Substituir por loop dinâmico depois -->
+        <div class="mini">
+          <div class="mini-top">
+            <strong>@tigerfyteste_bot</strong>
+            <label class="switch"><input type="checkbox" checked><span></span></label>
+          </div>
+          <div class="mini-body">
+            <label class="tiny">Token</label>
+            <input class="input" value="***conectado***" disabled>
+          </div>
+        </div>
+
+        <div class="mini">
+          <div class="mini-top">
+            <strong>@backup_gold_bot</strong>
+            <label class="switch"><input type="checkbox"><span></span></label>
+          </div>
+          <div class="mini-body">
+            <label class="tiny">Token</label>
+            <input class="input" placeholder="cole aqui para conectar">
+          </div>
+        </div>
+
+        <div class="mini ghost-state">Vazio</div>
+      </div>
+    </section>
+  </div>
+
+  <!-- === CONTINGÊNCIA (BOTS / TOKENS) ================================== -->
+  <div class="tabpane" id="contingencia" role="tabpanel">
+    <section class="card deep">
+      <div class="card-head">
+        <div class="title">
+          <span class="dot"></span>
+          <h3>Contingência de Bots</h3>
+        </div>
+        <p class="hint">Tudo relacionado a tokens e criação/duplicação de bots para esta oferta.</p>
+      </div>
+
+      <!-- usa a rota já pronta /ofertas/:id/token -->
+      <form action="/ofertas/<%= offer.id %>/token" method="post" class="grid-3 slim">
+        <div>
+          <label class="label">Username do bot (sem @)</label>
+          <input class="input" name="telegramUsername" value="<%= (offer?.telegramUsername || '').replace('@','') %>" placeholder="seu_bot">
+        </div>
+        <div>
+          <label class="label">Token do Bot *</label>
+          <input class="input" name="botToken" value="<%= offer?.botToken || '' %>" placeholder="123456789:AAE...">
+        </div>
+        <div class="v-end">
+          <button class="btn primary w100">Salvar & Conectar</button>
+        </div>
+      </form>
+
+      <div class="line"></div>
+
+      <div class="grid-3 slim">
+        <div class="ghost">
+          <div class="ghost-title">Duplicar Bot</div>
+          <p class="ghost-text">Cria um novo bot espelhado para contingência (apenas UI; plugar endpoint).</p>
+          <button class="btn ghost">Duplicar</button>
+        </div>
+        <div class="ghost">
+          <div class="ghost-title">Rotação Automática</div>
+          <p class="ghost-text">Alterna bots automaticamente em caso de falha.</p>
+          <label class="switch"><input type="checkbox"><span></span></label>
+        </div>
+        <div class="ghost">
+          <div class="ghost-title">Saúde do Bot</div>
+          <p class="ghost-text">Status, latência e últimos erros (em breve).</p>
+          <button class="btn ghost" disabled>Ver métricas</button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- === CLOAKER ======================================================== -->
+  <div class="tabpane" id="cloaker" role="tabpanel">
+    <section class="card deep">
+      <div class="card-head">
+        <div class="title">
+          <span class="dot"></span>
+          <h3>Cloaker Anti-Clone</h3>
+        </div>
+        <p class="hint">Impede clonagem automática; adiciona caracteres aleatórios ao copiar mensagens (em breve).</p>
+      </div>
+
+      <div class="split">
+        <div class="label">Ativar Cloaker</div>
+        <label class="switch"><input type="checkbox"><span></span></label>
+      </div>
+    </section>
+  </div>
+</section>
+
+<!-- ======= Styles específicos do painel (TigerFy Premium Gold) ======= -->
 <style>
-  :root{
-    --bg:#0a0a0a; --panel:#0f0f10; --line:rgba(255,255,255,.10);
-    --text:#f1f1f1; --muted:#a7a7a7; --gold:#f0d47a; --gold2:#c8ac62;
-    --ring:rgba(240,212,122,.22); --shadow:0 22px 60px rgba(0,0,0,.55);
-  }
-  .tf-wrap{max-width:1180px;margin:0 auto;padding:42px 18px 80px;color:var(--text)}
-  .tf-head{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:18px}
-  .tf-head h1{margin:0 0 4px;font-size:1.9rem;color:#f6eac2}
-  .tf-breadcrumb{font-size:.92rem}
-  .gold{color:#f6eac2} .muted{color:var(--muted)} .muted.s{font-size:.92rem}
-
-  /* Tabs */
-  .tf-tabs,.tf-subtabs{display:flex;gap:8px;margin:6px 0 16px}
-  .tab,.subtab{
-    border:1px solid var(--line); background:rgba(255,255,255,.03);
-    color:#ddd; padding:10px 14px; border-radius:10px; cursor:pointer; font-size:.95rem
-  }
-  .tab.is-active,.subtab.is-active{border-color:rgba(255,255,255,.18); color:#12100b; background:linear-gradient(90deg,var(--gold),var(--gold2))}
-  .tab[disabled],.subtab[disabled]{opacity:.45; cursor:not-allowed}
-
-  /* Grid 2 cols */
-  .tf-grid{display:grid;grid-template-columns:1fr 360px;gap:14px}
-  @media(max-width:1060px){.tf-grid{grid-template-columns:1fr}}
-
-  /* Cards */
-  .card{
-    background:var(--panel);
-    border:1px solid var(--line); border-radius:16px; padding:16px;
-    box-shadow:var(--shadow);
-  }
-  .card-lg{padding:18px 16px 16px}
-  .card-header{margin-bottom:12px}
-  .card-title{margin:0 0 2px;font-size:1.06rem;color:#f6eac2}
-  .row-between{display:flex;justify-content:space-between;align-items:center}
-  .row{display:flex;align-items:center} .gap8{gap:8px}
-
-  /* Fields */
-  .field{margin-bottom:10px}
-  .field label{display:block;margin:0 0 6px 2px;font-size:.88rem;color:#e9e9e9}
-  .field input,.field textarea{
-    width:100%;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.03);
-    color:#fff;padding:10px 12px;outline:none
-  }
-  .field textarea{min-height:160px;resize:vertical}
-  .field input:focus,.field textarea:focus{border-color:var(--gold);box-shadow:0 0 0 2px var(--ring)}
-
-  /* Media list */
-  .media-row{gap:12px}
-  .grow{flex:1}
-  .media-list{display:flex;flex-direction:column;gap:8px;margin:0;padding:0;list-style:none}
-  .media-item{display:flex;justify-content:space-between;align-items:center;gap:10px;
-    padding:8px 10px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.03)}
-  .media-item a{color:#ddd;text-decoration:none}
-
-  .sep{border:0;border-top:1px solid var(--line);margin:14px 0}
-  .cta-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
-  h4{margin:0;color:#f6eac2;font-size:1rem}
-
-  /* Buttons */
-  .btn{border:1px solid var(--line);background:transparent;color:#eaeaea;padding:10px 14px;border-radius:12px;cursor:pointer}
-  .btn:hover{border-color:rgba(255,255,255,.2)}
-  .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,.14)}
-  .btn.primary{border:none;background:linear-gradient(90deg,var(--gold),var(--gold2));color:#141008;font-weight:700}
-  .actions{display:flex;justify-content:flex-end;margin-top:12px}
-
+  .tiger-offer{max-width:1200px;margin:0 auto;padding:20px 16px 64px}
+  .tf-breadcrumb{display:flex;gap:8px;color:var(--muted-color);font-size:.9rem;margin-bottom:8px}
+  .tf-breadcrumb a{color:var(--muted-color)}
+  .tf-title-row{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:14px}
+  .tf-title-row h1{font-size:1.6rem;margin:0}
+  .tf-actions{display:flex;gap:8px;align-items:center}
+  .pill{padding:6px 10px;border-radius:999px;font-size:.8rem;border:1px solid var(--card-border);background:rgba(255,255,255,.03)}
+  .pill.ok{border-color:rgba(0,255,150,.25);color:#aef7d8}
+  .pill.warn{border-color:rgba(255,204,0,.25);color:var(--accent-color)}
+  .btn{border:1px solid var(--card-border);background:rgba(255,255,255,.02);padding:10px 14px;border-radius:12px}
+  .btn.primary{background:linear-gradient(180deg,rgba(255,204,0,.16),rgba(255,204,0,.08));border-color:rgba(255,204,0,.35)}
+  .btn.ghost{background:transparent}
+  .btn.danger{border-color:rgba(255,80,80,.35)}
+  .btn.sm{padding:8px 10px;font-size:.85rem;border-radius:10px}
+  .btn.xs{padding:6px 8px;font-size:.8rem;border-radius:9px}
+  .btn.w100{width:100%}
+  .tf-tabs,.tf-subtabs{display:flex;gap:8px;margin:10px 0 16px}
+  .tab,.subtab{padding:8px 12px;border-radius:10px;border:1px solid var(--card-border);background:rgba(255,255,255,.02);font-size:.9rem}
+  .tab.active,.subtab.active{border-color:rgba(255,204,0,.35);box-shadow:0 0 0 1px rgba(255,204,0,.08) inset}
+  .tabpane{display:none}
+  .tabpane.show{display:block}
+  .subpane{display:none}
+  .subpane.show{display:block}
+  .grid-2{display:grid;grid-template-columns:2fr 1fr;gap:24px}
+  .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .grid-3.slim{gap:12px}
+  .card{border:1px solid var(--card-border);background:var(--card-bg);border-radius:18px;padding:16px}
+  .card.deep{box-shadow:0 12px 40px rgba(0,0,0,.35),0 0 0 1px rgba(255,204,0,.06) inset}
+  .card.side{position:sticky;top:84px;height:fit-content}
+  .card-head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:12px}
+  .card-head .title{display:flex;align-items:center;gap:8px}
+  .card-head .title h3{margin:0;font-size:1.05rem}
+  .dot{width:8px;height:8px;border-radius:50%;background:var(--accent-color);box-shadow:0 0 12px rgba(255,204,0,.35)}
+  .hint{color:var(--muted-color);font-size:.9rem;margin:0}
+  .label{font-size:.9rem;margin:8px 0 6px;color:#ddd}
+  .input{width:100%;background:#0f0f0f;border:1px solid #1b1b1b;border-radius:12px;padding:10px 12px;color:#fff}
+  .input.area{min-height:140px}
+  .input.xs{max-width:140px}
+  .row{display:flex;align-items:end;justify-content:space-between;gap:12px}
+  .col.right{text-align:right}
+  .split{display:flex;align-items:center;justify-content:space-between;margin-top:8px}
+  .line{height:1px;background:linear-gradient(90deg,transparent,rgba(255,204,0,.18),transparent);margin:14px 0}
+  .media-list.empty{padding:10px;border:1px dashed rgba(255,255,255,.08);border-radius:12px;color:var(--muted-color)}
+  .inline{display:flex;align-items:center;gap:10px}
+  .actions{margin-top:12px;display:flex;gap:8px}
+  .actions.r{justify-content:flex-end}
+  .plans{display:flex;flex-direction:column;gap:10px}
+  .plan{border:1px solid var(--card-border);background:rgba(255,255,255,.02);border-radius:14px;padding:10px 10px 10px 12px;display:flex;align-items:center;justify-content:space-between}
+  .plan.expanded{flex-direction:column;align-items:stretch;gap:10px}
+  .p-l{display:flex;flex-direction:column}
+  .p-l strong{font-size:.95rem}
+  .p-l span{color:var(--muted-color);font-size:.85rem}
+  .p-r{display:flex;gap:6px}
+  .plan-body{border-top:1px dashed rgba(255,255,255,.08);padding-top:10px}
+  .soon{padding:28px;text-align:center;color:var(--muted-color)}
+  .radios{gap:10px}
+  .radio{display:flex;align-items:center;gap:8px;font-size:.95rem}
+  .radio input{transform:translateY(1px)}
+  .mini-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:6px}
+  .mini{border:1px solid var(--card-border);background:rgba(255,255,255,.02);border-radius:14px;padding:12px}
+  .mini-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+  .mini.ghost-state{display:flex;align-items:center;justify-content:center;color:var(--muted-color)}
+  .tiny{font-size:.8rem;color:var(--muted-color)}
+  .ghost{border:1px dashed rgba(255,255,255,.1);border-radius:14px;padding:12px}
+  .ghost-title{font-weight:600;margin-bottom:4px}
+  .ghost-text{color:var(--muted-color);font-size:.9rem;margin:0 0 8px}
   /* Switch */
-  .switch{position:relative;display:inline-block;width:46px;height:26px}
+  .switch{position:relative;display:inline-flex;width:44px;height:24px}
   .switch input{display:none}
-  .switch span{position:absolute;inset:0;background:#262626;border:1px solid var(--line);border-radius:999px;transition:.2s}
-  .switch span:after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;background:#cfcfcf;border-radius:50%;transition:.2s}
-  .switch input:checked+span{background:var(--gold)}
-  .switch input:checked+span:after{left:23px;background:#1a1300}
-
-  /* Plans (right column) */
-  .plans-list{display:flex;flex-direction:column;gap:10px}
-  .plan-item{border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.03);padding:10px}
-  .plan-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
-  .plan-name{font-weight:600}
-  .plan-id{color:#bdbdbd;font-size:.86rem}
-  .plan-meta{color:#d5d5d5;font-size:.9rem;margin-bottom:8px}
-  .plan-extra{display:grid;grid-template-columns:1fr 110px;gap:8px;align-items:center;margin-bottom:8px}
-  .plan-actions{display:flex;gap:8px;justify-content:flex-end}
-  .plan-actions .btn{padding:8px 10px;border-radius:10px}
-
-  /* Tracking */
-  .tf-single{max-width:920px;margin:0 auto}
-  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-  @media(max-width:860px){.grid-2{grid-template-columns:1fr}}
-  .radios{display:flex;gap:14px;flex-wrap:wrap}
-  .radio{display:flex;align-items:center;gap:8px}
-  .radio input{accent-color:#b49b4a}
-  .trk.is-hidden{display:none}
-  .redir-actions{display:flex;justify-content:flex-end;margin-bottom:10px}
-
-  /* Mini list (bots) */
-  .mini-list{display:flex;flex-direction:column;gap:10px}
-  .mini-item{display:grid;grid-template-columns:1fr 1fr auto auto;gap:8px;padding:10px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.03)}
-  .mini-item .switch{margin:auto}
-  .mini-item .btn{padding:8px 10px;border-radius:10px}
-
-  /* Tab visibility */
-  .tab-panel.is-hidden,.subpanel.is-hidden{display:none}
+  .switch span{position:absolute;inset:0;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:999px;transition:.2s}
+  .switch span:after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#444;transition:.2s}
+  .switch input:checked+span{background:rgba(255,204,0,.22);border-color:rgba(255,204,0,.45)}
+  .switch input:checked+span:after{left:23px;background:var(--accent-color);box-shadow:0 0 10px rgba(255,204,0,.45)}
+  @media (max-width:1080px){.grid-2{grid-template-columns:1fr}}
 </style>
 
-<!-- ============================ SCRIPT ============================ -->
+<!-- ======= JS: tabs/subtabs & tracking fields ======= -->
 <script>
-  // ------- Tabs superiores -------
-  const topTabs = document.querySelectorAll('.tf-tabs .tab');
-  const panels = document.querySelectorAll('.tab-panel');
-  topTabs.forEach(btn=>{
-    btn.addEventListener('click',()=>{
-      topTabs.forEach(b=>b.classList.remove('is-active'));
-      panels.forEach(p=>p.classList.add('is-hidden'));
-      btn.classList.add('is-active');
-      document.getElementById(btn.dataset.tab).classList.remove('is-hidden');
-    })
-  });
-
-  // ------- Subtabs (Principal) -------
-  const subTabs = document.querySelectorAll('.tf-subtabs .subtab');
-  const subPanels = document.querySelectorAll('.subpanel');
-  subTabs.forEach(btn=>{
-    btn.addEventListener('click',()=>{
-      if(btn.disabled) return;
-      subTabs.forEach(b=>b.classList.remove('is-active'));
-      subPanels.forEach(p=>p.classList.add('is-hidden'));
-      btn.classList.add('is-active');
-      document.getElementById('sub-'+btn.dataset.subtab).classList.remove('is-hidden');
-    })
-  });
-
-  // ------- Mídias (Front/Pix) -------
-  function wireMedia(btnId, listId){
-    const addBtn = document.getElementById(btnId);
-    const list = document.getElementById(listId);
-    addBtn?.addEventListener('click', ()=>{
-      const url = prompt('Cole o link público da mídia do Telegram:');
-      if(!url) return;
-      const li = document.createElement('li');
-      li.className = 'media-item';
-      li.innerHTML = `<a href="${url}" target="_blank" rel="noopener">${url}</a>
-                      <button class="btn ghost btnDel">Excluir</button>`;
-      list.appendChild(li);
+  // Tabs principais
+  const tabs = document.querySelectorAll('.tf-tabs .tab');
+  const panes = document.querySelectorAll('.tabpane');
+  tabs.forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      tabs.forEach(b=>b.classList.remove('active'));
+      panes.forEach(p=>p.classList.remove('show'));
+      btn.classList.add('active');
+      document.getElementById(btn.dataset.tab)?.classList.add('show');
     });
-    list?.addEventListener('click', e=>{
-      if(e.target.classList.contains('btnDel')) e.target.closest('.media-item')?.remove();
+  });
+
+  // Subtabs (Principal)
+  const st = document.querySelectorAll('.tf-subtabs .subtab');
+  const sp = document.querySelectorAll('.subpane');
+  st.forEach(b=>{
+    b.addEventListener('click', ()=>{
+      st.forEach(x=>x.classList.remove('active'));
+      sp.forEach(x=>x.classList.remove('show'));
+      b.classList.add('active');
+      document.getElementById('sub-'+b.dataset.sub)?.classList.add('show');
+    });
+  });
+
+  // Tracking fields show/hide
+  const radios = document.querySelectorAll('#trackRadios input[type=radio]');
+  const groups = document.querySelectorAll('#trackFields [data-for]');
+  function refreshTrack(){
+    const val = document.querySelector('#trackRadios input:checked')?.value || 'fb';
+    groups.forEach(g=>{
+      const set = g.getAttribute('data-for').split(' ');
+      g.style.display = set.includes(val) ? '' : 'none';
     });
   }
-  wireMedia('btnAddMedia','mediaList');
-  wireMedia('btnAddPixMedia','pixMediaList');
-
-  // ------- Planos (mini cards da direita) -------
-  const plansList = document.getElementById('plansList');
-  document.getElementById('btnAddPlan')?.addEventListener('click', ()=> addPlanCard());
-
-  function addPlanCard(data={}){
-    const id = data.id || ('novo-'+Math.random().toString(36).slice(2,8));
-    const el = document.createElement('div');
-    el.className='plan-item';
-    el.innerHTML = `
-      <div class="plan-h">
-        <div class="plan-name">${data.name || 'NOVO PLANO'}</div>
-        <div class="plan-id">ID: ${id}</div>
-      </div>
-      <div class="plan-meta">
-        Valor: <input class="p-price" type="text" value="${data.price||''}" placeholder="R$"> ·
-        Duração: <input class="p-days" type="number" min="1" value="${data.days||30}" style="width:86px"> dias
-      </div>
-      <div class="plan-extra">
-        <input class="p-url" type="url" placeholder="Entregável (após pagamento) — https://..." value="${data.url||''}">
-        <button class="btn primary btnSavePlan" type="button">Salvar</button>
-      </div>
-      <div class="plan-actions">
-        <button class="btn ghost btnEditPlan" type="button">Editar</button>
-        <button class="btn ghost btnDelPlan" type="button">Excluir</button>
-      </div>`;
-    plansList.appendChild(el);
-  }
-  plansList?.addEventListener('click', e=>{
-    const item = e.target.closest('.plan-item'); if(!item) return;
-    if(e.target.classList.contains('btnDelPlan')) item.remove();
-    if(e.target.classList.contains('btnEditPlan')){
-      const name = prompt('Nome do plano:', item.querySelector('.plan-name').textContent.trim());
-      if(name) item.querySelector('.plan-name').textContent = name;
-    }
-    if(e.target.classList.contains('btnSavePlan')){
-      e.target.textContent='Salvo ✓';
-      setTimeout(()=> e.target.textContent='Salvar', 900);
-    }
-  });
-  // Mock inicial (apague se vier do backend)
-  if(!plansList.children.length){
-    addPlanCard({ id:'5129', name:'MENSAL', price:'R$ 11,90', days:30 });
-    addPlanCard({ id:'5130', name:'MENSAL +BANIDOS', price:'R$ 15,90', days:30 });
-    addPlanCard({ id:'5131', name:'VITALÍCIO +15 GRUPOS', price:'R$ 18,90', days:99999999 });
-  }
-
-  // ------- Tracking: radios revelam campos -------
-  const radios = document.querySelectorAll('input[name="trk"]');
-  const trkFb = document.querySelectorAll('.trk-fb');
-  const trkUtm = document.querySelectorAll('.trk-utm');
-  function toggleTrk(v){
-    trkFb.forEach(x=>x.classList.toggle('is-hidden', v!=='fb' && v!=='utm_fb'));
-    trkUtm.forEach(x=>x.classList.toggle('is-hidden', v==='fb'));
-  }
-  radios.forEach(r=>r.addEventListener('change', e=>toggleTrk(e.target.value)));
-
-  // ------- Redirecionador (bots) -------
-  const botsList = document.getElementById('botsList');
-  document.getElementById('btnAddBot')?.addEventListener('click', ()=> addBotCard());
-  function addBotCard(data={}){
-    const wrap = document.createElement('div');
-    wrap.className='mini-item';
-    wrap.innerHTML = `
-      <input class="b-user" type="text" placeholder="username do bot (sem @)" value="${data.username||''}">
-      <input class="b-token" type="text" placeholder="token do bot" value="${data.token||''}">
-      <label class="switch"><input type="checkbox" ${data.active?'checked':''}><span></span></label>
-      <button class="btn ghost btnDelBot" type="button">Excluir</button>`;
-    botsList.appendChild(wrap);
-  }
-  botsList?.addEventListener('click', e=>{
-    if(e.target.classList.contains('btnDelBot')) e.target.closest('.mini-item')?.remove();
-  });
-
-  // ------- Botões “Salvar” (placeholders visuais) -------
-  function flash(btn){
-    btn.disabled=true; const t=btn.textContent; btn.textContent='Salvo ✓';
-    setTimeout(()=>{btn.disabled=false; btn.textContent=t}, 900);
-  }
-  document.getElementById('btnSaveFront')?.addEventListener('click', e=>flash(e.target));
-  document.getElementById('btnSavePix')?.addEventListener('click', e=>flash(e.target));
-  document.getElementById('btnSaveTracking')?.addEventListener('click', e=>flash(e.target));
-  document.getElementById('btnSaveCloaker')?.addEventListener('click', e=>flash(e.target));
+  radios.forEach(r=>r.addEventListener('change', refreshTrack));
+  refreshTrack();
 </script>
