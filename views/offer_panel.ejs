@@ -1,15 +1,26 @@
 <%- include('partials/visual_hottrack') %>
 
 <main class="tiger-offer-shell">
-  <!-- BREADCRUMB + TÍTULO + AÇÃO -->
+  <!-- BREADCRUMB + TÍTULO + ETAPAS + AÇÃO -->
   <header class="tf-header">
     <div class="tf-head-left">
-      <nav class="tf-breadcrumb">
+      <nav class="tf-breadcrumb" id="tfBreadcrumb">
         <a href="/ofertas">Minhas Ofertas</a>
         <span>›</span>
-        <span><%= (offer && offer.name) ? offer.name : 'Nome da Oferta' %></span>
+        <span id="crumbDynamic"><%= (offer && offer.name) ? offer.name : 'Nome da Oferta' %></span>
       </nav>
-      <h1 class="tf-offer-title"><%= (offer && offer.name) ? offer.name : 'Nome da Oferta' %></h1>
+
+      <div class="tf-title-row">
+        <h1 class="tf-offer-title" id="offerTitle">
+          <%= (offer && offer.name) ? offer.name : 'Nome da Oferta' %>
+        </h1>
+
+        <!-- ETAPAS (discreto, alinhado ao título) -->
+        <div class="tf-steps-inline">
+          <span class="tf-step-label" id="tfStepLabel">Etapa 1</span>
+          <button type="button" class="btn tiny" id="btnCreateStep">Criar etapa</button>
+        </div>
+      </div>
     </div>
 
     <div class="tf-head-right">
@@ -35,13 +46,12 @@
     <button class="subtab">Disparos</button>
   </div>
 
-  <!-- Área reservada (vazia por enquanto) -->
+  <!-- Placeholder para conteúdo (mantemos vazio por enquanto) -->
   <section class="tf-placeholder"></section>
 </main>
 
 <style>
   :root{
-    /* Paleta TigerFy Premium (dark, minimalista) */
     --bg-0:#0a0a0a;
     --surface-1:#0f0f0f;
     --surface-2:#131313;
@@ -50,102 +60,89 @@
     --text-1:#f2f2f2;
     --text-2:#b6b6b6;
     --text-3:#8a8a8a;
-    --accent:#ffcc00;       /* dourado */
-    --accent-soft:#d4ad15;  /* dourado suave (quase sem brilho) */
+    --accent:#ffcc00;
+    --accent-soft:#d4ad15;
   }
 
   .tiger-offer-shell{
-    max-width:1160px;
-    margin:0 auto;
-    padding:24px 16px 72px;
-    color:var(--text-1);
+    max-width:1160px;margin:0 auto;padding:24px 16px 72px;color:var(--text-1);
   }
 
   /* Cabeçalho */
   .tf-header{
-    display:flex;
-    align-items:flex-end;
-    justify-content:space-between;
-    gap:16px;
-    margin-bottom:18px;
+    display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:18px;
   }
   .tf-head-left{min-width:0}
   .tf-breadcrumb{
-    display:flex;gap:8px;align-items:center;
-    color:var(--text-3);font-size:.92rem;margin-bottom:6px;
+    display:flex;gap:8px;align-items:center;color:var(--text-3);font-size:.92rem;margin-bottom:6px;
   }
   .tf-breadcrumb a{color:var(--text-3);text-decoration:none}
   .tf-breadcrumb a:hover{color:var(--text-2)}
+
+  .tf-title-row{
+    display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+  }
+
   .tf-offer-title{
-    margin:0;
-    font-size:1.8rem;
-    letter-spacing:.2px;
-    font-weight:700;
+    margin:0;font-size:1.8rem;letter-spacing:.2px;font-weight:700;
     background:linear-gradient(180deg,#fff 20%, #e6e6e6 70%, #bbb 100%);
     -webkit-background-clip:text;background-clip:text;color:transparent;
-    filter:drop-shadow(0 0 0 transparent);
   }
+
+  /* Etapas inline (ao lado do título) */
+  .tf-steps-inline{
+    display:flex;align-items:center;gap:10px;
+  }
+  .tf-step-label{
+    display:inline-flex;align-items:center;justify-content:center;
+    padding:6px 10px;border-radius:999px;
+    background:#101010;border:1px solid var(--line-1);
+    color:var(--text-2);font-size:.9rem;line-height:1;
+  }
+  .btn.tiny{
+    padding:6px 10px;border-radius:10px;font-size:.88rem;line-height:1;
+    border:1px solid var(--line-1);background:var(--surface-2);color:var(--text-1);
+    transition:background .15s,border-color .15s,transform .05s;
+  }
+  .btn.tiny:hover{background:#151515;border-color:var(--line-2)}
+  .btn.tiny:active{transform:translateY(1px)}
 
   /* Botão principal */
   .btn{
-    border:1px solid var(--line-1);
-    background:var(--surface-2);
-    color:var(--text-1);
-    padding:10px 14px;border-radius:12px;
-    transition:background .15s,border-color .15s,transform .05s;
+    border:1px solid var(--line-1);background:var(--surface-2);color:var(--text-1);
+    padding:10px 14px;border-radius:12px;transition:background .15s,border-color .15s,transform .05s;
   }
   .btn:hover{background:#151515;border-color:var(--line-2)}
-  .btn.primary{
-    background:linear-gradient(180deg,#171717,#121212);
-    border-color:#2a2a2a;
-  }
+  .btn.primary{background:linear-gradient(180deg,#171717,#121212);border-color:#2a2a2a}
   .btn.primary:hover{background:#161616;border-color:#343434}
   .btn:active{transform:translateY(1px)}
 
   /* Abas principais */
-  .tf-tabs{
-    display:flex;gap:10px;justify-content:center;
-    margin:10px 0 12px;
-  }
+  .tf-tabs{display:flex;gap:10px;justify-content:center;margin:10px 0 12px}
   .tab{
-    appearance:none;cursor:pointer;
-    padding:10px 14px;border-radius:999px;
-    background:#101010;border:1px solid var(--line-1);
-    color:var(--text-2);font-size:.95rem;
+    appearance:none;cursor:pointer;padding:10px 14px;border-radius:999px;
+    background:#101010;border:1px solid var(--line-1);color:var(--text-2);font-size:.95rem;
     transition:background .15s,border-color .15s,color .15s;
   }
   .tab:hover{background:#131313;border-color:var(--line-2);color:var(--text-1)}
-  .tab.active{
-    background:#141414;border-color:#333;
-    color:var(--text-1);position:relative;
-  }
+  .tab.active{background:#141414;border-color:#333;color:var(--text-1);position:relative}
   .tab.active::after{
     content:"";position:absolute;left:12px;right:12px;bottom:-6px;height:2px;
     background:linear-gradient(90deg,transparent,var(--accent-soft),transparent);
     opacity:.9;border-radius:2px;
   }
 
-  /* Abas secundárias (chips menores) */
-  .tf-subtabs{
-    display:flex;gap:8px;justify-content:center;
-    margin:6px 0 18px;
-  }
+  /* Abas secundárias */
+  .tf-subtabs{display:flex;gap:8px;justify-content:center;margin:6px 0 18px}
   .subtab{
-    padding:8px 12px;border-radius:999px;
-    background:#0f0f0f;border:1px solid var(--line-1);
-    color:var(--text-2);font-size:.9rem;cursor:pointer;
-    transition:background .15s,border-color .15s,color .15s;
+    padding:8px 12px;border-radius:999px;background:#0f0f0f;border:1px solid var(--line-1);
+    color:var(--text-2);font-size:.9rem;cursor:pointer;transition:background .15s,border-color .15s,color .15s;
   }
   .subtab:hover{background:#131313;border-color:var(--line-2);color:var(--text-1)}
   .subtab.active{background:#141414;border-color:#303030;color:var(--text-1)}
 
-  /* Placeholder da área de conteúdo (só para dar respiro) */
-  .tf-placeholder{
-    height:220px;
-    border:1px dashed var(--line-2);
-    border-radius:18px;
-    background:var(--surface-1);
-  }
+  /* Placeholder (apenas respiro) */
+  .tf-placeholder{height:220px;border:1px dashed var(--line-2);border-radius:18px;background:var(--surface-1)}
 
   /* Responsivo */
   @media (max-width:900px){
@@ -155,8 +152,8 @@
 </style>
 
 <script>
-  // Alterna visibilidade das subtabs: só aparecem quando "Principal" está ativa.
   (function(){
+    // -------- Abas principais: exibe subtabs apenas em "Principal"
     var mainTabs = document.querySelectorAll('.tf-tabs .tab');
     var subTabsWrap = document.getElementById('subtabs-principal');
     mainTabs.forEach(function(btn){
@@ -167,7 +164,51 @@
         if(subTabsWrap){ subTabsWrap.style.display = isPrincipal ? 'flex' : 'none'; }
       });
     });
-    // Estado inicial
-    if(subTabsWrap){ subTabsWrap.style.display = 'flex'; }
+    if(subTabsWrap){ subTabsWrap.style.display = 'flex'; } // estado inicial
+
+    // -------- Etapas: leitura do ?etapa=N e UI dinâmica
+    var url = new URL(window.location.href);
+    var currentStep = parseInt(url.searchParams.get('etapa') || '0', 10);
+    if (isNaN(currentStep) || currentStep < 1) currentStep = 1;
+
+    // Atualiza label ao lado do título
+    var stepLabel = document.getElementById('tfStepLabel');
+    if (stepLabel) stepLabel.textContent = 'Etapa ' + currentStep;
+
+    // Breadcrumb dinâmico:
+    // - sem etapa explícita (ou etapa=1 por padrão que você quiser) -> Nome da oferta
+    // - com etapa na URL -> "Minhas Ofertas > Etapa X > Etapa X"
+    var bc = document.getElementById('tfBreadcrumb');
+    var offerTitleText = document.getElementById('offerTitle')?.textContent?.trim() || 'Nome da Oferta';
+    if (bc) {
+      var etapaParam = url.searchParams.get('etapa');
+      if (etapaParam && parseInt(etapaParam,10) >= 1) {
+        var x = parseInt(etapaParam,10);
+        bc.innerHTML =
+          '<a href="/ofertas">Minhas Ofertas</a>' +
+          '<span>›</span>' +
+          '<a href="' + (window.location.pathname + '?etapa=' + x) + '">Etapa ' + x + '</a>' +
+          '<span>›</span>' +
+          '<span>Etapa ' + x + '</span>';
+      } else {
+        // Padrão: Minhas Ofertas > Nome da oferta
+        bc.innerHTML =
+          '<a href="/ofertas">Minhas Ofertas</a>' +
+          '<span>›</span>' +
+          '<span>' + offerTitleText + '</span>';
+      }
+    }
+
+    // Criar etapa: navega para mesma rota com etapa=N+1 (back pode persistir e separar relatórios por etapa)
+    var createBtn = document.getElementById('btnCreateStep');
+    if (createBtn){
+      createBtn.addEventListener('click', function(){
+        var u = new URL(window.location.href);
+        var n = parseInt(u.searchParams.get('etapa') || '0', 10);
+        if (isNaN(n) || n < 1) n = 1;
+        u.searchParams.set('etapa', String(n + 1));
+        window.location.href = u.toString();
+      });
+    }
   })();
 </script>
