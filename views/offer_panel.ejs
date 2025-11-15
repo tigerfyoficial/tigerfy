@@ -1,25 +1,26 @@
-<div class="tf-offer-panel">
+<%- include('partials/visual_hottrack') %>
 
-  <!-- Breadcrumb dinâmico -->
+<div class="tf-offer-panel">
   <!-- Breadcrumb dinâmico (clicável) -->
   <nav class="tf-breadcrumb" id="tfBreadcrumb">
-    <a href="/ofertas">Minhas Ofertas</a>
-    <span>›</span>
-    <span id="offerTitleBC"><%= offer?.name || 'Nome da Oferta' %></span>
     <!-- preenchido via script para manter o mesmo visual -->
   </nav>
 
   <!-- Header: Título + Etapas (à esquerda) | Salvar (à direita) -->
-@@ -15,7 +13,7 @@
+  <header class="tf-header">
+    <div class="tf-header-left">
       <h1 class="tf-offer-title" id="offerTitle"><%= offer?.name || 'Nome da Oferta' %></h1>
-
       <div class="tf-step-inline">
-        <span class="tf-step-chip">Etapa: <strong id="tfStepName">Etapa 1</strong></span>
         <span class="tf-step-chip">Etapa: <strong id="tfStepName"><%= (currentStep && currentStep.name) ? currentStep.name : 'Etapa 1' %></strong></span>
         <button type="button" id="btnCreateStep" class="tf-btn tf-btn-small">Criar etapa</button>
       </div>
     </div>
-@@ -28,18 +26,22 @@
+
+    <div class="tf-header-right">
+      <button type="button" class="tf-btn tf-btn-primary" id="btnSaveAll">Salvar Alterações</button>
+    </div>
+  </header>
+
   <!-- Abas principais -->
   <div class="tf-tabs">
     <button class="tab active" data-tab="principal">
@@ -27,22 +28,26 @@
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="2"></rect><rect x="14" y="3" width="7" height="7" rx="2"></rect><rect x="14" y="14" width="7" height="7" rx="2"></rect><rect x="3" y="14" width="7" height="7" rx="2"></rect></svg>
       Principal
     </button>
+
     <button class="tab" data-tab="contingencia">
       <!-- shield -->
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"></path></svg>
       Contingência de Bots
     </button>
+
     <button class="tab" data-tab="tracking">
       <!-- target -->
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15A1.65 1.65 0 0 0 21 13.35 8 8 0 0 0 12 4a8 8 0 0 0-8 9.35A1.65 1.65 0 0 0 5.6 15"></path></svg>
       Traqueamento
     </button>
+
     <button class="tab" data-tab="relatorios">
       <!-- chart -->
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"></path><path d="M19 17V7"></path><path d="M13 17V3"></path><path d="M7 17v-7"></path></svg>
       Fluxo de Relatórios
     </button>
-@@ -48,45 +50,47 @@
+  </div>
+
   <!-- Abas secundárias (visíveis apenas quando Principal estiver ativo) -->
   <div class="tf-subtabs" id="subtabs-principal">
     <button class="subtab active" data-subtab="front">
@@ -50,26 +55,31 @@
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h8"></path><path d="M17 8h.01"></path><path d="M19 4v6h6"></path></svg>
       Front
     </button>
+
     <button class="subtab" data-subtab="orderbump" disabled>
       <!-- cart plus -->
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6h15l-1.5 9h-12z"></path><path d="M6 6l-1-3H2"></path><circle cx="9" cy="20" r="1"></circle><circle cx="18" cy="20" r="1"></circle><path d="M12 10h4"></path></svg>
       OrderBump (em breve)
     </button>
+
     <button class="subtab" data-subtab="upsell" disabled>
       <!-- trend up -->
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17l6-6 4 4 8-8"></path></svg>
       Upsell (em breve)
     </button>
+
     <button class="subtab" data-subtab="downsell" disabled>
       <!-- trend down -->
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 7l-6 6-4-4-8 8"></path></svg>
       Downsell (em breve)
     </button>
+
     <button class="subtab" data-subtab="pix">
       <!-- grid qr -->
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="14" width="7" height="7" rx="1"></rect><rect x="3" y="14" width="7" height="7" rx="1"></rect></svg>
       Mensagem PIX
     </button>
+
     <button class="subtab" data-subtab="disparos" disabled>
       <!-- paper plane -->
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 2L11 13"></path><path d="M22 2l-7 20-4-9-9-4 20-7z"></path></svg>
@@ -77,10 +87,6 @@
     </button>
   </div>
 
-  <!-- Área de conteúdo (vazia por enquanto, apenas layout de navegação) -->
-  <section class="tf-content-placeholder">
-    <!-- Intencionalmente vazio: navegação pronta para receber os cards depois -->
-  </section>
   <!-- Área de conteúdo (placeholder) -->
   <section class="tf-content-placeholder"></section>
 </div>
@@ -90,69 +96,202 @@
   <div class="tf-modal">
     <div class="tf-modal-head">
       <h3>Nova etapa</h3>
-      <button type="button" class="tf-modal-close" id="btnCloseModal" aria-label="Fechar">
-        ✕
-      </button>
       <button type="button" class="tf-modal-close" id="btnCloseModal" aria-label="Fechar">✕</button>
     </div>
 
     <div class="tf-modal-body">
-@@ -131,7 +135,7 @@
+      <div class="tf-field">
+        <label for="inpStepName">Nome da etapa</label>
+        <input type="text" id="inpStepName" placeholder="Ex.: Etapa 2, Upsell Bot de Taxa, Funil Pós-Compra" />
+      </div>
+
+      <div class="tf-radio-group">
+        <span class="tf-radio-title">Configurações iniciais</span>
+        <label class="tf-radio">
+          <input type="radio" name="dupMode" value="0" checked />
+          <span>Criar etapa do zero</span>
+        </label>
+
+        <label class="tf-radio">
+          <input type="radio" name="dupMode" value="1" />
+          <span>Duplicar configurações da etapa atual (sem relatórios)</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="tf-modal-actions">
+      <button type="button" class="tf-btn" id="btnCancelStep">Cancelar</button>
+      <button type="button" class="tf-btn tf-btn-primary" id="btnConfirmStep">Criar etapa</button>
+    </div>
+  </div>
+</div>
+
+<style>
+  :root{
+    --bg:#0b0b0b;
+    --panel:rgba(255,255,255,0.04);
+    --panel-strong:rgba(255,255,255,0.06);
+    --border:rgba(255,255,255,0.12);
+    --muted:#b8b8b8;
+    --text:#ffffff;
+    --accent:#ffcc00;
+    --accent-dim:#d4a100;
+    --shadow:0 8px 24px rgba(0,0,0,0.45);
+    --radius:14px;
+  }
 
   .tf-offer-panel{
     color:var(--text);
-    padding:60px 80px 100px 130px; /* compensa sidebar */
     padding:60px 80px 100px 130px;
     max-width:1200px;
     margin:0 auto;
   }
-@@ -151,9 +155,7 @@
+
+  .tf-breadcrumb{
+    display:flex; align-items:center; gap:8px;
+    color:var(--muted);
+    font-size:.9rem;
+    margin-bottom:10px;
+  }
+  .tf-breadcrumb a{
+    color:var(--muted); text-decoration:none;
+  }
+  .tf-breadcrumb a:hover{ color:#e0e0e0; }
+
+  .tf-header{
     display:flex; align-items:flex-start; justify-content:space-between;
     gap:16px; margin-bottom:18px;
-  }
-  .tf-header-left{
-    display:flex; align-items:center; gap:14px; flex-wrap:wrap;
   }
   .tf-header-left{ display:flex; align-items:center; gap:14px; flex-wrap:wrap; }
   .tf-offer-title{
     margin:0; font-size:1.75rem; letter-spacing:.3px;
     background:linear-gradient(90deg,#fff,#d8d8d8);
-@@ -186,8 +188,7 @@
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+
+  .tf-step-inline{ display:flex; align-items:center; gap:8px; }
+  .tf-step-chip{
+    display:inline-flex; align-items:center; gap:6px;
+    padding:6px 10px; border-radius:999px;
+    background:var(--panel); border:1px solid var(--border);
+    font-size:.85rem; color:#ddd;
+  }
+
+  .tf-btn{
+    appearance:none; border:1px solid var(--border);
+    background:var(--panel-strong); color:#eee;
+    padding:9px 14px; border-radius:10px; cursor:pointer;
+    font-weight:600; box-shadow:var(--shadow);
+    transition:.2s ease;
+  }
+  .tf-btn:hover{ border-color:rgba(255,255,255,0.2); background:rgba(255,255,255,0.08); }
+  .tf-btn:active{ transform:translateY(1px); }
+  .tf-btn-small{ padding:7px 10px; font-size:.85rem; border-radius:999px; }
+  .tf-btn-primary{
+    background:linear-gradient(90deg,var(--accent),var(--accent-dim));
+    color:#171300; border:1px solid rgba(255,204,0,0.35);
+    box-shadow:0 6px 22px rgba(255,204,0,0.25);
+  }
   .tf-btn-primary:hover{ filter:brightness(1.02); }
 
   .tf-tabs{
-    display:flex; gap:8px; flex-wrap:wrap; margin:16px 0 10px 0;
-    justify-content:center;
     display:flex; gap:8px; flex-wrap:wrap; margin:16px 0 10px 0; justify-content:center;
   }
   .tf-tabs .tab{
     display:inline-flex; align-items:center; gap:8px;
-@@ -203,8 +204,7 @@
+    padding:9px 14px; border-radius:999px; border:1px solid var(--border);
+    background:var(--panel); color:#dedede; font-weight:600; font-size:.92rem;
+    cursor:pointer; transition:.2s;
+  }
+  .tf-tabs .tab:hover{ background:rgba(255,255,255,0.07); }
+  .tf-tabs .tab.active{
+    background:rgba(255,255,255,0.10);
+    border-color:rgba(255,255,255,0.22);
+    color:#fff;
   }
 
   .tf-subtabs{
-    display:flex; gap:8px; flex-wrap:wrap; justify-content:center;
-    margin-bottom:18px;
     display:flex; gap:8px; flex-wrap:wrap; justify-content:center; margin-bottom:18px;
   }
   .tf-subtabs .subtab{
     display:inline-flex; align-items:center; gap:8px;
-@@ -228,13 +228,12 @@
+    padding:7px 12px; border-radius:999px; border:1px solid var(--border);
+    background:var(--panel); color:#dcdcdc; font-weight:600; font-size:.9rem;
+    cursor:pointer; transition:.2s;
+  }
+  .tf-subtabs .subtab[disabled]{ opacity:.45; cursor:not-allowed; }
+  .tf-subtabs .subtab:not([disabled]):hover{ background:rgba(255,255,255,0.07); }
+  .tf-subtabs .subtab.active{
+    background:rgba(255,255,255,0.10);
+    border-color:rgba(255,255,255,0.22);
+    color:#fff;
+  }
+
+  .tf-content-placeholder{
+    min-height:360px;
+    border:1px dashed rgba(255,255,255,0.12);
+    border-radius:var(--radius);
+    background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
     box-shadow:var(--shadow);
   }
 
-  /* ============= Modal ============= */
   /* Modal */
   .tf-modal-backdrop{
     position:fixed; inset:0; background:rgba(0,0,0,0.55);
     display:flex; align-items:center; justify-content:center;
     padding:20px; z-index:1000;
   }
-  /* garante que [hidden] sempre esconda o modal */
   .tf-modal-backdrop[hidden]{ display:none !important; }
 
   .tf-modal{
-@@ -289,6 +288,11 @@
+    width:100%; max-width:560px;
+    background:linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.04));
+    border:1px solid var(--border);
+    border-radius:16px; box-shadow:0 14px 42px rgba(0,0,0,0.55);
+    backdrop-filter: blur(6px);
+  }
+  .tf-modal-head{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:16px 16px 10px 16px;
+    border-bottom:1px solid rgba(255,255,255,0.09);
+  }
+  .tf-modal-head h3{ margin:0; font-size:1.05rem; color:#fff; }
+  .tf-modal-close{
+    background:transparent; border:0; color:#ccc; cursor:pointer; font-size:16px; padding:4px;
+  }
+  .tf-modal-close:hover{ color:#fff; }
+
+  .tf-modal-body{ padding:16px; display:flex; flex-direction:column; gap:14px; }
+  .tf-field label{
+    display:block; font-weight:600; margin-bottom:6px; color:#efefef; font-size:.92rem;
+  }
+  .tf-field input[type="text"]{
+    width:100%; padding:10px 12px; border-radius:10px;
+    background:rgba(255,255,255,0.06); color:#fff;
+    border:1px solid rgba(255,255,255,0.16); outline:none;
+    font-size:.95rem;
+  }
+  .tf-field input[type="text"]::placeholder{ color:#bfbfbf; }
+  .tf-field input[type="text"]:focus{
+    border-color:rgba(255,204,0,0.6);
+    box-shadow:0 0 0 2px rgba(255,204,0,0.20);
+  }
+
+  .tf-radio-group{ display:flex; flex-direction:column; gap:8px; }
+  .tf-radio-title{ font-size:.9rem; color:#e8e8e8; font-weight:600; margin-bottom:4px; }
+  .tf-radio{ display:flex; align-items:center; gap:8px; color:#cfcfcf; }
+  .tf-radio input{ transform:translateY(1px); }
+
+  .tf-modal-actions{
+    display:flex; align-items:center; justify-content:flex-end; gap:10px;
+    padding:12px 16px 16px 16px; border-top:1px solid rgba(255,255,255,0.09);
+  }
+
+  @media (max-width: 980px){
+    .tf-offer-panel{ padding:40px 18px 80px 18px; }
+    .tf-header{ flex-direction:column; align-items:flex-start; gap:10px; }
+  }
+</style>
 
 <script>
   (function(){
@@ -164,39 +303,16 @@
     // -------- Tabs principais: mantém subtabs visíveis só em "Principal"
     var mainTabs = document.querySelectorAll('.tf-tabs .tab');
     var subTabsWrap = document.getElementById('subtabs-principal');
-@@ -302,64 +306,66 @@
+    mainTabs.forEach(function(btn){
+      btn.addEventListener('click', function(){
+        mainTabs.forEach(function(b){ b.classList.remove('active'); });
+        btn.classList.add('active');
+        var isPrincipal = btn.dataset.tab === 'principal';
+        if(subTabsWrap){ subTabsWrap.style.display = isPrincipal ? 'flex' : 'none'; }
+      });
     });
     if(subTabsWrap){ subTabsWrap.style.display = 'flex'; } // estado inicial
 
-    // -------- Etapas: leitura do ?etapa=N & step=nome
-    var url = new URL(window.location.href);
-    var currentStep = parseInt(url.searchParams.get('etapa') || '0', 10);
-    if (isNaN(currentStep) || currentStep < 1) currentStep = 1;
-    var stepNameParam = (url.searchParams.get('step') || '').trim();
-    var computedStepName = stepNameParam || ('Etapa ' + currentStep);
-
-    // Atualiza chip
-    var stepNameEl = document.getElementById('tfStepName');
-    if (stepNameEl) stepNameEl.textContent = computedStepName;
-
-    // Breadcrumb dinâmico
-    var bc = document.getElementById('tfBreadcrumb');
-    var offerTitleText = document.getElementById('offerTitle')?.textContent?.trim() || 'Nome da Oferta';
-    var etapaParam = url.searchParams.get('etapa');
-    if (bc) {
-      if (etapaParam && parseInt(etapaParam,10) >= 1) {
-        var safeStep = computedStepName.replace(/</g,'&lt;').replace(/>/g,'&gt;');
-        bc.innerHTML =
-          '<a href="/ofertas">Minhas Ofertas</a>' +
-          '<span>›</span>' +
-          '<span>'+ offerTitleText.replace(/</g,'&lt;').replace(/>/g,'&gt;') +'</span>' +
-          '<span>›</span>' +
-          '<span>'+ safeStep +'</span>';
-      } else {
-        bc.innerHTML =
-          '<a href="/ofertas">Minhas Ofertas</a>' +
-          '<span>›</span>' +
-          '<span>'+ offerTitleText.replace(/</g,'&lt;').replace(/>/g,'&gt;') +'</span>';
     // -------- Breadcrumb clicável
     function buildBreadcrumb() {
       var bc = document.getElementById('tfBreadcrumb');
@@ -226,7 +342,6 @@
       return (s || "").replace(/</g,'&lt;').replace(/>/g,'&gt;');
     }
 
-    // -------- Modal "Criar etapa" (NÃO abrir automaticamente)
     buildBreadcrumb();
 
     // -------- Modal "Criar etapa"
@@ -237,18 +352,12 @@
     var confirmBtn = document.getElementById('btnConfirmStep');
     var nameInput = document.getElementById('inpStepName');
 
-    // Garante que, ao carregar, o modal esteja SEMPRE fechado
     // Garante fechado no load
     if (modal) { modal.setAttribute('hidden', ''); }
-
     function escToClose(e){ if (e.key === 'Escape') closeModal(); }
 
     function openModal(){
       if (!modal) return;
-      // sugestão de nome padrão
-      var nextN = isNaN(currentStep) ? 2 : (currentStep + 1);
-      if (nameInput) nameInput.value = 'Etapa ' + nextN;
-      modal.removeAttribute('hidden');     // abre
       // Sugestão de nome: próximo número
       var nextNo = 1;
       if (Array.isArray(steps) && steps.length) {
@@ -263,28 +372,22 @@
 
     function closeModal(){
       if (!modal) return;
-      modal.setAttribute('hidden','');     // fecha
       modal.setAttribute('hidden','');
       document.removeEventListener('keydown', escToClose);
     }
 
-@@ -373,18 +379,50 @@
+    if (openBtn) openBtn.addEventListener('click', openModal);
+    if (closeBtn) closeBtn.addEventListener('click', closeModal);
+    if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
+    if (modal){
+      modal.addEventListener('click', function(e){
+        if (e.target === modal) closeModal();
+      });
     }
 
     if (confirmBtn){
-      confirmBtn.addEventListener('click', function(){
       confirmBtn.addEventListener('click', async function(){
         var dupValue = document.querySelector('input[name="dupMode"]:checked')?.value || '0';
-        var stepName = (nameInput?.value || '').trim() || ('Etapa ' + (currentStep + 1));
-
-        // Navega para mesma rota com etapa incrementada + nome + flag dup
-        var u = new URL(window.location.href);
-        var n = parseInt(u.searchParams.get('etapa') || '0', 10);
-        if (isNaN(n) || n < 1) n = 1;
-        u.searchParams.set('etapa', String(n + 1));
-        u.searchParams.set('step', stepName);
-        u.searchParams.set('dup', dupValue); // 1 duplica configs, 0 do zero (back decide lógica)
-        window.location.href = u.toString();
         var stepName = (nameInput?.value || '').trim();
         if (!stepName) {
           // fallback nome
@@ -330,3 +433,4 @@
       });
     }
   })();
+</script>
