@@ -1,7 +1,7 @@
 <%- include('partials/visual_hottrack') %>
 
 <div class="tf-offer">
-  <!-- breadcrumb + header minimal -->
+  <!-- breadcrumb + header -->
   <nav class="tf-bc">
     <a href="/ofertas">Minhas Ofertas</a> <span>›</span> <span><%= offer.name %></span>
   </nav>
@@ -11,390 +11,282 @@
       <h1><%= offer.name %></h1>
       <p>ID: <%= offer.id %></p>
     </div>
-    <div class="tf-status <%= offer.status %>">
+    <span class="tf-status <%= offer.status %>">
       <%= offer.status === 'ativo' ? 'Ativo' : (offer.status === 'incompleto' ? 'Incompleto' : 'Erro') %>
-    </div>
+    </span>
   </header>
 
-  <!-- bot identity compacto -->
+  <!-- identidade do bot (mínima, sempre visível) -->
   <section class="tf-id">
-    <form method="POST" action="/ofertas/<%= offer.id %>/token" class="tf-id-grid">
+    <form method="POST" action="/ofertas/<%= offer.id %>/token" class="tf-id-grid" id="formIdentity">
       <div class="tf-field">
         <label>Username (sem @)</label>
-        <input type="text" name="telegramUsername" value="<%= (offer.telegramUsername||'').replace(/^@/,'') %>" placeholder="seu_bot_exemplo_bot">
+        <input type="text" name="telegramUsername" id="botUser" value="<%= (offer.telegramUsername||'').replace(/^@/,'') %>" placeholder="seu_bot_exemplo_bot">
       </div>
       <div class="tf-field">
         <label>Token do Bot</label>
-        <input type="text" name="botToken" value="<%= offer.botToken||'' %>" placeholder="123:AAAA...">
+        <input type="text" name="botToken" id="botToken" value="<%= offer.botToken||'' %>" placeholder="123:AAAA...">
       </div>
       <button class="tf-btn tf-btn-primary">Salvar</button>
+      <button type="button" class="tf-btn tf-btn-ghost" id="dupBot">Duplicar bot</button>
     </form>
   </section>
 
-  <!-- STEPS - fluxo vertical e minimal -->
-  <main class="tf-steps">
+  <!-- TABS / CAIXINHAS -->
+  <div class="tf-tabs">
+    <button class="tab active" data-tab="box-bot">Bot</button>
+    <button class="tab" data-tab="box-redirect">Redirecionador</button>
+    <button class="tab" data-tab="box-track">Traqueamento</button>
+    <button class="tab" data-tab="box-cloak">Cloaker Anti-Clone</button>
+  </div>
 
-    <!-- ========== STEP 1: Copy principal ========== -->
-    <section class="tf-step" id="step-copy">
-      <div class="tf-step-head">
+  <!-- 📦 1 — BOT (tudo aqui, mas minimalista) -->
+  <section class="tf-box show" id="box-bot">
+    <!-- separadores leves e cards compactos -->
+    <!-- Copy principal -->
+    <article class="tf-card">
+      <div class="tf-card-h">
         <div>
-          <h3>STEP 1 — Copy Principal do Bot</h3>
-          <p>Mensagem principal enviada no <code>/start</code>.</p>
+          <h3>Copy principal</h3>
+          <p class="muted">Mensagem enviada no <code>/start</code>.</p>
         </div>
-        <div class="tf-step-actions">
-          <button class="tf-btn tf-btn-ghost" data-insert-media="#copyMedia">Inserir mídia (Telegram)</button>
+        <div class="row gap8">
+          <button class="tf-btn tf-btn-ghost" data-insert="#copyMedia">Inserir mídia (Telegram)</button>
           <button class="tf-btn tf-btn-primary" data-save="copy">Salvar</button>
         </div>
       </div>
 
-      <div class="tf-step-body">
+      <div class="grid2">
         <div class="tf-field">
           <label>Mensagem</label>
-          <textarea id="copyText" placeholder="Escreva a mensagem de boas-vindas, CTAs, etc."></textarea>
+          <textarea id="copyText" placeholder="Escreva a mensagem de boas-vindas, CTA, etc."></textarea>
         </div>
-
-        <div class="tf-field">
-          <label>Link de mídia (opcional)</label>
-          <input id="copyMedia" type="url" placeholder="https://t.me/...">
-        </div>
-
-        <div class="tf-step-footer">
-          <div class="tf-inline">
-            <div class="tf-field small">
-              <label>Entregável (link)</label>
-              <input id="copyDeliver" type="url" placeholder="https://exemplo.com/obrigado?...">
+        <aside class="tf-mini">
+          <div class="tf-field">
+            <label>Plano vinculado (ID)</label>
+            <input id="copyPlan" type="text" placeholder="ex.: 5129">
+          </div>
+          <div class="tf-field">
+            <label>Valor (R$)</label>
+            <input id="copyPrice" type="text" placeholder="11,90">
+          </div>
+          <div class="tf-field">
+            <label>Mídia (link Telegram)</label>
+            <input id="copyMedia" type="url" placeholder="https://t.me/...">
+          </div>
+          <div class="tf-row-compact">
+            <div class="tf-field tiny">
+              <label>Entregável</label>
+              <input id="copyDeliver" type="url" placeholder="https://obrigado...">
             </div>
-
-            <div class="tf-field xsmall">
-              <label>Auto-deletar (seg)</label>
-              <input id="copyDelSec" type="number" min="0" placeholder="0 = não deletar">
-            </div>
-
-            <div class="tf-field xsmall">
-              <label>Apagar ao próximo passo</label>
+            <div class="tf-field tiny switch-row">
+              <label>Auto-deletar</label>
               <label class="tf-switch">
-                <input id="copyDelNext" type="checkbox"><span></span>
+                <input id="copyDelOn" type="checkbox"><span></span>
               </label>
-            </div>
-
-            <div class="tf-field xsmall">
-              <label>Apagar ao novo /start</label>
-              <label class="tf-switch">
-                <input id="copyDelStart" type="checkbox"><span></span>
-              </label>
-            </div>
-
-            <div class="tf-field track">
-              <label>Traqueamento</label>
-              <div class="tf-track">
-                <label><input type="radio" name="copyTrack" value="fb" checked><i>Facebook Pixel</i></label>
-                <label><input type="radio" name="copyTrack" value="utm_fb"><i>UTMify + Facebook</i></label>
-                <label><input type="radio" name="copyTrack" value="utm_utm"><i>UTMify + UTMify</i></label>
-              </div>
+              <input id="copyDelSec" class="sec" type="number" min="0" placeholder="seg" disabled>
             </div>
           </div>
-
-          <div class="tf-cloaker">
-            <div>
-              <strong>Cloaker de Copy (em breve)</strong>
-              <p class="muted">Impede clonagem automática; adiciona caracteres aleatórios se tentarem copiar suas mensagens.</p>
-            </div>
-            <label class="tf-switch">
-              <input id="copyCloak" type="checkbox" disabled><span></span>
-            </label>
-          </div>
-        </div>
+        </aside>
       </div>
-    </section>
+    </article>
 
-    <!-- ========== STEP 2: Botão CTA (opcional) ========== -->
-    <section class="tf-step" id="step-cta">
-      <div class="tf-step-head">
-        <div>
-          <h3>STEP 2 — Botão de CTA (opcional)</h3>
-          <p>Exibe um botão adicional na mensagem principal.</p>
-        </div>
-        <div class="tf-step-actions">
-          <button class="tf-btn tf-btn-ghost" data-insert-media="#ctaMedia">Inserir mídia (Telegram)</button>
+    <!-- CTA opcional -->
+    <article class="tf-card">
+      <div class="tf-card-h">
+        <div><h3>Botão de CTA (opcional)</h3></div>
+        <div class="row gap8">
+          <button class="tf-btn tf-btn-ghost" data-insert="#ctaMedia">Inserir mídia (Telegram)</button>
           <button class="tf-btn tf-btn-primary" data-save="cta">Salvar</button>
         </div>
       </div>
 
-      <div class="tf-step-body grid2">
-        <div class="tf-field">
-          <label>Nome do botão</label>
-          <input id="ctaName" type="text" placeholder="QUERO MINHA VAGA">
-        </div>
-        <div class="tf-field">
-          <label>Link (opcional)</label>
-          <input id="ctaLink" type="url" placeholder="https://...">
-        </div>
-        <div class="tf-field">
-          <label>Link de mídia (opcional)</label>
-          <input id="ctaMedia" type="url" placeholder="https://t.me/...">
-        </div>
+      <div class="grid3">
+        <div class="tf-field"><label>Nome</label><input id="ctaName" type="text" placeholder="QUERO MINHA VAGA"></div>
+        <div class="tf-field"><label>Link</label><input id="ctaLink" type="url" placeholder="https://..."></div>
+        <div class="tf-field"><label>Mídia (opcional)</label><input id="ctaMedia" type="url" placeholder="https://t.me/..."></div>
       </div>
 
-      <div class="tf-step-footer">
-        <div class="tf-inline">
-          <div class="tf-field small">
-            <label>Entregável (link)</label>
-            <input id="ctaDeliver" type="url" placeholder="https://exemplo.com/obrigado?...">
-          </div>
-          <div class="tf-field xsmall">
-            <label>Auto-deletar (seg)</label>
-            <input id="ctaDelSec" type="number" min="0" placeholder="0">
-          </div>
-          <div class="tf-field track">
-            <label>Traqueamento</label>
-            <div class="tf-track">
-              <label><input type="radio" name="ctaTrack" value="fb" checked><i>Facebook Pixel</i></label>
-              <label><input type="radio" name="ctaTrack" value="utm_fb"><i>UTMify + Facebook</i></label>
-              <label><input type="radio" name="ctaTrack" value="utm_utm"><i>UTMify + UTMify</i></label>
-            </div>
-          </div>
-        </div>
+      <div class="tf-row-compact">
+        <div class="tf-field tiny"><label>Entregável</label><input id="ctaDeliver" type="url" placeholder="https://obrigado..."></div>
+        <div class="tf-field tiny switch-row"><label>Auto-deletar</label><label class="tf-switch"><input id="ctaDelOn" type="checkbox"><span></span></label><input id="ctaDelSec" class="sec" type="number" min="0" placeholder="seg" disabled></div>
       </div>
-    </section>
+    </article>
 
-    <!-- ========== STEP 3: Orderbump ========== -->
-    <section class="tf-step" id="step-ob">
-      <div class="tf-step-head">
-        <div>
-          <h3>STEP 3 — Orderbump (ilimitados)</h3>
-          <p>Cards minimalistas com título, copy e mídia.</p>
-        </div>
-        <div class="tf-step-actions">
-          <button class="tf-btn tf-btn-primary" data-add-ob>+ Adicionar Orderbump</button>
-        </div>
+    <!-- OrderBump (ilimitados, listagem minimal com aceitar preview) -->
+    <article class="tf-card">
+      <div class="tf-card-h">
+        <div><h3>OrderBump</h3><p class="muted">Cards minimalistas; <b>Aceitar ou Não</b> para simular preço final.</p></div>
+        <div class="row gap8"><button class="tf-btn tf-btn-primary" id="addOB">+ Adicionar</button></div>
       </div>
 
-      <div class="tf-ob-list" id="obList">
-        <!-- itens são injetados via JS (mock) -->
-      </div>
-    </section>
-
-    <!-- ========== STEP 4: Mensagem do PIX ========== -->
-    <section class="tf-step" id="step-pix">
-      <div class="tf-step-head">
-        <div>
-          <h3>STEP 4 — Mensagem do PIX</h3>
-          <p>Inclua a variável obrigatória <code>((pix))</code> para copiar/colar automático.</p>
-        </div>
-        <div class="tf-step-actions">
-          <button class="tf-btn tf-btn-ghost" data-insert-media="#pixMedia">Inserir mídia (Telegram)</button>
-          <button class="tf-btn tf-btn-primary" data-save="pix">Salvar</button>
-        </div>
+      <div class="tf-field tiny" style="max-width:260px">
+        <label>Preço do front (R$)</label>
+        <input id="frontPrice" type="text" placeholder="11,90">
       </div>
 
-      <div class="tf-step-body">
-        <div class="tf-field">
-          <label>Mensagem (deve conter <code>((pix))</code>)</label>
-          <textarea id="pixText" placeholder="Ex.: Pague agora usando o código: ((pix))"></textarea>
-        </div>
-        <div class="tf-field">
-          <label>Link de mídia (opcional)</label>
-          <input id="pixMedia" type="url" placeholder="https://t.me/...">
-        </div>
+      <div id="obList" class="ob-list"></div>
 
-        <div class="tf-step-footer">
-          <div class="tf-inline">
-            <div class="tf-field small">
-              <label>Entregável (link)</label>
-              <input id="pixDeliver" type="url" placeholder="https://exemplo.com/obrigado?...">
-            </div>
-            <div class="tf-field xsmall">
-              <label>Auto-deletar (seg)</label>
-              <input id="pixDelSec" type="number" min="0" placeholder="0">
-            </div>
-            <div class="tf-field track">
-              <label>Traqueamento</label>
-              <div class="tf-track">
-                <label><input type="radio" name="pixTrack" value="fb" checked><i>Facebook Pixel</i></label>
-                <label><input type="radio" name="pixTrack" value="utm_fb"><i>UTMify + Facebook</i></label>
-                <label><input type="radio" name="pixTrack" value="utm_utm"><i>UTMify + UTMify</i></label>
-              </div>
-            </div>
-          </div>
-        </div>
+      <div class="tf-total">
+        <span>Valor final simulado:</span>
+        <strong id="sumTotal">R$ 0,00</strong>
       </div>
-    </section>
+    </article>
 
-    <!-- ========== STEP 5: Upsell ========== -->
-    <section class="tf-step" id="step-upsell">
-      <div class="tf-step-head">
-        <div>
-          <h3>STEP 5 — Upsell</h3>
-          <p>Oferta premium após a compra.</p>
-        </div>
-        <div class="tf-step-actions">
-          <button class="tf-btn tf-btn-ghost" data-insert-media="#upMedia">Inserir mídia (Telegram)</button>
+    <!-- Upsell -->
+    <article class="tf-card">
+      <div class="tf-card-h">
+        <div><h3>Upsell</h3></div>
+        <div class="row gap8">
+          <button class="tf-btn tf-btn-ghost" data-insert="#upMedia">Inserir mídia (Telegram)</button>
           <button class="tf-btn tf-btn-primary" data-save="upsell">Salvar</button>
         </div>
       </div>
 
-      <div class="tf-step-body grid2">
-        <div class="tf-field">
-          <label>Título</label>
-          <input id="upTitle" type="text" placeholder="Oferta Premium X">
-        </div>
-        <div class="tf-field">
-          <label>Valor (opcional)</label>
-          <input id="upPrice" type="text" placeholder="R$ 29,90">
-        </div>
-        <div class="tf-field">
-          <label>Copy</label>
-          <textarea id="upCopy" placeholder="Benefícios, urgência, CTA..."></textarea>
-        </div>
-        <div class="tf-field">
-          <label>Link de mídia (opcional)</label>
-          <input id="upMedia" type="url" placeholder="https://t.me/...">
+      <div class="grid3">
+        <div class="tf-field"><label>Título</label><input id="upTitle" type="text" placeholder="Oferta Premium X"></div>
+        <div class="tf-field"><label>Plano (ID)</label><input id="upPlan" type="text" placeholder="5131"></div>
+        <div class="tf-field"><label>Valor (R$)</label><input id="upPrice" type="text" placeholder="29,90"></div>
+      </div>
+      <div class="grid2">
+        <div class="tf-field"><label>Copy</label><textarea id="upCopy" placeholder="Benefícios, urgência, CTA..."></textarea></div>
+        <div class="tf-mini">
+          <div class="tf-field"><label>Mídia</label><input id="upMedia" type="url" placeholder="https://t.me/..."></div>
+          <div class="tf-field tiny"><label>Entregável</label><input id="upDeliver" type="url" placeholder="https://obrigado..."></div>
+          <div class="tf-field tiny switch-row"><label>Auto-deletar</label><label class="tf-switch"><input id="upDelOn" type="checkbox"><span></span></label><input id="upDelSec" class="sec" type="number" min="0" placeholder="seg" disabled></div>
         </div>
       </div>
+    </article>
 
-      <div class="tf-step-footer">
-        <div class="tf-inline">
-          <div class="tf-field small">
-            <label>Entregável (link)</label>
-            <input id="upDeliver" type="url" placeholder="https://exemplo.com/obrigado?...">
-          </div>
-          <div class="tf-field xsmall">
-            <label>Auto-deletar (seg)</label>
-            <input id="upDelSec" type="number" min="0" placeholder="0">
-          </div>
-          <div class="tf-field track">
-            <label>Traqueamento</label>
-            <div class="tf-track">
-              <label><input type="radio" name="upTrack" value="fb" checked><i>Facebook Pixel</i></label>
-              <label><input type="radio" name="upTrack" value="utm_fb"><i>UTMify + Facebook</i></label>
-              <label><input type="radio" name="upTrack" value="utm_utm"><i>UTMify + UTMify</i></label>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ========== STEP 6: Downsell ========== -->
-    <section class="tf-step" id="step-downsell">
-      <div class="tf-step-head">
-        <div>
-          <h3>STEP 6 — Downsell</h3>
-          <p>Oferta alternativa com preço reduzido.</p>
-        </div>
-        <div class="tf-step-actions">
-          <button class="tf-btn tf-btn-ghost" data-insert-media="#downMedia">Inserir mídia (Telegram)</button>
+    <!-- Downsell -->
+    <article class="tf-card">
+      <div class="tf-card-h">
+        <div><h3>Downsell</h3></div>
+        <div class="row gap8">
+          <button class="tf-btn tf-btn-ghost" data-insert="#downMedia">Inserir mídia (Telegram)</button>
           <button class="tf-btn tf-btn-primary" data-save="downsell">Salvar</button>
         </div>
       </div>
 
-      <div class="tf-step-body grid2">
-        <div class="tf-field">
-          <label>Título</label>
-          <input id="downTitle" type="text" placeholder="Oferta Alternativa Y">
+      <div class="grid3">
+        <div class="tf-field"><label>Título</label><input id="downTitle" type="text" placeholder="Oferta Alternativa Y"></div>
+        <div class="tf-field"><label>Plano (ID)</label><input id="downPlan" type="text" placeholder="5130"></div>
+        <div class="tf-field"><label>Valor (R$)</label><input id="downPrice" type="text" placeholder="19,90"></div>
+      </div>
+      <div class="grid2">
+        <div class="tf-field"><label>Copy</label><textarea id="downCopy" placeholder="Benefícios, condição, CTA..."></textarea></div>
+        <div class="tf-mini">
+          <div class="tf-field"><label>Mídia</label><input id="downMedia" type="url" placeholder="https://t.me/..."></div>
+          <div class="tf-field tiny"><label>Entregável</label><input id="downDeliver" type="url" placeholder="https://obrigado..."></div>
+          <div class="tf-field tiny switch-row"><label>Auto-deletar</label><label class="tf-switch"><input id="downDelOn" type="checkbox"><span></span></label><input id="downDelSec" class="sec" type="number" min="0" placeholder="seg" disabled></div>
         </div>
-        <div class="tf-field">
-          <label>Valor (opcional)</label>
-          <input id="downPrice" type="text" placeholder="R$ 19,90">
-        </div>
-        <div class="tf-field">
-          <label>Copy</label>
-          <textarea id="downCopy" placeholder="Benefícios, condição, CTA..."></textarea>
-        </div>
-        <div class="tf-field">
-          <label>Link de mídia (opcional)</label>
-          <input id="downMedia" type="url" placeholder="https://t.me/...">
+      </div>
+    </article>
+
+    <!-- Mensagem do PIX (suporta [[pix]] [[valor]] [[nome]]) -->
+    <article class="tf-card">
+      <div class="tf-card-h">
+        <div><h3>Mensagem do PIX</h3><p class="muted">Use variáveis entre colchetes: <code>[[pix]]</code>, <code>[[valor]]</code>, <code>[[nome]]</code>.</p></div>
+        <div class="row gap8">
+          <button class="tf-btn tf-btn-ghost" data-insert="#pixMedia">Inserir mídia (Telegram)</button>
+          <button class="tf-btn tf-btn-primary" data-save="pix">Salvar</button>
         </div>
       </div>
 
-      <div class="tf-step-footer">
-        <div class="tf-inline">
-          <div class="tf-field small">
-            <label>Entregável (link)</label>
-            <input id="downDeliver" type="url" placeholder="https://exemplo.com/obrigado?...">
-          </div>
-          <div class="tf-field xsmall">
-            <label>Auto-deletar (seg)</label>
-            <input id="downDelSec" type="number" min="0" placeholder="0">
-          </div>
-          <div class="tf-field track">
-            <label>Traqueamento</label>
-            <div class="tf-track">
-              <label><input type="radio" name="downTrack" value="fb" checked><i>Facebook Pixel</i></label>
-              <label><input type="radio" name="downTrack" value="utm_fb"><i>UTMify + Facebook</i></label>
-              <label><input type="radio" name="downTrack" value="utm_utm"><i>UTMify + UTMify</i></label>
-            </div>
-          </div>
+      <div class="grid2">
+        <div class="tf-field"><label>Mensagem</label><textarea id="pixText" placeholder="Ex.: Pague com PIX: [[pix]]"></textarea></div>
+        <div class="tf-mini">
+          <div class="tf-field"><label>Mídia</label><input id="pixMedia" type="url" placeholder="https://t.me/..."></div>
+          <div class="tf-field tiny"><label>Entregável</label><input id="pixDeliver" type="url" placeholder="https://obrigado..."></div>
+          <div class="tf-field tiny switch-row"><label>Auto-deletar</label><label class="tf-switch"><input id="pixDelOn" type="checkbox"><span></span></label><input id="pixDelSec" class="sec" type="number" min="0" placeholder="seg" disabled></div>
         </div>
       </div>
-    </section>
+    </article>
 
-    <!-- ========== STEP 7: Disparo / Follow-up ========== -->
-    <section class="tf-step" id="step-follow">
-      <div class="tf-step-head">
-        <div>
-          <h3>STEP 7 — Disparo / Follow-up</h3>
-          <p>Agendamentos, condições e mensagens por segmento.</p>
-        </div>
-        <div class="tf-step-actions">
-          <button class="tf-btn tf-btn-ghost" data-insert-media="#fupMedia">Inserir mídia (Telegram)</button>
+    <!-- Disparo / Follow-up -->
+    <article class="tf-card">
+      <div class="tf-card-h">
+        <div><h3>Disparo / Follow-up</h3></div>
+        <div class="row gap8">
+          <button class="tf-btn tf-btn-ghost" data-insert="#fupMedia">Inserir mídia (Telegram)</button>
           <button class="tf-btn tf-btn-primary" data-save="follow">Salvar</button>
         </div>
       </div>
 
-      <div class="tf-step-body">
-        <div class="tf-inline">
-          <div class="tf-field small">
-            <label>Agendamento</label>
-            <select id="fupWhen">
-              <option value="1h">1 hora</option>
-              <option value="6h">6 horas</option>
-              <option value="24h" selected>24 horas</option>
-              <option value="3d">3 dias</option>
-            </select>
-          </div>
-          <div class="tf-field small">
-            <label>Condição</label>
-            <select id="fupCond">
-              <option value="nao_pagou" selected>Não pagou</option>
-              <option value="abandonou">Abandonou</option>
-              <option value="pagou">Pagou</option>
-            </select>
-          </div>
+      <div class="grid3">
+        <div class="tf-field"><label>Agendamento</label>
+          <select id="fupWhen"><option value="1h">1h</option><option value="6h">6h</option><option value="24h" selected>24h</option><option value="3d">3 dias</option></select>
         </div>
+        <div class="tf-field"><label>Condição</label>
+          <select id="fupCond"><option value="nao_pagou" selected>Não pagou</option><option value="abandonou">Abandonou</option><option value="pagou">Pagou</option></select>
+        </div>
+        <div class="tf-field"><label>Mídia</label><input id="fupMedia" type="url" placeholder="https://t.me/..."></div>
+      </div>
 
-        <div class="tf-field">
-          <label>Copy</label>
-          <textarea id="fupCopy" placeholder="Mensagem de follow-up..."></textarea>
-        </div>
-        <div class="tf-field">
-          <label>Link de mídia (opcional)</label>
-          <input id="fupMedia" type="url" placeholder="https://t.me/...">
-        </div>
-
-        <div class="tf-step-footer">
-          <div class="tf-inline">
-            <div class="tf-field small">
-              <label>Entregável (link)</label>
-              <input id="fupDeliver" type="url" placeholder="https://exemplo.com/obrigado?...">
-            </div>
-            <div class="tf-field xsmall">
-              <label>Auto-deletar (seg)</label>
-              <input id="fupDelSec" type="number" min="0" placeholder="0">
-            </div>
-            <div class="tf-field track">
-              <label>Traqueamento</label>
-              <div class="tf-track">
-                <label><input type="radio" name="fupTrack" value="fb" checked><i>Facebook Pixel</i></label>
-                <label><input type="radio" name="fupTrack" value="utm_fb"><i>UTMify + Facebook</i></label>
-                <label><input type="radio" name="fupTrack" value="utm_utm"><i>UTMify + UTMify</i></label>
-              </div>
-            </div>
-          </div>
+      <div class="grid2">
+        <div class="tf-field"><label>Copy</label><textarea id="fupCopy" placeholder="Mensagem de follow-up..."></textarea></div>
+        <div class="tf-mini">
+          <div class="tf-field tiny"><label>Entregável</label><input id="fupDeliver" type="url" placeholder="https://obrigado..."></div>
+          <div class="tf-field tiny switch-row"><label>Auto-deletar</label><label class="tf-switch"><input id="fupDelOn" type="checkbox"><span></span></label><input id="fupDelSec" class="sec" type="number" min="0" placeholder="seg" disabled></div>
         </div>
       </div>
-    </section>
+    </article>
+  </section>
 
-  </main>
+  <!-- 📦 2 — REDIRECIONADOR -->
+  <section class="tf-box" id="box-redirect">
+    <article class="tf-card">
+      <div class="tf-card-h">
+        <div>
+          <h3>Redirecionador</h3>
+          <p class="muted">Cadastre múltiplos bots. Ative no máximo <b>2</b> para balancear tráfego.</p>
+        </div>
+        <div class="row gap8">
+          <button class="tf-btn tf-btn-primary" id="addBotRow">+ Cadastrar bot</button>
+          <button class="tf-btn tf-btn-ghost" data-save="redirect">Salvar ativos</button>
+        </div>
+      </div>
+
+      <div id="redirList" class="redir-list">
+        <!-- linhas de bots -->
+      </div>
+    </article>
+  </section>
+
+  <!-- 📦 3 — TRAQUEAMENTO -->
+  <section class="tf-box" id="box-track">
+    <article class="tf-card">
+      <div class="tf-card-h">
+        <div><h3>Traqueamento</h3><p class="muted">Escolha o modo e preencha IDs. Área isolada para evitar confusão.</p></div>
+        <button class="tf-btn tf-btn-primary" data-save="track">Salvar</button>
+      </div>
+
+      <div class="tf-trackseg">
+        <label><input type="radio" name="trk" value="fb" checked><span>Facebook Pixel</span></label>
+        <label><input type="radio" name="trk" value="utm_fb"><span>UTMify + Facebook Pixel</span></label>
+        <label><input type="radio" name="trk" value="utm_utm"><span>UTMify + UTMify Pixel</span></label>
+      </div>
+
+      <div class="grid3" id="trackFields">
+        <div class="tf-field trk-fb"><label>Facebook Pixel ID</label><input id="fbPixelId" type="text" placeholder="XXXXXXXXXXXXXXX"></div>
+
+        <div class="tf-field trk-utm"><label>UTMify Project / Site</label><input id="utmProject" type="text" placeholder="meu-site"></div>
+        <div class="tf-field trk-utm"><label>UTMify Pixel ID</label><input id="utmPixel" type="text" placeholder="utm-xxxx"></div>
+      </div>
+    </article>
+  </section>
+
+  <!-- 📦 4 — CLOAKER -->
+  <section class="tf-box" id="box-cloak">
+    <article class="tf-card subtle">
+      <div class="tf-card-h">
+        <div><h3>Cloaker Anti-Clone</h3><p class="muted">Em breve — adiciona ruído invisível ao copiar para evitar clonagem.</p></div>
+        <label class="tf-switch">
+          <input id="cloakOn" type="checkbox" disabled><span></span>
+        </label>
+      </div>
+    </article>
+  </section>
 
   <div class="tf-bottom">
     <a class="tf-btn tf-btn-secondary" href="/ofertas">Voltar</a>
@@ -403,68 +295,78 @@
 
 <style>
   :root{
-    --gold:#ffcc00; --gold2:#d4a100; --bg:#0b0b0b; --card:rgba(12,12,12,.78);
+    --gold:#ffcc00; --gold2:#d4a100; --bg:#0a0a0a; --card:rgba(12,12,12,.80);
     --muted:#a9a9a9; --line:rgba(255,204,0,.12); --line2:rgba(255,255,255,.10);
-    --shadow:0 10px 40px rgba(0,0,0,.55), 0 1px 0 rgba(255,255,255,.03) inset;
-    --glow:0 0 24px rgba(255,204,0,.10);
+    --shadow:0 12px 48px rgba(0,0,0,.55); --glow:0 0 32px rgba(255,204,0,.06);
   }
-
-  .tf-offer{max-width:1100px;margin:0 auto;padding:56px 24px 90px;color:#fff}
-  .tf-bc{display:flex;gap:8px;color:#bbb;margin-bottom:12px}
-  .tf-bc a{color:#ddd;text-decoration:none}
-  .tf-bc a:hover{color:#fff}
-
-  .tf-head{display:flex;justify-content:space-between;align-items:end;margin-bottom:18px}
-  .tf-head h1{margin:0;color:var(--gold);font-size:1.9rem}
-  .tf-head p{margin:4px 0 0;color:#888}
+  .tf-offer{max-width:1120px;margin:0 auto;padding:56px 18px 90px;color:#fff}
+  .tf-bc{display:flex;gap:8px;color:#bbb;margin-bottom:10px}
+  .tf-bc a{color:#ddd;text-decoration:none}.tf-bc a:hover{color:#fff}
+  .tf-head{display:flex;justify-content:space-between;align-items:end;margin-bottom:14px}
+  .tf-head h1{margin:0;color:var(--gold);font-size:2rem}
+  .tf-head p{margin:4px 0 0;color:#8c8c8c}
   .tf-status{padding:6px 12px;border-radius:999px;border:1px solid var(--line)}
   .tf-status.ativo{background:rgba(0,255,120,.14);color:#51ff9e;border-color:rgba(0,255,120,.32)}
   .tf-status.incompleto{background:rgba(255,204,0,.12);color:#ffd86a}
-  .tf-status.erro{background:rgba(255,0,80,.14);color:#ff7aa4}
 
-  .tf-id{background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow),var(--glow);padding:14px;margin-bottom:18px}
-  .tf-id-grid{display:grid;grid-template-columns:1fr 1fr auto;gap:12px;align-items:end}
+  .tf-id{background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow),var(--glow);padding:12px 12px;margin-bottom:14px}
+  .tf-id-grid{display:grid;grid-template-columns:1fr 1fr auto auto;gap:10px;align-items:end}
+  .row{display:flex;align-items:center}.gap8{gap:8px}
+
+  .tf-tabs{display:flex;gap:8px;margin:12px 0 8px}
+  .tf-tabs .tab{border:1px solid var(--line2);background:rgba(255,255,255,.03);color:#e9e9e9;padding:10px 14px;border-radius:12px;cursor:pointer}
+  .tf-tabs .tab.active{background:linear-gradient(90deg,var(--gold),var(--gold2));color:#1a1300;border:none;box-shadow:0 0 14px rgba(255,204,0,.35)}
+
+  .tf-box{display:none}.tf-box.show{display:block}
+  .tf-card{background:radial-gradient(1200px 300px at -10% -20%,rgba(255,204,0,.05),transparent 45%),var(--card);
+           border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow),var(--glow);padding:14px;margin-bottom:12px}
+  .tf-card.subtle{background:rgba(255,255,255,.05)}
+  .tf-card-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+  .tf-card-h h3{margin:0;color:var(--gold);font-size:1.05rem}
+  .muted{color:#a8a8a8}
 
   .tf-field label{display:block;margin-bottom:6px;font-size:.9rem;color:#eaeaea}
   .tf-field input,.tf-field textarea,.tf-field select{
     width:100%;border-radius:12px;border:1px solid var(--line2);
     background:rgba(255,255,255,.03);color:#fff;padding:11px 12px;outline:none;
-    box-shadow:inset 0 0 0 1px rgba(255,255,255,.02)
-  }
-  .tf-field textarea{min-height:130px;resize:vertical}
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,.02)}
+  .tf-field textarea{min-height:120px;resize:vertical}
   .tf-field input:focus,.tf-field textarea:focus,.tf-field select:focus{
-    border-color:var(--gold); box-shadow:0 0 0 1px rgba(255,204,0,.25), inset 0 0 0 1px rgba(255,204,0,.06)
+    border-color:var(--gold); box-shadow:0 0 0 1px rgba(255,204,0,.22), inset 0 0 0 1px rgba(255,204,0,.06)
   }
-  .tf-field.small{min-width:280px}
-  .tf-field.xsmall{min-width:180px}
-  .tf-field.track{min-width:340px}
+  .tf-mini{display:flex;flex-direction:column;gap:10px}
+  .tf-row-compact{display:flex;gap:10px;align-items:end}
+  .tf-field.tiny{min-width:240px}
+  .switch-row{display:flex;gap:8px;align-items:center}
+  .sec{width:90px}
 
-  .tf-btn{border:1px solid var(--line2);background:transparent;color:#eee;padding:10px 16px;border-radius:12px;cursor:pointer}
-  .tf-btn:hover{border-color:rgba(255,255,255,.28)}
-  .tf-btn-primary{border:none;background:linear-gradient(90deg,var(--gold),var(--gold2));color:#1a1300;font-weight:700;box-shadow:0 0 14px rgba(255,204,0,.35)}
+  .grid2{display:grid;grid-template-columns:1fr 420px;gap:12px}
+  .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+
+  .tf-btn{border:1px solid var(--line2);background:transparent;color:#eaeaea;padding:10px 14px;border-radius:12px;cursor:pointer}
+  .tf-btn:hover{border-color:rgba(255,255,255,.26)}
+  .tf-btn-primary{border:none;background:linear-gradient(90deg,var(--gold),var(--gold2));color:#1a1300;font-weight:700;box-shadow:0 0 12px rgba(255,204,0,.35)}
   .tf-btn-secondary{background:rgba(255,255,255,.06);text-decoration:none}
   .tf-btn-ghost{background:transparent;border:1px solid var(--line);color:#e9e9e9}
 
-  .tf-steps{display:flex;flex-direction:column;gap:16px}
-  .tf-step{
-    background:radial-gradient(1200px 300px at 20% -10%,rgba(255,204,0,.06),transparent 45%) , var(--card);
-    border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow),var(--glow);padding:16px 16px 12px
-  }
-  .tf-step-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
-  .tf-step-head h3{margin:0;color:var(--gold);font-size:1.05rem;letter-spacing:.2px}
-  .tf-step-head p{margin:4px 0 0;color:#bdbdbd}
-  .tf-step-actions{display:flex;gap:10px}
-  .tf-step-body{display:flex;flex-direction:column;gap:12px}
-  .tf-step-body.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-  .tf-step-footer{border-top:1px dashed rgba(255,255,255,.10);margin-top:6px;padding-top:12px}
-  .tf-inline{display:flex;flex-wrap:wrap;gap:12px;align-items:end}
+  /* Orderbump list */
+  .ob-list{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .ob{background:rgba(255,255,255,.03);border:1px solid var(--line2);border-radius:16px;padding:10px}
+  .ob .bar{display:flex;gap:8px;justify-content:flex-end;margin-top:8px}
+  .tf-total{display:flex;justify-content:flex-end;gap:8px;border-top:1px dashed rgba(255,255,255,.08);margin-top:8px;padding-top:10px}
 
-  /* tracking segmented */
-  .tf-track{display:flex;gap:8px;background:rgba(255,255,255,.04);padding:6px;border-radius:12px;border:1px solid var(--line2)}
-  .tf-track label{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:10px;cursor:pointer}
-  .tf-track input{appearance:none;width:14px;height:14px;border:1px solid rgba(255,255,255,.6);border-radius:50%}
-  .tf-track input:checked{background:var(--gold);border-color:var(--gold)}
-  .tf-track i{font-style:normal;color:#e8e8e8}
+  /* Redirector */
+  .redir-list{display:flex;flex-direction:column;gap:8px}
+  .redir-row{display:grid;grid-template-columns:28px 230px 1fr 160px 120px;gap:8px;align-items:center;background:rgba(255,255,255,.03);border:1px solid var(--line2);border-radius:14px;padding:8px}
+  .redir-row .idx{opacity:.7}
+  .active-tag{padding:6px 10px;border-radius:999px;border:1px solid var(--line2);background:rgba(255,255,255,.06)}
+
+  /* Tracking segmented */
+  .tf-trackseg{display:flex;gap:8px;background:rgba(255,255,255,.04);padding:6px;border-radius:12px;border:1px solid var(--line2);margin-bottom:10px}
+  .tf-trackseg label{display:flex;gap:8px;align-items:center;padding:8px 10px;border-radius:10px;cursor:pointer}
+  .tf-trackseg input{appearance:none;width:14px;height:14px;border:1px solid rgba(255,255,255,.6);border-radius:50%}
+  .tf-trackseg input:checked{background:var(--gold);border-color:var(--gold)}
+  .tf-trackseg span{color:#eaeaea}
 
   /* switch */
   .tf-switch{position:relative;display:inline-block;width:46px;height:26px}
@@ -474,107 +376,177 @@
   .tf-switch input:checked+span{background:var(--gold)}
   .tf-switch input:checked+span:after{left:23px;background:#1a1300}
 
-  /* orderbump mini cards */
-  .tf-ob-list{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-  .tf-ob{background:rgba(255,255,255,.03);border:1px solid var(--line2);border-radius:16px;padding:12px}
-  .tf-ob h4{margin:0 0 8px;color:#f1f1f1}
-  .tf-ob .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-  .tf-ob .bar{display:flex;gap:8px;justify-content:flex-end;margin-top:10px}
+  .tf-bottom{display:flex;justify-content:flex-end;margin-top:16px}
 
-  .tf-cloaker{margin-top:10px;border:1px dashed rgba(255,255,255,.10);border-radius:14px;padding:10px;display:flex;align-items:center;justify-content:space-between}
-  .muted{color:#9e9e9e}
-
-  .tf-bottom{display:flex;justify-content:flex-end;margin-top:18px}
-
-  @media (max-width:1000px){
+  @media (max-width:1040px){
+    .grid2{grid-template-columns:1fr}
+    .grid3{grid-template-columns:1fr}
+    .ob-list{grid-template-columns:1fr}
     .tf-id-grid{grid-template-columns:1fr}
-    .tf-step-body.grid2{grid-template-columns:1fr}
-    .tf-ob-list{grid-template-columns:1fr}
+    .redir-row{grid-template-columns:28px 1fr}
   }
 </style>
 
 <script>
+  // --- helpers básicos
+  const $ = (q,ctx=document)=>ctx.querySelector(q);
+  const $$ = (q,ctx=document)=>Array.from(ctx.querySelectorAll(q));
+  const money = (v)=> {
+    const n = (''+v).replace(/[^\d,\.]/g,'').replace(',','.');
+    const f = parseFloat(n||'0')||0; return f;
+  };
+  const brl = (n)=> n.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+
   // normaliza username sem @
-  document.querySelectorAll('input[name="telegramUsername"]').forEach(i=>{
-    i.addEventListener('blur',()=> i.value = i.value.replace(/^@+/,''))
+  $('#botUser')?.addEventListener('blur', e => e.target.value = e.target.value.replace(/^@+/,''));
+
+  // alterna abas
+  $$('.tf-tabs .tab').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      $$('.tf-tabs .tab').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      const id = btn.dataset.tab;
+      $$('.tf-box').forEach(b=>b.classList.remove('show'));
+      $('#'+id)?.classList.add('show');
+    });
   });
 
-  // mock de "Inserir mídia" (cola no input alvo)
-  document.addEventListener('click', (e)=>{
-    const btn = e.target.closest('[data-insert-media]');
-    if(!btn) return;
-    const target = document.querySelector(btn.dataset.insertMedia);
-    if(!target) return;
+  // inserir mídia via prompt
+  document.addEventListener('click',e=>{
+    const b = e.target.closest('[data-insert]');
+    if(!b) return;
+    const target = $(b.dataset.insert);
     const url = prompt('Cole o link da mídia do Telegram:');
-    if(url) target.value = url;
+    if(url && target) target.value = url;
   });
 
-  // validação PIX ((pix))
-  function hasPixVar(t){ return /\(\(pix\)\)/i.test(t); }
+  // habilita/desabilita seconds dos auto-delete
+  function wireAutoDelete(rowOn,rowSec){
+    const on = $(rowOn), sec = $(rowSec);
+    if(!on || !sec) return;
+    const toggle = ()=> sec.disabled = !on.checked;
+    on.addEventListener('change',toggle); toggle();
+  }
+  wireAutoDelete('#copyDelOn','#copyDelSec');
+  wireAutoDelete('#ctaDelOn','#ctaDelSec');
+  wireAutoDelete('#upDelOn','#upDelSec');
+  wireAutoDelete('#downDelOn','#downDelSec');
+  wireAutoDelete('#pixDelOn','#pixDelSec');
+  wireAutoDelete('#fupDelOn','#fupDelSec');
 
-  // mock "Salvar"
-  document.addEventListener('click', (e)=>{
+  // valida PIX [[pix]] (aceita ((pix)) também)
+  function hasPixVar(t){ return /(\[\[pix\]\]|\(\(pix\)\))/i.test(t||''); }
+
+  // salvar mocks
+  document.addEventListener('click', e=>{
     const s = e.target.closest('[data-save]');
     if(!s) return;
-    const step = s.dataset.save;
+    const tp = s.dataset.save;
 
-    if(step==='pix'){
-      const txt = (document.getElementById('pixText')?.value||'').trim();
-      if(!hasPixVar(txt)){
-        alert('A mensagem do PIX deve conter a variável ((pix)).');
-        return;
-      }
+    if(tp==='pix'){
+      const txt = $('#pixText')?.value||'';
+      if(!hasPixVar(txt)){ alert('A mensagem do PIX deve conter [[pix]] (ou ((pix))).'); return; }
     }
-    // aqui você chama fetch('/api/...', {method:'POST', body:...})
-    s.disabled = true;
-    const prev = s.textContent;
-    s.textContent = 'Salvo ✓';
+    s.disabled = true; const prev = s.textContent; s.textContent = 'Salvo ✓';
     setTimeout(()=>{ s.disabled=false; s.textContent=prev; },900);
+    // aqui você chama fetch('/api/...',{method:'POST',body:...})
   });
 
-  // Orderbump minimal
-  const obList = document.getElementById('obList');
-  function addOB(){
-    const idx = (obList.querySelectorAll('.tf-ob').length + 1);
+  // ------- OrderBump (lista minimal + simulação) -------
+  const obList = $('#obList');
+  function recalcTotal(){
+    let total = money($('#frontPrice')?.value||0);
+    $$('.ob').forEach(card=>{
+      if($('.acc',card)?.checked){
+        total += money($('.price',card)?.value||0);
+      }
+    });
+    $('#sumTotal').textContent = brl(total);
+  }
+  function addOBCard(){
+    const idx = $$('.ob').length+1;
     const el = document.createElement('div');
-    el.className='tf-ob';
-    el.innerHTML=`
-      <h4>Orderbump #${idx}</h4>
-      <div class="row">
-        <div class="tf-field"><label>Título</label><input type="text" placeholder="Bump ${idx}"></div>
-        <div class="tf-field"><label>Mídia (link Telegram)</label><input type="url" placeholder="https://t.me/..."></div>
+    el.className='ob';
+    el.innerHTML = `
+      <div class="grid3">
+        <div class="tf-field"><label>Título</label><input class="title" type="text" placeholder="Bump ${idx}"></div>
+        <div class="tf-field"><label>Plano (ID)</label><input class="plan" type="text" placeholder="51xx"></div>
+        <div class="tf-field"><label>Valor (R$)</label><input class="price" type="text" placeholder="8,90"></div>
       </div>
-      <div class="tf-field"><label>Copy</label><textarea placeholder="Copy do bump..."></textarea></div>
-      <div class="tf-inline">
-        <div class="tf-field small"><label>Entregável (link)</label><input type="url" placeholder="https://..."></div>
-        <div class="tf-field xsmall"><label>Auto-deletar (seg)</label><input type="number" min="0" placeholder="0"></div>
-        <div class="tf-field track">
-          <label>Traqueamento</label>
-          <div class="tf-track">
-            <label><input type="radio" name="obTrack_${idx}" value="fb" checked><i>Facebook Pixel</i></label>
-            <label><input type="radio" name="obTrack_${idx}" value="utm_fb"><i>UTMify + Facebook</i></label>
-            <label><input type="radio" name="obTrack_${idx}" value="utm_utm"><i>UTMify + UTMify</i></label>
-          </div>
+      <div class="grid3">
+        <div class="tf-field"><label>Copy</label><input class="copy" type="text" placeholder="Texto curto do bump"></div>
+        <div class="tf-field"><label>Mídia (Telegram)</label><input class="media" type="url" placeholder="https://t.me/..."></div>
+        <div class="tf-field"><label>Aceitar?</label>
+          <label class="tf-switch"><input class="acc" type="checkbox"><span></span></label>
         </div>
       </div>
       <div class="bar">
-        <button class="tf-btn tf-btn-ghost" data-remove>Remover</button>
+        <button class="tf-btn tf-btn-ghost" data-rm>Remover</button>
         <button class="tf-btn tf-btn-primary" data-save="ob">Salvar</button>
       </div>`;
     obList.appendChild(el);
   }
-  document.querySelector('[data-add-ob]')?.addEventListener('click', addOB);
-  obList?.addEventListener('click',(e)=>{
-    if(e.target.closest('[data-remove]')){
-      e.target.closest('.tf-ob')?.remove();
-    }
-    if(e.target.closest('[data-save="ob"]')){
-      const btn = e.target.closest('button');
-      btn.disabled=true; const t=btn.textContent; btn.textContent='Salvo ✓';
-      setTimeout(()=>{btn.disabled=false;btn.textContent=t;},900);
+  $('#addOB')?.addEventListener('click', addOBCard);
+  obList?.addEventListener('input', e=>{
+    if(e.target.classList.contains('price') || e.target.classList.contains('acc') || e.target.id==='frontPrice'){
+      recalcTotal();
     }
   });
+  obList?.addEventListener('click', e=>{
+    if(e.target.matches('[data-rm]')){
+      e.target.closest('.ob')?.remove(); recalcTotal();
+    }
+    if(e.target.matches('[data-save="ob"]')){
+      const b = e.target; b.disabled=true; const t=b.textContent; b.textContent='Salvo ✓';
+      setTimeout(()=>{b.disabled=false;b.textContent=t;},900);
+    }
+  });
+  $('#frontPrice')?.addEventListener('input', recalcTotal);
+  addOBCard(); // inicia com 1 card suave
+  recalcTotal();
 
-  // inicia com um bump exemplo (vazio) para UX
-  addOB();
+  // ------- Redirecionador: até 2 ativos -------
+  const redirList = $('#redirList');
+  function activeCount(){ return $$('.redir-row .act input:checked', redirList).length; }
+  function enforceActiveLimit(changed){
+    if(activeCount()>2){ changed.checked=false; alert('Ative no máximo 2 bots.'); }
+  }
+  function addRedirRow(user='', token=''){
+    const idx = $$('.redir-row', redirList).length+1;
+    const row = document.createElement('div');
+    row.className='redir-row';
+    row.innerHTML = `
+      <div class="idx">#${idx}</div>
+      <div class="tf-field"><label>Username</label><input type="text" value="${user}"></div>
+      <div class="tf-field"><label>Token</label><input type="text" value="${token}"></div>
+      <div class="act"><label>Ativo</label> <label class="tf-switch"><input type="checkbox"><span></span></label></div>
+      <button class="tf-btn tf-btn-ghost" data-rm>Remover</button>`;
+    redirList.appendChild(row);
+    $('input[type="checkbox"]', row).addEventListener('change', e=>enforceActiveLimit(e.target));
+  }
+  $('#addBotRow')?.addEventListener('click', ()=>addRedirRow());
+
+  // duplicar bot a partir da identidade
+  $('#dupBot')?.addEventListener('click', ()=>{
+    const u = $('#botUser')?.value||''; const t = $('#botToken')?.value||'';
+    if(!u || !t){ alert('Preencha Username e Token para duplicar.'); return; }
+    addRedirRow(u,t);
+    // aqui você pode chamar POST /ofertas/:id/bots/duplicate
+  });
+
+  // inicia redir com 1 (se já tiver user/token no topo)
+  if(('<%= (offer.telegramUsername||"") %>' || '<%= (offer.botToken||"") %>').length){
+    addRedirRow('<%= (offer.telegramUsername||"").replace(/^@/,"") %>','<%= offer.botToken||"" %>');
+  } else {
+    addRedirRow();
+  }
+
+  // tracking fields show/hide
+  function updateTrackFields(){
+    const mode = $('input[name="trk"]:checked')?.value;
+    $$('.trk-fb').forEach(el=> el.style.display = (mode==='fb' || mode==='utm_fb') ? 'block' : 'none');
+    $$('.trk-utm').forEach(el=> el.style.display = (mode==='utm_fb' || mode==='utm_utm') ? 'block' : 'none');
+  }
+  $$('.tf-trackseg input').forEach(r=> r.addEventListener('change', updateTrackFields));
+  updateTrackFields();
 </script>
