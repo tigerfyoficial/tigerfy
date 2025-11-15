@@ -1,305 +1,236 @@
 <%- include('partials/visual_hottrack') %>
 
-<div class="tgf-wrap">
-  <!-- Breadcrumb + título -->
-  <nav class="bc">
-    <a href="/ofertas">Minhas Ofertas</a><span>›</span><span><%= offer.name %></span>
-  </nav>
-
-  <header class="page-h">
+<div class="tgffx-wrap">
+  <!-- Cabeçalho / estilo Flexion -->
+  <div class="hdr">
     <div>
-      <h1>Gerenciar Oferta</h1>
-      <p class="muted">Nome: <strong class="gold"><%= offer.name %></strong> · ID: <%= offer.id %></p>
+      <h1>Gerenciar Mensagens e Funis</h1>
+      <p class="muted">Oferta: <strong class="gold"><%= offer.name %></strong> · ID: <%= offer.id %></p>
     </div>
 
-    <!-- Categorias principais estilo Supabase/Flexion: TRACKING e CLOAKER -->
-    <div class="segcat" role="tablist" aria-label="Categorias">
-      <button class="seg" data-cat="panel-main" aria-selected="true">Painel</button>
-      <button class="seg" data-cat="panel-track">Tracking</button>
-      <button class="seg" data-cat="panel-cloak">Cloaker</button>
+    <!-- Abas superiores (nível macro) -->
+    <div class="top-tabs" role="tablist" aria-label="Categorias">
+      <button class="top-tab is-active" data-pane="pane-main" aria-selected="true">Principal</button>
+      <button class="top-tab" data-pane="pane-track">Tracking</button>
+      <button class="top-tab" data-pane="pane-cloak">Cloaker</button>
     </div>
-  </header>
+  </div>
 
-  <!-- ===================== PAINEL PRINCIPAL ===================== -->
-  <section id="panel-main" class="cat show">
-    <!-- Caixinha 1 — FRONT / COPY + CTA + PLANOS + ENTREGÁVEL + PIX -->
-    <article class="card">
-      <div class="card-title">
-        <h3>Front / Fluxo Principal</h3>
-        <div class="row gap8">
-          <span class="status <%= offer.status %>"><%= offer.status %></span>
-        </div>
-      </div>
+  <!-- ========================= PRINCIPAL ========================= -->
+  <section id="pane-main" class="pane show">
+    <!-- Abas internas (clone Flexion) -->
+    <div class="sub-tabs" role="tablist" aria-label="Funções do Bot">
+      <button class="sub-tab is-active" data-subpane="sub-front" aria-selected="true">Front</button>
+      <button class="sub-tab" data-subpane="sub-bump">OrderBump <span class="badge">em breve</span></button>
+      <button class="sub-tab" data-subpane="sub-upsell">Upsell <span class="badge">em breve</span></button>
+      <button class="sub-tab" data-subpane="sub-downsell">Downsell <span class="badge">em breve</span></button>
+      <button class="sub-tab" data-subpane="sub-fire">Disparo <span class="badge">em breve</span></button>
+      <button class="sub-tab" data-subpane="sub-pix">Mensagem PIX</button>
+    </div>
 
-      <!-- Identidade do bot + Duplicar -->
-      <div class="soft">
-        <div class="grid3">
-          <div class="field">
-            <label>Username (sem @)</label>
-            <input id="botUser" type="text" value="<%= (offer.telegramUsername||'').replace(/^@/,'') %>" placeholder="seu_bot_exemplo_bot">
-          </div>
-          <div class="field">
-            <label>Token do Bot</label>
-            <input id="botToken" type="text" value="<%= offer.botToken||'' %>" placeholder="123:AAAA...">
-          </div>
-          <div class="field align-end">
-            <form method="POST" action="/ofertas/<%= offer.id %>/token">
-              <input type="hidden" name="telegramUsername" id="hiddenUser">
-              <input type="hidden" name="botToken" id="hiddenToken">
-              <button class="btn btn-primary">Salvar credenciais</button>
-              <button type="button" id="dupBot" class="btn btn-ghost">Duplicar bot</button>
-            </form>
-          </div>
-        </div>
-      </div>
+    <div class="grid">
+      <!-- Coluna esquerda (cards centrais) -->
+      <div class="col-main">
+        <!-- FRONT -->
+        <div id="sub-front" class="subpane show">
+          <!-- Card: Copy principal -->
+          <article class="card">
+            <div class="card-h">
+              <div>
+                <h3 class="card-t">Mensagem Principal (/start)</h3>
+                <p class="muted">Texto enviado no primeiro contato do usuário com o bot.</p>
+              </div>
+              <div class="row gap8">
+                <button class="btn ghost" data-insert="#frontMedia">Inserir mídia (Telegram)</button>
+                <button class="btn primary" data-save="front">Salvar</button>
+              </div>
+            </div>
 
-      <div class="divider"></div>
-
-      <!-- (a) Copy principal -->
-      <section class="block">
-        <div class="block-h">
-          <div>
-            <h4>Copy principal (/start)</h4>
-            <p class="muted">Mensagem enviada no <code>/start</code>.</p>
-          </div>
-          <div class="row gap8">
-            <button type="button" class="btn btn-ghost" data-insert="#copyMedia">Inserir mídia (Telegram)</button>
-            <button type="button" class="btn btn-primary" data-save="copy">Salvar</button>
-          </div>
-        </div>
-        <div class="grid2">
-          <div class="field">
-            <label>Mensagem</label>
-            <textarea id="copyText" placeholder="Escreva a mensagem principal…"></textarea>
-          </div>
-          <aside class="mini">
             <div class="field">
-              <label>Plano base</label>
-              <select id="copyPlan"></select>
+              <label>Copy</label>
+              <textarea id="frontCopy" placeholder="Escreva a mensagem principal…"></textarea>
             </div>
-            <div class="pair">
-              <div class="field"><label>Valor (R$)</label><input id="copyPrice" type="text" placeholder="11,90"></div>
-              <div class="field"><label>Duração (dias)</label><input id="copyDays" type="number" min="0" placeholder="30"></div>
+
+            <div class="grid2fit">
+              <div class="field">
+                <label>Mídia (link Telegram)</label>
+                <input id="frontMedia" type="url" placeholder="https://t.me/...">
+              </div>
+              <div class="field mini-inline">
+                <label class="switch"><input id="frontAutoDel" type="checkbox"><span></span></label>
+                <input id="frontAutoSec" type="number" min="0" class="w120" placeholder="Delay (s)">
+                <span class="muted">Auto deletar</span>
+              </div>
             </div>
-            <div class="field"><label>Mídia (link Telegram)</label><input id="copyMedia" type="url" placeholder="https://t.me/..."></div>
-            <div class="field mini-inline">
-              <label class="switch"><input id="copyAutoDel" type="checkbox"><span></span></label>
-              <input id="copyAutoSec" type="number" min="0" placeholder="Delay (s)" class="w120">
-            </div>
-          </aside>
+          </article>
         </div>
-      </section>
 
-      <div class="divider subtle"></div>
+        <!-- ORDERBUMP (placeholder minimalista) -->
+        <div id="sub-bump" class="subpane">
+          <article class="card placeholder">
+            <h3 class="card-t">OrderBump</h3>
+            <p class="muted">Estrutura minimalista — em breve.</p>
+          </article>
+        </div>
 
-      <!-- (b) CTA opcional -->
-      <section class="block slim">
-        <div class="block-h">
-          <h4>CTA (opcional)</h4>
+        <!-- UPSELL -->
+        <div id="sub-upsell" class="subpane">
+          <article class="card placeholder">
+            <h3 class="card-t">Upsell</h3>
+            <p class="muted">Estrutura minimalista — em breve.</p>
+          </article>
+        </div>
+
+        <!-- DOWNSELL -->
+        <div id="sub-downsell" class="subpane">
+          <article class="card placeholder">
+            <h3 class="card-t">Downsell</h3>
+            <p class="muted">Estrutura minimalista — em breve.</p>
+          </article>
+        </div>
+
+        <!-- DISPARO -->
+        <div id="sub-fire" class="subpane">
+          <article class="card placeholder">
+            <h3 class="card-t">Disparo / Follow-up</h3>
+            <p class="muted">Estrutura minimalista — em breve.</p>
+          </article>
+        </div>
+
+        <!-- MENSAGEM PIX -->
+        <div id="sub-pix" class="subpane">
+          <article class="card">
+            <div class="card-h">
+              <div>
+                <h3 class="card-t">Mensagens PIX</h3>
+                <p class="muted">Use variáveis: <code>[[pix]]</code> <code>[[valor]]</code> <code>[[nome]]</code></p>
+              </div>
+              <div class="row gap8">
+                <button class="btn ghost" data-insert="#pixMedia">Inserir mídia (Telegram)</button>
+                <button class="btn primary" data-save="pix">Salvar</button>
+              </div>
+            </div>
+
+            <div class="grid2fit">
+              <div class="field">
+                <label>Texto da mensagem</label>
+                <textarea id="pixText" placeholder="Ex.: Pague usando o código: [[pix]]"></textarea>
+              </div>
+              <div class="field">
+                <label>Mídia (link Telegram)</label>
+                <input id="pixMedia" type="url" placeholder="https://t.me/...">
+              </div>
+            </div>
+
+            <div class="field mini-inline">
+              <label class="switch"><input id="pixAutoDel" type="checkbox"><span></span></label>
+              <input id="pixAutoSec" type="number" min="0" class="w120" placeholder="Delay (s)">
+              <span class="muted">Auto deletar</span>
+            </div>
+          </article>
+        </div>
+      </div>
+
+      <!-- Coluna direita (cards menores — clone do padrão Flexion) -->
+      <aside class="col-side">
+        <!-- Card: Planos (com entregável pequeno por plano) -->
+        <article class="card">
+          <div class="card-h">
+            <h3 class="card-t">Planos</h3>
+            <button class="btn primary" id="addPlan">+ Adicionar</button>
+          </div>
+
+          <div id="plans" class="plans">
+            <!-- mini-cards gerados via JS -->
+          </div>
+        </article>
+
+        <!-- Card: CTA (opcional) -->
+        <article class="card">
+          <div class="card-h">
+            <h3 class="card-t">CTA (opcional)</h3>
+            <button class="btn primary" data-save="cta">Salvar</button>
+          </div>
+
+          <div class="field">
+            <label>Texto do botão</label>
+            <input id="ctaText" type="text" placeholder="QUERO MINHA VAGA AGORA">
+          </div>
+          <div class="field">
+            <label>Link (opcional)</label>
+            <input id="ctaLink" type="url" placeholder="https://...">
+          </div>
+          <div class="field">
+            <label>Mídia (link Telegram)</label>
+            <input id="ctaMedia" type="url" placeholder="https://t.me/...">
+          </div>
           <div class="row gap8">
             <label class="switch"><input id="ctaOn" type="checkbox"><span></span></label>
-            <button type="button" class="btn btn-ghost" data-insert="#ctaMedia">Mídia</button>
-            <button type="button" class="btn btn-primary" data-save="cta">Salvar</button>
+            <span class="muted">Ativar CTA</span>
           </div>
-        </div>
-        <div class="grid3">
-          <div class="field"><label>Texto do botão</label><input id="ctaName" type="text" placeholder="QUERO MINHA VAGA"></div>
-          <div class="field"><label>Link</label><input id="ctaLink" type="url" placeholder="https://..."></div>
-          <div class="field"><label>Mídia</label><input id="ctaMedia" type="url" placeholder="https://t.me/..."></div>
-        </div>
-      </section>
-
-      <div class="divider subtle"></div>
-
-      <!-- (c) Planos -->
-      <section class="block">
-        <div class="block-h">
-          <h4>Planos</h4>
-          <button type="button" class="btn btn-primary" id="addPlan">+ Adicionar plano</button>
-        </div>
-        <div id="plans" class="plan-list"><!-- mini-cards --></div>
-      </section>
-
-      <div class="divider subtle"></div>
-
-      <!-- Pequenos: Entregável + Mensagem PIX -->
-      <div class="grid2">
-        <!-- (d) Entregável -->
-        <section class="block slim">
-          <div class="block-h">
-            <h4>Entregável (pós-pagamento)</h4>
-            <button type="button" class="btn btn-primary" data-save="deliver">Salvar</button>
-          </div>
-          <div class="grid2fit">
-            <div class="field"><label>URL</label><input id="deliverUrl" type="url" placeholder="https://obrigado..."></div>
-            <div class="field w160"><label>Expira (dias)</label><input id="deliverDays" type="number" min="0" placeholder="0 = sem expiração"></div>
-          </div>
-        </section>
-
-        <!-- (e) Mensagem do PIX -->
-        <section class="block slim">
-          <div class="block-h">
-            <div>
-              <h4>Mensagens PIX</h4>
-              <p class="muted">Variáveis: <code>[[pix]]</code> <code>[[valor]]</code> <code>[[nome]]</code></p>
-            </div>
-            <div class="row gap8">
-              <button type="button" class="btn btn-ghost" data-insert="#pixMedia">Mídia</button>
-              <button type="button" class="btn btn-primary" data-save="pix">Salvar</button>
-            </div>
-          </div>
-          <div class="grid2fit">
-            <div class="field"><label>Texto</label><textarea id="pixText" placeholder="Ex.: Copie e pague: [[pix]]"></textarea></div>
-            <div class="field"><label>Mídia (Telegram)</label><input id="pixMedia" type="url" placeholder="https://t.me/..."></div>
-          </div>
-          <div class="field mini-inline">
-            <label class="switch"><input id="pixAutoDel" type="checkbox"><span></span></label>
-            <input id="pixAutoSec" type="number" min="0" placeholder="Delay (s)" class="w120">
-          </div>
-        </section>
-      </div>
-    </article>
-
-    <!-- Caixinha 2 — ORDERBUMP -->
-    <article class="card">
-      <div class="card-title">
-        <h3>OrderBump</h3>
-        <button type="button" class="btn btn-primary" id="addOB">+ Adicionar</button>
-      </div>
-
-      <div class="field w260">
-        <label>Plano (preço base do front)</label>
-        <select id="frontPlan"></select>
-      </div>
-
-      <div id="obList" class="ob-list"></div>
-      <div class="total">
-        <span>Valor final:</span><strong id="sumTotal">R$ 0,00</strong>
-      </div>
-    </article>
-
-    <!-- Caixinha 3 — UPSELL e 4 — DOWNSELL -->
-    <div class="grid2">
-      <article class="card">
-        <div class="card-title">
-          <h3>Upsell</h3>
-          <div class="row gap8">
-            <button type="button" class="btn btn-ghost" data-insert="#upMedia">Mídia</button>
-            <button type="button" class="btn btn-primary" data-save="upsell">Salvar</button>
-          </div>
-        </div>
-        <div class="grid3">
-          <div class="field"><label>Plano</label><select id="upPlan"></select></div>
-          <div class="field"><label>Valor (R$)</label><input id="upPrice" type="text" placeholder="29,90"></div>
-          <div class="field"><label>Mídia</label><input id="upMedia" type="url" placeholder="https://t.me/..."></div>
-        </div>
-        <div class="field"><label>Copy</label><textarea id="upCopy" placeholder="Mensagem do upsell…"></textarea></div>
-        <div class="grid2fit">
-          <div class="field"><label>Entregável</label><input id="upDeliver" type="url" placeholder="https://..."></div>
-          <div class="field mini-inline">
-            <label class="switch"><input id="upAutoDel" type="checkbox"><span></span></label>
-            <input id="upAutoSec" type="number" min="0" placeholder="Delay (s)" class="w120">
-          </div>
-        </div>
-      </article>
-
-      <article class="card">
-        <div class="card-title">
-          <h3>Downsell</h3>
-          <div class="row gap8">
-            <button type="button" class="btn btn-ghost" data-insert="#downMedia">Mídia</button>
-            <button type="button" class="btn btn-primary" data-save="downsell">Salvar</button>
-          </div>
-        </div>
-        <div class="grid3">
-          <div class="field"><label>Plano</label><select id="downPlan"></select></div>
-          <div class="field"><label>Valor (R$)</label><input id="downPrice" type="text" placeholder="19,90"></div>
-          <div class="field"><label>Mídia</label><input id="downMedia" type="url" placeholder="https://t.me/..."></div>
-        </div>
-        <div class="field"><label>Copy</label><textarea id="downCopy" placeholder="Mensagem do downsell…"></textarea></div>
-        <div class="grid2fit">
-          <div class="field"><label>Entregável</label><input id="downDeliver" type="url" placeholder="https://..."></div>
-          <div class="field mini-inline">
-            <label class="switch"><input id="downAutoDel" type="checkbox"><span></span></label>
-            <input id="downAutoSec" type="number" min="0" placeholder="Delay (s)" class="w120">
-          </div>
-        </div>
-      </article>
+        </article>
+      </aside>
     </div>
-
-    <!-- Caixinha 5 — DISPARO / FOLLOW-UP -->
-    <article class="card">
-      <div class="card-title">
-        <h3>Disparo / Follow-up</h3>
-        <div class="row gap8">
-          <button type="button" class="btn btn-ghost" data-insert="#fupMedia">Mídia</button>
-          <button type="button" class="btn btn-primary" data-save="follow">Salvar</button>
-        </div>
-      </div>
-      <div class="grid3">
-        <div class="field">
-          <label>Agendamento</label>
-          <select id="fupWhen"><option value="1h">1h</option><option value="6h">6h</option><option value="24h" selected>24h</option><option value="3d">3 dias</option></select>
-        </div>
-        <div class="field">
-          <label>Condição</label>
-          <select id="fupCond"><option value="nao_pagou" selected>Não pagou</option><option value="abandonou">Abandonou</option><option value="pagou">Pagou</option></select>
-        </div>
-        <div class="field"><label>Mídia</label><input id="fupMedia" type="url" placeholder="https://t.me/..."></div>
-      </div>
-      <div class="field"><label>Copy</label><textarea id="fupCopy" placeholder="Mensagem de follow-up…"></textarea></div>
-      <div class="field mini-inline">
-        <label class="switch"><input id="fupAutoDel" type="checkbox"><span></span></label>
-        <input id="fupAutoSec" type="number" min="0" placeholder="Delay (s)" class="w120">
-      </div>
-    </article>
   </section>
 
-  <!-- ===================== TRACKING (com Redirecionador) ===================== -->
-  <section id="panel-track" class="cat">
-    <article class="card">
-      <div class="card-title">
-        <h3>Traqueamento</h3>
-        <button type="button" class="btn btn-primary" data-save="track">Salvar</button>
+  <!-- ========================= TRACKING ========================= -->
+  <section id="pane-track" class="pane">
+    <div class="grid">
+      <div class="col-main">
+        <!-- Card: Seleção de Tracking (padrão Supabase) -->
+        <article class="card">
+          <div class="card-h">
+            <h3 class="card-t">Traqueamento</h3>
+            <button class="btn primary" data-save="track">Salvar</button>
+          </div>
+
+          <div class="seg-radio">
+            <label><input type="radio" name="trk" value="fb" checked><span>Facebook Pixel</span></label>
+            <label><input type="radio" name="trk" value="utm_fb"><span>UTMify + Facebook Pixel</span></label>
+            <label><input type="radio" name="trk" value="utm_utm"><span>UTMify + UTMify Pixel</span></label>
+          </div>
+
+          <div class="grid2fit">
+            <div class="field t-fb"><label>Facebook Pixel ID</label><input id="fbPixel" type="text" placeholder="XXXXXXXXXXXXXXX"></div>
+            <div class="field t-utm"><label>UTMify Project/Site</label><input id="utmProject" type="text" placeholder="meu-site"></div>
+            <div class="field t-utm"><label>UTMify Pixel ID</label><input id="utmPixel" type="text" placeholder="utm-XXXX"></div>
+          </div>
+        </article>
+
+        <!-- Card: Redirecionador (lista de bots) -->
+        <article class="card">
+          <div class="card-h">
+            <h3 class="card-t">Redirecionador (múltiplos bots)</h3>
+            <div class="row gap8">
+              <button class="btn primary" id="addBotRow">+ Cadastrar bot</button>
+              <button class="btn ghost" data-save="redirect">Salvar ativos</button>
+            </div>
+          </div>
+
+          <p class="muted">Ative no máximo <strong>2</strong> bots.</p>
+          <div id="redirList" class="redir-list"><!-- linhas geradas via JS --></div>
+        </article>
       </div>
 
-      <!-- Radios estilo Supabase -->
-      <div class="seg">
-        <label><input type="radio" name="trk" value="fb" checked><span>Facebook Pixel</span></label>
-        <label><input type="radio" name="trk" value="utm_fb"><span>UTMify + Facebook Pixel</span></label>
-        <label><input type="radio" name="trk" value="utm_utm"><span>UTMify + UTMify Pixel</span></label>
-      </div>
-
-      <div class="grid2">
-        <div class="field t-fb"><label>Facebook Pixel ID</label><input id="fbPixelId" type="text" placeholder="XXXXXXXXXXXXXXX"></div>
-        <div class="field t-utm"><label>UTMify Project/Site</label><input id="utmProject" type="text" placeholder="meu-site"></div>
-        <div class="field t-utm"><label>UTMify Pixel ID</label><input id="utmPixel" type="text" placeholder="utm-XXXX"></div>
-      </div>
-    </article>
-
-    <article class="card">
-      <div class="card-title">
-        <h3>Redirecionador (múltiplos bots)</h3>
-        <div class="row gap8">
-          <button type="button" class="btn btn-primary" id="addBotRow">+ Cadastrar bot</button>
-          <button type="button" class="btn btn-ghost" data-save="redirect">Salvar ativos</button>
-        </div>
-      </div>
-
-      <p class="muted">Ative no máximo <strong>2</strong> bots.</p>
-      <div id="redirList" class="redir-list"><!-- gerado via JS --></div>
-    </article>
+      <aside class="col-side">
+        <!-- Card: Dica curta / Logs (opcional, clean) -->
+        <article class="card tiny">
+          <h3 class="card-t">Dicas</h3>
+          <p class="muted">Use poucos bots ativos para estabilidade e menor latência.</p>
+        </article>
+      </aside>
+    </div>
   </section>
 
-  <!-- ===================== CLOAKER ===================== -->
-  <section id="panel-cloak" class="cat">
+  <!-- ========================= CLOAKER ========================= -->
+  <section id="pane-cloak" class="pane">
     <article class="card tiny">
-      <div class="card-title">
-        <h3>Cloaker Anti-Clone</h3>
+      <div class="card-h">
+        <h3 class="card-t">Cloaker Anti-Clone</h3>
       </div>
       <div class="row gap12">
         <label class="switch"><input id="cloakOn" type="checkbox" disabled><span></span></label>
-        <span class="muted">Em breve — adiciona ruído invisível ao copiar para desencorajar clones.</span>
+        <span class="muted">Em breve — impede clonagem automática adicionando ruído invisível ao copiar.</span>
       </div>
     </article>
   </section>
@@ -307,92 +238,67 @@
 
 <style>
   :root{
-    --bg:#0b0b0b; --card:#0f0f0f; --line:rgba(255,255,255,.08);
-    --muted:#a7a7a7; --gold:#ffcc00; --gold2:#d1a200; --ring:rgba(255,204,0,.18);
-    --shadow:0 18px 60px rgba(0,0,0,.55); --glow:0 0 38px rgba(255,204,0,.07);
+    --bg:#0a0a0a; --panel:#0f0f0f; --line:rgba(255,255,255,.09);
+    --text:#f0f0f0; --muted:#a7a7a7; --gold:#ffcc00; --gold2:#d1a200;
+    --ring:rgba(255,204,0,.22); --shadow:0 18px 60px rgba(0,0,0,.55); --glow:0 0 38px rgba(255,204,0,.07);
   }
-  .tgf-wrap{max-width:1180px;margin:0 auto;padding:54px 18px 96px;color:#fff}
-  .bc{display:flex;gap:8px;margin-bottom:10px;color:#bdbdbd}
-  .bc a{color:#e9e9e9;text-decoration:none}.bc a:hover{color:#fff}
-  .page-h{display:flex;justify-content:space-between;align-items:end;margin-bottom:10px}
-  .page-h h1{margin:0;font-size:1.9rem;color:#f7e8b0}
-  .gold{color:#f7e8b0}
-  .muted{color:#a7a7a7}
+  .tgffx-wrap{max-width:1180px;margin:0 auto;padding:46px 18px 90px;color:var(--text)}
+  .hdr{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:10px}
+  .hdr h1{margin:0 0 4px;font-size:1.9rem;color:#f7e8b0}
+  .muted{color:var(--muted)} .gold{color:#f7e8b0}
 
-  /* Segmented categories */
-  .segcat{display:flex;gap:8px}
-  .seg{border:1px solid var(--line);background:rgba(255,255,255,.03);color:#eaeaea;
-       padding:9px 14px;border-radius:12px;cursor:pointer}
-  .seg[aria-selected="true"]{background:linear-gradient(90deg,var(--gold),var(--gold2));color:#1a1300;border:none;box-shadow:0 0 12px rgba(255,204,0,.35)}
+  /* Tabs superiores */
+  .top-tabs{display:flex;gap:8px}
+  .top-tab{border:1px solid var(--line);background:rgba(255,255,255,.03);color:#eaeaea;padding:9px 14px;border-radius:12px;cursor:pointer}
+  .top-tab.is-active{background:linear-gradient(90deg,var(--gold),var(--gold2));color:#1a1300;border:none;box-shadow:0 0 12px rgba(255,204,0,.35)}
+
+  /* Abas internas */
+  .sub-tabs{display:flex;gap:8px;margin-bottom:10px}
+  .sub-tab{border:1px solid var(--line);background:rgba(255,255,255,.03);color:#eaeaea;padding:8px 12px;border-radius:10px;cursor:pointer}
+  .sub-tab.is-active{border-color:var(--gold);box-shadow:0 0 0 2px var(--ring) inset}
+  .badge{font-size:.72rem;color:#161616;background:#ffd24a;border-radius:8px;padding:2px 6px;margin-left:6px}
+
+  /* Grid de duas colunas (Flexion) */
+  .grid{display:grid;grid-template-columns:1fr 360px;gap:12px}
+  .col-main{min-width:0} .col-side{min-width:0}
+
+  /* Pane show/hide */
+  .pane{display:none}.pane.show{display:block}
+  .subpane{display:none}.subpane.show{display:block}
 
   /* Cards */
-  .card{background:radial-gradient(1000px 260px at -15% -30%, rgba(255,204,0,.05), transparent 48%), var(--card);
-        border:1px solid var(--line); border-radius:16px; box-shadow:var(--shadow),var(--glow); padding:16px; margin-bottom:12px}
+  .card{background:radial-gradient(1000px 260px at -15% -30%, rgba(255,204,0,.05), transparent 48%), var(--panel);
+        border:1px solid var(--line); border-radius:16px; box-shadow:var(--shadow),var(--glow); padding:16px; }
+  .card + .card{margin-top:12px}
   .card.tiny{padding:12px}
-  .card-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
-  .card-title h3{margin:0;font-size:1.04rem;color:#f7e8b0}
+  .card-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+  .card-t{margin:0;color:#f7e8b0;font-size:1.06rem}
 
-  /* Blocks internos (divisões leves) */
-  .block{margin-bottom:6px}
-  .block.slim{margin-bottom:2px}
-  .block-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
-  .soft{padding:10px;border-radius:12px;background:rgba(255,255,255,.03);border:1px solid var(--line)}
-  .divider{height:1px;background:var(--line);margin:12px 0}.divider.subtle{opacity:.6}
-
-  /* Form/fields */
+  /* Form */
   .field label{display:block;margin:0 0 6px 2px;font-size:.88rem;color:#e9e9e9}
   .field input,.field textarea,.field select{
     width:100%;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.03);
     color:#fff;padding:10px 12px;outline:none
   }
-  .field textarea{min-height:108px;resize:vertical}
-  .field input:focus,.field textarea:focus,.field select:focus{
-    border-color:var(--gold);box-shadow:0 0 0 2px var(--ring)
-  }
-  .mini{display:flex;flex-direction:column;gap:10px}
-  .pair{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-  .grid2{display:grid;grid-template-columns:1fr 420px;gap:12px}
-  .grid2fit{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-  .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
-  .row{display:flex;align-items:center}.gap8{gap:8px}.gap12{gap:12px}
-  .align-end{display:flex;align-items:end;gap:8px;justify-content:flex-end}
-  .w120{max-width:120px}.w160{max-width:160px}.w260{max-width:260px}
+  .field textarea{min-height:110px;resize:vertical}
+  .field input:focus,.field textarea:focus,.field select:focus{border-color:var(--gold);box-shadow:0 0 0 2px var(--ring)}
+  .mini-inline{display:flex;align-items:center;gap:10px}
+  .w120{max-width:120px}
 
-  /* Buttons */
+  .grid2fit{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .row{display:flex;align-items:center}.gap8{gap:8px}.gap12{gap:12px}
+
   .btn{border:1px solid var(--line);background:transparent;color:#eaeaea;padding:10px 14px;border-radius:12px;cursor:pointer}
   .btn:hover{border-color:rgba(255,255,255,.2)}
-  .btn-ghost{background:transparent;border:1px solid rgba(255,255,255,.14)}
-  .btn-primary{border:none;background:linear-gradient(90deg,var(--gold),var(--gold2));color:#1a1300;font-weight:700;box-shadow:0 0 12px rgba(255,204,0,.35)}
+  .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,.14)}
+  .btn.primary{border:none;background:linear-gradient(90deg,var(--gold),var(--gold2));color:#1a1300;font-weight:700;box-shadow:0 0 12px rgba(255,204,0,.35)}
 
-  /* Status chip */
-  .status{padding:6px 10px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.05)}
-  .status.ativo{background:rgba(0,255,150,.12);border-color:rgba(0,255,150,.25);color:#66ffc9}
-
-  /* Plans mini-cards */
-  .plan-list{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-  .plan{display:grid;grid-template-columns:1fr 110px 100px 110px auto;gap:8px;align-items:center;
+  /* Plans mini-cards (coluna direita) */
+  .plans{display:flex;flex-direction:column;gap:10px}
+  .plan{display:grid;grid-template-columns:1fr 88px 80px;gap:8px;align-items:center;
         padding:10px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.03)}
-  .plan .act{display:flex;gap:8px;justify-content:flex-end}
-
-  /* Orderbump */
-  .ob-list{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-  .ob{padding:10px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.03)}
-  .ob .bar{display:flex;gap:8px;justify-content:flex-end;margin-top:8px}
-  .total{display:flex;justify-content:flex-end;gap:10px;border-top:1px dashed rgba(255,255,255,.08);padding-top:10px;margin-top:10px}
-
-  /* Tracking radios estilo Supabase */
-  .seg{display:flex;gap:8px;background:rgba(255,255,255,.04);padding:6px;border-radius:12px;border:1px solid var(--line);margin-bottom:10px}
-  .seg label{display:flex;gap:8px;align-items:center;padding:8px 10px;border-radius:10px;cursor:pointer}
-  .seg input{appearance:none;width:14px;height:14px;border:1px solid rgba(255,255,255,.65);border-radius:50%}
-  .seg input:checked{background:var(--gold);border-color:var(--gold)}
-  .seg span{color:#eaeaea}
-  .t-utm{display:none}
-
-  /* Redirecionador */
-  .redir-list{display:flex;flex-direction:column;gap:10px}
-  .redir-row{display:grid;grid-template-columns:26px 220px 1fr 120px auto;gap:10px;align-items:center;
-             padding:10px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.03)}
-  .redir-row .idx{opacity:.65}
+  .plan .row-end{display:flex;gap:8px;justify-content:flex-end}
+  .plan .url{grid-column:1 / -1}
 
   /* Switch */
   .switch{position:relative;display:inline-block;width:46px;height:26px}
@@ -401,118 +307,88 @@
   .switch span:after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;background:#cfcfcf;border-radius:50%;transition:.2s}
   .switch input:checked+span{background:var(--gold)}
   .switch input:checked+span:after{left:23px;background:#1a1300}
-  .mini-inline{display:flex;align-items:center;gap:10px}
 
-  /* Categorias */
-  .cat{display:none}.cat.show{display:block}
+  /* Radios estilo Supabase */
+  .seg-radio{display:flex;gap:8px;background:rgba(255,255,255,.04);padding:6px;border-radius:12px;border:1px solid var(--line);margin-bottom:10px}
+  .seg-radio label{display:flex;gap:8px;align-items:center;padding:8px 10px;border-radius:10px;cursor:pointer}
+  .seg-radio input{appearance:none;width:14px;height:14px;border:1px solid rgba(255,255,255,.65);border-radius:50%}
+  .seg-radio input:checked{background:var(--gold);border-color:var(--gold)}
+  .t-utm{display:none}
 
+  /* Redirecionador (lista de bots) */
+  .redir-list{display:flex;flex-direction:column;gap:10px}
+  .redir-row{display:grid;grid-template-columns:26px 190px 1fr 118px auto;gap:10px;align-items:center;
+             padding:10px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.03)}
+  .redir-row .idx{opacity:.65}
+
+  /* Responsivo */
   @media (max-width:1060px){
-    .grid2{grid-template-columns:1fr}
-    .grid3,.grid2fit{grid-template-columns:1fr}
-    .plan-list{grid-template-columns:1fr}
-    .ob-list{grid-template-columns:1fr}
+    .grid{grid-template-columns:1fr}
+    .grid2fit{grid-template-columns:1fr}
     .redir-row{grid-template-columns:26px 1fr}
   }
 </style>
 
 <script>
-  // helpers
   const $=(q,c=document)=>c.querySelector(q); const $$=(q,c=document)=>Array.from(c.querySelectorAll(q));
-  const toBRL=n=>n.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
-  const parseMoney=v=>{const x=(''+v).replace(/[^\d,\.]/g,'').replace(',','.');return parseFloat(x||'0')||0;}
 
-  // categorias
-  $$('.segcat .seg').forEach(b=>b.addEventListener('click',()=>{
-    $$('.segcat .seg').forEach(x=>x.setAttribute('aria-selected','false'));
-    b.setAttribute('aria-selected','true');
-    const cat=b.dataset.cat; $$('.cat').forEach(x=>x.classList.remove('show')); $('#'+cat).classList.add('show');
-  }));
-  $('.segcat .seg')?.setAttribute('aria-selected','true');
-
-  // normalizar @
-  $('#botUser')?.addEventListener('blur',e=>e.target.value=e.target.value.replace(/^@+/,''));
-  $('form[action*="/token"]')?.addEventListener('submit',e=>{
-    $('#hiddenUser').value=$('#botUser').value.replace(/^@+/,''); $('#hiddenToken').value=$('#botToken').value;
+  /* ===== Abas superiores ===== */
+  $$('.top-tab').forEach(b=>{
+    b.addEventListener('click',()=>{
+      $$('.top-tab').forEach(t=>t.classList.remove('is-active'));
+      b.classList.add('is-active');
+      const id=b.dataset.pane; $$('.pane').forEach(p=>p.classList.remove('show')); $('#'+id).classList.add('show');
+    });
   });
 
-  // prompt de mídia
+  /* ===== Abas internas ===== */
+  $$('.sub-tab').forEach(b=>{
+    b.addEventListener('click',()=>{
+      $$('.sub-tab').forEach(t=>t.classList.remove('is-active'));
+      b.classList.add('is-active');
+      const id=b.dataset.subpane; $$('.subpane').forEach(p=>p.classList.remove('show')); $('#'+id).classList.add('show');
+    });
+  });
+
+  /* ===== Mídia por prompt ===== */
   document.addEventListener('click',e=>{
     const t=e.target.closest('[data-insert]'); if(!t) return;
     const el=$(t.dataset.insert); const url=prompt('Cole o link da mídia do Telegram:');
     if(url && el) el.value=url;
   });
 
-  // ========= PLANOS =========
-  const plansEl=$('#plans'); const planSelects=['#copyPlan','#frontPlan','#upPlan','#downPlan'].map(s=>$(s));
-  function planOptions(){ return $$('.plan').map(p=>{
-      const id=p.dataset.pid||$('.p-name',p).value||'p';
-      return `<option value="${id}" data-price="${$('.p-price',p).value||'0,00'}" data-days="${$('.p-days',p).value||'0'}">${$('.p-name',p).value||'Sem nome'}</option>`;
-    }).join(''); }
-  function refillSelects(){
-    const html=planOptions(); planSelects.forEach(s=>{if(!s)return; const cur=s.value; s.innerHTML=html; if(cur) s.value=cur;});
-    syncPlan('#copyPlan','#copyPrice','#copyDays'); syncPlan('#upPlan','#upPrice'); syncPlan('#downPlan','#downPrice'); recalcOB();
-  }
-  function syncPlan(sel,price,days){
-    const s=$(sel); if(!s) return; const o=s.selectedOptions[0]; if(!o) return;
-    if(price) $(price).value=o.dataset.price||''; if(days) $(days).value=o.dataset.days||'';
-  }
-  planSelects.forEach(s=>s&&s.addEventListener('change',()=>{ if(s.id==='copyPlan') syncPlan('#copyPlan','#copyPrice','#copyDays'); if(s.id==='upPlan') syncPlan('#upPlan','#upPrice'); if(s.id==='downPlan') syncPlan('#downPlan','#downPrice'); recalcOB(); }));
+  /* ===== Auto deletar: habilita delay apenas quando ativo ===== */
+  function bindAuto(tId,sId){ const t=$(tId), s=$(sId); if(!t||!s) return; const up=()=>s.disabled=!t.checked; t.addEventListener('change',up); up(); }
+  bindAuto('#frontAutoDel','#frontAutoSec'); bindAuto('#pixAutoDel','#pixAutoSec');
 
+  /* ===== Planos (mini-cards na direita) ===== */
+  const plansEl=$('#plans');
   function addPlan(data={}){
-    const card=document.createElement('div'); card.className='plan'; card.dataset.pid=data.id||`p_${Date.now()}`;
-    card.innerHTML=`
-      <input class="p-name"  type="text" placeholder="Nome do plano" value="${data.name||''}">
-      <input class="p-price" type="text" placeholder="11,90"        value="${data.price||''}">
+    const row=document.createElement('div'); row.className='plan';
+    row.innerHTML=`
+      <input class="p-name"  type="text" placeholder="Nome" value="${data.name||''}">
+      <input class="p-price" type="text" placeholder="R$"   value="${data.price||''}">
       <input class="p-days"  type="number" min="0" placeholder="30" value="${data.days||''}">
-      <select class="p-status"><option value="ativo">Ativo</option><option value="inativo">Inativo</option></select>
-      <div class="act"><button class="btn btn-ghost" data-del>Excluir</button></div>`;
-    plansEl.appendChild(card);
-  }
-  $('#addPlan')?.addEventListener('click',()=>{ addPlan(); refillSelects(); });
-  plansEl?.addEventListener('click',e=>{ if(e.target.matches('[data-del]')){ e.target.closest('.plan')?.remove(); refillSelects(); }});
-  plansEl?.addEventListener('input',refillSelects);
-  if(!plansEl.children.length){ addPlan({name:'MENSAL',price:'11,90',days:'30'}); }
-  refillSelects();
-
-  // ========= ORDERBUMP =========
-  const obList=$('#obList'); function recalcOB(){
-    const fp=$('#frontPlan'); let total=0; if(fp&&fp.selectedOptions[0]) total=parseMoney(fp.selectedOptions[0].dataset.price||0);
-    $$('.ob',obList).forEach(c=>{ if($('.acc',c).checked) total+=parseMoney($('.price',c).value||0); });
-    $('#sumTotal').textContent=toBRL(total);
-  }
-  function addOB(){
-    const n=document.createElement('div'); n.className='ob';
-    n.innerHTML=`
-      <div class="grid3">
-        <div class="field"><label>Nome</label><input class="name" type="text" placeholder="Bump rápido"></div>
-        <div class="field"><label>Valor (R$)</label><input class="price" type="text" placeholder="7,90"></div>
-        <div class="field"><label>Aceitar</label><label class="switch"><input class="acc" type="checkbox"><span></span></label></div>
-      </div>
-      <div class="grid2fit">
-        <div class="field"><label>Copy</label><input class="copy" type="text" placeholder="Descrição breve…"></div>
-        <div class="field"><label>Mídia (Telegram)</label><input class="media" type="url" placeholder="https://t.me/..."></div>
-      </div>
-      <div class="bar">
-        <button class="btn btn-ghost" data-rm>Remover</button>
-        <button class="btn btn-primary" data-save="ob">Salvar</button>
+      <input class="url"     type="url" placeholder="Entregável (após pagar) — https://..." value="${data.url||''}">
+      <div class="row-end">
+        <button class="btn ghost" data-del>Excluir</button>
+        <button class="btn primary" data-save="plan">Salvar</button>
       </div>`;
-    obList.appendChild(n);
-    $('.acc',n).addEventListener('change',recalcOB);
-    $('.price',n).addEventListener('input',recalcOB);
+    plansEl.appendChild(row);
   }
-  $('#addOB')?.addEventListener('click',addOB);
-  obList?.addEventListener('click',e=>{ if(e.target.matches('[data-rm]')){ e.target.closest('.ob')?.remove(); recalcOB(); }});
-  addOB(); recalcOB();
+  $('#addPlan')?.addEventListener('click',()=>addPlan());
+  plansEl?.addEventListener('click',e=>{ if(e.target.matches('[data-del]')) e.target.closest('.plan')?.remove(); });
+  if(!plansEl.children.length){ addPlan({name:'MENSAL',price:'11,90',days:'30'}); }
 
-  // ========= TRACKING =========
+  /* ===== Tracking radios: alterna campos ===== */
   function updTrack(){
     const v=$('input[name="trk"]:checked')?.value;
     $$('.t-fb').forEach(x=>x.style.display=(v==='fb'||v==='utm_fb')?'block':'none');
     $$('.t-utm').forEach(x=>x.style.display=(v==='utm_fb'||v==='utm_utm')?'block':'none');
   }
-  $$('.seg input').forEach(r=>r.addEventListener('change',updTrack)); updTrack();
+  $$('.seg-radio input').forEach(r=>r.addEventListener('change',updTrack)); updTrack();
 
-  // ========= REDIRECIONADOR =========
+  /* ===== Redirecionador ===== */
   const redirList=$('#redirList');
   function activeCount(){ return $$('.redir-row input[type="checkbox"]:checked',redirList).length; }
   function enforceTwo(chk){ if(activeCount()>2){ chk.checked=false; alert('Ative no máximo 2 bots.'); } }
@@ -521,36 +397,29 @@
     const row=document.createElement('div'); row.className='redir-row';
     row.innerHTML=`
       <div class="idx">#${i}</div>
-      <div class="field"><label>Username</label><input type="text" value="${user}"></div>
-      <div class="field"><label>Token</label><input type="text" value="${token}"></div>
+      <div class="field"><label>Username</label><input type="text" value="${user.replace?.(/^@+/,'')||''}"></div>
+      <div class="field"><label>Token</label><input type="text" value="${token||''}"></div>
       <div class="field"><label>Ativo</label><label class="switch"><input type="checkbox"><span></span></label></div>
-      <button class="btn btn-ghost" data-del>Remover</button>`;
+      <button class="btn ghost" data-del>Remover</button>`;
     redirList.appendChild(row);
     $('input[type="checkbox"]',row).addEventListener('change',e=>enforceTwo(e.target));
   }
   $('#addBotRow')?.addEventListener('click',()=>addRedir());
   redirList?.addEventListener('click',e=>{ if(e.target.matches('[data-del]')) e.target.closest('.redir-row')?.remove(); });
 
-  // duplicar bot atual -> redirecionador
-  $('#dupBot')?.addEventListener('click',()=>{
-    const u=$('#botUser')?.value.trim(); const t=$('#botToken')?.value.trim();
-    if(!u||!t){ alert('Preencha Username e Token.'); return; }
-    addRedir(u.replace(/^@+/,''),t);
-  });
-  // se já há credenciais, adiciona uma linha
-  if('<%= (offer.telegramUsername||"") %>' || '<%= (offer.botToken||"") %>'){
-    addRedir('<%= (offer.telegramUsername||"").replace(/^@/,"") %>','<%= offer.botToken||"" %>');
-  }
+  /* Se a oferta já tem user/token, sugere uma linha */
+  <% if ((offer.telegramUsername||'') || (offer.botToken||'')) { %>
+    addRedir('<%= (offer.telegramUsername||"").replace(/^@+/,"") %>','<%= offer.botToken||"" %>');
+  <% } %>
 
-  // ========= PIX: exigir [[pix]] =========
-  function hasPix(s){ return /\[\[pix\]\]/i.test(s||''); }
+  /* ===== Botões Salvar (placeholders) ===== */
   document.addEventListener('click',e=>{
     const b=e.target.closest('[data-save]'); if(!b) return;
-    if(b.dataset.save==='pix' && !hasPix($('#pixText')?.value)){ alert('A mensagem do PIX deve conter [[pix]].'); return; }
-    b.disabled=true; const t=b.textContent; b.textContent='Salvo ✓'; setTimeout(()=>{b.disabled=false;b.textContent=t;},900);
+    if(b.dataset.save==='pix'){
+      const hasPix=/\[\[pix\]\]/i.test($('#pixText')?.value||'');
+      if(!hasPix){ alert('Inclua [[pix]] na mensagem do PIX.'); return; }
+    }
+    b.disabled=true; const t=b.textContent; b.textContent='Salvo ✓';
+    setTimeout(()=>{ b.disabled=false; b.textContent=t; },800);
   });
-
-  // habilitar/desabilitar delay quando toggle ativa
-  function bindAuto(idToggle,idSecs){ const t=$(idToggle), s=$(idSecs); if(!t||!s) return; const up=()=>s.disabled=!t.checked; t.addEventListener('change',up); up(); }
-  bindAuto('#copyAutoDel','#copyAutoSec'); bindAuto('#pixAutoDel','#pixAutoSec'); bindAuto('#upAutoDel','#upAutoSec'); bindAuto('#downAutoDel','#downAutoSec'); bindAuto('#fupAutoDel','#fupAutoSec');
 </script>
