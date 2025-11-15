@@ -119,17 +119,20 @@ router.get("/ofertas/painel/:id", authGuard, async (req, res) => {
     if (offerRes.error || !offerRes.data) return res.redirect("/ofertas");
     const offer = mapOffer(offerRes.data);
 
-    // Garante Etapa 1
-    await Steps.ensureFirstStep(offer.id);
+    // Garante Etapa 1 (mantém assinatura atual do helper)
+    if (typeof Steps.ensureFirstStep === "function") {
+      await Steps.ensureFirstStep(offer.id);
+    }
 
     // Todas as etapas
     const stepsRes = await Steps.listSteps(offer.id);
     const steps = (stepsRes.data || []).map(mapStep);
 
-    // Etapa atual
+    // Etapa atual: prioriza offer_id + stepId para não pegar etapa errada
     let currentStep = null;
     if (stepId) {
-      currentStep = steps.find(s => s.id === stepId) || null;
+      const got = await Steps.getStepById({ offerId: offer.id, stepId });
+      if (!got.error && got.data) currentStep = mapStep(got.data);
     } else if (etapaNum && !isNaN(etapaNum)) {
       currentStep = steps.find(s => s.stepNo === etapaNum) || null;
     }
@@ -161,12 +164,25 @@ router.post("/ofertas/:id/etapas", authGuard, async (req, res) => {
       return res.status(403).json({ ok: false, error: "forbidden" });
     }
 
-    const createRes = await Steps.createStep({
-      offerId,
-      name,
-      duplicate: !!duplicate,
-      fromStepId: duplicate ? (fromStepId || null) : null,
-    });
+    // Usa mutateStep se existir; senão, mantém createStep atual
+    let createRes;
+    if (typeof Steps.mutateStep === "function") {
+      createRes = await Steps.mutateStep({
+        mode: duplicate ? "duplicateFromCurrent" : "createFromScratch",
+        offerId,
+        ownerId: owner,
+        name: (name || "").trim(),
+        fromStepId: duplicate ? (fromStepId || null) : null,
+      });
+    } else {
+      createRes = await Steps.createStep({
+        offerId,
+        name: (name || "").trim(),
+        duplicate: !!duplicate,
+        fromStepId: duplicate ? (fromStepId || null) : null,
+      });
+    }
+
     if (createRes.error || !createRes.data) {
       console.error("[steps] insert error:", createRes.error?.message || createRes.error);
       return res.status(500).json({ ok: false, error: "insert_failed" });
@@ -198,13 +214,26 @@ router.post("/ofertas/:id/etapas/:stepId/save", authGuard, async (req, res) => {
       return res.status(404).json({ ok: false, error: "step_not_found" });
     }
 
-    // Atualiza (apenas meta / settings por enquanto)
-    const updRes = await Steps.updateStep({
-      offerId,
-      stepId,
-      name: typeof name === "string" ? name : undefined,
-      settings: settings && typeof settings === "object" ? settings : undefined,
-    });
+    // Atualiza via mutateStep se existir; senão, mantém updateStep atual
+    let updRes;
+    if (typeof Steps.mutateStep === "function") {
+      updRes = await Steps.mutateStep({
+        mode: "update",
+        offerId,
+        ownerId: owner,
+        stepId,
+        name: typeof name === "string" ? name : undefined,
+        payloadConfig: settings && typeof settings === "object" ? settings : undefined,
+      });
+    } else {
+      updRes = await Steps.updateStep({
+        offerId,
+        stepId,
+        name: typeof name === "string" ? name : undefined,
+        settings: settings && typeof settings === "object" ? settings : undefined,
+      });
+    }
+
     if (updRes.error || !updRes.data) {
       console.error("[steps] update error:", updRes.error?.message || updRes.error);
       return res.status(500).json({ ok: false, error: "update_failed" });
