@@ -1,306 +1,165 @@
 <%- include('partials/visual_hottrack') %>
 
-<div class="tgffx-wrap">
-  <!-- Cabeçalho / estilo Flexion -->
-  <div class="hdr">
+<div class="fx-wrap">
+  <!-- Cabeçalho enxuto (igual Flexion: título + contexto) -->
+  <div class="fx-head">
     <div>
       <h1>Gerenciar Mensagens e Funis</h1>
       <p class="muted">Oferta: <strong class="gold"><%= offer.name %></strong> · ID: <%= offer.id %></p>
     </div>
-
-    <!-- Abas superiores (nível macro) -->
-    <div class="top-tabs" role="tablist" aria-label="Categorias">
-      <button class="top-tab is-active" data-pane="pane-main" aria-selected="true">Principal</button>
-      <button class="top-tab" data-pane="pane-track">Tracking</button>
-      <button class="top-tab" data-pane="pane-cloak">Cloaker</button>
-    </div>
+    <a href="/ofertas" class="btn ghost">Voltar</a>
   </div>
 
-  <!-- ========================= PRINCIPAL ========================= -->
-  <section id="pane-main" class="pane show">
-    <!-- Abas internas (clone Flexion) -->
-    <div class="sub-tabs" role="tablist" aria-label="Funções do Bot">
-      <button class="sub-tab is-active" data-subpane="sub-front" aria-selected="true">Front</button>
-      <button class="sub-tab" data-subpane="sub-bump">OrderBump <span class="badge">em breve</span></button>
-      <button class="sub-tab" data-subpane="sub-upsell">Upsell <span class="badge">em breve</span></button>
-      <button class="sub-tab" data-subpane="sub-downsell">Downsell <span class="badge">em breve</span></button>
-      <button class="sub-tab" data-subpane="sub-fire">Disparo <span class="badge">em breve</span></button>
-      <button class="sub-tab" data-subpane="sub-pix">Mensagem PIX</button>
-    </div>
-
-    <div class="grid">
-      <!-- Coluna esquerda (cards centrais) -->
-      <div class="col-main">
-        <!-- FRONT -->
-        <div id="sub-front" class="subpane show">
-          <!-- Card: Copy principal -->
-          <article class="card">
-            <div class="card-h">
-              <div>
-                <h3 class="card-t">Mensagem Principal (/start)</h3>
-                <p class="muted">Texto enviado no primeiro contato do usuário com o bot.</p>
-              </div>
-              <div class="row gap8">
-                <button class="btn ghost" data-insert="#frontMedia">Inserir mídia (Telegram)</button>
-                <button class="btn primary" data-save="front">Salvar</button>
-              </div>
-            </div>
-
-            <div class="field">
-              <label>Copy</label>
-              <textarea id="frontCopy" placeholder="Escreva a mensagem principal…"></textarea>
-            </div>
-
-            <div class="grid2fit">
-              <div class="field">
-                <label>Mídia (link Telegram)</label>
-                <input id="frontMedia" type="url" placeholder="https://t.me/...">
-              </div>
-              <div class="field mini-inline">
-                <label class="switch"><input id="frontAutoDel" type="checkbox"><span></span></label>
-                <input id="frontAutoSec" type="number" min="0" class="w120" placeholder="Delay (s)">
-                <span class="muted">Auto deletar</span>
-              </div>
-            </div>
-          </article>
-        </div>
-
-        <!-- ORDERBUMP (placeholder minimalista) -->
-        <div id="sub-bump" class="subpane">
-          <article class="card placeholder">
-            <h3 class="card-t">OrderBump</h3>
-            <p class="muted">Estrutura minimalista — em breve.</p>
-          </article>
-        </div>
-
-        <!-- UPSELL -->
-        <div id="sub-upsell" class="subpane">
-          <article class="card placeholder">
-            <h3 class="card-t">Upsell</h3>
-            <p class="muted">Estrutura minimalista — em breve.</p>
-          </article>
-        </div>
-
-        <!-- DOWNSELL -->
-        <div id="sub-downsell" class="subpane">
-          <article class="card placeholder">
-            <h3 class="card-t">Downsell</h3>
-            <p class="muted">Estrutura minimalista — em breve.</p>
-          </article>
-        </div>
-
-        <!-- DISPARO -->
-        <div id="sub-fire" class="subpane">
-          <article class="card placeholder">
-            <h3 class="card-t">Disparo / Follow-up</h3>
-            <p class="muted">Estrutura minimalista — em breve.</p>
-          </article>
-        </div>
-
-        <!-- MENSAGEM PIX -->
-        <div id="sub-pix" class="subpane">
-          <article class="card">
-            <div class="card-h">
-              <div>
-                <h3 class="card-t">Mensagens PIX</h3>
-                <p class="muted">Use variáveis: <code>[[pix]]</code> <code>[[valor]]</code> <code>[[nome]]</code></p>
-              </div>
-              <div class="row gap8">
-                <button class="btn ghost" data-insert="#pixMedia">Inserir mídia (Telegram)</button>
-                <button class="btn primary" data-save="pix">Salvar</button>
-              </div>
-            </div>
-
-            <div class="grid2fit">
-              <div class="field">
-                <label>Texto da mensagem</label>
-                <textarea id="pixText" placeholder="Ex.: Pague usando o código: [[pix]]"></textarea>
-              </div>
-              <div class="field">
-                <label>Mídia (link Telegram)</label>
-                <input id="pixMedia" type="url" placeholder="https://t.me/...">
-              </div>
-            </div>
-
-            <div class="field mini-inline">
-              <label class="switch"><input id="pixAutoDel" type="checkbox"><span></span></label>
-              <input id="pixAutoSec" type="number" min="0" class="w120" placeholder="Delay (s)">
-              <span class="muted">Auto deletar</span>
-            </div>
-          </article>
-        </div>
-      </div>
-
-      <!-- Coluna direita (cards menores — clone do padrão Flexion) -->
-      <aside class="col-side">
-        <!-- Card: Planos (com entregável pequeno por plano) -->
-        <article class="card">
-          <div class="card-h">
-            <h3 class="card-t">Planos</h3>
-            <button class="btn primary" id="addPlan">+ Adicionar</button>
+  <!-- ===== GRID FLEXION: ESQUERDA (CARD ÚNICO) + DIREITA (PLANOS & BOTÕES) ===== -->
+  <div class="fx-grid">
+    <!-- =================== COLUNA ESQUERDA: CARD ÚNICO =================== -->
+    <section class="fx-left">
+      <article class="card card-lg">
+        <!-- Título + subtítulo da seção -->
+        <header class="card-header">
+          <div class="title">
+            <div class="ic"></div>
+            <h3>Mensagem Principal (/start)</h3>
           </div>
+          <p class="muted s">
+            Esta é a mensagem inicial que o usuário recebe ao interagir com o bot pela primeira vez.
+            Se o CTA estiver ativo, a mensagem de oferta será exibida com um botão.
+          </p>
+        </header>
 
-          <div id="plans" class="plans">
-            <!-- mini-cards gerados via JS -->
+        <!-- Campo de texto grande (o maior elemento) -->
+        <div class="field">
+          <label>Conteúdo da Mensagem</label>
+          <textarea id="frontCopy" placeholder="Digite sua mensagem de boas-vindas. Use tags como [[nome]] se quiser."></textarea>
+        </div>
+
+        <!-- Mídias atuais + inserir mídia (Telegram) -->
+        <div class="media-row">
+          <div class="field grow">
+            <label>Mídias atuais</label>
+            <ul id="mediaList" class="media-list"><!-- Itens adicionados via JS --></ul>
           </div>
-        </article>
+          <div class="media-actions">
+            <button class="btn ghost" id="btnAddMedia">Inserir mídia (Telegram)</button>
+          </div>
+        </div>
 
-        <!-- Card: CTA (opcional) -->
-        <article class="card">
-          <div class="card-h">
-            <h3 class="card-t">CTA (opcional)</h3>
-            <button class="btn primary" data-save="cta">Salvar</button>
+        <hr class="sep">
+
+        <!-- CTA dentro do MESMO card (toggle à direita do título) -->
+        <div class="cta-block">
+          <div class="cta-head">
+            <h4>Botão de Ação (CTA)</h4>
+            <label class="switch">
+              <input id="ctaOn" type="checkbox">
+              <span></span>
+            </label>
           </div>
 
           <div class="field">
-            <label>Texto do botão</label>
+            <label>Texto da Chamada (opcional)</label>
+            <input id="ctaHeadline" type="text" placeholder="Ex.: Cansado de perder tempo? Clique abaixo para garantir sua vaga agora mesmo!">
+          </div>
+
+          <div class="field">
+            <label>Texto do Botão</label>
             <input id="ctaText" type="text" placeholder="QUERO MINHA VAGA AGORA">
           </div>
-          <div class="field">
-            <label>Link (opcional)</label>
-            <input id="ctaLink" type="url" placeholder="https://...">
-          </div>
-          <div class="field">
-            <label>Mídia (link Telegram)</label>
-            <input id="ctaMedia" type="url" placeholder="https://t.me/...">
-          </div>
+        </div>
+
+        <!-- Salvar Alterações (sempre no final, dentro do card) -->
+        <div class="actions">
+          <button class="btn primary" id="btnSaveFront">Salvar Alterações</button>
+        </div>
+      </article>
+    </section>
+
+    <!-- =================== COLUNA DIREITA: PLANOS & BOTÕES =================== -->
+    <aside class="fx-right">
+      <article class="card">
+        <div class="card-header row-between">
+          <h3>Planos &amp; Botões</h3>
           <div class="row gap8">
-            <label class="switch"><input id="ctaOn" type="checkbox"><span></span></label>
-            <span class="muted">Ativar CTA</span>
+            <button class="btn ghost" id="btnCreateRedirect">Criar Redirect</button>
+            <button class="btn primary" id="btnAddPlan">+ Criar Plano</button>
           </div>
-        </article>
-      </aside>
-    </div>
-  </section>
+        </div>
 
-  <!-- ========================= TRACKING ========================= -->
-  <section id="pane-track" class="pane">
-    <div class="grid">
-      <div class="col-main">
-        <!-- Card: Seleção de Tracking (padrão Supabase) -->
-        <article class="card">
-          <div class="card-h">
-            <h3 class="card-t">Traqueamento</h3>
-            <button class="btn primary" data-save="track">Salvar</button>
-          </div>
-
-          <div class="seg-radio">
-            <label><input type="radio" name="trk" value="fb" checked><span>Facebook Pixel</span></label>
-            <label><input type="radio" name="trk" value="utm_fb"><span>UTMify + Facebook Pixel</span></label>
-            <label><input type="radio" name="trk" value="utm_utm"><span>UTMify + UTMify Pixel</span></label>
-          </div>
-
-          <div class="grid2fit">
-            <div class="field t-fb"><label>Facebook Pixel ID</label><input id="fbPixel" type="text" placeholder="XXXXXXXXXXXXXXX"></div>
-            <div class="field t-utm"><label>UTMify Project/Site</label><input id="utmProject" type="text" placeholder="meu-site"></div>
-            <div class="field t-utm"><label>UTMify Pixel ID</label><input id="utmPixel" type="text" placeholder="utm-XXXX"></div>
-          </div>
-        </article>
-
-        <!-- Card: Redirecionador (lista de bots) -->
-        <article class="card">
-          <div class="card-h">
-            <h3 class="card-t">Redirecionador (múltiplos bots)</h3>
-            <div class="row gap8">
-              <button class="btn primary" id="addBotRow">+ Cadastrar bot</button>
-              <button class="btn ghost" data-save="redirect">Salvar ativos</button>
-            </div>
-          </div>
-
-          <p class="muted">Ative no máximo <strong>2</strong> bots.</p>
-          <div id="redirList" class="redir-list"><!-- linhas geradas via JS --></div>
-        </article>
-      </div>
-
-      <aside class="col-side">
-        <!-- Card: Dica curta / Logs (opcional, clean) -->
-        <article class="card tiny">
-          <h3 class="card-t">Dicas</h3>
-          <p class="muted">Use poucos bots ativos para estabilidade e menor latência.</p>
-        </article>
-      </aside>
-    </div>
-  </section>
-
-  <!-- ========================= CLOAKER ========================= -->
-  <section id="pane-cloak" class="pane">
-    <article class="card tiny">
-      <div class="card-h">
-        <h3 class="card-t">Cloaker Anti-Clone</h3>
-      </div>
-      <div class="row gap12">
-        <label class="switch"><input id="cloakOn" type="checkbox" disabled><span></span></label>
-        <span class="muted">Em breve — impede clonagem automática adicionando ruído invisível ao copiar.</span>
-      </div>
-    </article>
-  </section>
+        <!-- Lista de planos (mini cards compactos como na Flexion) -->
+        <div id="plansList" class="plans-list">
+          <!-- Mini-card de plano (gerado via JS) -->
+          <!--
+          Estrutura:
+          .plan-item
+            .plan-h (nome + id à direita)
+            .plan-meta (valor | duração)
+            .plan-extra (entregável)
+            .plan-actions (Editar/Excluir/Salvar)
+          -->
+        </div>
+      </article>
+    </aside>
+  </div>
 </div>
 
 <style>
   :root{
-    --bg:#0a0a0a; --panel:#0f0f0f; --line:rgba(255,255,255,.09);
-    --text:#f0f0f0; --muted:#a7a7a7; --gold:#ffcc00; --gold2:#d1a200;
-    --ring:rgba(255,204,0,.22); --shadow:0 18px 60px rgba(0,0,0,.55); --glow:0 0 38px rgba(255,204,0,.07);
+    --bg:#0a0a0a; --panel:#0f0f0f; --line:rgba(255,255,255,.10);
+    --text:#f2f2f2; --muted:#a6a6a6; --gold:#ffcc00; --gold2:#d1a200;
+    --ring:rgba(255,204,0,.22); --shadow:0 18px 60px rgba(0,0,0,.55); --glow:0 0 38px rgba(255,204,0,.06);
   }
-  .tgffx-wrap{max-width:1180px;margin:0 auto;padding:46px 18px 90px;color:var(--text)}
-  .hdr{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:10px}
-  .hdr h1{margin:0 0 4px;font-size:1.9rem;color:#f7e8b0}
-  .muted{color:var(--muted)} .gold{color:#f7e8b0}
+  .fx-wrap{max-width:1180px;margin:0 auto;padding:42px 18px 80px;color:var(--text)}
+  .fx-head{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:16px}
+  .fx-head h1{margin:0 0 4px;font-size:1.9rem;color:#f7e8b0}
+  .muted{color:var(--muted)} .muted.s{font-size:.92rem}
+  .gold{color:#f7e8b0}
 
-  /* Tabs superiores */
-  .top-tabs{display:flex;gap:8px}
-  .top-tab{border:1px solid var(--line);background:rgba(255,255,255,.03);color:#eaeaea;padding:9px 14px;border-radius:12px;cursor:pointer}
-  .top-tab.is-active{background:linear-gradient(90deg,var(--gold),var(--gold2));color:#1a1300;border:none;box-shadow:0 0 12px rgba(255,204,0,.35)}
+  .fx-grid{display:grid;grid-template-columns:1fr 360px;gap:14px}
+  @media (max-width:1060px){ .fx-grid{grid-template-columns:1fr} }
 
-  /* Abas internas */
-  .sub-tabs{display:flex;gap:8px;margin-bottom:10px}
-  .sub-tab{border:1px solid var(--line);background:rgba(255,255,255,.03);color:#eaeaea;padding:8px 12px;border-radius:10px;cursor:pointer}
-  .sub-tab.is-active{border-color:var(--gold);box-shadow:0 0 0 2px var(--ring) inset}
-  .badge{font-size:.72rem;color:#161616;background:#ffd24a;border-radius:8px;padding:2px 6px;margin-left:6px}
+  .card{
+    background:radial-gradient(900px 240px at -15% -30%, rgba(255,204,0,.05), transparent 48%), var(--panel);
+    border:1px solid var(--line); border-radius:16px; padding:16px;
+    box-shadow:var(--shadow),var(--glow);
+  }
+  .card-lg{padding:18px 16px 16px}
+  .card-header{margin-bottom:12px}
+  .card-header .title{display:flex;align-items:center;gap:10px}
+  .card-header h3{margin:0;color:#f7e8b0;font-size:1.06rem}
+  .row-between{display:flex;justify-content:space-between;align-items:center}
+  .row{display:flex;align-items:center} .gap8{gap:8px}
 
-  /* Grid de duas colunas (Flexion) */
-  .grid{display:grid;grid-template-columns:1fr 360px;gap:12px}
-  .col-main{min-width:0} .col-side{min-width:0}
-
-  /* Pane show/hide */
-  .pane{display:none}.pane.show{display:block}
-  .subpane{display:none}.subpane.show{display:block}
-
-  /* Cards */
-  .card{background:radial-gradient(1000px 260px at -15% -30%, rgba(255,204,0,.05), transparent 48%), var(--panel);
-        border:1px solid var(--line); border-radius:16px; box-shadow:var(--shadow),var(--glow); padding:16px; }
-  .card + .card{margin-top:12px}
-  .card.tiny{padding:12px}
-  .card-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
-  .card-t{margin:0;color:#f7e8b0;font-size:1.06rem}
-
-  /* Form */
+  .field{margin-bottom:10px}
   .field label{display:block;margin:0 0 6px 2px;font-size:.88rem;color:#e9e9e9}
-  .field input,.field textarea,.field select{
+  .field input,.field textarea{
     width:100%;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.03);
     color:#fff;padding:10px 12px;outline:none
   }
-  .field textarea{min-height:110px;resize:vertical}
-  .field input:focus,.field textarea:focus,.field select:focus{border-color:var(--gold);box-shadow:0 0 0 2px var(--ring)}
-  .mini-inline{display:flex;align-items:center;gap:10px}
-  .w120{max-width:120px}
+  .field textarea{min-height:160px;resize:vertical}
+  .field input:focus,.field textarea:focus{border-color:var(--gold);box-shadow:0 0 0 2px var(--ring)}
 
-  .grid2fit{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-  .row{display:flex;align-items:center}.gap8{gap:8px}.gap12{gap:12px}
+  .media-row{display:flex;gap:12px;align-items:flex-end}
+  .media-row .grow{flex:1}
+  .media-list{display:flex;flex-direction:column;gap:8px;margin:0;padding:0;list-style:none}
+  .media-item{display:flex;justify-content:space-between;align-items:center;gap:10px;
+    padding:8px 10px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.03)}
+  .media-item a{color:#ddd;text-decoration:none}
+  .media-actions{display:flex;align-items:center}
+
+  .sep{border:0;border-top:1px solid var(--line);margin:14px 0}
+
+  .cta-block{margin-top:8px}
+  .cta-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+  .cta-head h4{margin:0;color:#f7e8b0;font-size:1rem}
+
+  .actions{display:flex;justify-content:flex-end;margin-top:12px}
 
   .btn{border:1px solid var(--line);background:transparent;color:#eaeaea;padding:10px 14px;border-radius:12px;cursor:pointer}
   .btn:hover{border-color:rgba(255,255,255,.2)}
   .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,.14)}
   .btn.primary{border:none;background:linear-gradient(90deg,var(--gold),var(--gold2));color:#1a1300;font-weight:700;box-shadow:0 0 12px rgba(255,204,0,.35)}
 
-  /* Plans mini-cards (coluna direita) */
-  .plans{display:flex;flex-direction:column;gap:10px}
-  .plan{display:grid;grid-template-columns:1fr 88px 80px;gap:8px;align-items:center;
-        padding:10px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.03)}
-  .plan .row-end{display:flex;gap:8px;justify-content:flex-end}
-  .plan .url{grid-column:1 / -1}
-
-  /* Switch */
+  /* Switch minimalista (toggle) */
   .switch{position:relative;display:inline-block;width:46px;height:26px}
   .switch input{display:none}
   .switch span{position:absolute;inset:0;background:#2b2b2b;border:1px solid var(--line);border-radius:999px;transition:.2s}
@@ -308,118 +167,106 @@
   .switch input:checked+span{background:var(--gold)}
   .switch input:checked+span:after{left:23px;background:#1a1300}
 
-  /* Radios estilo Supabase */
-  .seg-radio{display:flex;gap:8px;background:rgba(255,255,255,.04);padding:6px;border-radius:12px;border:1px solid var(--line);margin-bottom:10px}
-  .seg-radio label{display:flex;gap:8px;align-items:center;padding:8px 10px;border-radius:10px;cursor:pointer}
-  .seg-radio input{appearance:none;width:14px;height:14px;border:1px solid rgba(255,255,255,.65);border-radius:50%}
-  .seg-radio input:checked{background:var(--gold);border-color:var(--gold)}
-  .t-utm{display:none}
-
-  /* Redirecionador (lista de bots) */
-  .redir-list{display:flex;flex-direction:column;gap:10px}
-  .redir-row{display:grid;grid-template-columns:26px 190px 1fr 118px auto;gap:10px;align-items:center;
-             padding:10px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.03)}
-  .redir-row .idx{opacity:.65}
-
-  /* Responsivo */
-  @media (max-width:1060px){
-    .grid{grid-template-columns:1fr}
-    .grid2fit{grid-template-columns:1fr}
-    .redir-row{grid-template-columns:26px 1fr}
-  }
+  /* Planos (mini cards) — coluna direita */
+  .plans-list{display:flex;flex-direction:column;gap:10px}
+  .plan-item{border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.03);padding:10px}
+  .plan-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+  .plan-name{font-weight:600}
+  .plan-id{color:#bdbdbd;font-size:.86rem}
+  .plan-meta{color:#d5d5d5;font-size:.9rem;margin-bottom:8px}
+  .plan-extra{display:grid;grid-template-columns:1fr 110px;gap:8px;align-items:center;margin-bottom:8px}
+  .plan-actions{display:flex;gap:8px;justify-content:flex-end}
+  .plan-actions .btn{padding:8px 10px;border-radius:10px}
 </style>
 
 <script>
-  const $=(q,c=document)=>c.querySelector(q); const $$=(q,c=document)=>Array.from(c.querySelectorAll(q));
-
-  /* ===== Abas superiores ===== */
-  $$('.top-tab').forEach(b=>{
-    b.addEventListener('click',()=>{
-      $$('.top-tab').forEach(t=>t.classList.remove('is-active'));
-      b.classList.add('is-active');
-      const id=b.dataset.pane; $$('.pane').forEach(p=>p.classList.remove('show')); $('#'+id).classList.add('show');
-    });
+  // ====== Mídias (lista simples) ======
+  const mediaList = document.getElementById('mediaList');
+  document.getElementById('btnAddMedia')?.addEventListener('click', () => {
+    const url = prompt('Cole o link da mídia do Telegram:');
+    if(!url) return;
+    const li = document.createElement('li');
+    li.className = 'media-item';
+    li.innerHTML = `
+      <a href="${url}" target="_blank" rel="noopener">${url}</a>
+      <button class="btn ghost btnDelMedia">Excluir</button>
+    `;
+    mediaList.appendChild(li);
+  });
+  mediaList?.addEventListener('click', e => {
+    if(e.target.classList.contains('btnDelMedia')) e.target.closest('.media-item')?.remove();
   });
 
-  /* ===== Abas internas ===== */
-  $$('.sub-tab').forEach(b=>{
-    b.addEventListener('click',()=>{
-      $$('.sub-tab').forEach(t=>t.classList.remove('is-active'));
-      b.classList.add('is-active');
-      const id=b.dataset.subpane; $$('.subpane').forEach(p=>p.classList.remove('show')); $('#'+id).classList.add('show');
-    });
-  });
+  // ====== Planos (mini-cards na direita) ======
+  const plansList = document.getElementById('plansList');
+  const btnAddPlan = document.getElementById('btnAddPlan');
 
-  /* ===== Mídia por prompt ===== */
-  document.addEventListener('click',e=>{
-    const t=e.target.closest('[data-insert]'); if(!t) return;
-    const el=$(t.dataset.insert); const url=prompt('Cole o link da mídia do Telegram:');
-    if(url && el) el.value=url;
-  });
-
-  /* ===== Auto deletar: habilita delay apenas quando ativo ===== */
-  function bindAuto(tId,sId){ const t=$(tId), s=$(sId); if(!t||!s) return; const up=()=>s.disabled=!t.checked; t.addEventListener('change',up); up(); }
-  bindAuto('#frontAutoDel','#frontAutoSec'); bindAuto('#pixAutoDel','#pixAutoSec');
-
-  /* ===== Planos (mini-cards na direita) ===== */
-  const plansEl=$('#plans');
-  function addPlan(data={}){
-    const row=document.createElement('div'); row.className='plan';
-    row.innerHTML=`
-      <input class="p-name"  type="text" placeholder="Nome" value="${data.name||''}">
-      <input class="p-price" type="text" placeholder="R$"   value="${data.price||''}">
-      <input class="p-days"  type="number" min="0" placeholder="30" value="${data.days||''}">
-      <input class="url"     type="url" placeholder="Entregável (após pagar) — https://..." value="${data.url||''}">
-      <div class="row-end">
-        <button class="btn ghost" data-del>Excluir</button>
-        <button class="btn primary" data-save="plan">Salvar</button>
-      </div>`;
-    plansEl.appendChild(row);
+  function addPlanCard(data = {}) {
+    const id = data.id || ('novo-' + Math.random().toString(36).slice(2, 8));
+    const wrapper = document.createElement('div');
+    wrapper.className = 'plan-item';
+    wrapper.innerHTML = `
+      <div class="plan-h">
+        <div class="plan-name">${data.name || 'NOVO PLANO'}</div>
+        <div class="plan-id">ID: ${id}</div>
+      </div>
+      <div class="plan-meta">
+        Valor: <input type="text" class="p-price" value="${data.price || ''}" placeholder="R$"> ·
+        Duração: <input type="number" class="p-days" value="${data.days || 30}" min="1" style="width:86px"> dias
+      </div>
+      <div class="plan-extra">
+        <input class="p-url" type="url" placeholder="Entregável (após pagamento) — https://..." value="${data.url || ''}">
+        <button class="btn primary btnSavePlan">Salvar</button>
+      </div>
+      <div class="plan-actions">
+        <button class="btn ghost btnEditPlan">Editar</button>
+        <button class="btn ghost btnDelPlan">Excluir</button>
+      </div>
+    `;
+    plansList.appendChild(wrapper);
   }
-  $('#addPlan')?.addEventListener('click',()=>addPlan());
-  plansEl?.addEventListener('click',e=>{ if(e.target.matches('[data-del]')) e.target.closest('.plan')?.remove(); });
-  if(!plansEl.children.length){ addPlan({name:'MENSAL',price:'11,90',days:'30'}); }
 
-  /* ===== Tracking radios: alterna campos ===== */
-  function updTrack(){
-    const v=$('input[name="trk"]:checked')?.value;
-    $$('.t-fb').forEach(x=>x.style.display=(v==='fb'||v==='utm_fb')?'block':'none');
-    $$('.t-utm').forEach(x=>x.style.display=(v==='utm_fb'||v==='utm_utm')?'block':'none');
-  }
-  $$('.seg-radio input').forEach(r=>r.addEventListener('change',updTrack)); updTrack();
+  btnAddPlan?.addEventListener('click', () => addPlanCard());
 
-  /* ===== Redirecionador ===== */
-  const redirList=$('#redirList');
-  function activeCount(){ return $$('.redir-row input[type="checkbox"]:checked',redirList).length; }
-  function enforceTwo(chk){ if(activeCount()>2){ chk.checked=false; alert('Ative no máximo 2 bots.'); } }
-  function addRedir(user='',token=''){
-    const i=$$('.redir-row',redirList).length+1;
-    const row=document.createElement('div'); row.className='redir-row';
-    row.innerHTML=`
-      <div class="idx">#${i}</div>
-      <div class="field"><label>Username</label><input type="text" value="${user.replace?.(/^@+/,'')||''}"></div>
-      <div class="field"><label>Token</label><input type="text" value="${token||''}"></div>
-      <div class="field"><label>Ativo</label><label class="switch"><input type="checkbox"><span></span></label></div>
-      <button class="btn ghost" data-del>Remover</button>`;
-    redirList.appendChild(row);
-    $('input[type="checkbox"]',row).addEventListener('change',e=>enforceTwo(e.target));
-  }
-  $('#addBotRow')?.addEventListener('click',()=>addRedir());
-  redirList?.addEventListener('click',e=>{ if(e.target.matches('[data-del]')) e.target.closest('.redir-row')?.remove(); });
+  plansList?.addEventListener('click', (e) => {
+    const item = e.target.closest('.plan-item');
+    if(!item) return;
 
-  /* Se a oferta já tem user/token, sugere uma linha */
-  <% if ((offer.telegramUsername||'') || (offer.botToken||'')) { %>
-    addRedir('<%= (offer.telegramUsername||"").replace(/^@+/,"") %>','<%= offer.botToken||"" %>');
-  <% } %>
-
-  /* ===== Botões Salvar (placeholders) ===== */
-  document.addEventListener('click',e=>{
-    const b=e.target.closest('[data-save]'); if(!b) return;
-    if(b.dataset.save==='pix'){
-      const hasPix=/\[\[pix\]\]/i.test($('#pixText')?.value||'');
-      if(!hasPix){ alert('Inclua [[pix]] na mensagem do PIX.'); return; }
+    if(e.target.classList.contains('btnDelPlan')) {
+      item.remove();
     }
-    b.disabled=true; const t=b.textContent; b.textContent='Salvo ✓';
-    setTimeout(()=>{ b.disabled=false; b.textContent=t; },800);
+    if(e.target.classList.contains('btnEditPlan')) {
+      const name = prompt('Nome do plano:', item.querySelector('.plan-name').textContent.trim());
+      if(name) item.querySelector('.plan-name').textContent = name;
+    }
+    if(e.target.classList.contains('btnSavePlan')) {
+      // placeholder — aqui você persistiria via fetch
+      e.target.textContent = 'Salvo ✓';
+      setTimeout(()=> e.target.textContent = 'Salvar', 900);
+    }
+  });
+
+  // Seed mínimo para demonstrar proporção (remova se já vier do backend)
+  if(!plansList.children.length){
+    addPlanCard({ id: '5129', name: 'MENSAL', price: 'R$ 11,90', days: 30 });
+    addPlanCard({ id: '5130', name: 'MENSAL +BANIDOS', price: 'R$ 15,90', days: 30 });
+    addPlanCard({ id: '5131', name: 'VITALÍCIO +15 GRUPOS', price: 'R$ 18,90', days: 99999999 });
+  }
+
+  // ====== Salvar FRONT (placeholder – mesmo comportamento visual da Flexion) ======
+  document.getElementById('btnSaveFront')?.addEventListener('click', () => {
+    // Validações mínimas sem poluir a UI
+    const copy = document.getElementById('frontCopy').value.trim();
+    if(!copy) { alert('Preencha a mensagem principal.'); return; }
+
+    const btn = document.getElementById('btnSaveFront');
+    btn.disabled = true; const t = btn.textContent;
+    btn.textContent = 'Salvo ✓';
+    setTimeout(() => { btn.disabled = false; btn.textContent = t; }, 900);
+  });
+
+  // Redirect (placeholder)
+  document.getElementById('btnCreateRedirect')?.addEventListener('click', () => {
+    alert('Redirect: tela/flow será aberto em Tracking depois.');
   });
 </script>
