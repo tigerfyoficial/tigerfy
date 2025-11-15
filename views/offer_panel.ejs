@@ -15,10 +15,20 @@
           <%= (offer && offer.name) ? offer.name : 'Nome da Oferta' %>
         </h1>
 
-        <!-- ETAPAS (discreto, alinhado ao título) -->
+        <!-- CONTROLE DE ETAPAS (ao lado do título) -->
         <div class="tf-steps-inline">
-          <span class="tf-step-label" id="tfStepLabel">Etapa 1</span>
-          <button type="button" class="btn tiny" id="btnCreateStep">Criar etapa</button>
+          <span class="tf-step-chip">
+            <span class="muted">Etapa:</span>
+            <strong id="tfStepName">Etapa 1</strong>
+          </span>
+          <button type="button" class="chip-btn" id="btnCreateStep">
+            <!-- ícone plus -->
+            <svg class="ico" width="16" height="16" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 5v14M5 12h14"/>
+            </svg>
+            Criar etapa
+          </button>
         </div>
       </div>
     </div>
@@ -28,123 +38,238 @@
     </div>
   </header>
 
-  <!-- ABAS PRINCIPAIS -->
+  <!-- ABAS PRINCIPAIS (mesma estrutura, agora com ícones) -->
   <div class="tf-tabs">
-    <button class="tab active" data-tab="principal">Principal</button>
-    <button class="tab" data-tab="contingencia">Contingência de Bots</button>
-    <button class="tab" data-tab="tracking">Traqueamento</button>
-    <button class="tab" data-tab="reports">Fluxo de Relatórios</button>
+    <button class="tab active" data-tab="principal">
+      <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+        stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/>
+        <rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>
+      </svg>
+      Principal
+    </button>
+
+    <button class="tab" data-tab="contingencia">
+      <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+        stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2l7 4v5c0 5-3.5 9-7 11-3.5-2-7-6-7-11V6l7-4z"/><!-- escudo -->
+      </svg>
+      Contingência de Bots
+    </button>
+
+    <button class="tab" data-tab="tracking">
+      <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+        stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.6 4.6l2.1 2.1M17.3 17.3l2.1 2.1M19.4 4.6l-2.1 2.1M6.7 17.3l-2.1 2.1"/>
+      </svg>
+      Traqueamento
+    </button>
+
+    <button class="tab" data-tab="reports">
+      <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+        stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 17l5-5 4 4 7-7"/><path d="M21 21H3V3"/>
+      </svg>
+      Fluxo de Relatórios
+    </button>
   </div>
 
   <!-- ABAS SECUNDÁRIAS (visíveis apenas quando "Principal" estiver ativa) -->
   <div class="tf-subtabs" id="subtabs-principal">
-    <button class="subtab active">Front</button>
-    <button class="subtab">OrderBump</button>
-    <button class="subtab">Upsell</button>
-    <button class="subtab">Downsell</button>
-    <button class="subtab">Mensagem PIX</button>
-    <button class="subtab">Disparos</button>
+    <button class="subtab active">
+      <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+        stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v9z"/>
+      </svg>
+      Front
+    </button>
+    <button class="subtab">
+      <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+        stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M20 7l-8 10-5-5"/><path d="M3 7h18" />
+      </svg>
+      OrderBump
+    </button>
+    <button class="subtab">
+      <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+        stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 17l6-6 4 4 8-8"/><!-- trend up -->
+      </svg>
+      Upsell
+    </button>
+    <button class="subtab">
+      <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+        stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 7l6 6 4-4 8 8"/><!-- trend down (espelhado visual simples) -->
+      </svg>
+      Downsell
+    </button>
+    <button class="subtab">
+      <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+        stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 7h10M7 12h10M7 17h5"/><!-- lista/qr feel -->
+      </svg>
+      Mensagem PIX
+    </button>
+    <button class="subtab">
+      <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+        stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/>
+      </svg>
+      Disparos
+    </button>
   </div>
 
-  <!-- Placeholder para conteúdo (mantemos vazio por enquanto) -->
+  <!-- Placeholder para conteúdo (mantemos vazio) -->
   <section class="tf-placeholder"></section>
 </main>
 
+<!-- MODAL: Criar Etapa -->
+<div class="tf-modal-backdrop" id="stepModal" hidden>
+  <div class="tf-modal" role="dialog" aria-modal="true" aria-labelledby="stepModalTitle">
+    <div class="tf-modal-header">
+      <h3 id="stepModalTitle">Nova etapa</h3>
+      <button class="modal-close" id="btnCloseModal" aria-label="Fechar">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 6L6 18M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="tf-modal-body">
+      <label class="tf-label" for="inpStepName">Nome da etapa</label>
+      <input id="inpStepName" class="tf-input" type="text"
+        placeholder="Etapa 2, Upsell Bot de Taxa, Funil Pós-Compra..." />
+
+      <div class="sep"></div>
+
+      <div class="tf-radio-group">
+        <label class="radio-row">
+          <input type="radio" name="dupMode" value="0" checked>
+          <span>
+            <strong>Criar etapa do zero</strong>
+            <small>Comece sem nenhuma configuração copiada.</small>
+          </span>
+        </label>
+        <label class="radio-row">
+          <input type="radio" name="dupMode" value="1">
+          <span>
+            <strong>Duplicar configurações da etapa atual</strong>
+            <small>Duplica mensagens, planos, bots, tracking etc. <b>Nunca</b> duplica relatórios.</small>
+          </span>
+        </label>
+      </div>
+    </div>
+
+    <div class="tf-modal-actions">
+      <button class="btn" id="btnCancelStep">Cancelar</button>
+      <button class="btn primary" id="btnConfirmStep">Criar etapa</button>
+    </div>
+  </div>
+</div>
+
 <style>
   :root{
-    --bg-0:#0a0a0a;
-    --surface-1:#0f0f0f;
-    --surface-2:#131313;
-    --line-1:#1e1e1e;
-    --line-2:#262626;
-    --text-1:#f2f2f2;
-    --text-2:#b6b6b6;
-    --text-3:#8a8a8a;
-    --accent:#ffcc00;
-    --accent-soft:#d4ad15;
+    --bg-0:#0a0a0a; --surface-1:#0f0f0f; --surface-2:#131313;
+    --line-1:#1e1e1e; --line-2:#262626;
+    --text-1:#f2f2f2; --text-2:#b6b6b6; --text-3:#8a8a8a;
   }
 
-  .tiger-offer-shell{
-    max-width:1160px;margin:0 auto;padding:24px 16px 72px;color:var(--text-1);
-  }
-
-  /* Cabeçalho */
-  .tf-header{
-    display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:18px;
-  }
+  .tiger-offer-shell{max-width:1160px;margin:0 auto;padding:24px 16px 72px;color:var(--text-1);}
+  .tf-header{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:18px;}
   .tf-head-left{min-width:0}
-  .tf-breadcrumb{
-    display:flex;gap:8px;align-items:center;color:var(--text-3);font-size:.92rem;margin-bottom:6px;
-  }
+  .tf-breadcrumb{display:flex;gap:8px;align-items:center;color:var(--text-3);font-size:.92rem;margin-bottom:6px;}
   .tf-breadcrumb a{color:var(--text-3);text-decoration:none}
   .tf-breadcrumb a:hover{color:var(--text-2)}
-
-  .tf-title-row{
-    display:flex;align-items:center;gap:14px;flex-wrap:wrap;
-  }
-
+  .tf-title-row{display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
   .tf-offer-title{
     margin:0;font-size:1.8rem;letter-spacing:.2px;font-weight:700;
     background:linear-gradient(180deg,#fff 20%, #e6e6e6 70%, #bbb 100%);
     -webkit-background-clip:text;background-clip:text;color:transparent;
   }
 
-  /* Etapas inline (ao lado do título) */
-  .tf-steps-inline{
-    display:flex;align-items:center;gap:10px;
+  /* Etapas ao lado do título */
+  .tf-steps-inline{display:flex;align-items:center;gap:10px;}
+  .tf-step-chip{
+    display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;
+    background:#101010;border:1px solid var(--line-1);color:var(--text-2);font-size:.9rem;line-height:1;
   }
-  .tf-step-label{
-    display:inline-flex;align-items:center;justify-content:center;
-    padding:6px 10px;border-radius:999px;
-    background:#101010;border:1px solid var(--line-1);
-    color:var(--text-2);font-size:.9rem;line-height:1;
+  .tf-step-chip .muted{color:var(--text-3);font-weight:500}
+  .chip-btn{
+    display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;
+    background:#101010;border:1px solid var(--line-1);color:var(--text-1);font-size:.92rem;
+    transition:background .15s,border-color .15s,transform .05s; cursor:pointer;
   }
-  .btn.tiny{
-    padding:6px 10px;border-radius:10px;font-size:.88rem;line-height:1;
-    border:1px solid var(--line-1);background:var(--surface-2);color:var(--text-1);
-    transition:background .15s,border-color .15s,transform .05s;
-  }
-  .btn.tiny:hover{background:#151515;border-color:var(--line-2)}
-  .btn.tiny:active{transform:translateY(1px)}
+  .chip-btn:hover{background:#141414;border-color:#303030}
+  .chip-btn .ico{width:16px;height:16px;display:block}
 
-  /* Botão principal */
-  .btn{
-    border:1px solid var(--line-1);background:var(--surface-2);color:var(--text-1);
-    padding:10px 14px;border-radius:12px;transition:background .15s,border-color .15s,transform .05s;
-  }
+  /* Botões padrão */
+  .btn{border:1px solid var(--line-1);background:var(--surface-2);color:var(--text-1);
+       padding:10px 14px;border-radius:12px;transition:background .15s,border-color .15s,transform .05s;}
   .btn:hover{background:#151515;border-color:var(--line-2)}
   .btn.primary{background:linear-gradient(180deg,#171717,#121212);border-color:#2a2a2a}
   .btn.primary:hover{background:#161616;border-color:#343434}
   .btn:active{transform:translateY(1px)}
 
-  /* Abas principais */
+  /* Tabs (mesmo grid/posições, agora com ícones) */
   .tf-tabs{display:flex;gap:10px;justify-content:center;margin:10px 0 12px}
   .tab{
-    appearance:none;cursor:pointer;padding:10px 14px;border-radius:999px;
-    background:#101010;border:1px solid var(--line-1);color:var(--text-2);font-size:.95rem;
+    appearance:none;cursor:pointer;padding:10px 14px;border-radius:999px;background:#101010;
+    border:1px solid var(--line-1);color:var(--text-2);font-size:.95rem;display:inline-flex;align-items:center;gap:8px;
     transition:background .15s,border-color .15s,color .15s;
   }
   .tab:hover{background:#131313;border-color:var(--line-2);color:var(--text-1)}
   .tab.active{background:#141414;border-color:#333;color:var(--text-1);position:relative}
+  .tab .ico{width:16px;height:16px;display:block}
   .tab.active::after{
     content:"";position:absolute;left:12px;right:12px;bottom:-6px;height:2px;
-    background:linear-gradient(90deg,transparent,var(--accent-soft),transparent);
-    opacity:.9;border-radius:2px;
+    background:#2a2a2a;border-radius:2px;opacity:.9;
   }
 
-  /* Abas secundárias */
   .tf-subtabs{display:flex;gap:8px;justify-content:center;margin:6px 0 18px}
   .subtab{
     padding:8px 12px;border-radius:999px;background:#0f0f0f;border:1px solid var(--line-1);
-    color:var(--text-2);font-size:.9rem;cursor:pointer;transition:background .15s,border-color .15s,color .15s;
+    color:var(--text-2);font-size:.9rem;cursor:pointer;display:inline-flex;align-items:center;gap:8px;
+    transition:background .15s,border-color .15s,color .15s;
   }
   .subtab:hover{background:#131313;border-color:var(--line-2);color:var(--text-1)}
   .subtab.active{background:#141414;border-color:#303030;color:var(--text-1)}
+  .subtab .ico{width:16px;height:16px;display:block}
 
-  /* Placeholder (apenas respiro) */
+  /* Placeholder */
   .tf-placeholder{height:220px;border:1px dashed var(--line-2);border-radius:18px;background:var(--surface-1)}
 
-  /* Responsivo */
+  /* Modal */
+  .tf-modal-backdrop{
+    position:fixed;inset:0;background:rgba(0,0,0,.5);display:grid;place-items:center;z-index:50;
+    backdrop-filter:saturate(120%) blur(4px);
+  }
+  .tf-modal{
+    width:min(520px,92vw);background:#111;border:1px solid #262626;border-radius:16px;
+    box-shadow:0 10px 50px rgba(0,0,0,.45);padding:14px 14px 12px;
+  }
+  .tf-modal-header{display:flex;align-items:center;justify-content:space-between;padding:6px 6px 8px 8px}
+  .tf-modal-header h3{margin:0;font-size:1.05rem;color:var(--text-1)}
+  .modal-close{background:transparent;border:1px solid var(--line-1);border-radius:10px;padding:6px;cursor:pointer;color:var(--text-2)}
+  .modal-close:hover{background:#151515;border-color:#303030;color:var(--text-1)}
+  .tf-modal-body{padding:8px}
+  .tf-label{display:block;font-size:.9rem;color:var(--text-2);margin-bottom:6px}
+  .tf-input{
+    width:100%;padding:10px 12px;border-radius:10px;border:1px solid #2a2a2a;background:#121212;
+    color:#fff;font-size:.96rem;outline:none;
+  }
+  .tf-input::placeholder{color:#8d8d8d}
+  .sep{height:12px}
+  .tf-radio-group{display:grid;gap:8px}
+  .radio-row{
+    display:flex;gap:10px;align-items:flex-start;padding:10px;border:1px solid #232323;border-radius:12px;background:#101010;
+  }
+  .radio-row input{margin-top:3px}
+  .radio-row span{display:grid}
+  .radio-row strong{font-size:.95rem;color:#e9e9e9}
+  .radio-row small{font-size:.85rem;color:#9f9f9f}
+  .tf-modal-actions{display:flex;justify-content:flex-end;gap:10px;padding:10px 6px 4px}
   @media (max-width:900px){
     .tf-header{flex-direction:column;align-items:flex-start}
     .tf-head-right{width:100%;display:flex;justify-content:flex-end}
@@ -153,7 +278,7 @@
 
 <script>
   (function(){
-    // -------- Abas principais: exibe subtabs apenas em "Principal"
+    // -------- Tabs principais: mantém subtabs visíveis só em "Principal"
     var mainTabs = document.querySelectorAll('.tf-tabs .tab');
     var subTabsWrap = document.getElementById('subtabs-principal');
     mainTabs.forEach(function(btn){
@@ -166,47 +291,85 @@
     });
     if(subTabsWrap){ subTabsWrap.style.display = 'flex'; } // estado inicial
 
-    // -------- Etapas: leitura do ?etapa=N e UI dinâmica
+    // -------- Etapas: leitura do ?etapa=N & step=nome
     var url = new URL(window.location.href);
     var currentStep = parseInt(url.searchParams.get('etapa') || '0', 10);
     if (isNaN(currentStep) || currentStep < 1) currentStep = 1;
+    var stepNameParam = (url.searchParams.get('step') || '').trim();
+    var computedStepName = stepNameParam || ('Etapa ' + currentStep);
 
-    // Atualiza label ao lado do título
-    var stepLabel = document.getElementById('tfStepLabel');
-    if (stepLabel) stepLabel.textContent = 'Etapa ' + currentStep;
+    // Atualiza chip
+    var stepNameEl = document.getElementById('tfStepName');
+    if (stepNameEl) stepNameEl.textContent = computedStepName;
 
     // Breadcrumb dinâmico:
-    // - sem etapa explícita (ou etapa=1 por padrão que você quiser) -> Nome da oferta
-    // - com etapa na URL -> "Minhas Ofertas > Etapa X > Etapa X"
+    // sem etapa -> Minhas Ofertas > Nome da oferta
+    // com etapa -> Minhas Ofertas > NOME_DA_OFERTA > NOME_DA_ETAPA
     var bc = document.getElementById('tfBreadcrumb');
     var offerTitleText = document.getElementById('offerTitle')?.textContent?.trim() || 'Nome da Oferta';
+    var etapaParam = url.searchParams.get('etapa');
     if (bc) {
-      var etapaParam = url.searchParams.get('etapa');
       if (etapaParam && parseInt(etapaParam,10) >= 1) {
-        var x = parseInt(etapaParam,10);
+        var safeStep = computedStepName.replace(/</g,'&lt;').replace(/>/g,'&gt;');
         bc.innerHTML =
           '<a href="/ofertas">Minhas Ofertas</a>' +
           '<span>›</span>' +
-          '<a href="' + (window.location.pathname + '?etapa=' + x) + '">Etapa ' + x + '</a>' +
+          '<span>'+ offerTitleText.replace(/</g,'&lt;').replace(/>/g,'&gt;') +'</span>' +
           '<span>›</span>' +
-          '<span>Etapa ' + x + '</span>';
+          '<span>'+ safeStep +'</span>';
       } else {
-        // Padrão: Minhas Ofertas > Nome da oferta
         bc.innerHTML =
           '<a href="/ofertas">Minhas Ofertas</a>' +
           '<span>›</span>' +
-          '<span>' + offerTitleText + '</span>';
+          '<span>'+ offerTitleText.replace(/</g,'&lt;').replace(/>/g,'&gt;') +'</span>';
       }
     }
 
-    // Criar etapa: navega para mesma rota com etapa=N+1 (back pode persistir e separar relatórios por etapa)
-    var createBtn = document.getElementById('btnCreateStep');
-    if (createBtn){
-      createBtn.addEventListener('click', function(){
+    // -------- Modal "Criar etapa"
+    var modal = document.getElementById('stepModal');
+    var openBtn = document.getElementById('btnCreateStep');
+    var closeBtn = document.getElementById('btnCloseModal');
+    var cancelBtn = document.getElementById('btnCancelStep');
+    var confirmBtn = document.getElementById('btnConfirmStep');
+    var nameInput = document.getElementById('inpStepName');
+
+    function openModal(){
+      if (!modal) return;
+      // sugestão de nome padrão
+      var nextN = isNaN(currentStep) ? 2 : (currentStep + 1);
+      if (nameInput) nameInput.value = 'Etapa ' + nextN;
+      modal.hidden = false;
+      nameInput && nameInput.focus();
+      document.addEventListener('keydown', escToClose);
+    }
+    function closeModal(){
+      if (!modal) return;
+      modal.hidden = true;
+      document.removeEventListener('keydown', escToClose);
+    }
+    function escToClose(e){ if (e.key === 'Escape') closeModal(); }
+
+    if (openBtn) openBtn.addEventListener('click', openModal);
+    if (closeBtn) closeBtn.addEventListener('click', closeModal);
+    if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
+    if (modal){
+      modal.addEventListener('click', function(e){
+        if (e.target === modal) closeModal();
+      });
+    }
+
+    if (confirmBtn){
+      confirmBtn.addEventListener('click', function(){
+        var dupValue = document.querySelector('input[name="dupMode"]:checked')?.value || '0';
+        var stepName = (nameInput?.value || '').trim() || ('Etapa ' + (currentStep + 1));
+
+        // Navega para mesma rota com etapa incrementada + nome + flag dup
         var u = new URL(window.location.href);
         var n = parseInt(u.searchParams.get('etapa') || '0', 10);
         if (isNaN(n) || n < 1) n = 1;
         u.searchParams.set('etapa', String(n + 1));
+        u.searchParams.set('step', stepName);
+        u.searchParams.set('dup', dupValue); // 1 duplica configs, 0 do zero (back decide lógica)
         window.location.href = u.toString();
       });
     }
