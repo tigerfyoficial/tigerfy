@@ -9,16 +9,45 @@
     <div class="tf-header-left">
       <h1 class="tf-offer-title" id="offerTitle"><%= offer?.name || 'Nome da Oferta' %></h1>
 
-      <!-- Chip de etapa + dropdown -->
-      <div class="tf-step-inline">
-        <button type="button" id="tfStepChip" class="tf-step-chip tf-step-chip--click">
-          Etapa: <strong id="tfStepName"><%= (currentStep && currentStep.name) ? currentStep.name : 'Etapa 1' %></strong>
-          <span class="tf-caret" aria-hidden="true">▾</span>
+      <!-- Área de Etapas: seletor + criar -->
+      <div class="tf-step-area">
+        <!-- Seletor -->
+        <button class="tf-step-current" id="btnStepSelector" aria-haspopup="true" aria-expanded="false">
+          <span class="dot"></span>
+          <span id="tfStepNameInline"><%= (currentStep && currentStep.name) ? currentStep.name : 'Etapa 1' %></span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
         </button>
-        <button type="button" id="btnCreateStep" class="tf-btn tf-btn-small">Criar etapa</button>
 
-        <!-- Dropdown de etapas -->
-        <div id="tfStepDropdown" class="tf-step-dropdown" hidden></div>
+        <div class="tf-step-menu" id="stepMenu" hidden>
+          <% (steps || []).forEach(function(s){ %>
+            <div class="tf-step-item <%= (currentStep && currentStep.id===s.id) ? 'is-active' : '' %>" data-step-id="<%= s.id %>">
+              <div class="info">
+                <span class="no">#<%= s.step_no %></span>
+                <span class="nm"><%= s.name %></span>
+                <% if (currentStep && currentStep.id===s.id) { %>
+                  <span class="tag">Atual</span>
+                <% } %>
+              </div>
+
+              <% if (s.step_no !== 1) { %>
+                <button class="trash" data-del-step-id="<%= s.id %>" title="Excluir etapa">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="3 6 5 6 21 6"></polyline>
+                    <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path>
+                    <path d="M10 11v6"></path><path d="M14 11v6"></path>
+                    <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"></path>
+                  </svg>
+                </button>
+              <% } %>
+            </div>
+          <% }) %>
+        </div>
+
+        <!-- Criar -->
+        <button type="button" id="btnCreateStep" class="tf-btn tf-btn-small tf-create-ripple" data-ripple>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+          Criar etapa
+        </button>
       </div>
     </div>
 
@@ -47,7 +76,7 @@
     </button>
   </div>
 
-  <!-- Subtabs -->
+  <!-- Subtabs da Principal -->
   <div class="tf-subtabs" id="subtabs-principal">
     <button class="subtab active" data-subtab="front">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h8"></path><path d="M17 8h.01"></path><path d="M19 4v6h6"></path></svg>
@@ -78,9 +107,9 @@
   <section class="tf-content-placeholder"></section>
 </div>
 
-<!-- Modal "Nova etapa" (simplificado) -->
+<!-- Modal Nova Etapa (simples) -->
 <div class="tf-modal-backdrop" id="stepModal" hidden>
-  <div class="tf-modal tf-modal-animate">
+  <div class="tf-modal tf-animate-in">
     <div class="tf-modal-head">
       <h3>Nova etapa</h3>
       <button type="button" class="tf-modal-close" id="btnCloseModal" aria-label="Fechar">✕</button>
@@ -89,7 +118,7 @@
     <div class="tf-modal-body">
       <div class="tf-field">
         <label for="inpStepName">Nome da etapa</label>
-        <input type="text" id="inpStepName" placeholder="Ex.: Etapa 2" />
+        <input type="text" id="inpStepName" placeholder="Ex.: Etapa 2, Pós-compra, Fluxo VIP…" />
       </div>
     </div>
 
@@ -100,12 +129,39 @@
   </div>
 </div>
 
+<!-- Modal Confirmação de Exclusão -->
+<div class="tf-modal-backdrop" id="confirmModal" hidden>
+  <div class="tf-modal tf-animate-in">
+    <div class="tf-modal-head">
+      <h3>Excluir etapa?</h3>
+      <button type="button" class="tf-modal-close" id="btnCloseConfirm" aria-label="Fechar">✕</button>
+    </div>
+    <div class="tf-modal-body">
+      <p id="confirmText">Tem certeza que deseja excluir esta etapa? Essa ação não pode ser desfeita.</p>
+    </div>
+    <div class="tf-modal-actions">
+      <button type="button" class="tf-btn" id="btnCancelConfirm">Cancelar</button>
+      <button type="button" class="tf-btn tf-btn-danger" id="btnConfirmDelete">Excluir etapa</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast container -->
+<div class="tf-toast-container" id="tfToastContainer" aria-live="polite" aria-atomic="true"></div>
+
 <style>
   :root{
-    --bg:#0b0b0b; --panel:rgba(255,255,255,0.04); --panel-strong:rgba(255,255,255,0.06);
-    --border:rgba(255,255,255,0.12); --muted:#b8b8b8; --text:#ffffff;
-    --accent:#ffcc00; --accent-dim:#d4a100; --shadow:0 8px 24px rgba(0,0,0,0.45);
+    --bg:#0b0b0b;
+    --panel:rgba(255,255,255,0.04);
+    --panel-strong:rgba(255,255,255,0.06);
+    --border:rgba(255,255,255,0.12);
+    --muted:#b8b8b8;
+    --text:#ffffff;
+    --accent:#ffcc00;
+    --accent-dim:#d4a100;
+    --shadow:0 8px 24px rgba(0,0,0,0.45);
     --radius:14px;
+    --danger:#ee5555;
   }
 
   .tf-offer-panel{ color:var(--text); padding:60px 80px 100px 130px; max-width:1200px; margin:0 auto; }
@@ -114,97 +170,125 @@
   .tf-breadcrumb a:hover{ color:#e0e0e0; }
 
   .tf-header{ display:flex; align-items:flex-start; justify-content:space-between; gap:16px; margin-bottom:18px; }
-  .tf-header-left{ display:flex; align-items:center; gap:14px; flex-wrap:wrap; }
+  .tf-header-left{ display:flex; align-items:center; gap:16px; flex-wrap:wrap; }
   .tf-offer-title{ margin:0; font-size:1.75rem; letter-spacing:.3px; background:linear-gradient(90deg,#fff,#d8d8d8); -webkit-background-clip:text; background-clip:text; color:transparent; }
 
-  .tf-step-inline{ position:relative; display:flex; align-items:center; gap:8px; }
-  .tf-step-chip{
-    display:inline-flex; align-items:center; gap:8px; padding:6px 12px; border-radius:999px;
-    background:var(--panel); border:1px solid var(--border); font-size:.9rem; color:#ddd;
-  }
-  .tf-step-chip--click{ cursor:pointer; transition:.2s; }
-  .tf-step-chip--click:hover{ background:rgba(255,255,255,0.08); }
-  .tf-caret{ opacity:.85; transform:translateY(1px); }
+  /* Área de etapas */
+  .tf-step-area{ display:flex; align-items:center; gap:10px; position:relative; }
 
-  /* Dropdown das etapas (visual claro + hover/ativo) */
-  .tf-step-dropdown{
-    position:absolute; top:36px; left:0; min-width:240px; max-height:320px; overflow:auto;
-    background:linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.04));
-    border:1px solid var(--border); border-radius:12px; box-shadow:0 14px 42px rgba(0,0,0,0.55);
-    padding:6px; z-index:1100; backdrop-filter:blur(6px);
+  .tf-step-current{
+    display:inline-flex; align-items:center; gap:8px;
+    padding:8px 12px; border-radius:999px; border:1px solid var(--border);
+    background:var(--panel); color:#e8e8e8; font-weight:700; letter-spacing:.2px;
+    cursor:pointer; transition:.18s ease; position:relative; overflow:hidden;
+    box-shadow:0 8px 26px rgba(0,0,0,.25);
+  }
+  .tf-step-current .dot{ width:6px; height:6px; border-radius:50%; background:var(--accent); box-shadow:0 0 10px rgba(255,204,0,.6); }
+  .tf-step-current:hover{ transform:translateY(-1px); border-color:rgba(255,255,255,.22); background:rgba(255,255,255,.08); }
+  .tf-step-current[aria-expanded="true"]{ box-shadow:0 10px 30px rgba(0,0,0,.35); }
+
+  .tf-step-menu{
+    position:absolute; top:44px; left:0; min-width:260px; background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.05));
+    border:1px solid var(--border); border-radius:14px; box-shadow:0 18px 42px rgba(0,0,0,.45); backdrop-filter:blur(6px);
+    padding:6px; z-index:30; animation:tfFadeSlide .18s ease;
   }
   .tf-step-item{
-    display:flex; align-items:center; justify-content:space-between; gap:10px;
-    padding:8px 10px; border-radius:10px; font-weight:600; color:#eaeaea;
-    transition:background .15s ease, transform .08s ease;
+    display:flex; align-items:center; justify-content:space-between;
+    gap:8px; padding:9px 10px; border-radius:12px; cursor:pointer; transition:.14s;
   }
-  .tf-step-item:hover{ background:rgba(255,255,255,0.08); }
-  .tf-step-item.active{ background:rgba(255,255,255,0.12); color:#fff; border:1px solid rgba(255,255,255,0.18); }
-  .tf-step-item .lbl{ display:flex; align-items:center; gap:8px; }
-  .tf-step-item .pill{ font-size:.72rem; padding:3px 6px; border-radius:6px; color:#171300; background:linear-gradient(90deg,var(--accent),var(--accent-dim)); font-weight:800; letter-spacing:.3px; }
-  .tf-step-del{
-    appearance:none; background:transparent; border:0; color:#ffb3b3; cursor:pointer; font-weight:800;
-    padding:2px 6px; border-radius:8px; transition:.15s;
+  .tf-step-item .info{ display:flex; align-items:center; gap:8px; }
+  .tf-step-item .no{ opacity:.7; font-weight:700; font-size:.85rem; }
+  .tf-step-item .nm{ font-weight:700; }
+  .tf-step-item .tag{
+    margin-left:6px; padding:2px 8px; border-radius:999px; font-size:.72rem; font-weight:800;
+    background:rgba(255,204,0,.15); color:#ffd74d; border:1px solid rgba(255,204,0,.25);
   }
-  .tf-step-del:hover{ color:#ffd5d5; background:rgba(255,0,0,.08); }
+  .tf-step-item:hover{ background:rgba(255,255,255,.08); transform:scale(1.01); }
+  .tf-step-item.is-active{ border:1px solid rgba(255,204,0,.25); background:rgba(255,204,0,.10); }
+  .tf-step-item .trash{
+    appearance:none; border:0; background:transparent; color:#d7d7d7; padding:6px; border-radius:10px; cursor:pointer; transition:.15s;
+  }
+  .tf-step-item .trash:hover{ color:#fff; background:rgba(255,255,255,.08); box-shadow:0 0 0 1px rgba(255,255,255,.10) inset; }
 
+  /* Botões */
   .tf-btn{ appearance:none; border:1px solid var(--border); background:var(--panel-strong); color:#eee; padding:9px 14px; border-radius:10px; cursor:pointer; font-weight:600; box-shadow:var(--shadow); transition:.2s ease; }
   .tf-btn:hover{ border-color:rgba(255,255,255,0.2); background:rgba(255,255,255,0.08); }
   .tf-btn:active{ transform:translateY(1px); }
-  .tf-btn-small{ padding:7px 10px; font-size:.85rem; border-radius:999px; }
+  .tf-btn-small{ padding:8px 12px; font-size:.86rem; border-radius:999px; }
   .tf-btn-primary{ background:linear-gradient(90deg,var(--accent),var(--accent-dim)); color:#171300; border:1px solid rgba(255,204,0,0.35); box-shadow:0 6px 22px rgba(255,204,0,0.25); }
   .tf-btn-primary:hover{ filter:brightness(1.02); }
+  .tf-btn-danger{ background:linear-gradient(90deg,#ff6767,#d94a4a); color:#1a0f0f; border:1px solid rgba(255,80,80,.35); box-shadow:0 6px 22px rgba(255,80,80,.25); }
+  .tf-create-ripple{ position:relative; overflow:hidden; }
+  .tf-create-ripple::after{ content:""; position:absolute; inset:0; border-radius:inherit; box-shadow:0 0 0 0 rgba(255,204,0,.0); transition:box-shadow .25s ease; }
+  .tf-create-ripple:hover::after{ box-shadow:0 0 0 6px rgba(255,204,0,.06); }
 
+  /* Conteúdo */
   .tf-tabs{ display:flex; gap:8px; flex-wrap:wrap; margin:16px 0 10px 0; justify-content:center; }
   .tf-tabs .tab{ display:inline-flex; align-items:center; gap:8px; padding:9px 14px; border-radius:999px; border:1px solid var(--border); background:var(--panel); color:#dedede; font-weight:600; font-size:.92rem; cursor:pointer; transition:.2s; }
   .tf-tabs .tab:hover{ background:rgba(255,255,255,0.07); }
   .tf-tabs .tab.active{ background:rgba(255,255,255,0.10); border-color:rgba(255,255,255,0.22); color:#fff; }
-
   .tf-subtabs{ display:flex; gap:8px; flex-wrap:wrap; justify-content:center; margin-bottom:18px; }
   .tf-subtabs .subtab{ display:inline-flex; align-items:center; gap:8px; padding:7px 12px; border-radius:999px; border:1px solid var(--border); background:var(--panel); color:#dcdcdc; font-weight:600; font-size:.9rem; cursor:pointer; transition:.2s; }
   .tf-subtabs .subtab[disabled]{ opacity:.45; cursor:not-allowed; }
   .tf-subtabs .subtab:not([disabled]):hover{ background:rgba(255,255,255,0.07); }
   .tf-subtabs .subtab.active{ background:rgba(255,255,255,0.10); border-color:rgba(255,255,255,0.22); color:#fff; }
-
   .tf-content-placeholder{ min-height:360px; border:1px dashed rgba(255,255,255,0.12); border-radius:var(--radius); background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02)); box-shadow:var(--shadow); }
 
-  /* Modal + animação leve */
+  /* Modal */
   .tf-modal-backdrop{ position:fixed; inset:0; background:rgba(0,0,0,0.55); display:flex; align-items:center; justify-content:center; padding:20px; z-index:1000; }
   .tf-modal-backdrop[hidden]{ display:none !important; }
-  .tf-modal{ width:100%; max-width:560px; background:linear-gradient(180deg, rgba(255,255,255,0.07), rgba(255,255,255,0.045)); border:1px solid var(--border); border-radius:16px; box-shadow:0 14px 42px rgba(0,0,0,0.55); backdrop-filter: blur(6px); }
-  .tf-modal-animate{ animation: tfModalIn .18s ease-out; transform-origin: 50% 45%; }
-  @keyframes tfModalIn{ from{ opacity:0; transform:scale(.98); } to{ opacity:1; transform:scale(1); } }
+  .tf-modal{ width:100%; max-width:560px; background:linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.04)); border:1px solid var(--border); border-radius:16px; box-shadow:0 14px 42px rgba(0,0,0,0.55); backdrop-filter: blur(6px); }
   .tf-modal-head{ display:flex; align-items:center; justify-content:space-between; padding:16px 16px 10px 16px; border-bottom:1px solid rgba(255,255,255,0.09); }
-  .tf-modal-head h3{ margin:0; font-size:1.06rem; color:#fff; letter-spacing:.2px; }
+  .tf-modal-head h3{ margin:0; font-size:1.05rem; color:#fff; letter-spacing:.3px; }
   .tf-modal-close{ background:transparent; border:0; color:#ccc; cursor:pointer; font-size:16px; padding:4px; }
   .tf-modal-close:hover{ color:#fff; }
   .tf-modal-body{ padding:16px; display:flex; flex-direction:column; gap:14px; }
   .tf-field label{ display:block; font-weight:700; margin-bottom:6px; color:#efefef; font-size:.95rem; letter-spacing:.2px; }
-  .tf-field input[type="text"]{ width:100%; padding:10px 12px; border-radius:10px; background:rgba(255,255,255,0.07); color:#fff; border:1px solid rgba(255,255,255,0.18); outline:none; font-size:.98rem; }
+  .tf-field input[type="text"]{ width:100%; padding:12px 14px; border-radius:12px; background:rgba(255,255,255,0.07); color:#fff; border:1px solid rgba(255,255,255,0.16); outline:none; font-size:.98rem; }
   .tf-field input[type="text"]::placeholder{ color:#bfbfbf; }
   .tf-field input[type="text"]:focus{ border-color:rgba(255,204,0,0.6); box-shadow:0 0 0 2px rgba(255,204,0,0.20); }
   .tf-modal-actions{ display:flex; align-items:center; justify-content:flex-end; gap:10px; padding:12px 16px 16px 16px; border-top:1px solid rgba(255,255,255,0.09); }
 
-  /* Botão "3D" após salvar (efeito rápido e discreto) */
-  @keyframes tfSavedPulse {
-    0%   { transform: perspective(600px) translateZ(0); box-shadow: 0 6px 22px rgba(255,204,0,0.25); }
-    40%  { transform: perspective(600px) translateZ(6px); box-shadow: 0 10px 30px rgba(255,204,0,0.45); }
-    100% { transform: perspective(600px) translateZ(0); box-shadow: 0 6px 22px rgba(255,204,0,0.25); }
+  .tf-animate-in{ animation:tfZoomIn .16s ease; }
+  @keyframes tfZoomIn{ from{ transform:scale(.98); opacity:0 } to{ transform:scale(1); opacity:1 } }
+  @keyframes tfFadeSlide{ from{ opacity:0; transform:translateY(-6px) } to{ opacity:1; transform:translateY(0) } }
+
+  /* Toasts premium */
+  .tf-toast-container{ position:fixed; right:26px; top:24px; display:flex; flex-direction:column; gap:10px; z-index:1400; }
+  .tf-toast{
+    display:flex; align-items:center; gap:10px; padding:12px 14px; border-radius:12px; font-weight:800; letter-spacing:.25px;
+    box-shadow:0 12px 28px rgba(0,0,0,.45), inset 0 0 0 1px rgba(255,255,255,.1);
+    color:#171300; background:linear-gradient(135deg,#ffd54d,#e3b20a);
+    transform:translateY(-6px); opacity:0; animation:toastIn .18s ease forwards;
+  }
+  .tf-toast.error{ color:#2b0f0f; background:linear-gradient(135deg,#ff8a8a,#f35e5e); }
+  .tf-toast .ico{ display:inline-flex; align-items:center; justify-content:center; width:18px; height:18px; }
+  @keyframes toastIn{ to{ transform:translateY(0); opacity:1 } }
+  .tf-toast.out{ animation:toastOut .18s ease forwards; }
+  @keyframes toastOut{ to{ transform:translateY(-6px); opacity:0 } }
+
+  /* Glow rápido no salvar */
+  .tf-saved-glow{ box-shadow:0 0 0 0 rgba(255,204,0,.0), 0 0 0 0 rgba(255,204,0,.0); animation:btnGlow .8s ease; }
+  @keyframes btnGlow{
+    0%{ box-shadow:0 0 0 0 rgba(255,204,0,.4); transform:translateZ(0) }
+    100%{ box-shadow:0 0 0 18px rgba(255,204,0,0); }
   }
 
   @media (max-width: 980px){
     .tf-offer-panel{ padding:40px 18px 80px 18px; }
     .tf-header{ flex-direction:column; align-items:flex-start; gap:10px; }
+    .tf-step-menu{ left:auto; right:0; }
   }
 </style>
 
 <script>
 (function(){
+  // Dados do EJS
   var offer = <%- JSON.stringify(offer || null) %>;
   var steps = <%- JSON.stringify(steps || []) %>;
   var currentStep = <%- JSON.stringify(currentStep || null) %>;
 
-  /* breadcrumb */
+  /* Breadcrumb */
   function escapeHtml(s){ return (s || "").replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
   (function buildBreadcrumb(){
     var bc = document.getElementById('tfBreadcrumb'); if (!bc) return;
@@ -217,18 +301,30 @@
     if (currentStep && currentStep.id) {
       items.push('<span>›</span>');
       var stepUrl = offerHref + "?stepId=" + encodeURIComponent(currentStep.id);
-      items.push('<a href="'+ stepUrl +'">'+ escapeHtml(currentStep.name || ('Etapa ' + (currentStep.stepNo||''))) +'</a>');
+      items.push('<a href="'+ stepUrl +'">'+ escapeHtml(currentStep.name || ('Etapa ' + (currentStep.step_no||''))) +'</a>');
     }
     bc.innerHTML = items.join('');
   })();
 
-  /* chip texto da etapa atual */
-  try {
-    var chipTxt = document.getElementById('tfStepName');
-    if (chipTxt && currentStep) chipTxt.textContent = currentStep.name || ('Etapa ' + (currentStep.stepNo || ''));
-  } catch(_) {}
+  /* Toast premium */
+  function showToast(type, text){
+    var cont = document.getElementById('tfToastContainer');
+    if (!cont) return;
+    var el = document.createElement('div');
+    el.className = 'tf-toast' + (type==='error' ? ' error' : '');
+    el.innerHTML =
+      '<span class="ico">'+
+        (type==='error'
+          ? '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>'
+          : '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"></path></svg>'
+        )+
+      '</span>'+
+      '<span>'+ (text || (type==='error' ? 'Falhou' : 'Concluído')) +'</span>';
+    cont.appendChild(el);
+    setTimeout(function(){ el.classList.add('out'); setTimeout(function(){ el.remove(); }, 180); }, 2400);
+  }
 
-  /* tabs principais */
+  /* Subtabs visíveis só na principal */
   var mainTabs = document.querySelectorAll('.tf-tabs .tab');
   var subTabsWrap = document.getElementById('subtabs-principal');
   mainTabs.forEach(function(btn){
@@ -241,79 +337,98 @@
   });
   if (subTabsWrap) subTabsWrap.style.display = 'flex';
 
-  /* Toast premium (topo) */
-  function showToast(type, text){
-    var wrap = document.createElement('div');
-    wrap.style.position='fixed'; wrap.style.top='22px'; wrap.style.left='50%'; wrap.style.transform='translateX(-50%)';
-    wrap.style.zIndex='3000';
+  /* Seletor de etapas */
+  var stepBtn = document.getElementById('btnStepSelector');
+  var stepMenu = document.getElementById('stepMenu');
+  var stepNameInline = document.getElementById('tfStepNameInline');
+  if (stepNameInline && currentStep) stepNameInline.textContent = currentStep.name || ('Etapa ' + (currentStep.step_no||''));
 
-    var card = document.createElement('div');
-    card.style.padding='10px 14px'; card.style.borderRadius='10px';
-    card.style.border='1px solid rgba(255,204,0,0.35)';
-    card.style.boxShadow='0 10px 30px rgba(0,0,0,0.45)';
-    card.style.background = (type==='error')
-      ? 'linear-gradient(90deg,#2a0000,#3a0000)'
-      : 'linear-gradient(90deg,#ffcc00,#d4a100)';
-    card.style.color = (type==='error') ? '#ffd5d5' : '#171300';
-    card.style.fontWeight='800'; card.style.letterSpacing='.3px';
-    card.textContent = text || (type==='error' ? 'Falhou' : 'Salvo!');
-    wrap.appendChild(card);
-    document.body.appendChild(wrap);
-    setTimeout(function(){ wrap.remove(); }, 1400);
+  function closeMenu(){ if(stepMenu){ stepMenu.setAttribute('hidden',''); stepBtn && stepBtn.setAttribute('aria-expanded','false'); } }
+  function openMenu(){ if(stepMenu){ stepMenu.removeAttribute('hidden'); stepBtn && stepBtn.setAttribute('aria-expanded','true'); } }
+  if (stepBtn) stepBtn.addEventListener('click', function(e){
+    var isOpen = stepMenu && !stepMenu.hasAttribute('hidden');
+    isOpen ? closeMenu() : openMenu();
+  });
+  document.addEventListener('click', function(e){
+    if (!stepMenu || !stepBtn) return;
+    if (e.target === stepBtn || stepBtn.contains(e.target)) return;
+    if (stepMenu.contains(e.target)) return;
+    closeMenu();
+  });
+
+  // Navegar para etapa selecionada
+  if (stepMenu){
+    stepMenu.addEventListener('click', function(e){
+      var item = e.target.closest('.tf-step-item');
+      if (!item) return;
+      var trashBtn = e.target.closest('.trash');
+      if (trashBtn) return; // exclusão tem seu fluxo
+      var id = item.getAttribute('data-step-id');
+      if (!id) return;
+      window.location.href = '/ofertas/painel/' + encodeURIComponent(offer.id) + '?stepId=' + encodeURIComponent(id);
+    });
   }
 
-  /* Botão salvar: estados + efeito 3D no sucesso */
-  var saveBtn = document.getElementById('btnSaveAll');
-  function setButtonLoading(btn, isLoading){
-    if (!btn) return;
-    if (isLoading){
-      btn.disabled = true;
-      if (!btn.dataset._txt) btn.dataset._txt = btn.textContent;
-      btn.textContent = 'Salvando…';
-      btn.style.filter='brightness(1.02)';
-      btn.style.boxShadow='0 6px 22px rgba(255,204,0,0.35)';
-    } else {
-      btn.disabled = false;
-      btn.textContent = btn.dataset._txt || 'Salvar Alterações';
-      btn.style.filter=''; btn.style.boxShadow='';
-    }
+  /* Exclusão com confirmação */
+  var confirmModal = document.getElementById('confirmModal');
+  var btnCloseConfirm = document.getElementById('btnCloseConfirm');
+  var btnCancelConfirm = document.getElementById('btnCancelConfirm');
+  var btnConfirmDelete = document.getElementById('btnConfirmDelete');
+  var confirmText = document.getElementById('confirmText');
+  var toDeleteStepId = null;
+
+  function openConfirm(stepObj){
+    toDeleteStepId = stepObj.id;
+    if (confirmText) confirmText.textContent = 'Tem certeza que deseja excluir a ' + (stepObj.name || ('Etapa ' + stepObj.step_no)) + '? Essa ação não pode ser desfeita.';
+    confirmModal && confirmModal.removeAttribute('hidden');
+    document.addEventListener('keydown', escCloseConfirm);
   }
-  function flashSaved(btn){
-    if (!btn) return;
-    const old = btn.textContent;
-    btn.textContent = 'Salvo!';
-    btn.style.animation = 'tfSavedPulse .55s ease-out';
-    setTimeout(function(){
-      btn.style.animation = '';
-      btn.textContent = btn.dataset._txt || 'Salvar Alterações';
-    }, 900);
+  function closeConfirm(){
+    confirmModal && confirmModal.setAttribute('hidden','');
+    toDeleteStepId = null;
+    document.removeEventListener('keydown', escCloseConfirm);
+  }
+  function escCloseConfirm(e){ if(e.key==='Escape') closeConfirm(); }
+  [btnCloseConfirm, btnCancelConfirm].forEach(function(b){ if(b) b.addEventListener('click', closeConfirm); });
+  if (confirmModal){
+    confirmModal.addEventListener('click', function(e){ if(e.target === confirmModal) closeConfirm(); });
   }
 
-  if (saveBtn){
-    saveBtn.addEventListener('click', async function(){
-      var draftSettings = (window.tfDraftSettings && typeof window.tfDraftSettings === 'object')
-        ? window.tfDraftSettings
-        : {};
-      try{
-        setButtonLoading(saveBtn, true);
-        const r = await fetch('/ofertas/' + encodeURIComponent(offer.id) + '/etapas/' + encodeURIComponent(currentStep.id) + '/save', {
-          method:'POST', headers:{'Content-Type':'application/json'},
-          body: JSON.stringify({ settings: draftSettings })
+  // Abrir confirmação ao clicar na lixeira
+  document.querySelectorAll('.tf-step-item .trash').forEach(function(b){
+    b.addEventListener('click', function(e){
+      e.stopPropagation();
+      var sid = b.getAttribute('data-del-step-id');
+      var stepObj = (steps || []).find(function(s){ return s.id === sid; });
+      if (!stepObj) return;
+      openConfirm(stepObj);
+    });
+  });
+
+  // Executa exclusão
+  if (btnConfirmDelete){
+    btnConfirmDelete.addEventListener('click', async function(){
+      if (!toDeleteStepId) return;
+      try {
+        const r = await fetch('/ofertas/' + encodeURIComponent(offer.id) + '/etapas/' + encodeURIComponent(toDeleteStepId) + '/delete', {
+          method:'POST', headers:{'Content-Type':'application/json'}
         });
         const js = await r.json();
-        if (!js || !js.ok) throw new Error('save_failed');
-        flashSaved(saveBtn);
-        showToast('success','Etapa salva com sucesso.');
-      }catch(e){
+        if (!js || !js.ok) throw new Error('delete_failed');
+        closeConfirm();
+        showToast('success','Etapa excluída com sucesso.');
+        // redireciona para o painel da oferta (backend seleciona a etapa correta)
+        setTimeout(function(){
+          window.location.href = '/ofertas/painel/' + encodeURIComponent(offer.id);
+        }, 300);
+      } catch(e){
         console.error(e);
-        showToast('error','Não foi possível salvar. Tente novamente.');
-      }finally{
-        setButtonLoading(saveBtn, false);
+        showToast('error','Não foi possível excluir. Tente novamente.');
       }
     });
   }
 
-  /* Modal criar etapa (simples) */
+  /* Modal Nova Etapa (sem duplicar) */
   var stepModal = document.getElementById('stepModal');
   var openBtn = document.getElementById('btnCreateStep');
   var closeBtn = document.getElementById('btnCloseModal');
@@ -321,27 +436,46 @@
   var confirmBtn = document.getElementById('btnConfirmStep');
   var nameInput = document.getElementById('inpStepName');
 
-  function escToClose(e){ if(e.key==='Escape') closeModal(); }
   function openModal(){
     if(!stepModal) return;
+    // sugestão de nome (maior step_no + 1)
     var nextNo = 1;
-    if (Array.isArray(steps) && steps.length){
-      nextNo = Math.max.apply(null, steps.map(function(s){return Number(s.stepNo||0)})) + 1;
-    }
+    if (Array.isArray(steps) && steps.length){ nextNo = Math.max.apply(null, steps.map(function(s){return Number(s.step_no||0)})) + 1; }
     if (nameInput) nameInput.value = 'Etapa ' + nextNo;
     stepModal.removeAttribute('hidden'); nameInput && nameInput.focus();
     document.addEventListener('keydown', escToClose);
   }
   function closeModal(){ if(stepModal){ stepModal.setAttribute('hidden',''); document.removeEventListener('keydown',escToClose); } }
-
-  if (openBtn) openBtn.addEventListener('click', openModal);
+  function escToClose(e){ if(e.key==='Escape') closeModal(); }
+  if (openBtn) openBtn.addEventListener('click', function(e){
+    // ripple simples
+    const r = openBtn.getBoundingClientRect();
+    const circle = document.createElement('span');
+    const size = Math.max(r.width, r.height);
+    circle.style.position='absolute'; circle.style.width=size+'px'; circle.style.height=size+'px';
+    circle.style.left=(e.clientX - r.left - size/2)+'px';
+    circle.style.top=(e.clientY - r.top - size/2)+'px';
+    circle.style.borderRadius='50%';
+    circle.style.background='rgba(255,204,0,.12)';
+    circle.style.pointerEvents='none';
+    circle.style.transform='scale(0)';
+    circle.style.transition='transform .35s ease, opacity .4s ease';
+    openBtn.appendChild(circle);
+    requestAnimationFrame(()=>{ circle.style.transform='scale(1)'; circle.style.opacity='0'; setTimeout(()=>circle.remove(), 400); });
+    openModal();
+  });
   if (closeBtn) closeBtn.addEventListener('click', closeModal);
   if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
   if (stepModal){ stepModal.addEventListener('click', function(e){ if (e.target === stepModal) closeModal(); }); }
 
   if (confirmBtn){
     confirmBtn.addEventListener('click', async function(){
-      var stepName = (nameInput?.value || '').trim() || 'Etapa';
+      var stepName = (nameInput?.value || '').trim();
+      if (!stepName){
+        var nextNo = 1;
+        if (Array.isArray(steps) && steps.length){ nextNo = Math.max.apply(null, steps.map(function(s){return Number(s.step_no||0)})) + 1; }
+        stepName = 'Etapa ' + nextNo;
+      }
       try {
         const r = await fetch('/ofertas/' + encodeURIComponent(offer.id) + '/etapas', {
           method:'POST', headers:{'Content-Type':'application/json'},
@@ -349,6 +483,7 @@
         });
         const js = await r.json();
         if (!js || !js.ok) throw new Error('create_failed');
+        showToast('success','Etapa criada.');
         window.location.href = '/ofertas/painel/' + offer.id + '?stepId=' + encodeURIComponent(js.step.id);
       } catch(e){
         console.error(e);
@@ -357,91 +492,42 @@
     });
   }
 
-  /* Dropdown de etapas (UX clara + excluir) */
-  var chip = document.getElementById('tfStepChip');
-  var dd = document.getElementById('tfStepDropdown');
-
-  function renderDropdown(){
-    if (!dd) return;
-    dd.innerHTML = '';
-    (steps || []).forEach(function(s){
-      var item = document.createElement('div');
-      item.className = 'tf-step-item' + ((currentStep && s.id === currentStep.id) ? ' active' : '');
-      item.dataset.id = s.id;
-
-      var lbl = document.createElement('div');
-      lbl.className = 'lbl';
-      lbl.textContent = s.name || ('Etapa ' + (s.stepNo || ''));
-
-      if (currentStep && s.id === currentStep.id){
-        var pill = document.createElement('span');
-        pill.className = 'pill';
-        pill.textContent = 'Atual';
-        lbl.appendChild(pill);
-      }
-
-      var del = document.createElement('button');
-      del.className = 'tf-step-del';
-      del.type = 'button';
-      del.textContent = '🗑'; // discreto; mantém estilo minimalista
-      del.title = 'Excluir etapa';
-
-      del.addEventListener('click', async function(ev){
-        ev.stopPropagation();
-        // protege Etapa 1 no cliente também
-        if ((s.stepNo || 0) === 1){
-          showToast('error','A Etapa 1 não pode ser excluída.');
-          return;
-        }
-        try{
-          const r = await fetch('/ofertas/' + encodeURIComponent(offer.id) + '/etapas/' + encodeURIComponent(s.id), { method:'DELETE' });
-          const js = await r.json();
-          if (!js || !js.ok) throw new Error('delete_failed');
-          // atualiza steps na memória
-          steps = js.steps || [];
-          // se deletou a atual, redireciona para a primeira da lista
-          if (currentStep && currentStep.id === s.id){
-            var next = steps[0];
-            if (next) {
-              window.location.href = '/ofertas/painel/' + offer.id + '?stepId=' + encodeURIComponent(next.id);
-            } else {
-              window.location.href = '/ofertas/painel/' + offer.id;
-            }
-            return;
-          }
-          renderDropdown();
-          showToast('success','Etapa excluída.');
-        }catch(e){
-          console.error(e);
-          showToast('error','Não foi possível excluir a etapa.');
-        }
-      });
-
-      item.appendChild(lbl);
-      item.appendChild(del);
-
-      item.addEventListener('click', function(){
-        if (s.id === (currentStep && currentStep.id)) { dd.hidden = true; return; }
-        window.location.href = '/ofertas/painel/' + offer.id + '?stepId=' + encodeURIComponent(s.id);
-      });
-
-      dd.appendChild(item);
-    });
+  /* Salvar Alterações (usa rota /save existente) */
+  var saveBtn = document.getElementById('btnSaveAll');
+  function setButtonLoading(btn, isLoading){
+    if (!btn) return;
+    if (isLoading){
+      btn.disabled = true;
+      if (!btn.dataset._txt) btn.dataset._txt = btn.textContent;
+      btn.textContent = 'Salvando…';
+    } else {
+      btn.disabled = false;
+      btn.textContent = btn.dataset._txt || 'Salvar Alterações';
+    }
   }
+  if (saveBtn){
+    saveBtn.addEventListener('click', async function(){
+      var draftSettings = (window.tfDraftSettings && typeof window.tfDraftSettings === 'object')
+        ? window.tfDraftSettings : {};
 
-  if (chip){
-    chip.addEventListener('click', function(){
-      if (dd.hidden){
-        renderDropdown();
-        dd.hidden = false;
-        document.addEventListener('click', outsideClose, { once:true });
-      } else {
-        dd.hidden = true;
+      try{
+        setButtonLoading(saveBtn, true);
+        const r = await fetch('/ofertas/' + encodeURIComponent(offer.id) + '/etapas/' + encodeURIComponent(currentStep.id) + '/save', {
+          method:'POST', headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({ settings: draftSettings })
+        });
+        const js = await r.json();
+        if (!js || !js.ok) throw new Error('save_failed');
+        // glow curto 3D + toast
+        saveBtn.classList.remove('tf-saved-glow'); void saveBtn.offsetWidth; saveBtn.classList.add('tf-saved-glow');
+        showToast('success', 'Etapa salva com sucesso ✅');
+      }catch(e){
+        console.error(e);
+        showToast('error','Não foi possível salvar. Tente novamente.');
+      }finally{
+        setButtonLoading(saveBtn, false);
       }
     });
-  }
-  function outsideClose(ev){
-    if (!dd.contains(ev.target) && ev.target !== chip) dd.hidden = true;
   }
 })();
 </script>
