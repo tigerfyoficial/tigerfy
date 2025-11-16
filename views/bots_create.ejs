@@ -62,17 +62,19 @@
 </div>
 
 <style>
-  /* ===== Área da página (respeita sidebar; NÃO altera o tema) ===== */
+  /* ===== Área da página (respeita sidebar) ===== */
   .tiger-offer-create{
-    padding:60px 80px 100px 130px;   /* igual às demais páginas do painel */
-    max-width:1200px;
-    margin:0 auto;                   /* centraliza a área útil (descontando a sidebar pelo padding-left) */
-    color:#fff;
+    /* AJUSTE TIGERFY: padding horizontal simétrico p/ centralizar na área útil */
+    padding: 60px 80px 100px 80px;
+    max-width: 1200px;
+    margin: 0 auto;     /* centraliza a área útil */
+    color: #fff;
+    box-sizing: border-box;
   }
 
-  /* ===== Centralização perfeita do card ===== */
+  /* ===== Centralização do card ===== */
   .offer-create-wrapper{
-    min-height: calc(100vh - 120px); /* respiro superior semelhante ao modal de etapas */
+    min-height: calc(100dvh - 140px); /* respiro vertical semelhante ao modal de etapas */
     display:flex;
     align-items:center;              /* centro vertical */
     justify-content:center;          /* centro horizontal */
@@ -196,30 +198,14 @@
 
   /* ===== Responsivo ===== */
   @media (max-width: 980px){
-/* AJUSTE TIGERFY — centralização real na área útil (à direita da sidebar) */
-.tiger-offer-create{
-  /* era: padding:60px 80px 100px 130px;  ← causava o deslocamento */
-  padding: 60px 80px 100px 80px;   /* padding L/R simétrico */
-  max-width: 1200px;
-  margin: 0 auto;                  /* mantém centro da área útil */
-}
-
-/* mantém o centro vertical e horizontal do bloco */
-.offer-create-wrapper{
-  min-height: calc(100dvh - 140px); /* respiro vertical um pouco maior p/ ficar realmente no meio */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 24px 0;
-}
-
-/* garante que o conjunto header+form fique centrado dentro do wrapper */
-.offer-create-inner{
-  max-width: 880px;
-  width: 100%;
-  margin: 0 auto;                  /* reforça o centro */
-}
-
+    .tiger-offer-create{ padding:50px 18px 80px 18px; }
+    .offer-create-wrapper{
+      min-height:auto;              /* evita “espremer” em telas menores */
+      align-items:flex-start;       /* começa um pouco mais alto no mobile */
+      padding-top:12px;
+    }
+    .offer-create-inner{ max-width:100%; }
+    .offer-create-form{ padding:18px; }
   }
 </style>
 
