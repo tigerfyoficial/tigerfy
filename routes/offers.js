@@ -119,7 +119,7 @@ router.get("/ofertas/painel/:id", authGuard, async (req, res) => {
     if (offerRes.error || !offerRes.data) return res.redirect("/ofertas");
     const offer = mapOffer(offerRes.data);
 
-    // Garante Etapa 1 (mantém assinatura atual do helper)
+    // Garante Etapa 1
     if (typeof Steps.ensureFirstStep === "function") {
       await Steps.ensureFirstStep(offer.id);
     }
@@ -128,7 +128,7 @@ router.get("/ofertas/painel/:id", authGuard, async (req, res) => {
     const stepsRes = await Steps.listSteps(offer.id);
     const steps = (stepsRes.data || []).map(mapStep);
 
-    // Etapa atual: prioriza offer_id + stepId para não pegar etapa errada
+    // Etapa atual (prioriza filtro por stepId + offerId)
     let currentStep = null;
     if (stepId) {
       const got = await Steps.getStepById({ offerId: offer.id, stepId });
@@ -151,37 +151,51 @@ router.get("/ofertas/painel/:id", authGuard, async (req, res) => {
   }
 });
 
-// CRIAR ETAPA — sempre INSERT, nunca sobrescreve
+/* ---------- Criar etapa (sempre INSERT, nunca sobrescreve) ---------- */
 router.post("/ofertas/:id/etapas", authGuard, async (req, res) => {
   try {
     const owner = req.session.userId;
     const { id: offerId } = req.params;
     const { name, duplicate, fromStepId } = req.body || {};
 
+    // Confere owner da oferta
     const offerRes = await Steps.getOfferByIdForOwner(offerId, owner);
     if (offerRes.error || !offerRes.data) {
       return res.status(403).json({ ok: false, error: "forbidden" });
     }
 
+    // Usa mutateStep se existir; senão, createStep
     const fn = typeof Steps.mutateStep === "function" ? Steps.mutateStep : Steps.createStep;
     const params = (fn === Steps.mutateStep)
-      ? { mode: duplicate ? "duplicateFromCurrent" : "createFromScratch", offerId, ownerId: owner, name: (name || "").trim(), fromStepId: duplicate ? (fromStepId || null) : null }
-      : { offerId, ownerId: owner, name: (name || "").trim(), duplicate: !!duplicate, fromStepId: duplicate ? (fromStepId || null) : null };
+      ? {
+          mode: duplicate ? "duplicateFromCurrent" : "createFromScratch",
+          offerId,
+          ownerId: owner,
+          name: (name || "").trim(),
+          fromStepId: duplicate ? (fromStepId || null) : null
+        }
+      : {
+          offerId,
+          name: (name || "").trim(),
+          duplicate: !!duplicate,
+          fromStepId: duplicate ? (fromStepId || null) : null
+        };
 
     const created = await fn(params);
     if (created.error || !created.data) {
       console.error("[steps] insert error:", created.error);
       return res.status(500).json({ ok: false, error: "insert_failed" });
     }
-    return res.json({ ok: true, step: created.data });
+
+    return res.json({ ok: true, step: mapStep(created.data) });
   } catch (err) {
     console.error("Erro criar etapa:", err);
     return res.status(500).json({ ok: false, error: "server_error" });
   }
 });
 
-/* ---------- Salvar alterações da etapa (settings / nome) ---------- */
-router.post("/ofertas/:id/etapas/:stepId/save", authGuard, async (req, res) => {
+/* ---------- Salvar alterações da etapa (PATCH canônico) ---------- */
+router.patch("/ofertas/:id/etapas/:stepId", authGuard, async (req, res) => {
   try {
     const owner = req.session.userId;
     const { id: offerId, stepId } = req.params;
@@ -199,7 +213,7 @@ router.post("/ofertas/:id/etapas/:stepId/save", authGuard, async (req, res) => {
       return res.status(404).json({ ok: false, error: "step_not_found" });
     }
 
-    // Atualiza via mutateStep se existir; senão, mantém updateStep atual
+    // Atualiza via mutateStep se existir; senão, updateStep
     let updRes;
     if (typeof Steps.mutateStep === "function") {
       updRes = await Steps.mutateStep({
@@ -226,7 +240,43 @@ router.post("/ofertas/:id/etapas/:stepId/save", authGuard, async (req, res) => {
 
     return res.json({ ok: true, step: mapStep(updRes.data) });
   } catch (err) {
-    console.error("Erro salvar etapa:", err);
+    console.error("Erro salvar etapa (PATCH):", err);
+    return res.status(500).json({ ok: false, error: "server_error" });
+  }
+});
+
+/* ---------- Salvar alterações (compat: POST /save) ---------- */
+router.post("/ofertas/:id/etapas/:stepId/save", authGuard, async (req, res) => {
+  try {
+    const owner = req.session.userId;
+    const { id: offerId, stepId } = req.params;
+    const { name, settings } = req.body || {};
+
+    const offerRes = await Steps.getOfferByIdForOwner(offerId, owner);
+    if (offerRes.error || !offerRes.data) {
+      return res.status(403).json({ ok: false, error: "forbidden" });
+    }
+
+    const stepRes = await Steps.getStepById({ offerId, stepId });
+    if (stepRes.error || !stepRes.data) {
+      return res.status(404).json({ ok: false, error: "step_not_found" });
+    }
+
+    const updRes = await Steps.updateStep({
+      offerId,
+      stepId,
+      name: typeof name === "string" ? name : undefined,
+      settings: settings && typeof settings === "object" ? settings : undefined,
+    });
+
+    if (updRes.error || !updRes.data) {
+      console.error("[steps] update error:", updRes.error?.message || updRes.error);
+      return res.status(500).json({ ok: false, error: "update_failed" });
+    }
+
+    return res.json({ ok: true, step: mapStep(updRes.data) });
+  } catch (err) {
+    console.error("Erro salvar etapa (POST /save):", err);
     return res.status(500).json({ ok: false, error: "server_error" });
   }
 });
