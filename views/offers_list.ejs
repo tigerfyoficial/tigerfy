@@ -70,353 +70,112 @@
   </div>
 </div>
 
-<!-- ===== Modal: Gerenciar Oferta ===== -->
-<div class="modal-gerenciar-oferta-overlay" id="offerManagerOverlay" style="display:none;">
-  <div class="modal-gerenciar-oferta">
-    <div class="m-header">
-      <div>
-        <h3>Gerenciar Oferta</h3>
-        <p class="m-sub">Veja o resumo desta oferta e gerencie as ações rápidas.</p>
-      </div>
-      <button class="m-close" type="button" id="offerManagerClose" aria-label="Fechar">
-        <!-- X centralizado -->
-        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true">
-          <path d="M18.3 5.71a1 1 0 0 0-1.41 0L12 10.59 7.11 5.7A1 1 0 0 0 5.7 7.11L10.59 12l-4.9 4.89a1 1 0 1 0 1.41 1.41L12 13.41l4.89 4.9a1 1 0 0 0 1.41-1.41L13.41 12l4.9-4.89a1 1 0 0 0-.01-1.4Z"/>
-        </svg>
-      </button>
-    </div>
-
-    <div class="m-body">
-      <!-- Resumo -->
-      <section class="m-section">
-        <h4>Resumo da Oferta</h4>
-        <ul class="m-resumo">
-          <li><strong>Nome atual:</strong> <span id="resNome">—</span></li>
-          <li><strong>ID:</strong> <span id="resId">—</span></li>
-          <li><strong>Quantidade de bots vinculados:</strong> <span id="resBots">0</span></li>
-          <li><strong>Tipo de Bot:</strong> <span id="resTipo">—</span></li>
-        </ul>
-      </section>
-
-      <!-- Renomear -->
-      <section class="m-section">
-        <h4>Renomear Oferta</h4>
-        <div class="m-field">
-          <label for="novoNome">Novo nome da oferta</label>
-          <input type="text" id="novoNome" placeholder="Ex: Mundo VIP 2.0, Oferta Principal, etc..." />
-        </div>
-        <button class="btn-primary" id="btnSalvarNome" type="button">Salvar novo nome</button>
-        <small class="m-error" id="renameError" style="display:none;">Não foi possível renomear. Tente novamente.</small>
-      </section>
-
-      <!-- Excluir -->
-      <section class="m-section danger">
-        <h4>Atenção</h4>
-        <p class="m-danger-text">Cuidado: esta ação é permanente.</p>
-        <button class="btn-danger" id="btnExcluir" type="button">Excluir oferta</button>
-      </section>
-    </div>
-  </div>
-</div>
-
-<!-- ===== Toasts ===== -->
-<div id="tfToastHost" class="tf-toast-host" style="pointer-events:none;"></div>
-
-<style>
-  .tiger-offers-list{
-    padding:60px 80px 100px 130px;
-    max-width:calc(100vw - 120px);
-    margin:0 auto;
-    color:#fff;
-  }
-  .list-header{
-    display:flex; align-items:center; justify-content:space-between; margin-bottom:18px;
-  }
-  .list-header h1{ margin:0 0 6px; font-size:2rem; color:#ffcc00; }
-  .list-header p{ margin:0; color:#b4b4b4; font-size:.95rem; }
-
-  .list-grid{
-    display:grid; gap:12px;
-    grid-template-columns:repeat(auto-fill, minmax(280px, 1fr));
-  }
-  .offer-card{
-    position:relative;
-    display:block; text-decoration:none; color:#fff;
-    background:rgba(0,0,0,0.70);
-    border:1px solid rgba(255,204,0,0.12);
-    border-radius:16px; padding:14px;
-    transition:.2s;
-  }
-  .offer-card:hover{ border-color:#ffcc00; box-shadow:0 0 16px rgba(255,204,0,0.3); }
-  .card-top{ display:flex; align-items:center; justify-content:space-between; gap:8px; }
-  .card-top h3{ margin:0; font-size:1rem; }
-  .status{ font-size:.75rem; padding:3px 7px; border-radius:999px; }
-  .status.ativo{ background:rgba(0,255,120,0.16); color:#4fff9a; }
-  .status.incompleto{ background:rgba(255,196,0,0.16); color:#ffdd66; }
-  .status.erro{ background:rgba(255,0,76,0.16); color:#ff6b9e; }
-
-  .meta{
-    display:flex; gap:10px; flex-wrap:wrap; margin-top:8px;
-    font-size:.78rem; color:#c9c9c9;
-  }
-  .meta-line{ display:flex; align-items:center; gap:8px; }
-  .meta-text{ white-space:nowrap; }
-
-  .go{ position:absolute; right:12px; bottom:10px; opacity:.6; font-size:1.4rem; }
-
-  .empty{ text-align:center; padding:30px 16px; background:rgba(0,0,0,0.70); border:1px solid rgba(255,204,0,0.12); border-radius:16px; }
-  .btn-primary.small{ padding:8px 16px; font-size:.85rem; }
-  .btn-primary{
-    border:none; border-radius:10px; padding:10px 22px; font-weight:600; cursor:pointer; text-decoration:none;
-    background:linear-gradient(90deg,#ffcc00,#d4a100); color:#1a1300; box-shadow:0 0 12px rgba(255,204,0,0.4); font-size:.95rem;
-  }
-
-  /* Botão “•••” embutido ao lado do Tipo */
-  .offer-actions-inline{
-    display:inline-flex; align-items:center; justify-content:center;
-    height:22px; min-width:22px; padding:0 6px;
-    border-radius:999px;
-    background:rgba(255,255,255,0.06);
-    border:1px solid rgba(255,255,255,0.14);
-    color:#fff; cursor:pointer;
-    transition: box-shadow .16s ease, transform .08s ease, background .16s ease, border-color .16s ease;
-  }
-  .offer-actions-inline:hover{
-    background:rgba(255,255,255,0.08);
-    border-color:rgba(255,204,0,0.35);
-    box-shadow:0 0 0 2px rgba(255,204,0,0.2), 0 10px 24px rgba(0,0,0,0.45);
-  }
-  .offer-actions-inline:active{ transform:translateY(1px); }
-
-  /* ===== Modal Gerenciar Oferta (estilo TigerFy, sem alterar tema global) ===== */
-  .modal-gerenciar-oferta-overlay{
-    position:fixed; inset:0; z-index:9999;
-    background:rgba(0,0,0,0.55);
-    backdrop-filter: blur(8px);
-    display:flex; align-items:center; justify-content:center;
-  }
-  .modal-gerenciar-oferta{
-    width:min(680px, 92vw);
-    background:rgba(18,18,18,0.92);
-    border:1px solid rgba(255,204,0,0.12);
-    border-radius:18px;
-    box-shadow:0 0 24px rgba(255,204,0,0.16), 0 10px 30px rgba(0,0,0,0.55);
-    padding:18px;
-    transform: translateY(6px);
-    animation: tfFadeUp .18s ease-out forwards;
-  }
-  @keyframes tfFadeUp{
-    from{ opacity:0; transform: translateY(10px) scale(0.99); }
-    to{ opacity:1; transform: translateY(0) scale(1); }
-  }
-  .m-header{
-    display:flex; align-items:flex-start; justify-content:space-between; gap:12px; margin-bottom:10px;
-  }
-  .m-header h3{ margin:0 0 2px 0; color:#ffcc00; }
-  .m-sub{ margin:0; color:#b4b4b4; font-size:.9rem; }
-  .m-close{
-    display:grid; place-items:center;
-    width:34px; height:34px; border-radius:999px;
-    background:rgba(255,255,255,0.06);
-    border:1px solid rgba(255,255,255,0.14);
-    color:#fff; cursor:pointer; flex:0 0 auto;
-    transition: box-shadow .16s ease, transform .08s ease, background .16s ease, border-color .16s ease;
-  }
-  .m-close:hover{
-    background:rgba(255,255,255,0.08);
-    border-color:rgba(255,204,0,0.35);
-    box-shadow:0 0 0 2px rgba(255,204,0,0.2);
-  }
-
-  .m-body{ display:flex; flex-direction:column; gap:16px; }
-  .m-section{ background:rgba(0,0,0,0.35); border:1px solid rgba(255,204,0,0.10); border-radius:14px; padding:14px; }
-  .m-section h4{ margin:0 0 8px 0; }
-  .m-resumo{ list-style:none; padding:0; margin:0; display:grid; gap:6px; color:#d7d7d7; }
-  .m-resumo strong{ color:#fff; font-weight:600; }
-
-  .m-field{ display:flex; flex-direction:column; gap:6px; margin-bottom:10px; }
-  .m-field label{ color:#c9c9c9; font-size:.9rem; }
-  .m-field input{
-    background:#111; border:1px solid rgba(255,255,255,0.12); color:#fff;
-    padding:10px 12px; border-radius:10px; outline:none;
-  }
-  .m-error{ color:#ff6b9e; display:block; margin-top:6px; }
-
-  .m-section.danger{ border-color: rgba(255,90,90,0.25); }
-  .m-danger-text{ color:#ff9aa9; margin:0 0 8px 0; }
-  .btn-danger{
-    border:none; border-radius:10px; padding:10px 16px; font-weight:600; cursor:pointer;
-    background:linear-gradient(90deg,#ff3b58,#d41435); color:#fff; box-shadow:0 0 12px rgba(255,59,88,0.35); font-size:.95rem;
-  }
-
-  /* ===== Toasts ===== */
-  .tf-toast-host{
-    position:fixed; top:18px; right:18px; z-index:10000; display:flex; flex-direction:column; gap:10px;
-  }
-  .tf-toast{
-    display:flex; align-items:center; gap:10px;
-    background:rgba(18,18,18,0.96);
-    border:1px solid rgba(255,204,0,0.18);
-    color:#fff; border-radius:12px; padding:10px 12px;
-    box-shadow:0 10px 24px rgba(0,0,0,0.45), 0 0 14px rgba(255,204,0,0.12);
-    transform: translateY(-6px); opacity:0;
-    animation: tfToastIn .18s ease-out forwards;
-  }
-  .tf-toast.success{ border-color:rgba(120,255,180,0.25); box-shadow:0 0 14px rgba(120,255,180,0.18), 0 10px 24px rgba(0,0,0,0.45); }
-  .tf-toast.error{ border-color:rgba(255,90,120,0.30); box-shadow:0 0 14px rgba(255,90,120,0.18), 0 10px 24px rgba(0,0,0,0.45); }
-  .tf-toast .ticon{ opacity:.9; }
-  @keyframes tfToastIn{
-    from{ transform: translateY(-6px); opacity:0; }
-    to{ transform: translateY(0); opacity:1; }
-  }
-</style>
-
-<script>
-(function(){
-  const $overlay = document.getElementById('offerManagerOverlay');
-  const $close   = document.getElementById('offerManagerClose');
-  const $host    = document.getElementById('tfToastHost');
-
-  const $resNome = document.getElementById('resNome');
-  const $resId   = document.getElementById('resId');
-  const $resBots = document.getElementById('resBots');
-  const $resTipo = document.getElementById('resTipo');
-
-  const $novoNome    = document.getElementById('novoNome');
-  const $btnSalvar   = document.getElementById('btnSalvarNome');
-  const $btnExcluir  = document.getElementById('btnExcluir');
-  const $renameError = document.getElementById('renameError');
-
-  let currentCard = null; // referência do card selecionado
-
-  function showOverlay(){ $overlay.style.display = 'flex'; }
-  function hideOverlay(){ $overlay.style.display = 'none'; }
-
-  function toast(type, msg){
-    const node = document.createElement('div');
-    node.className = 'tf-toast ' + (type || 'success');
-    node.innerHTML = `
-      <span class="ticon" aria-hidden="true">
-        ${type === 'error'
-          ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 1 0 .001 20.001A10 10 0 0 0 12 2Zm1 15h-2v-2h2v2Zm0-4h-2V7h2v6Z"/></svg>'
-          : '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>'
-        }
-      </span>
-      <span>${msg}</span>
-    `;
-    $host.appendChild(node);
-    setTimeout(()=>{ node.style.opacity = '0'; node.style.transform = 'translateY(-6px)'; }, 2200);
-    setTimeout(()=>{ node.remove(); }, 2600);
-  }
-
-  // Exposto globalmente para o botão (…) dentro do card
-  window.tfOpenOfferManager = function(btnEl){
-    currentCard = btnEl.closest('.offer-card');
-    if(!currentCard) return;
-
-    const id       = currentCard.dataset.offerId;
-    const name     = currentCard.dataset.offerName || currentCard.querySelector('.offer-title')?.textContent || '';
-    const botCount = currentCard.dataset.offerBotCount || '0';
-    const tipo     = currentCard.dataset.offerBotTypeLabel || 'Padrão';
-
-    // Preenche resumo
-    $resNome.textContent = name || '—';
-    $resId.textContent   = id || '—';
-    $resBots.textContent = String(botCount);
-    $resTipo.textContent = tipo;
-
-    // Preenche campo renomear
-    $novoNome.value = name || '';
-    $renameError.style.display = 'none';
-
-    showOverlay();
-  };
-
-  // Fechar modal
-  $close.addEventListener('click', hideOverlay);
-  $overlay.addEventListener('click', (e)=>{
-    if(e.target === $overlay) hideOverlay();
-  });
-
-  // Salvar novo nome
-  $btnSalvar.addEventListener('click', async ()=>{
-    if(!currentCard) return;
-    const id = currentCard.dataset.offerId;
-    const novoNome = ($novoNome.value || '').trim();
-    if(!novoNome){ $renameError.style.display='block'; $renameError.textContent='Digite um nome válido.'; return; }
-
-    // POST /ofertas/:id/renomear  { novoNome }
-    try{
-      $renameError.style.display='none';
-      const res = await fetch(`/ofertas/${encodeURIComponent(id)}/renomear`, {
-        method: 'POST',
-        headers: { 'Content-Type':'application/json' },
-        body: JSON.stringify({ novoNome })
-      });
-      const payload = await res.json().catch(()=>({}));
-      if(!res.ok || payload?.ok === false){
-        throw new Error(payload?.error || 'Falha ao renomear');
-      }
-
-      // Atualiza DOM (título + datasets)
-      const titleEl = currentCard.querySelector('.offer-title');
-      if(titleEl) titleEl.textContent = novoNome;
-      currentCard.dataset.offerName = novoNome;
-      $resNome.textContent = novoNome;
-
-      toast('success','Nome atualizado com sucesso.');
-      hideOverlay();
-    }catch(err){
-      console.error(err);
-      $renameError.style.display='block';
-      $renameError.textContent='Não foi possível renomear. Tente novamente.';
-      toast('error','Falha ao renomear.');
+// Renomear oferta
+router.post("/ofertas/:id/renomear", authGuard, async (req, res) => {
+  try {
+    const owner = req.session.userId;
+    const { id } = req.params;
+    const { novoNome } = req.body || {};
+    if (!novoNome || !String(novoNome).trim()) {
+      return res.status(400).json({ ok: false, error: "invalid_name" });
     }
-  });
 
-  // Excluir oferta
-  $btnExcluir.addEventListener('click', async ()=>{
-    if(!currentCard) return;
-    const id = currentCard.dataset.offerId;
-    const ok = confirm('Tem certeza que deseja excluir esta oferta? Esta ação é permanente.');
-    if(!ok) return;
+    // Confirma que a oferta é do usuário
+    const { data: exists, error: getErr } = await supabase
+      .from("offers")
+      .select("id, owner")
+      .eq("id", id)
+      .eq("owner", owner)
+      .single();
+    if (getErr || !exists) return res.status(404).json({ ok: false, error: "not_found" });
 
-    try{
-      const res = await fetch(`/ofertas/${encodeURIComponent(id)}/excluir`, {
-        method: 'POST',
-        headers: { 'Content-Type':'application/json' }
-      });
-      const payload = await res.json().catch(()=>({}));
-      if(!res.ok || payload?.ok === false){
-        throw new Error(payload?.error || 'Falha ao excluir');
-      }
+    const { data, error } = await supabase
+      .from("offers")
+      .update({ name: String(novoNome).trim() })
+      .eq("id", id)
+      .eq("owner", owner)
+      .select("id, name")
+      .single();
 
-      // Remove card e estado vazio se necessário
-      const grid = document.getElementById('offersGrid');
-      currentCard.remove();
-      currentCard = null;
-      hideOverlay();
-      toast('success','Oferta excluída com sucesso.');
+    if (error) return res.status(500).json({ ok: false, error: error.message });
+    return res.json({ ok: true, offer: data });
+  } catch (err) {
+    console.error("rename error:", err);
+    return res.status(500).json({ ok: false, error: "server_error" });
+  }
+});
 
-      if(grid && grid.querySelectorAll('.offer-card').length === 0){
-        const empty = document.getElementById('emptyState');
-        if(empty) empty.style.display='block';
-        else{
-          const node = document.createElement('div');
-          node.className='empty';
-          node.id='emptyState';
-          node.innerHTML = `
-            <h3>Você ainda não tem ofertas</h3>
-            <p>Crie sua primeira oferta para começar.</p>
-            <a href="/ofertas/criar" class="btn-primary small">Criar oferta</a>
-          `;
-          grid.appendChild(node);
-        }
-      }
-    }catch(err){
-      console.error(err);
-      toast('error','Não foi possível excluir a oferta.');
-    }
-  });
-})();
-</script>
+// Excluir oferta (remove etapas antes se não houver ON DELETE CASCADE)
+router.post("/ofertas/:id/excluir", authGuard, async (req, res) => {
+  try {
+    const owner = req.session.userId;
+    const { id } = req.params;
+
+    const { data: exists, error: getErr } = await supabase
+      .from("offers")
+      .select("id, owner")
+      .eq("id", id)
+      .eq("owner", owner)
+      .single();
+    if (getErr || !exists) return res.status(404).json({ ok: false, error: "not_found" });
+
+    // Apaga etapas relacionadas (seguro para ausência de CASCADE)
+    await supabase.from("offer_steps").delete().eq("offer_id", id);
+
+    const { error } = await supabase
+      .from("offers")
+      .delete()
+      .eq("id", id)
+      .eq("owner", owner);
+
+    if (error) return res.status(500).json({ ok: false, error: error.message });
+    return res.json({ ok: true });
+  } catch (err) {
+    console.error("delete offer error:", err);
+    return res.status(500).json({ ok: false, error: "server_error" });
+  }
+});
+
+// Duplicar oferta
+router.post("/ofertas/:id/duplicar", authGuard, async (req, res) => {
+  try {
+    const owner = req.session.userId;
+    const { id } = req.params;
+
+    // Carrega original
+    const { data: orig, error: getErr } = await supabase
+      .from("offers")
+      .select("id, owner, name, bot_type, tracking_type, status, telegram_username, bot_token")
+      .eq("id", id)
+      .eq("owner", owner)
+      .single();
+
+    if (getErr || !orig) return res.status(404).json({ ok: false, error: "not_found" });
+
+    const payload = {
+      owner: orig.owner,
+      name: `${orig.name} (cópia)`,
+      bot_type: orig.bot_type || "bot_padrao",
+      tracking_type: orig.tracking_type || "fb_pixel",
+      status: orig.status || "incompleto",
+      telegram_username: orig.telegram_username || null,
+      bot_token: orig.bot_token || null
+    };
+
+    const { data: created, error: insErr } = await supabase
+      .from("offers")
+      .insert([payload])
+      .select("id, owner, name, bot_type, tracking_type, status, telegram_username, bot_token")
+      .single();
+
+    if (insErr) return res.status(500).json({ ok: false, error: insErr.message });
+
+    // (Opcional futuro: duplicar offer_steps, configs, etc.)
+
+    return res.json({ ok: true, offer: created });
+  } catch (err) {
+    console.error("duplicate offer error:", err);
+    return res.status(500).json({ ok: false, error: "server_error" });
+  }
+});
+
