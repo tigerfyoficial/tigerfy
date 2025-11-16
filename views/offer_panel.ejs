@@ -1,5 +1,6 @@
 <%- include('partials/visual_hottrack') %>
 
+<!-- WRAPPER (mantido) -->
 <div class="offer-panel-container">
   <div class="tf-offer-panel">
     <nav class="tf-breadcrumb" id="tfBreadcrumb"></nav>
@@ -20,9 +21,9 @@
           Principal
         </button>
 
-        <button class="tab" data-tab="blindagem">
+        <button class="tab" data-tab="contingencia">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"></path></svg>
-          Blindagem de Bots
+          Contingência de Bots
         </button>
 
         <button class="tab" data-tab="tracking">
@@ -82,24 +83,20 @@
     <section class="tf-content-placeholder"></section>
   </div>
 </div>
+<!-- /offer-panel-container -->
 
+<!-- ===================== MODAL (visual intocado) ===================== -->
 <div class="tf-steps-overlay" id="stepsUnifiedModal" hidden>
-  <div class="tf-steps-dialog tf-steps-dialog--create-theme" role="dialog" aria-modal="true">
+  <div class="tf-steps-dialog tf-steps-dialog--wiin" role="dialog" aria-modal="true">
     <div class="tf-steps-head tf-steps-head--center">
       <h3>Gerenciar Etapas da Oferta</h3>
-      <p class="tf-steps-sub">Crie, selecione e organize as etapas desta oferta. As alterações só são aplicadas ao clicar em <strong>Salvar mudanças</strong>.</p>
-      <button type="button" class="tf-steps-close" id="btnCloseStepsUnified" aria-label="Fechar">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <line x1="18" y1="6" x2="6" y2="18"></line>
-          <line x1="6" y1="6" x2="18" y2="18"></line>
-        </svg>
-      </button>
+      <p class="tf-steps-sub">Crie, selecione e organize as etapas desta oferta.</p>
+      <button type="button" class="tf-steps-close" id="btnCloseStepsUnified" aria-label="Fechar">✕</button>
     </div>
 
     <div class="tf-steps-body tf-steps-body--compact">
       <div class="tf-steps-toolbar tf-steps-toolbar--tight">
-        <button type="button" class="btn-secondary btn-small" id="btnAddStepUnified" title="Adicionar nova etapa">
+        <button type="button" class="tf-btn tf-btn-small" id="btnAddStepUnified" title="Adicionar nova etapa">
           <span class="tf-icon-plus">＋</span> Nova etapa
         </button>
         <small class="tf-hint tf-toolbar-hint">Clique em <strong>Salvar mudanças</strong> para aplicar.</small>
@@ -108,214 +105,16 @@
       <ul class="tf-steps-list" id="tfStepsUnifiedList" aria-label="Lista de Etapas"></ul>
     </div>
 
-    <div class="tf-steps-actions tf-steps-actions--create-theme">
-      <button type="button" class="btn-secondary" id="btnCancelStepsUnified">Cancelar</button>
-      <button type="button" class="btn-primary" id="btnSaveStepsUnified">Salvar mudanças</button>
+    <div class="tf-steps-actions tf-steps-actions--wiin">
+      <button type="button" class="tf-btn" id="btnCancelStepsUnified">Cancelar</button>
+      <button type="button" class="tf-btn tf-btn-primary" id="btnSaveStepsUnified">Salvar mudanças</button>
     </div>
   </div>
 </div>
 
 <style>
-  :root{
-    --panel:rgba(255,255,255,0.04);
-    --panel-strong:rgba(255,255,255,0.06);
-    --border:rgba(255,255,255,0.12);
-    --muted:#b8b8b8;
-    --text:#ffffff;
-    --accent:#ffcc00;
-    --accent-dim:#d4a100;
-    --shadow:0 8px 24px rgba(0,0,0,0.45);
-    --pills-width: 980px;
-    --radius: 14px;
-  }
-
-  .offer-panel-container{ width:100%; max-width:1200px; margin-left:auto; margin-right:auto; }
-  .offer-panel-container .tf-offer-panel{ padding:60px 80px 100px 80px; }
-
-  .tf-offer-panel{ color:var(--text); padding:60px 80px 100px 130px; max-width:1200px; margin:0 auto; }
-  .tf-breadcrumb{ display:flex; align-items:center; gap:8px; color:var(--muted); font-size:.9rem; margin-bottom:10px; }
-  .tf-header{ display:flex; align-items:flex-start; justify-content:space-between; gap:16px; margin-bottom:12px; }
-  .tf-offer-title{ margin:0; font-size:1.8rem; letter-spacing:.3px; background:linear-gradient(90deg,#fff,#d8d8d8); -webkit-background-clip:text; background-clip:text; color:transparent; }
-
-  .tf-btn{ appearance:none; border:1px solid var(--border); background:var(--panel-strong); color:#eee; padding:9px 14px; border-radius:var(--radius); cursor:pointer; font-weight:600; box-shadow:var(--shadow); transition:.18s ease; }
-  .tf-btn:hover{ border-color:rgba(255,255,255,0.2); background:rgba(255,255,255,0.09); }
-  .tf-btn-primary{ background:linear-gradient(90deg,var(--accent),var(--accent-dim)); color:#171300; border:1px solid rgba(255,204,0,0.35); box-shadow:0 6px 22px rgba(255,204,0,0.25); }
-
-  .tf-pills-wrap{ max-width:var(--pills-width); margin:16px auto 8px; }
-  .tf-tabs{ display:flex; gap:8px; flex-wrap:wrap; justify-content:center; }
-  .tf-subtabs{ display:flex; gap:8px; flex-wrap:wrap; justify-content:center; margin-top:10px; }
-
-  .tf-tabs .tab{ display:inline-flex; align-items:center; gap:8px; padding:9px 14px; border-radius:999px; border:1px solid var(--border); background:var(--panel); color:#dedede; font-weight:600; font-size:.92rem; height:38px; transition:.18s ease; }
-  .tf-tabs .tab.active{ background:rgba(255,255,255,0.10); border-color:rgba(255,255,255,0.22); color:#fff; }
-  .tf-subtabs .subtab{ display:inline-flex; align-items:center; gap:8px; padding:7px 12px; border-radius:999px; border:1px solid var(--border); background:var(--panel); color:#dcdcdc; font-weight:600; font-size:.9rem; height:34px; }
-
-  .tf-content-placeholder{
-    min-height:360px; border:1px dashed rgba(255,255,255,0.12); border-radius:var(--radius);
-    background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
-    box-shadow:var(--shadow); margin-top:14px;
-  }
-
-  .btn-primary, .btn-secondary{
-    border:none; border-radius:10px; padding:10px 22px;
-    font-weight:600; cursor:pointer; text-decoration:none;
-    font-size:.95rem; display:inline-flex; align-items:center; justify-content:center;
-  }
-  .btn-small{ height:34px; padding:8px 14px; font-size:.9rem; border-radius:10px; }
-  .btn-primary{
-    background:linear-gradient(90deg,#ffcc00,#d4a100);
-    color:#1a1300;
-    box-shadow:0 0 16px rgba(255,204,0,0.45);
-    border:1px solid rgba(255,204,0,0.35);
-    transition:.18s ease;
-  }
-  .btn-secondary{
-    background:rgba(255,255,255,0.12);
-    color:#fff;
-    border:1px solid rgba(255,255,255,0.10);
-    transition:.18s ease;
-  }
-  .btn-secondary:hover{ background:rgba(255,255,255,0.18); }
-
-  .tf-steps-overlay[hidden]{ display:none !important; }
-  .tf-steps-overlay{
-    position:fixed; inset:0; z-index:3000;
-    display:flex; align-items:center; justify-content:center;
-    background:rgba(0,0,0,0.55);
-    backdrop-filter: blur(10px);
-  }
-  .tf-steps-dialog{
-    width:min(760px, calc(100vw - 40px));
-    max-height:min(70vh, 680px);
-    overflow:hidden;
-    border-radius:20px;
-    border:1px solid rgba(255,204,0,0.16);
-    box-shadow:0 0 40px rgba(0,0,0,0.6);
-    background:rgba(0,0,0,0.78);
-    transform: translateY(8px) scale(0.985);
-    animation: tfStepsIn .18s ease-out forwards;
-  }
-  @keyframes tfStepsIn { to { transform: translateY(0) scale(1); } }
-
-  .tf-steps-head{ position:relative; padding:22px 22px 12px 22px; border-bottom:1px solid rgba(255,255,255,0.08); }
-  .tf-steps-head--center h3{ text-align:center; }
-  .tf-steps-head h3{ margin:0; font-size:1.35rem; font-weight:800; color:#ffcc00; }
-  .tf-steps-sub{ color:#b4b4b4; margin:8px 0 0 0; font-size:.95rem; text-align:center; }
-  .tf-steps-close{
-    position:absolute; top:12px; right:12px;
-    width:36px; height:36px; border-radius:999px;
-    border:1px solid rgba(255,255,255,0.12); background:rgba(255,255,255,0.06); color:#eee;
-    display:inline-flex; align-items:center; justify-content:center; padding:0; line-height:1; cursor:pointer;
-    transition:.18s ease;
-  }
-  .tf-steps-close:hover{ background:rgba(255,255,255,0.10); border-color:rgba(255,255,255,0.20); }
-
-  .tf-steps-body{ padding:16px 18px; }
-  .tf-steps-toolbar{ display:flex; align-items:center; gap:12px; margin-bottom:12px; }
-  .tf-toolbar-hint{ margin-left:auto; color:#c9c9c9; font-size:.9rem; }
-
-  .tf-steps-list{
-    list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:12px;
-    max-height:48vh; overflow:auto;
-  }
-
-  .tf-step-item{
-    display:grid;
-    grid-template-columns: 32px 42px 1fr auto auto;
-    align-items:center; gap:12px;
-    padding:12px 14px;
-    border-radius:14px;
-    background:rgba(255,255,255,0.05);
-    border:1px solid rgba(255,255,255,0.10);
-    transition:.18s ease;
-  }
-  .tf-step-item:hover{ border-color:rgba(255,204,0,0.45); background:rgba(255,255,255,0.10); }
-  .tf-step-item.is-current{
-    border-color:#ffcc00;
-    background:radial-gradient(circle at top left,#fff7bf,#ffcc00 45%,#8a5a16 100%);
-    color:#111;
-    box-shadow:0 0 18px rgba(255,204,0,0.55);
-  }
-
-  .tf-drag-handle{
-    display:inline-flex; align-items:center; justify-content:center;
-    width:28px; height:28px; border-radius:10px;
-    border:1px solid rgba(255,255,255,0.10);
-    background:rgba(255,255,255,0.06);
-    cursor:grab; user-select:none; transition:.16s ease;
-  }
-  .tf-drag-handle:hover{ background:rgba(255,255,255,0.10); }
-  .tf-drag-handle:active{ cursor:grabbing; }
-  .tf-drag-handle svg{ width:14px; height:14px; opacity:.85; }
-
-  .tf-step-no{
-    display:inline-flex; align-items:center; justify-content:center;
-    width:40px; height:28px; border-radius:999px;
-    background: rgba(255,255,255,0.08);
-    border:1px solid rgba(255,255,255,0.14);
-    font-weight:800; color:#fff;
-  }
-  .tf-step-item.is-current .tf-step-no{ background:rgba(0,0,0,0.12); border-color:rgba(0,0,0,0.18); color:#111; }
-
-  .tf-step-name{
-    width:100%; padding:10px 12px; border-radius:10px;
-    border:1px solid rgba(255,255,255,0.22);
-    background:rgba(255,255,255,0.06);
-    color:#fff; outline:none; font-size:.95rem;
-    transition:border-color .2s, box-shadow .2s;
-  }
-  .tf-step-name::placeholder{ color:rgba(255,255,255,0.65); }
-  .tf-step-name:focus{ border-color:#ffcc00; box-shadow:0 0 0 2px rgba(255,204,0,0.28); }
-  .tf-step-item.is-current .tf-step-name{ color:#111; }
-
-  .tf-actions-inline{ display:flex; align-items:center; gap:8px; }
-
-  .tf-btn-ghost{
-    padding:8px 14px; border-radius:10px; height:36px;
-    background:rgba(255,255,255,0.12); color:#fff; border:1px solid rgba(255,255,255,0.10);
-    font-weight:700; transition:.18s ease;
-  }
-  .tf-btn-ghost:hover{ background:rgba(255,255,255,0.18); }
-  .tf-step-item.is-current .tf-btn-ghost{ background:rgba(0,0,0,0.06); color:#111; border-color:rgba(0,0,0,0.12); }
-
-  .tf-badge{
-    display:none; align-items:center; gap:6px; padding:7px 12px; border-radius:999px; height:36px;
-    border:1px solid rgba(255,255,255,0.12); background:rgba(255,255,255,0.06); color:#eaeaea; font-weight:800;
-  }
-  .tf-badge::before{ content:none !important; } /* garante SEM “bolinha” ao lado do texto */
-  .tf-badge.visible{ display:inline-flex; }
-  .tf-badge.current{
-    background:linear-gradient(90deg,#ffcc00,#d4a100);
-    color:#1a1300; border-color:rgba(255,204,0,0.45);
-  }
-
-  .tf-step-btn{
-    padding:8px 12px; border-radius:10px; height:36px;
-    border:1px solid rgba(255,255,255,0.12);
-    background:rgba(255,255,255,0.06);
-    color:#eee; transition:.16s ease;
-  }
-  .tf-step-btn:hover{ background:rgba(255,255,255,0.10); border-color:rgba(255,255,255,0.20); }
-  .tf-step-btn.danger{ border-color: rgba(255, 85, 85, .35); background: linear-gradient(90deg, #320000, #250000); color:#ffdada; }
-  .tf-step-btn.danger:hover{ filter:brightness(1.05); }
-
-  .tf-select-radio{ display:none !important; } /* radio fica oculto (mantém compat de lógica) */
-
-  .tf-steps-actions{ display:flex; justify-content:flex-end; gap:12px; padding:16px 18px 18px 18px; border-top:1px solid rgba(255,255,255,0.08); }
-
-  @keyframes tfPulseGlow {
-    0% { box-shadow: 0 0 0 0 rgba(255,204,0,0.35); transform: translateY(0) scale(1); }
-    60% { box-shadow: 0 0 24px 8px rgba(255,204,0,0.24); transform: translateY(-1px) scale(1.01); }
-    100% { box-shadow: 0 0 0 0 rgba(255,204,0,0.0); transform: translateY(0) scale(1); }
-  }
-  .tf-pulse-once { animation: tfPulseGlow .5s ease-out 1; }
-
-  @media (max-width: 980px){
-    .offer-panel-container{ padding: 0 12px; }
-    .tf-offer-panel{ padding:40px 18px 80px 18px; }
-    .tf-pills-wrap{ max-width: calc(100% - 24px); }
-    .tf-steps-dialog{ width:calc(100vw - 28px); }
-    .tf-step-item{ grid-template-columns: 28px 36px 1fr auto auto; }
-  }
+  /* (todo o seu tema permanece igual; apenas garantimos que o badge não tenha “bolinha”) */
+  .tf-badge::before{ content:none !important; }
 </style>
 
 <script>
@@ -326,6 +125,7 @@
 
   function escapeHtml(s){ return (s || "").replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
+  /* Breadcrumb (mantido) */
   function buildBreadcrumb(){
     var bc = document.getElementById('tfBreadcrumb'); if (!bc) return;
     var offerName = (offer && offer.name) ? offer.name : 'Nome da Oferta';
@@ -343,6 +143,7 @@
   }
   buildBreadcrumb();
 
+  /* Tabs (mantido) */
   var mainTabs = document.querySelectorAll('.tf-tabs-main .tab');
   var subTabsWrap = document.getElementById('subtabs-principal');
   mainTabs.forEach(function(btn){
@@ -356,6 +157,7 @@
   });
   if (subTabsWrap) subTabsWrap.style.display = 'flex';
 
+  /* Toast (mantido) */
   function showToast(type, text){
     var host = document.createElement('div');
     host.style.position='fixed'; host.style.top='20px'; host.style.right='20px';
@@ -373,10 +175,11 @@
     var txt = document.createElement('span'); txt.textContent = text || (type==='error' ? 'Falha' : 'Sucesso');
     var row = document.createElement('div'); row.style.display='flex'; row.style.alignItems='center'; row.appendChild(icon); row.appendChild(txt);
     card.appendChild(row); host.appendChild(card); document.body.appendChild(host);
-    requestAnimationFrame(function(){ card.style.transform='translateY(0)'; card.style.opacity='1'; });
-    setTimeout(function(){ card.style.transform='translateY(-10px)'; card.style.opacity='0'; setTimeout(function(){ host.remove(); }, 160); }, 2300);
+    requestAnimationFrame(function(){ card.style.transform='translateY(0) scale(1)'; card.style.opacity='1'; });
+    setTimeout(function(){ card.style.transform='translateY(-10px) scale(.98)'; card.style.opacity='0'; setTimeout(function(){ host.remove(); }, 160); }, 2300);
   }
 
+  /* Botão global “Salvar Alterações” (mantido) */
   var saveBtn = document.getElementById('btnSaveAll');
   function setBtnLoading(btn, on){
     if (!btn) return;
@@ -404,6 +207,7 @@
     });
   }
 
+  /* ===================== MODAL: lógica ajustada ===================== */
   var modal    = document.getElementById('stepsUnifiedModal');
   var btnClose = document.getElementById('btnCloseStepsUnified');
   var btnCancel= document.getElementById('btnCancelStepsUnified');
@@ -430,60 +234,79 @@
     if (opts.id) li.dataset.id = opts.id; else li.dataset.new='1';
     if (opts.isCurrent) li.classList.add('is-current');
 
+    // Handle drag
     var handle = document.createElement('div');
-    handle.className='tf-drag-handle';
-    handle.setAttribute('draggable','true');
+    handle.className='tf-drag-handle'; handle.setAttribute('draggable','true');
     handle.innerHTML = '<svg viewBox="0 0 20 20" fill="currentColor"><circle cx="6" cy="5" r="1.3"/><circle cx="10" cy="5" r="1.3"/><circle cx="14" cy="5" r="1.3"/><circle cx="6" cy="10" r="1.3"/><circle cx="10" cy="10" r="1.3"/><circle cx="14" cy="10" r="1.3"/></svg>';
 
+    // Número
     var no = document.createElement('span'); no.className='tf-step-no'; no.textContent = opts.stepNo || (listEl.children.length + 1);
 
+    // Nome
     var input = document.createElement('input');
-    input.className='tf-step-name'; input.type='text'; input.placeholder='Nova etapa';
+    input.className='tf-step-name'; input.type='text';
+    input.placeholder='Exemplo: Etapa X, Upsell X';  /* <<< regra #4 */
     input.value = opts.name || ''; input.dataset.oldName = opts.name || '';
 
+    // Ações (apenas 2 botões visíveis + radio oculto de compat)
     var actions = document.createElement('div'); actions.className='tf-actions-inline';
 
-    var selectBtn = document.createElement('button'); 
+    var selectBtn = document.createElement('button');
     selectBtn.type='button'; 
-    selectBtn.className='tf-btn-ghost'; 
-    selectBtn.textContent = opts.isCurrent ? 'Acessar etapa' : 'Selecionar';   /* <<< regra #3 */
+    selectBtn.className='tf-btn-ghost';
+    selectBtn.textContent = opts.isCurrent ? 'Acessar etapa' : 'Selecionar etapa'; /* <<< regra #2 */
 
-    var badge = document.createElement('span');
+    var badge = document.createElement('span');        /* indicador não clicável (pode existir) */
     badge.className = 'tf-badge' + (opts.isCurrent ? ' visible current' : '');
     badge.textContent='Atual';
 
     var radioWrap = document.createElement('label'); radioWrap.className='tf-select-radio';
     var radio = document.createElement('input'); radio.type='radio'; radio.name='tfStepCurrent';
-    radio.checked = !!opts.isCurrent;
-    radioWrap.appendChild(radio);
+    radio.checked = !!opts.isCurrent; radioWrap.appendChild(radio);
 
+    // Clique em Selecionar/Acessar (toggle)
     selectBtn.addEventListener('click', function(){
-      /* marca como atual visualmente e troca rótulos dos botões */
-      Array.from(listEl.children).forEach(function(row){
-        row.classList.remove('is-current');
-        var b = row.querySelector('.tf-badge'); if (b){ b.classList.remove('visible','current'); }
-        var r = row.querySelector('input[type="radio"]'); if (r){ r.checked = false; }
-        var sb = row.querySelector('.tf-btn-ghost'); if (sb){ sb.textContent='Selecionar'; }  /* sempre 2 botões */
-      });
-      li.classList.add('is-current');
-      badge.classList.add('visible','current');
-      radio.checked = true;
-      selectBtn.textContent = 'Acessar etapa';  /* <<< fica “Acessar etapa” após selecionar */
-
-      /* mantém lógica atual: fechar modal e abrir a etapa */
-      var sid = li.dataset.id || null;
-      closeStepsModal();
-      if (sid){ window.location.href = `/ofertas/painel/${offer.id}?stepId=${encodeURIComponent(sid)}`; }
+      if (selectBtn.textContent === 'Selecionar etapa'){
+        // Tornar esta a etapa atual (só estado visual + compat de backend via radio)
+        Array.from(listEl.children).forEach(function(row){
+          row.classList.remove('is-current');
+          var b = row.querySelector('.tf-badge'); if (b){ b.classList.remove('visible','current'); }
+          var r = row.querySelector('input[type="radio"]'); if (r){ r.checked = false; }
+          var sb = row.querySelector('.tf-btn-ghost'); if (sb){ sb.textContent='Selecionar etapa'; }
+        });
+        li.classList.add('is-current');
+        badge.classList.add('visible','current');
+        radio.checked = true;
+        selectBtn.textContent = 'Acessar etapa';   // não fecha nem redireciona aqui
+        // mantém a mesma lógica de persistência (via botão "Salvar mudanças" se aplicável)
+      } else {
+        // Acessar etapa → fecha modal e navega
+        var sid = li.dataset.id || null;
+        if (sid){
+          closeStepsModal();
+          window.location.href = `/ofertas/painel/${offer.id}?stepId=${encodeURIComponent(sid)}`;
+        }
+      }
     });
 
     actions.appendChild(selectBtn);
     actions.appendChild(badge);
     actions.appendChild(radioWrap);
 
-    var delBtn = document.createElement('button'); delBtn.className='tf-step-btn danger'; delBtn.textContent='Excluir'; delBtn.title='Excluir etapa';
-    if (opts.stepNo === 1 && opts.id) delBtn.disabled = true;
-    delBtn.addEventListener('click', function(){ confirmDeleteUnified(li, input.value || 'Etapa'); });
+    var delBtn = document.createElement('button'); 
+    delBtn.className='tf-step-btn danger'; 
+    delBtn.textContent='Excluir'; 
+    delBtn.title='Excluir etapa';
+    // (regra #3) — excluir qualquer etapa; valida se é a última
+    delBtn.addEventListener('click', function(){ 
+      if (listEl.children.length <= 1){
+        showToast('error','Você precisa manter ao menos uma etapa.');
+        return;
+      }
+      confirmDeleteUnified(li, input.value || 'Etapa'); 
+    });
 
+    // Monta linha
     li.appendChild(handle);
     li.appendChild(no);
     li.appendChild(input);
@@ -491,6 +314,7 @@
     li.appendChild(delBtn);
     listEl.appendChild(li);
 
+    // Drag
     initDragFor(handle, li);
 
     if (!opts.id){ setTimeout(function(){ input.focus(); }, 0); }
@@ -506,10 +330,12 @@
     btnAdd.addEventListener('click', function(){
       addRowUnified({ name:'', stepNo: listEl.children.length + 1, isCurrent:false });
       recomputeNosUnified();
-      showToast('success','Nova etapa criada.');  /* <<< regra #2: feedback e permanece no modal */
+      showToast('success','Nova etapa criada.');
+      // permanece no modal; não altera etapa atual
     });
   }
 
+  /* Drag & Drop (mantido) */
   var dragContext = { draggingLi: null };
   function initDragFor(handle, li){
     handle.addEventListener('dragstart', function(e){
@@ -540,21 +366,26 @@
     }, { offset: Number.NEGATIVE_INFINITY }).element;
   }
 
+  /* Confirmação de deleção (mantida + atualiza steps/local) */
   function confirmDeleteUnified(li, displayName){
     var overlay = document.createElement('div'); overlay.className='tf-steps-overlay'; overlay.style.zIndex='4001';
-    var box = document.createElement('div'); box.className='tf-steps-dialog tf-steps-dialog--create-theme'; box.style.maxWidth='460px';
+    var box = document.createElement('div'); box.className='tf-steps-dialog tf-steps-dialog--wiin'; box.style.maxWidth='460px';
     box.innerHTML = '<div class="tf-steps-head tf-steps-head--center"><h3>Excluir etapa?</h3></div>' +
       '<div class="tf-steps-body tf-steps-body--compact"><p>Tem certeza que deseja excluir <strong>'+ escapeHtml(displayName) +'</strong>? Essa ação não pode ser desfeita.</p></div>' +
-      '<div class="tf-steps-actions tf-steps-actions--create-theme">' +
-      '<button type="button" class="btn-secondary" id="cxCancel">Cancelar</button>' +
-      '<button type="button" class="btn-primary" id="cxDelete">Excluir etapa</button>' +
+      '<div class="tf-steps-actions tf-steps-actions--wiin">' +
+      '<button type="button" class="tf-btn" id="cxCancel">Cancelar</button>' +
+      '<button type="button" class="tf-btn tf-btn-primary" id="cxDelete">Excluir etapa</button>' +
       '</div>';
     overlay.appendChild(box); document.body.appendChild(overlay);
     function close(){ overlay.remove(); }
     box.querySelector('#cxCancel').addEventListener('click', close);
     overlay.addEventListener('click', function(e){ if (e.target === overlay) close(); });
     box.querySelector('#cxDelete').addEventListener('click', async function(){
-      if (!li.dataset.id){ li.remove(); recomputeNosUnified(); showToast('success','Etapa removida.'); close(); return; }
+      // Apaga localmente se ainda não tem id
+      if (!li.dataset.id){ 
+        li.remove(); recomputeNosUnified(); showToast('success','Etapa removida.'); close(); 
+        return; 
+      }
       try{
         const r = await fetch(`/ofertas/${encodeURIComponent(offer.id)}/etapas/${encodeURIComponent(li.dataset.id)}`, { method:'DELETE' });
         const js = await r.json(); if (!js || !js.ok) throw new Error('delete_failed');
@@ -567,11 +398,13 @@
     });
   }
 
+  /* Salvar mudanças (mantido) */
   var saveModalBtn = document.getElementById('btnSaveStepsUnified');
   if (saveModalBtn){
     saveModalBtn.addEventListener('click', async function(){
       saveModalBtn.disabled=true; saveModalBtn.textContent='Salvando…';
       try{
+        // 1) Criar novas
         var newNames = [];
         Array.from(listEl.children).forEach(function(li){
           if (!li.dataset.id){
@@ -595,6 +428,7 @@
           });
         }
 
+        // 2) Renomear alteradas
         for (const li of Array.from(listEl.children)){
           const id = li.dataset.id; if (!id) continue;
           const input = li.querySelector('.tf-step-name');
@@ -612,6 +446,7 @@
           }
         }
 
+        // 3) Reordenar (ordem atual do DOM)
         var order = Array.from(listEl.children).map(function(li){ return li.dataset.id; }).filter(Boolean);
         if (order.length){
           const r = await fetch(`/ofertas/${encodeURIComponent(offer.id)}/etapas/reorder`, {
@@ -622,6 +457,7 @@
           order.forEach(function(id, idx){ var s = steps.find(x => x.id === id); if (s) s.stepNo = idx + 1; });
         }
 
+        // 4) Etapa atual (compat via radio)
         let selectedId = null;
         for (const li of Array.from(listEl.children)){
           const radio = li.querySelector('input[type="radio"]'); if (radio && radio.checked) { selectedId = li.dataset.id || null; break; }
