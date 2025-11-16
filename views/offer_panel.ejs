@@ -1,5 +1,6 @@
 <%- include('partials/visual_hottrack') %>
 
+<!-- WRAPPER (mantido) -->
 <div class="offer-panel-container">
   <div class="tf-offer-panel">
     <nav class="tf-breadcrumb" id="tfBreadcrumb"></nav>
@@ -20,9 +21,9 @@
           Principal
         </button>
 
-        <button class="tab" data-tab="blindagem">
+        <button class="tab" data-tab="contingencia">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"></path></svg>
-          Blindagem de Bots
+          Contingência de Bots
         </button>
 
         <button class="tab" data-tab="tracking">
@@ -83,6 +84,7 @@
   </div>
 </div>
 
+<!-- MODAL (visual intocado) -->
 <div class="tf-steps-overlay" id="stepsUnifiedModal" hidden>
   <div class="tf-steps-dialog tf-steps-dialog--create-theme" role="dialog" aria-modal="true">
     <div class="tf-steps-head tf-steps-head--center">
@@ -281,7 +283,7 @@
     display:none; align-items:center; gap:6px; padding:7px 12px; border-radius:999px; height:36px;
     border:1px solid rgba(255,255,255,0.12); background:rgba(255,255,255,0.06); color:#eaeaea; font-weight:800;
   }
-  .tf-badge::before{ content:none !important; } /* garante SEM “bolinha” ao lado do texto */
+  .tf-badge::before{ content:none !important; } /* AJUSTE TIGERFY: remove qualquer “bolinha” ao lado do texto */
   .tf-badge.visible{ display:inline-flex; }
   .tf-badge.current{
     background:linear-gradient(90deg,#ffcc00,#d4a100);
@@ -298,7 +300,7 @@
   .tf-step-btn.danger{ border-color: rgba(255, 85, 85, .35); background: linear-gradient(90deg, #320000, #250000); color:#ffdada; }
   .tf-step-btn.danger:hover{ filter:brightness(1.05); }
 
-  .tf-select-radio{ display:none !important; } /* radio fica oculto (mantém compat de lógica) */
+  .tf-select-radio{ display:none !important; } /* radio oculto (mantém compat) */
 
   .tf-steps-actions{ display:flex; justify-content:flex-end; gap:12px; padding:16px 18px 18px 18px; border-top:1px solid rgba(255,255,255,0.08); }
 
@@ -438,15 +440,17 @@
     var no = document.createElement('span'); no.className='tf-step-no'; no.textContent = opts.stepNo || (listEl.children.length + 1);
 
     var input = document.createElement('input');
-    input.className='tf-step-name'; input.type='text'; input.placeholder='Nova etapa';
-    input.value = opts.name || ''; input.dataset.oldName = opts.name || '';
+    input.className='tf-step-name'; input.type='text';
+    input.placeholder='Exemplo: Etapa X, Upsell X'; /* AJUSTE TIGERFY: placeholder-exemplo pedido */
+    input.value = opts.name || ''; 
+    input.dataset.oldName = opts.name || '';
 
     var actions = document.createElement('div'); actions.className='tf-actions-inline';
 
     var selectBtn = document.createElement('button'); 
     selectBtn.type='button'; 
     selectBtn.className='tf-btn-ghost'; 
-    selectBtn.textContent = opts.isCurrent ? 'Acessar etapa' : 'Selecionar';   /* <<< regra #3 */
+    selectBtn.textContent = opts.isCurrent ? 'Acessar etapa' : 'Selecionar etapa'; /* AJUSTE TIGERFY: textos unificados */
 
     var badge = document.createElement('span');
     badge.className = 'tf-badge' + (opts.isCurrent ? ' visible current' : '');
@@ -457,32 +461,45 @@
     radio.checked = !!opts.isCurrent;
     radioWrap.appendChild(radio);
 
+    /* AJUSTE TIGERFY: fluxo Selecionar etapa -> só marca atual (sem fechar/navegar).
+       Depois, com o rótulo Acessar etapa -> fecha e navega. */
     selectBtn.addEventListener('click', function(){
-      /* marca como atual visualmente e troca rótulos dos botões */
-      Array.from(listEl.children).forEach(function(row){
-        row.classList.remove('is-current');
-        var b = row.querySelector('.tf-badge'); if (b){ b.classList.remove('visible','current'); }
-        var r = row.querySelector('input[type="radio"]'); if (r){ r.checked = false; }
-        var sb = row.querySelector('.tf-btn-ghost'); if (sb){ sb.textContent='Selecionar'; }  /* sempre 2 botões */
-      });
-      li.classList.add('is-current');
-      badge.classList.add('visible','current');
-      radio.checked = true;
-      selectBtn.textContent = 'Acessar etapa';  /* <<< fica “Acessar etapa” após selecionar */
-
-      /* mantém lógica atual: fechar modal e abrir a etapa */
-      var sid = li.dataset.id || null;
-      closeStepsModal();
-      if (sid){ window.location.href = `/ofertas/painel/${offer.id}?stepId=${encodeURIComponent(sid)}`; }
+      if (selectBtn.textContent === 'Selecionar etapa'){
+        // Tornar atual (visual + compat via radio), sem navegar
+        Array.from(listEl.children).forEach(function(row){
+          row.classList.remove('is-current');
+          var b = row.querySelector('.tf-badge'); if (b){ b.classList.remove('visible','current'); }
+          var r = row.querySelector('input[type="radio"]'); if (r){ r.checked = false; }
+          var sb = row.querySelector('.tf-btn-ghost'); if (sb){ sb.textContent='Selecionar etapa'; }
+        });
+        li.classList.add('is-current');
+        badge.classList.add('visible','current');
+        radio.checked = true;
+        selectBtn.textContent = 'Acessar etapa';
+      } else {
+        // Acessar etapa → fecha modal e navega (fluxo original de abrir etapa)
+        var sid = li.dataset.id || null;
+        closeStepsModal();
+        if (sid){ window.location.href = `/ofertas/painel/${offer.id}?stepId=${encodeURIComponent(sid)}`; }
+      }
     });
 
     actions.appendChild(selectBtn);
     actions.appendChild(badge);
     actions.appendChild(radioWrap);
 
-    var delBtn = document.createElement('button'); delBtn.className='tf-step-btn danger'; delBtn.textContent='Excluir'; delBtn.title='Excluir etapa';
-    if (opts.stepNo === 1 && opts.id) delBtn.disabled = true;
-    delBtn.addEventListener('click', function(){ confirmDeleteUnified(li, input.value || 'Etapa'); });
+    var delBtn = document.createElement('button'); 
+    delBtn.className='tf-step-btn danger'; 
+    delBtn.textContent='Excluir'; 
+    delBtn.title='Excluir etapa';
+    // AJUSTE TIGERFY: excluir qualquer etapa; se for a última, bloquear com mensagem
+    delBtn.addEventListener('click', function(){ 
+      if (listEl.children.length <= 1){
+        showToast('error','Você precisa manter ao menos uma etapa.');
+        return;
+      }
+      confirmDeleteUnified(li, input.value || 'Etapa'); 
+    });
 
     li.appendChild(handle);
     li.appendChild(no);
@@ -506,7 +523,7 @@
     btnAdd.addEventListener('click', function(){
       addRowUnified({ name:'', stepNo: listEl.children.length + 1, isCurrent:false });
       recomputeNosUnified();
-      showToast('success','Nova etapa criada.');  /* <<< regra #2: feedback e permanece no modal */
+      showToast('success','Nova etapa criada.');  // AJUSTE TIGERFY: feedback e permanece no modal
     });
   }
 
@@ -554,7 +571,10 @@
     box.querySelector('#cxCancel').addEventListener('click', close);
     overlay.addEventListener('click', function(e){ if (e.target === overlay) close(); });
     box.querySelector('#cxDelete').addEventListener('click', async function(){
-      if (!li.dataset.id){ li.remove(); recomputeNosUnified(); showToast('success','Etapa removida.'); close(); return; }
+      if (!li.dataset.id){ 
+        li.remove(); recomputeNosUnified(); showToast('success','Etapa removida.'); close(); 
+        return; 
+      }
       try{
         const r = await fetch(`/ofertas/${encodeURIComponent(offer.id)}/etapas/${encodeURIComponent(li.dataset.id)}`, { method:'DELETE' });
         const js = await r.json(); if (!js || !js.ok) throw new Error('delete_failed');
