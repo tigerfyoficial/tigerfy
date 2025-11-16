@@ -9,7 +9,7 @@
     <a href="/ofertas/criar" class="btn-primary">Criar nova oferta</a>
   </div>
 
-  <div class="list-grid" id="offersGrid">
+  <div class="list-grid">
     <% if (!offers || offers.length === 0) { %>
       <div class="empty">
         <h3>Você ainda não tem ofertas</h3>
@@ -17,52 +17,89 @@
         <a href="/ofertas/criar" class="btn-primary small">Criar oferta</a>
       </div>
     <% } else { %>
-      <% offers.forEach(function(o){ 
-           const id = String(o._id || o.id || '');
-           const idShort = id ? id.slice(-6) : '—';
-           const botsCount = Number(o.botsCount || o.bots || 0);
-           const btypeRaw = o.botType || o.bot_type || 'bot_padrao';
-           const botLabel = (btypeRaw === 'bot_padrao') ? 'Padrão' : (btypeRaw.includes('wiin') ? 'Fluxo (Wiinbot)' : (btypeRaw.includes('many') ? 'Fluxo (Manychat)' : 'Fluxo'));
-      %>
-        <a 
-          class="offer-card" 
-          href="/ofertas/painel/<%= id %>"
-          id="offer-card-<%= id %>"
-          data-offer-id="<%= id %>"
-          data-offer-name="<%- o.name || '' %>"
-          data-bot-type="<%= btypeRaw %>"
-          data-tracking-type="<%= o.trackingType || o.tracking_type || '' %>"
-          data-bots-count="<%= botsCount %>"
-        >
+      <% offers.forEach(function(o){ %>
+        <!-- Card da oferta -->
+        <a class="offer-card" href="/ofertas/painel/<%= o._id %>" data-offer-id="<%= o._id %>">
           <div class="card-top">
-            <h3 class="offer-name" data-offer-id="<%= id %>"><%- o.name %></h3>
+            <h3 class="offer-name"><%= o.name %></h3>
+            <!-- (STATUS REMOVIDO) -->
           </div>
 
-          <div class="meta meta--with-actions">
-            <span>ID: <%= idShort %></span><span> | </span>
-            <span>Bots: <%= botsCount %></span><span> | </span>
-            <span>Tipo: <%= botLabel %></span>
+          <!-- Botão … (menu) — não navega, abre modal -->
+          <button
+            type="button"
+            class="offer-actions-inline"
+            title="Gerenciar oferta"
+            aria-label="Gerenciar oferta"
+            data-offer-id="<%= o._id %>"
+            data-offer-name="<%- o.name %>"
+            data-offer-type="<%- o.botType %>"
+            data-offer-bots="<%- (typeof o.botsCount !== 'undefined' ? o.botsCount : 0) %>"
+          >
+            <span class="dots">•••</span>
+          </button>
 
-            <!-- Botão de três pontinhos, alinhado à direita da linha -->
-            <button 
-              type="button" 
-              class="offer-actions-inline" 
-              title="Gerenciar oferta" 
-              aria-label="Gerenciar oferta"
-              data-id="<%= id %>"
-              data-name="<%- o.name || '' %>"
-              data-bots="<%= botsCount %>"
-              data-bottype="<%= btypeRaw %>"
-              data-tracktype="<%= o.trackingType || o.tracking_type || '' %>"
-            >
-              <span class="dots">•••</span>
-            </button>
+          <!-- Mini resumo -->
+          <div class="meta">
+            <span>ID: <%= String(o._id).slice(0, 8) %></span>
+            <span class="sep">|</span>
+            <span>Bots: <%= (typeof o.botsCount !== 'undefined' ? o.botsCount : 0) %></span>
+            <span class="sep">|</span>
+            <span>Tipo:
+              <% if (o.botType === 'bot_padrao') { %>Padrão<% }
+                 else if (o.botType === 'bot_fluxo_wiin') { %>Fluxo<% }
+                 else if (o.botType === 'bot_fluxo_many') { %>Fluxo (Manychat)<% }
+                 else { %>Outro<% } %>
+            </span>
           </div>
 
           <span class="go">›</span>
         </a>
       <% }) %>
     <% } %>
+  </div>
+</div>
+
+<!-- Modal de Gerenciar Oferta (mesmo visual; permanece opcional) -->
+<div class="offer-modal-overlay" data-modal="manage-offer" hidden>
+  <div class="offer-modal">
+    <div class="offer-modal-header">
+      <h3>Gerenciar Oferta</h3>
+      <button type="button" class="offer-modal-close" aria-label="Fechar">
+        <span>✕</span>
+      </button>
+    </div>
+
+    <div class="offer-modal-body">
+      <!-- Resumo -->
+      <section class="block">
+        <h4>Resumo da Oferta</h4>
+        <div class="kv">
+          <div><strong>Nome atual:</strong> <span id="mo-name">—</span></div>
+          <div><strong>ID:</strong> <span id="mo-id">—</span></div>
+          <div><strong>Quantidade de bots vinculados:</strong> <span id="mo-bots">0</span></div>
+          <div><strong>Tipo de Bot:</strong> <span id="mo-type">—</span></div>
+        </div>
+      </section>
+
+      <!-- Renomear -->
+      <section class="block">
+        <h4>Renomear Oferta</h4>
+        <div class="rename-row">
+          <input id="mo-rename-input" type="text" placeholder="Ex: Mundo VIP 2.0, Oferta Principal..." />
+          <button id="mo-rename-save" type="button" class="btn-primary">Salvar novo nome</button>
+        </div>
+        <small class="error-text" id="mo-rename-error" hidden>Não foi possível renomear. Tente novamente.</small>
+      </section>
+
+      <!-- Excluir -->
+      <section class="block danger">
+        <h4>Atenção</h4>
+        <p class="warn">Cuidado: esta ação é permanente.</p>
+        <button id="mo-delete" type="button" class="btn-danger">Excluir oferta</button>
+        <small class="error-text" id="mo-delete-error" hidden>Falha ao excluir. Tente novamente.</small>
+      </section>
+    </div>
   </div>
 </div>
 
@@ -88,313 +125,227 @@
     display:block; text-decoration:none; color:#fff;
     background:rgba(0,0,0,0.70);
     border:1px solid rgba(255,204,0,0.12);
-    border-radius:16px; padding:14px;
+    border-radius:16px; padding:14px 42px 18px 14px; /* espaço p/ botão ... */
     transition:.2s;
+    overflow:hidden;
   }
   .offer-card:hover{ border-color:#ffcc00; box-shadow:0 0 16px rgba(255,204,0,0.3); }
-  .card-top{ display:flex; align-items:center; justify-content:space-between; gap:8px; }
-  .card-top h3{ margin:0; font-size:1rem; }
 
-  /* (STATUS REMOVIDO) — regras antigas .status foram eliminadas */
+  .card-top{ display:flex; align-items:center; justify-content:space-between; gap:8px; }
+  .card-top h3{ margin:0; font-size:1rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+
+  /* (STATUS REMOVIDO) */
 
   .meta{
     display:flex; gap:10px; flex-wrap:wrap; margin-top:8px;
-    font-size:.78rem; color:#c9c9c9;
+    font-size:.78rem; color:#c9c9c9; align-items:center;
   }
-
-/* fica fixo no centro vertical da linha */
-.offer-actions-inline{
-  position:absolute;
-  right:10px;
-  top:50%;
-  transform: translateY(-50%);
-  /* ✅ não animamos transform; só cor/borda */
-  transition: background-color .15s ease, border-color .15s ease;
-}
-
-/* ✅ hover minimalista, sem translate/top/scale */
-.offer-actions-inline:hover{
-  background: rgba(255,204,0,.12);
-  border-color: rgba(255,204,0,.28);
-}
-
-
-  }
-  .offer-actions-inline .dots{ line-height:1; font-size:13px; transform:translateY(-.5px) }
+  .meta .sep{ opacity:.6; }
 
   .go{ position:absolute; right:12px; bottom:10px; opacity:.6; font-size:1.4rem; }
+
   .empty{ text-align:center; padding:30px 16px; background:rgba(0,0,0,0.70); border:1px solid rgba(255,204,0,0.12); border-radius:16px; }
   .btn-primary.small{ padding:8px 16px; font-size:.85rem; }
   .btn-primary{
     border:none; border-radius:10px; padding:10px 22px; font-weight:600; cursor:pointer; text-decoration:none;
     background:linear-gradient(90deg,#ffcc00,#d4a100); color:#1a1300; box-shadow:0 0 12px rgba(255,204,0,0.4); font-size:.95rem;
   }
-</style>
 
-<!-- =========================
-     (Modal e JS existentes permanecem — somente ajustes acima)
-     ========================= -->
-<div id="tf-manage-offer" class="tfm hidden" aria-hidden="true">
-  <div class="tfm__backdrop" onclick="TFManage.close()"></div>
+  /* ===== Botão … (menu) — FIX: hover sem movimento ===== */
+  .offer-actions-inline{
+    position:absolute;
+    right:10px;
+    top:14px;                 /* fixo, não centraliza pela altura p/ evitar “pulo” */
+    width:34px; height:34px;
+    border-radius:999px;
+    border:1px solid rgba(255,204,0,0.18);
+    background:rgba(255,255,255,0.06);
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer;
+    /* ✅ NÃO animar transform; evitar deslocamento */
+    transition: background-color .15s ease, border-color .15s ease, box-shadow .15s ease;
+    z-index:2;
+  }
+  .offer-actions-inline .dots{
+    font-size:16px; line-height:1; transform: translateY(-0.5px); user-select:none;
+  }
+  .offer-actions-inline:hover{
+    background: rgba(255,204,0,.12);
+    border-color: rgba(255,204,0,.28);
+    box-shadow: 0 0 0 2px rgba(255,204,0,0.12) inset;
+  }
 
-  <div class="tfm__card" role="dialog" aria-modal="true" aria-labelledby="tfm-title">
-    <header class="tfm__head">
-      <div>
-        <h3 id="tfm-title">Gerenciar Oferta</h3>
-        <p class="tfm__sub">Veja o resumo desta oferta e gerencie ações rápidas.</p>
-      </div>
-      <button class="tfm__close" type="button" aria-label="Fechar" onclick="TFManage.close()">
-        <span>×</span>
-      </button>
-    </header>
+  /* ===== Modal (mantém identidade TigerFy) ===== */
+  .offer-modal-overlay[hidden]{ display:none !important; }
+  .offer-modal-overlay{
+    position:fixed; inset:0; z-index:9999;
+    backdrop-filter: blur(8px);
+    background:rgba(0,0,0,0.45);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .offer-modal{
+    width:min(560px, calc(100vw - 48px));
+    background: rgba(0,0,0,0.78);
+    border:1px solid rgba(255,204,0,0.16);
+    border-radius:16px;
+    box-shadow: 0 0 40px rgba(0,0,0,0.6);
+    color:#fff;
+    overflow:hidden;
+  }
+  .offer-modal-header{
+    display:flex; align-items:center; justify-content:space-between; gap:12px;
+    padding:14px 14px;
+    border-bottom:1px solid rgba(255,204,0,0.12);
+  }
+  .offer-modal-header h3{
+    margin:0; font-size:1.05rem; color:#ffcc00;
+  }
+  .offer-modal-close{
+    width:32px; height:32px; border-radius:999px;
+    border:1px solid rgba(255,255,255,.18);
+    background:rgba(255,255,255,.06);
+    display:flex; align-items:center; justify-content:center; /* ✅ centraliza o X */
+    cursor:pointer; color:#fff;
+    transition: background-color .15s ease, border-color .15s ease;
+  }
+  .offer-modal-close:hover{ background:rgba(255,255,255,.12); border-color:rgba(255,255,255,.28); }
 
-    <div class="tfm__body">
-      <section class="tfm__sec">
-        <h4>Resumo da Oferta</h4>
-        <ul class="tfm__resume">
-          <li><b>Nome atual:</b> <span id="tfm-name">—</span></li>
-          <li><b>ID:</b> <span id="tfm-id">—</span></li>
-          <li><b>Quantidade de bots vinculados:</b> <span id="tfm-bots">0</span></li>
-          <li><b>Tipo de Bot:</b> <span id="tfm-bottype">—</span></li>
-        </ul>
-      </section>
+  .offer-modal-body{ padding:14px; display:flex; flex-direction:column; gap:14px; }
+  .block{ background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.10); border-radius:12px; padding:12px; }
+  .block h4{ margin:0 0 8px; font-size:.95rem; color:#e9e9e9; }
+  .kv{ display:grid; gap:6px; font-size:.9rem; color:#dcdcdc; }
+  .rename-row{ display:flex; gap:10px; }
+  .rename-row input{
+    flex:1; padding:9px 10px; border-radius:10px; border:1px solid rgba(255,255,255,0.22);
+    background:rgba(255,255,255,0.06); color:#fff; outline:none; font-size:.95rem;
+    transition:border-color .2s, box-shadow .2s;
+  }
+  .rename-row input:focus{ border-color:#ffcc00; box-shadow:0 0 0 2px rgba(255,204,0,0.28); }
 
-      <hr class="tfm__sep">
-
-      <section class="tfm__sec">
-        <h4>Renomear Oferta</h4>
-        <label class="tfm__label" for="tfm-input-name">Novo nome da oferta <span>*</span></label>
-        <input id="tfm-input-name" class="tfm__input" type="text" placeholder="Ex: Mundo VIP 2.0, Oferta Principal..."/>
-        <div class="tfm__row">
-          <button id="tfm-rename" class="tfm__btn tfm__btn--gold" type="button">Salvar novo nome</button>
-          <small id="tfm-rename-error" class="tfm__error hidden"></small>
-        </div>
-      </section>
-
-      <hr class="tfm__sep">
-
-      <section class="tfm__sec">
-        <h4>Duplicar Oferta</h4>
-        <p class="tfm__muted">Crie uma cópia desta oferta com um novo ID, preservando configurações principais.</p>
-        <button id="tfm-duplicate" class="tfm__btn tfm__btn--gold tfm__btn--slim" type="button">Duplicar oferta</button>
-        <small id="tfm-duplicate-error" class="tfm__error hidden"></small>
-      </section>
-
-      <hr class="tfm__sep">
-
-      <section class="tfm__sec">
-        <h4>Excluir Oferta</h4>
-        <p class="tfm__warn">Cuidado: esta ação é permanente.</p>
-        <button id="tfm-delete" class="tfm__btn tfm__btn--danger tfm__btn--slim" type="button">Excluir oferta</button>
-        <small id="tfm-delete-error" class="tfm__error hidden"></small>
-      </section>
-    </div>
-  </div>
-</div>
-
-<div id="tf-toasts" class="tft"></div>
-
-<style>
-  .hidden{display:none}
-  .tft{position:fixed;top:18px;right:18px;display:grid;gap:8px;z-index:100000}
-  .tft__item{background:rgba(15,15,15,.95);color:#fff;border:1px solid rgba(255,204,0,.16);
-    border-radius:12px;padding:10px 12px;box-shadow:0 0 14px rgba(255,204,0,.18);
-    transform:translateY(-6px);opacity:0;animation:tfToastIn .16s ease forwards}
-  .tft__item--err{border-color:rgba(255,59,107,.35);box-shadow:0 0 14px rgba(255,59,107,.22)}
-  @keyframes tfToastIn{to{transform:translateY(0);opacity:1}}
-
-  .tfm{position:fixed;inset:0;z-index:99999}
-  .tfm[aria-hidden="true"]{display:none}
-  .tfm__backdrop{position:absolute;inset:0;backdrop-filter:blur(6px);background:rgba(0,0,0,.45)}
-  .tfm__card{position:absolute;inset:0;margin:auto;width:min(640px,calc(100vw - 48px));
-    background:rgba(0,0,0,.78);border:1px solid rgba(255,204,0,.16);border-radius:16px;
-    box-shadow:0 0 40px rgba(0,0,0,.6);color:#fff;display:flex;flex-direction:column;overflow:hidden}
-  .tfm__head{display:flex;align-items:center;justify-content:space-between;
-    padding:16px 16px 10px;border-bottom:1px solid rgba(255,204,0,.1)}
-  .tfm__head h3{margin:0;color:#ffcc00;font-size:1.08rem}
-  .tfm__sub{margin:4px 0 0;color:#b4b4b4;font-size:.92rem}
-  .tfm__close{width:28px;height:28px;border-radius:999px;border:1px solid rgba(255,204,0,.22);
-    background:rgba(255,204,0,.08);color:#ffcc00;cursor:pointer;display:flex;align-items:center;
-    justify-content:center;line-height:0;padding:0}
-  .tfm__close span{display:block;font-size:18px;line-height:1;transform:translateY(-.5px)}
-
-  .tfm__body{padding:14px 16px 16px;display:grid;gap:14px}
-  .tfm__sec h4{margin:0 0 8px;font-size:.98rem}
-  .tfm__resume{list-style:none;margin:0;padding:0;display:grid;gap:6px;color:#d6d6d6;font-size:.95rem}
-  .tfm__sep{height:1px;border:0;background:rgba(255,255,255,.08);margin:2px 0}
-
-  .tfm__label{display:block;font-size:.95rem;font-weight:600;margin-bottom:6px}
-  .tfm__label span{color:#ffcc00}
-  .tfm__input{width:100%;padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,.22);
-    background:rgba(255,255,255,.06);color:#fff;outline:none;font-size:.95rem;
-    transition:border-color .2s,box-shadow .2s}
-  .tfm__input::placeholder{color:rgba(255,255,255,.65)}
-  .tfm__input:focus{border-color:#ffcc00;box-shadow:0 0 0 2px rgba(255,204,0,.28)}
-  .tfm__row{display:flex;align-items:center;gap:10px;margin-top:10px}
-
-  .tfm__btn{border:none;border-radius:10px;padding:10px 22px;font-weight:600;cursor:pointer}
-  .tfm__btn--gold{background:linear-gradient(90deg,#ffcc00,#d4a100);color:#1a1300;box-shadow:0 0 12px rgba(255,204,0,.35)}
-  .tfm__btn--danger{background:linear-gradient(90deg,#ff3b6b,#cc2a50);color:#fff;box-shadow:0 0 12px rgba(255,59,107,.22)}
-  .tfm__btn--slim{padding:8px 18px}
-  .tfm__muted{color:#b4b4b4;margin:0 0 6px}
-  .tfm__warn{color:#ff6b9e;margin:0 0 6px}
-  .tfm__error{color:#ff6b9e}
-  @media (max-width:980px){.tfm__card{width:calc(100vw - 24px)}}
+  .btn-danger{
+    border:none; border-radius:10px; padding:10px 16px; font-weight:600; cursor:pointer;
+    background:linear-gradient(90deg,#ff4060,#e02044); color:#fff;
+  }
+  .block.danger .warn{ color:#ff8aa4; margin:0 0 10px; font-size:.9rem; }
+  .error-text{ color:#ff8aa4; display:block; margin-top:6px; }
 </style>
 
 <script>
-  // Bloqueia a navegação quando clicar no botão "…"
-  document.addEventListener('click', (e) => {
-    const btn = e.target.closest('.offer-actions-inline');
-    if (btn) { e.preventDefault(); e.stopPropagation(); TFManage.openFrom(btn); }
-  });
+  (function(){
+    const overlay = document.querySelector('.offer-modal-overlay[data-modal="manage-offer"]');
+    const modalClose = overlay?.querySelector('.offer-modal-close');
+    const renameInput = overlay?.querySelector('#mo-rename-input');
+    const renameBtn   = overlay?.querySelector('#mo-rename-save');
+    const deleteBtn   = overlay?.querySelector('#mo-delete');
 
-  // ================= TigerFy Manage Offer (já existente) =================
-  const TFManage = (() => {
-    const modal = document.getElementById('tf-manage-offer');
-    const elName = document.getElementById('tfm-name');
-    const elId   = document.getElementById('tfm-id');
-    const elBots = document.getElementById('tfm-bots');
-    const elType = document.getElementById('tfm-bottype');
-    const inputName = document.getElementById('tfm-input-name');
-    let current = null;
+    // Campos resumo
+    const fName = overlay?.querySelector('#mo-name');
+    const fId   = overlay?.querySelector('#mo-id');
+    const fBots = overlay?.querySelector('#mo-bots');
+    const fType = overlay?.querySelector('#mo-type');
 
-    function mapType(t){ 
-      if (t === 'bot_padrao') return 'Padrão';
-      if ((t||'').includes('wiin')) return 'Fluxo (Wiinbot)';
-      if ((t||'').includes('many')) return 'Fluxo (Manychat)';
-      return 'Fluxo';
-    }
+    // Erros
+    const errRename = overlay?.querySelector('#mo-rename-error');
+    const errDelete = overlay?.querySelector('#mo-delete-error');
 
-    function openFrom(btn){
-      current = {
-        id: btn.dataset.id,
-        name: btn.dataset.name || '',
-        bots: Number(btn.dataset.bots || 0),
-        bottype: btn.dataset.bottype || 'bot_padrao'
-      };
-      elName.textContent = current.name;
-      elId.textContent   = current.id;
-      elBots.textContent = current.bots;
-      elType.textContent = mapType(current.bottype);
-      inputName.value    = current.name;
+    let currentOfferId = null;
 
-      hideErrors();
-      modal.setAttribute('aria-hidden','false');
-      modal.classList.remove('hidden');
-    }
-    function close(){
-      modal.setAttribute('aria-hidden','true');
-      modal.classList.add('hidden');
-      current = null;
-    }
-    function hideErrors(){
-      ['tfm-rename-error','tfm-duplicate-error','tfm-delete-error'].forEach(id=>{
-        const e = document.getElementById(id);
-        e.textContent = ''; e.classList.add('hidden');
-      });
-    }
-    function toast(msg, err=false){
-      const box = document.getElementById('tf-toasts');
-      const t = document.createElement('div');
-      t.className = 'tft__item'+(err?' tft__item--err':'');
-      t.textContent = msg;
-      box.appendChild(t);
-      setTimeout(()=>{t.style.opacity='0';t.style.transform='translateY(-6px)';}, 2000);
-      setTimeout(()=>{t.remove();}, 2400);
-    }
+    // Abre modal com dados do card
+    document.addEventListener('click', (e) => {
+      const btn = e.target.closest('.offer-actions-inline');
+      if (!btn) return;
 
-    async function rename(){
-      const err = document.getElementById('tfm-rename-error'); err.classList.add('hidden');
-      if(!current) return;
-      const novoNome = (inputName.value||'').trim();
-      if(!novoNome){ err.textContent='Informe um nome válido.'; err.classList.remove('hidden'); return; }
+      // Impede navegação do <a>
+      e.preventDefault();
+      e.stopPropagation();
 
-      try{
-        const res = await fetch(`/ofertas/${encodeURIComponent(current.id)}/renomear`, {
-          method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ novoNome })
+      const offerId   = btn.getAttribute('data-offer-id');
+      const offerName = btn.getAttribute('data-offer-name') || '';
+      const offerType = btn.getAttribute('data-offer-type') || 'bot_padrao';
+      const offerBots = btn.getAttribute('data-offer-bots') || '0';
+
+      currentOfferId = offerId;
+      if (fName) fName.textContent = offerName;
+      if (fId)   fId.textContent   = offerId;
+      if (fBots) fBots.textContent = offerBots;
+      if (fType) {
+        fType.textContent = (offerType === 'bot_padrao')
+          ? 'Padrão'
+          : (offerType === 'bot_fluxo_wiin')
+          ? 'Fluxo'
+          : (offerType === 'bot_fluxo_many')
+          ? 'Fluxo (Manychat)'
+          : 'Outro';
+      }
+
+      if (renameInput) renameInput.value = offerName;
+
+      if (errRename) errRename.hidden = true;
+      if (errDelete) errDelete.hidden = true;
+
+      overlay.hidden = false;
+    });
+
+    // Fechar modal
+    modalClose?.addEventListener('click', () => overlay.hidden = true);
+    overlay?.addEventListener('click', (e) => {
+      if (e.target === overlay) overlay.hidden = true;
+    });
+
+    // Renomear (rota de exemplo: POST /ofertas/:id/renomear  { novoNome })
+    renameBtn?.addEventListener('click', async () => {
+      if (!currentOfferId) return;
+      const novoNome = (renameInput?.value || '').trim();
+      if (!novoNome) {
+        if (errRename) { errRename.textContent = 'Digite um nome válido.'; errRename.hidden = false; }
+        return;
+      }
+      if (errRename) errRename.hidden = true;
+
+      try {
+        const res = await fetch(`/ofertas/${currentOfferId}/renomear`, {
+          method: 'POST',
+          headers: { 'Content-Type':'application/json' },
+          body: JSON.stringify({ novoNome })
         });
-        const j = await res.json();
-        if(!j || j.ok!==true) throw new Error(j?.error||'Falha ao renomear');
+        if (!res.ok) throw new Error('bad_status');
 
-        document.querySelectorAll(`.offer-name[data-offer-id="${current.id}"]`).forEach(el=>el.textContent=novoNome);
-        const cardA = document.getElementById(`offer-card-${current.id}`);
-        if(cardA) cardA.dataset.offerName = novoNome;
+        // Atualiza nome no card sem recarregar
+        const card = document.querySelector(`.offer-card[data-offer-id="${currentOfferId}"]`);
+        card?.querySelector('.offer-name')?.replaceChildren(document.createTextNode(novoNome));
 
-        toast('Oferta renomeada.');
-        close();
-      }catch(e){ err.textContent='Não foi possível renomear. Tente novamente.'; err.classList.remove('hidden'); }
-    }
+        // Atualiza dados do botão …
+        const btn = card?.querySelector('.offer-actions-inline');
+        if (btn) btn.setAttribute('data-offer-name', novoNome);
 
-    async function duplicate(){
-      const err = document.getElementById('tfm-duplicate-error'); err.classList.add('hidden');
-      if(!current) return;
-      try{
-        const res = await fetch(`/ofertas/${encodeURIComponent(current.id)}/duplicar`, { method:'POST' });
-        const j = await res.json();
-        if(!j || j.ok!==true || !j.offer) throw new Error(j?.error||'Falha ao duplicar');
+        overlay.hidden = true;
+      } catch (err) {
+        if (errRename) { errRename.textContent = 'Não foi possível renomear. Tente novamente.'; errRename.hidden = false; }
+      }
+    });
 
-        const o = j.offer;
-        const botsCount = Number(o.botsCount ?? 0);
-        const btypeRaw  = o.bot_type || o.botType || 'bot_padrao';
-        const botLabel  = mapType(btypeRaw);
+    // Excluir (rota de exemplo: DELETE /ofertas/:id)
+    deleteBtn?.addEventListener('click', async () => {
+      if (!currentOfferId) return;
+      if (!confirm('Tem certeza que deseja excluir esta oferta? Esta ação é permanente.')) return;
 
-        const card = document.createElement('a');
-        card.className='offer-card';
-        card.href=`/ofertas/painel/${o.id}`;
-        card.id=`offer-card-${o.id}`;
-        card.dataset.offerId=o.id;
-        card.dataset.offerName=o.name;
-        card.dataset.botType=btypeRaw;
-        card.dataset.trackingType=o.tracking_type || o.trackingType || '';
-        card.dataset.botsCount=botsCount;
+      if (errDelete) errDelete.hidden = true;
 
-        /* Status removido do HTML duplicado */
-        card.innerHTML = `
-          <div class="card-top">
-            <h3 class="offer-name" data-offer-id="${o.id}">${o.name}</h3>
-          </div>
-          <div class="meta meta--with-actions">
-            <span>ID: ${String(o.id).slice(-6)}</span><span> | </span>
-            <span>Bots: ${botsCount}</span><span> | </span>
-            <span>Tipo: ${botLabel}</span>
-            <button type="button" class="offer-actions-inline"
-              title="Gerenciar oferta" aria-label="Gerenciar oferta"
-              data-id="${o.id}" data-name="${o.name}" data-bots="${botsCount}"
-              data-bottype="${btypeRaw}" data-tracktype="${card.dataset.trackingType}">
-              <span class="dots">•••</span>
-            </button>
-          </div>
-          <span class="go">›</span>
-        `;
-        (document.getElementById('offersGrid')||document.body).prepend(card);
-        toast('Oferta duplicada.');
-        close();
-      }catch(e){ err.textContent='Não foi possível duplicar. Tente novamente.'; err.classList.remove('hidden'); }
-    }
+      try {
+        const res = await fetch(`/ofertas/${currentOfferId}`, { method:'DELETE' });
+        if (!res.ok) throw new Error('bad_status');
 
-    async function remove(){
-      const err = document.getElementById('tfm-delete-error'); err.classList.add('hidden');
-      if(!current) return;
-      if(!confirm('Tem certeza que deseja excluir esta oferta? Esta ação é permanente.')) return;
-      try{
-        let res = await fetch(`/ofertas/${encodeURIComponent(current.id)}`, { method:'DELETE' });
-        if(res.status===404){ res = await fetch(`/ofertas/${encodeURIComponent(current.id)}/excluir`, { method:'POST' }); }
-        const j = await res.json();
-        if(!j || j.ok!==true) throw new Error(j?.error||'Falha ao excluir');
+        // Remove card da lista
+        const card = document.querySelector(`.offer-card[data-offer-id="${currentOfferId}"]`);
+        card?.parentElement?.removeChild(card);
 
-        const card = document.getElementById(`offer-card-${current.id}`);
-        if(card) card.remove();
-        toast('Oferta excluída.');
-        close();
-      }catch(e){ err.textContent='Não foi possível excluir. Tente novamente.'; err.classList.remove('hidden'); }
-    }
+        overlay.hidden = true;
+      } catch (err) {
+        if (errDelete) { errDelete.textContent = 'Falha ao excluir. Tente novamente.'; errDelete.hidden = false; }
+      }
+    });
 
-    document.getElementById('tfm-rename').addEventListener('click', rename);
-    document.getElementById('tfm-duplicate').addEventListener('click', duplicate);
-    document.getElementById('tfm-delete').addEventListener('click', remove);
-
-    return { openFrom, close, toast };
+    // Evita que o clique no modal feche por acidente
+    overlay?.querySelector('.offer-modal')?.addEventListener('click', (e) => e.stopPropagation());
   })();
-  window.TFManage = TFManage;
 </script>
