@@ -1,8 +1,5 @@
-<!-- =========================================
-     TIGERFY — MODAL CENTRAL: GERENCIAR ETAPAS
-     (cole este bloco completo antes de </body>)
-========================================= -->
-<div class="tf-steps2-overlay" id="tfSteps2Modal" aria-hidden="true" hidden>
+<!-- ============ MODAL CENTRAL: GERENCIAR ETAPAS DA OFERTA ============ -->
+<div class="tf-steps2-overlay" id="tfSteps2Modal" hidden aria-hidden="true">
   <div class="tf-steps2-dialog" role="dialog" aria-modal="true" aria-labelledby="tfSteps2Title">
     <header class="tf-steps2-head">
       <div>
@@ -14,7 +11,7 @@
 
     <section class="tf-steps2-info">
       <div class="tf-steps2-left">
-        <button type="button" class="tf-btn tf-btn-small" id="tfSteps2Add">＋ Nova etapa</button>
+        <button type="button" class="tf-btn tf-btn-small" id="tfSteps2Add" aria-label="Adicionar nova etapa">＋ Nova etapa</button>
       </div>
       <small class="tf-steps2-hint">As alterações só entram no painel ao clicar em <strong>Salvar mudanças</strong>.</small>
     </section>
@@ -30,14 +27,12 @@
   </div>
 </div>
 
-<!-- MINI CONFIRM (usa o mesmo overlay) -->
+<!-- ============ MINI CONFIRM (usa o mesmo overlay) ============ -->
 <template id="tfSteps2ConfirmTpl">
-  <div class="tf-steps2-confirm">
+  <div class="tf-steps2-confirm" role="dialog" aria-modal="true" aria-label="Confirmar exclusão">
     <div class="tf-steps2-confirm-card">
       <h4>Excluir etapa?</h4>
-      <p class="tf-steps2-confirm-text">
-        Tem certeza que deseja excluir <strong class="nm">esta etapa</strong>? Essa ação não pode ser desfeita.
-      </p>
+      <p class="tf-steps2-confirm-text">Tem certeza que deseja excluir <strong class="nm">esta etapa</strong>? Essa ação não pode ser desfeita.</p>
       <div class="tf-steps2-confirm-actions">
         <button type="button" class="tf-btn tf-btn-ghost js-cancel">Cancelar</button>
         <button type="button" class="tf-btn tf-btn-primary js-delete">Excluir etapa</button>
@@ -47,20 +42,14 @@
 </template>
 
 <style>
-  /* ================== OVERLAY SAFE ==================
-     Nunca ocupa a tela se aria-hidden="true".
-     Togle por display para não interferir no layout. */
+  /* ======== BASE LOCAL (não mexe no tema global) ======== */
   .tf-steps2-overlay[hidden]{ display:none !important; }
   .tf-steps2-overlay{
     position:fixed; inset:0; z-index:3000;
-    display:none; /* fechado por padrão */
-    align-items:center; justify-content:center;
+    display:flex; align-items:center; justify-content:center;
     background: rgba(0,0,0,.48);
     backdrop-filter: blur(8px);
   }
-  .tf-steps2-overlay[aria-hidden="false"]{ display:flex; }
-
-  /* ===== Dialog ===== */
   .tf-steps2-dialog{
     width:min(880px, calc(100vw - 32px));
     max-height:min(78vh, 760px);
@@ -120,7 +109,7 @@
   .tf-steps2-body{ padding:10px 14px; overflow:auto; }
   .tf-steps2-list{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:10px; }
 
-  /* ===== Linha da Etapa ===== */
+  /* Linha da Etapa */
   .tf-steps2-item{
     display:grid;
     grid-template-columns:56px 30px 1fr 140px 110px; /* idx | handle | nome | excluir | radio */
@@ -131,16 +120,12 @@
     box-shadow: 0 10px 26px rgba(0,0,0,0.35), inset 0 0 0 1px rgba(255,255,255,0.04);
     transition: transform .08s ease, background .14s ease, border-color .14s ease, opacity .14s ease;
   }
-  .tf-steps2-item:hover{
-    background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.05));
-    border-color: rgba(255,255,255,0.2); transform: translateY(-1px);
-  }
+  .tf-steps2-item:hover{ background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.05)); border-color: rgba(255,255,255,0.2); transform: translateY(-1px); }
   .tf-steps2-item.dragging{ opacity:.6; }
   .tf-steps2-index{
     display:inline-flex; align-items:center; justify-content:center;
     width:42px; height:30px; border-radius:999px;
-    background: rgba(255,255,255,0.09); border:1px solid rgba(255,255,255,0.18);
-    color:#fff; font-weight:800;
+    background: rgba(255,255,255,0.09); border:1px solid rgba(255,255,255,0.18); color:#fff; font-weight:800;
   }
   .tf-steps2-handle{
     cursor:grab; user-select:none; display:flex; align-items:center; justify-content:center;
@@ -152,19 +137,16 @@
     width:100%; padding:8px 10px; border-radius:10px;
     background: rgba(255,255,255,0.06); color:#fff; border:1px solid rgba(255,255,255,0.16);
   }
-  .tf-steps2-name:focus{
-    border-color: rgba(255,204,0,0.6); box-shadow: 0 0 0 2px rgba(255,204,0,0.20); outline: none;
-  }
+  .tf-steps2-name:focus{ border-color: rgba(255,204,0,0.6); box-shadow: 0 0 0 2px rgba(255,204,0,0.20); outline: none; }
 
   .tf-steps2-actions{ display:flex; align-items:center; gap:6px; justify-content:flex-start; }
-  .tf-steps2-del{
-    border-color: rgba(255, 75, 75, .35) !important;
-    background: linear-gradient(90deg, #3a0000, #2a0000) !important; color:#ffdada !important;
-  }
+  .tf-steps2-del{ border-color: rgba(255, 75, 75, .35) !important; background: linear-gradient(90deg, #3a0000, #2a0000) !important; color:#ffdada !important; }
   .tf-steps2-del:hover{ filter: brightness(1.06); }
 
-  /* ===== Radio premium ===== */
-  .tf-steps2-radio{ display:inline-flex; align-items:center; gap:8px; justify-content:flex-end; }
+  /* Radio premium */
+  .tf-steps2-radio{
+    display:inline-flex; align-items:center; gap:8px; justify-content:flex-end;
+  }
   .tf-steps2-radio input[type="radio"]{
     appearance:none; width:18px; height:18px; border-radius:999px;
     border:1px solid rgba(255,255,255,0.24); background:rgba(255,255,255,0.06);
@@ -174,21 +156,21 @@
     content:""; position:absolute; inset:3px; border-radius:999px; background:transparent; transition:.16s;
   }
   .tf-steps2-radio input[type="radio"]:checked{
-    border-color: rgba(255,204,0,0.7);
-    box-shadow: 0 0 0 2px rgba(255,204,0,0.15), inset 0 0 0 2px rgba(0,0,0,0.2);
+    border-color: rgba(255,204,0,0.7); box-shadow: 0 0 0 2px rgba(255,204,0,0.15), inset 0 0 0 2px rgba(0,0,0,0.2);
   }
   .tf-steps2-radio input[type="radio"]:checked::after{
     background:linear-gradient(90deg, #ffcc00, #d4a100);
   }
   .tf-steps2-radio span{ color:#eaeaea; font-weight:800; letter-spacing:.2px; }
 
-  /* ===== Footer ===== */
+  .tf-steps2-actions,
+  .tf-steps2-ghost{ /* footer */ }
   .tf-steps2-actions{
     display:flex; justify-content:flex-end; align-items:center; gap:8px;
     padding:12px 14px 16px 14px; border-top:1px solid rgba(255,255,255,0.12);
   }
 
-  /* ===== Mini confirm ===== */
+  /* Confirm mini modal (montado dentro do overlay) */
   .tf-steps2-confirm{
     position:fixed; inset:0; display:flex; align-items:center; justify-content:center;
     background: rgba(0,0,0,.35); backdrop-filter: blur(2px); z-index:3100;
@@ -204,7 +186,7 @@
   .tf-steps2-confirm-text{ margin:0 0 12px 0; color:#e8e8e8; }
   .tf-steps2-confirm-actions{ display:flex; justify-content:flex-end; gap:8px; }
 
-  /* ===== Toast ===== */
+  /* Toast */
   .tf-steps2-toast{
     position:fixed; top:18px; right:18px; z-index:3200;
     padding:10px 14px; border-radius:12px; font-weight:800; letter-spacing:.3px;
@@ -219,42 +201,31 @@
   }
   .tf-steps2-toast.show{ transform: translateY(0) scale(1); opacity:1; }
 
-  /* ===== micro feedback salvar ===== */
+  /* micro feedback salvar */
   @keyframes tfSteps2Pulse {
     0% { box-shadow: 0 0 0 0 rgba(255,204,0,0.35); transform: translateY(0) scale(1); }
-    60%{ box-shadow: 0 0 24px 8px rgba(255,204,0,0.24); transform: translateY(-1px) scale(1.01); }
-    100%{ box-shadow: 0 0 0 0 rgba(255,204,0,0.0); transform: translateY(0) scale(1); }
+    60% { box-shadow: 0 0 24px 8px rgba(255,204,0,0.24); transform: translateY(-1px) scale(1.01); }
+    100% { box-shadow: 0 0 0 0 rgba(255,204,0,0.0); transform: translateY(0) scale(1); }
   }
   .tf-steps2-saved { animation: tfSteps2Pulse .5s ease-out 1; }
 </style>
 
 <script>
 (function(){
-  /* ===== Contexto ===== */
+  /* ===== Boot de contexto ===== */
   const Ctx = (window.__TigerFyCtx && typeof window.__TigerFyCtx === 'object') ? window.__TigerFyCtx : {};
   let OFFER   = Ctx.offer || window.offer || null;
   let STEPS   = (Ctx.steps || window.steps || []);
   let CURRENT = Ctx.currentStep || window.currentStep || null;
 
-  /* ===== Elements ===== */
-  const modal     = document.getElementById('tfSteps2Modal');
-  const btnClose  = document.getElementById('tfSteps2Close');
-  const btnCancel = document.getElementById('tfSteps2Cancel');
-  const btnSave   = document.getElementById('tfSteps2Save');
-  const btnAdd    = document.getElementById('tfSteps2Add');
-  const listEl    = document.getElementById('tfSteps2List');
+  const modal      = document.getElementById('tfSteps2Modal');
+  const btnClose   = document.getElementById('tfSteps2Close');
+  const btnCancel  = document.getElementById('tfSteps2Cancel');
+  const btnSave    = document.getElementById('tfSteps2Save');
+  const btnAdd     = document.getElementById('tfSteps2Add');
+  const listEl     = document.getElementById('tfSteps2List');
 
-  /* ======== FIX CRÍTICO =========
-     Se você colou o modal dentro de <main>, movemos para <body>
-     para impedir qualquer efeito colateral de layout. */
-  if (modal && modal.parentElement !== document.body) {
-    document.body.appendChild(modal);
-  }
-
-  /* Garantia: overlay fechado no boot */
-  if (modal) { modal.setAttribute('aria-hidden','true'); modal.hidden = true; }
-
-  /* ===== Public API ===== */
+  /* Public API: abre com dados do painel atual */
   window.TigerFyEtapas = {
     open(ctxOffer, ctxSteps, ctxCurrent){
       OFFER   = ctxOffer   || OFFER;
@@ -266,30 +237,28 @@
     close: closeModal
   };
 
-  /* Gatilhos existentes no painel (não muda layout) */
-  document.querySelectorAll('#tabEtapas, #btnEtapas, [data-open-steps]').forEach(btn=>{
-    btn.addEventListener('click', (e)=>{ e.preventDefault(); window.TigerFyEtapas.open(); });
-  });
+  /* Gatilho padrão do seu botão/pill "Etapas" (não altera layout) */
+  const openBtn = document.getElementById('tabEtapas');
+  if (openBtn){
+    openBtn.addEventListener('click', (e)=>{ e.preventDefault(); window.TigerFyEtapas.open(); });
+  }
 
   /* ===== Helpers ===== */
   function bodyLock(lock){
     if (lock){ document.documentElement.style.overflow='hidden'; document.body.style.overflow='hidden'; }
     else { document.documentElement.style.overflow=''; document.body.style.overflow=''; }
   }
-  function openModal(){
-    modal.hidden=false;
-    modal.setAttribute('aria-hidden','false'); /* display:flex via CSS */
-    bodyLock(true);
-  }
-  function closeModal(){
-    modal.setAttribute('aria-hidden','true');
-    modal.hidden=true; /* display:none via CSS */
-    bodyLock(false);
-  }
+  function openModal(){ modal.hidden=false; modal.setAttribute('aria-hidden','false'); bodyLock(true); }
+  function closeModal(){ modal.hidden=true; modal.setAttribute('aria-hidden','true'); bodyLock(false); }
 
   if (btnClose)  btnClose.addEventListener('click', closeModal);
   if (btnCancel) btnCancel.addEventListener('click', closeModal);
   modal?.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+
+  /* Fechar com ESC (não afeta o resto do site) */
+  document.addEventListener('keydown', (e)=>{
+    if (e.key === 'Escape' && modal.getAttribute('aria-hidden') === 'false') closeModal();
+  });
 
   function showToast(msg, isErr){
     const t = document.createElement('div');
@@ -305,14 +274,12 @@
     listEl.innerHTML = '';
     const ordered = (STEPS || []).slice().sort((a,b)=> (a.stepNo||a.step_no||0) - (b.stepNo||b.step_no||0));
     ordered.forEach(s => addRow({
-      id: s.id,
-      name: s.name,
-      stepNo: s.stepNo || s.step_no,
-      isCurrent: !!(CURRENT && CURRENT.id===s.id)
+      id: s.id, name: s.name, stepNo: s.stepNo || s.step_no,
+      isCurrent: CURRENT && CURRENT.id===s.id
     }));
   }
 
-  /* Drag & Drop com handle */
+  /* Drag & Drop */
   let dragging = null;
   function enableDnD(li){
     li.draggable = true;
@@ -329,10 +296,22 @@
     });
   }
 
+  function setRadio(li){
+    const rb = li.querySelector('input[type="radio"]');
+    if (rb){ rb.checked = true; }
+  }
+
   function addRow(opts){
     const li = document.createElement('li');
     li.className = 'tf-steps2-item';
     if (opts.id) li.dataset.id = opts.id; else li.dataset.new = '1';
+
+    /* selecionar ao clicar na linha (sem atrapalhar drag ou edição) */
+    li.addEventListener('click', (e)=>{
+      const tag = (e.target.tagName||'').toLowerCase();
+      if (dragging || tag === 'input' || tag === 'button' || e.target.closest('.tf-steps2-handle')) return;
+      setRadio(li);
+    });
 
     const colIndex = document.createElement('div');
     colIndex.className = 'tf-steps2-index';
@@ -347,13 +326,15 @@
     name.type='text'; name.className='tf-steps2-name';
     name.placeholder='Nova etapa'; name.value = opts.name || '';
     name.dataset.oldName = opts.name || '';
+    name.addEventListener('keydown', (e)=>{ if (e.key === 'Enter') setRadio(li); });
 
     const actions = document.createElement('div');
     actions.className = 'tf-steps2-actions';
     const btnDel = document.createElement('button');
     btnDel.type='button'; btnDel.className='tf-btn tf-steps2-del'; btnDel.textContent='Excluir';
-    if ((opts.stepNo === 1 || opts.stepNo === '1') && opts.id) btnDel.disabled = true; /* opcional: proteger Etapa 1 persistida */
-    btnDel.addEventListener('click', ()=> askDelete(li, name.value || 'Etapa'));
+    /* Se o backend proteger a etapa 1, manter desabilitado evita erro visual */
+    if ((opts.stepNo === 1 || opts.stepNo === '1') && opts.id) btnDel.disabled = true;
+    btnDel.addEventListener('click', (ev)=>{ ev.stopPropagation(); askDelete(li, name.value || 'Etapa'); });
 
     actions.appendChild(btnDel);
 
@@ -404,61 +385,46 @@
 
     bDelete.addEventListener('click', ()=>{
       li.dataset.toDelete = '1';
-      li.style.opacity = .35; li.style.filter = 'grayscale(30%)';
+      li.style.opacity = .35;
+      li.style.filter = 'grayscale(30%)';
       close();
     });
 
     modal.appendChild(layer);
   }
 
-  /* ===== Save flow ===== */
+  /* ===== Salvar Mudanças ===== */
   function setSaving(on){
     if (!btnSave) return;
     if (on){ btnSave.disabled = true; if(!btnSave.dataset._txt) btnSave.dataset._txt = btnSave.textContent; btnSave.textContent='Salvando…'; }
     else { btnSave.disabled = false; btnSave.textContent = btnSave.dataset._txt || 'Salvar mudanças'; }
   }
 
-  /* Endpoints preferenciais (com fallbacks) */
   async function apiBatchCreate(names){
     const r = await fetch(`/ofertas/${encodeURIComponent(OFFER.id)}/etapas/batch`,{
       method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ names })
     });
-    if (r.ok){
-      const js = await r.json(); if (js && js.ok) return js.steps || [];
-    }
-    const created = [];
-    for (const nm of names){
-      const rr = await fetch(`/ofertas/${encodeURIComponent(OFFER.id)}/etapas`,{
-        method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ name: nm })
-      });
-      const jj = await rr.json().catch(()=>null);
-      if (jj && jj.ok && jj.step){ created.push(jj.step); }
-      else throw new Error('create_failed');
-    }
-    return created;
+    const js = await r.json();
+    if (!js || !js.ok) throw new Error('batch_failed');
+    return js.steps || [];
   }
   async function apiRename(id, name){
-    let r = await fetch(`/ofertas/${encodeURIComponent(OFFER.id)}/etapas/${encodeURIComponent(id)}/rename`,{
+    const r = await fetch(`/ofertas/${encodeURIComponent(OFFER.id)}/etapas/${encodeURIComponent(id)}/rename`,{
       method:'PATCH', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ name })
     });
-    if (r.ok){ const js = await r.json(); if (js && js.ok) return js.step || null; }
-    r = await fetch(`/ofertas/${encodeURIComponent(OFFER.id)}/etapas/${encodeURIComponent(id)}/save`,{
-      method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ name })
-    });
-    const js = await r.json(); if (js && js.ok) return js.step || null;
-    throw new Error('rename_failed');
+    const js = await r.json(); if (!js || !js.ok) throw new Error('rename_failed');
+    return js.step || null;
   }
   async function apiDelete(id){
     const r = await fetch(`/ofertas/${encodeURIComponent(OFFER.id)}/etapas/${encodeURIComponent(id)}`,{ method:'DELETE' });
-    if (r.ok){ const js = await r.json(); if (js && js.ok) return true; }
-    throw new Error('delete_failed');
+    const js = await r.json(); if (!js || !js.ok) throw new Error('delete_failed');
+    return true;
   }
   async function apiReorder(orderIds){
     const r = await fetch(`/ofertas/${encodeURIComponent(OFFER.id)}/etapas/reorder`,{
       method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ order: orderIds })
     });
-    if (r.ok){ const js = await r.json(); if (js && js.ok) return true; }
-    console.warn('[steps] reorder endpoint indisponível — pulando reordenação.');
+    const js = await r.json(); if (!js || !js.ok) throw new Error('reorder_failed');
     return true;
   }
 
@@ -467,11 +433,12 @@
       try{
         setSaving(true);
 
+        // Coleta: novos, renomes, deletions e seleção atual
         const rows = Array.from(listEl.children);
-        const newNames  = [];
+        const newNames = [];
         const renameOps = [];
         const deleteIds = [];
-        let selectedId  = null;
+        let selectedId = null;
         let selectedIdResolved = false;
 
         for (const li of rows){
@@ -483,31 +450,30 @@
           const old  = (nameEl?.dataset.oldName || '').trim();
           const rb   = li.querySelector('input[type="radio"]');
 
-          if (rb && rb.checked){
-            selectedId = id || '__will_select_new__';
-          }
+          if (rb && rb.checked){ selectedId = id || '__will_select_new__'; }
           if (isNew && !toDel && name){ newNames.push(name); }
           if (!isNew && toDel){ deleteIds.push(id); }
           if (!isNew && !toDel && name && name !== old){ renameOps.push({ id, name }); }
         }
 
+        // Criar novos
         if (newNames.length){
-          const created = await apiBatchCreate(newNames);
+          const created = await apiBatchCreate(newNames); // [{id,name,stepNo...}]
           let idx=0;
           for (const li of rows){
             if (!li.dataset.id && li.dataset.toDelete !== '1'){
-              const c = created[idx++];
-              if (!c) continue;
-              li.dataset.id = c.id;
+              const createdStep = created[idx++]; if (!createdStep) continue;
+              li.dataset.id = createdStep.id;
               const nameEl = li.querySelector('.tf-steps2-name');
-              if (nameEl){ nameEl.dataset.oldName = c.name || nameEl.value || ''; }
+              if (nameEl){ nameEl.dataset.oldName = createdStep.name || nameEl.value || ''; }
               if (selectedId === '__will_select_new__' && !selectedIdResolved){
-                selectedIdResolved = true; selectedId = c.id;
+                selectedIdResolved = true; selectedId = createdStep.id;
               }
             }
           }
         }
 
+        // Renomear / Excluir / Reordenar
         for (const op of renameOps){ await apiRename(op.id, op.name); }
         for (const id of deleteIds){ await apiDelete(id); }
 
@@ -517,11 +483,13 @@
           .filter(Boolean);
         if (orderIds.length){ await apiReorder(orderIds); }
 
+        // Feedback + sair
         btnSave.classList.add('tf-steps2-saved');
         setTimeout(()=> btnSave.classList.remove('tf-steps2-saved'), 600);
         showToast('Etapas salvas com sucesso.');
         closeModal();
 
+        // Navegação conforme etapa escolhida
         if (selectedId && selectedId !== '__will_select_new__'){
           window.location.href = `/ofertas/painel/${encodeURIComponent(OFFER.id)}?stepId=${encodeURIComponent(selectedId)}`;
         } else {
