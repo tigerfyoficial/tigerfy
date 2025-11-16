@@ -62,42 +62,51 @@
 </div>
 
 <style>
+  /* ===========================
+     Centralização estilo Dashboard
+     (NÃO altera tema; apenas posicionamento)
+     =========================== */
+
   :root{
-    /* usado só nesta página; calculo via JS */
-    --tf-sidebar-half: 0px;
+    /* Valores idênticos ao snippet da dashboard.
+       Se quiser micro-ajuste, altere aqui. */
+    --tf-scale: 0.9;
+    --tf-shift-x: -38px;  /* esquerda */
+    --tf-shift-y: 0px;    /* sobe/abaixa */
   }
 
-  /* Área de conteúdo (não altera tema global) */
+  /* Área “útil” da página (respeita sidebar) */
   .offer-create-shell{
-    max-width:1200px;
+    /* mesmo padding-base do painel com sidebar */
+    padding:60px 80px 100px 130px;
     margin:0 auto;
-    padding:60px 80px 100px 80px; /* simétrico */
+    max-width:calc(100vw - 120px);
     box-sizing:border-box;
-    color:#fff;
+
+    /* AJUSTE TIGERFY: mesma centralização da dashboard */
+    transform: scale(var(--tf-scale)) translateY(var(--tf-shift-y)) translateX(var(--tf-shift-x));
+    transform-origin: top center;
   }
 
-  /* CENTRO REAL H/V + compensação da sidebar */
+  /* Wrapper fica neutro pra não brigar com o transform acima */
   .offer-create-wrapper{
-    min-height: 100dvh;                 /* centro vertical real */
-    display: grid;
-    place-items: center;                 /* centro horizontal/vertical */
-    /* AJUSTE TIGERFY: compensa metade da sidebar e um ajuste vertical leve */
-    transform: translate(
-      calc(-1 * var(--tf-sidebar-half)),
-      -8px
-    );
+    display:block;       /* remove o centro forçado anterior */
+    min-height:unset;
+    padding:0;
   }
 
+  /* Largura do bloco central (card + título) */
   .offer-create-inner{
-    max-width:980px;
+    max-width:980px;   /* largura confortável */
     width:100%;
-    margin:0 auto;
+    margin:0 auto;     /* mantém o bloco centrado dentro do shell */
     display:flex;
     flex-direction:column;
     gap:24px;
+    color:#fff;
   }
 
-  /* Cabeçalho (sem mudança visual) */
+  /* ===== Header (visual intacto) ===== */
   .offer-create-header h1{
     font-size:2.1rem;
     color:#ffcc00;
@@ -109,7 +118,7 @@
     font-size:.95rem;
   }
 
-  /* Card (visual intacto) */
+  /* ===== Card (visual intacto) ===== */
   .offer-create-form{
     background:rgba(0,0,0,0.78);
     border-radius:20px;
@@ -120,7 +129,7 @@
     margin:0 auto;
   }
 
-  /* Campos */
+  /* ===== Campos ===== */
   .field-group{ margin-bottom:22px; }
   .field-group label{
     display:block;
@@ -153,7 +162,7 @@
     box-shadow:0 0 0 2px rgba(255,204,0,0.28);
   }
 
-  /* Pills */
+  /* ===== Pills ===== */
   .pill-row{ display:flex; flex-wrap:wrap; gap:10px; }
   .pill{
     flex:1;
@@ -186,7 +195,7 @@
   .pill.active .pill-title{ color:#111; }
   .pill.active .pill-sub{ color:#2b2100; }
 
-  /* Ações */
+  /* ===== Ações ===== */
   .actions{ margin-top:24px; display:flex; justify-content:flex-end; gap:12px; }
   .btn-primary, .btn-secondary{
     border:none; border-radius:10px; padding:10px 22px;
@@ -202,14 +211,12 @@
   .btn-secondary{ background:rgba(255,255,255,0.12); color:#fff; }
   .btn-secondary:hover{ background:rgba(255,255,255,0.18); }
 
-  /* Responsivo */
+  /* ===== Responsivo ===== */
   @media (max-width: 980px){
-    .offer-create-shell{ padding:50px 18px 80px 18px; }
-    .offer-create-wrapper{
-      min-height:auto;
-      transform:none;        /* no mobile não precisa compensar sidebar */
-      align-items:flex-start;
-      padding-top:12px;
+    .offer-create-shell{
+      padding:50px 18px 80px 18px;
+      transform:none;              /* sem scale/translate no mobile */
+      max-width:100%;
     }
     .offer-create-inner{ max-width:100%; }
     .offer-create-form{ padding:18px; }
@@ -234,23 +241,4 @@
     }
     setupPillGroup('botType', 'botTypeInput');
   });
-
-  // AJUSTE TIGERFY: mede a sidebar e compensa metade para centralizar a área útil
-  (function(){
-    function setSidebarHalf(){
-      const candidates = [
-        'aside', '.sidebar', '.tf-sidebar', '.tigerfy-sidebar',
-        'nav.sidebar', '[data-sidebar]'
-      ];
-      let sb = null;
-      for (const sel of candidates){
-        sb = document.querySelector(sel);
-        if (sb) break;
-      }
-      const w = sb ? sb.getBoundingClientRect().width : 0;
-      document.documentElement.style.setProperty('--tf-sidebar-half', (w/2) + 'px');
-    }
-    setSidebarHalf();
-    window.addEventListener('resize', setSidebarHalf);
-  })();
 </script>
