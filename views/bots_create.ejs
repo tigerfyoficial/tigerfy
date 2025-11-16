@@ -1,96 +1,82 @@
 <%- include('partials/visual_hottrack') %>
 
 <div class="tiger-offer-create">
-  <div class="offer-create-header">
-    <h1>Criar nova oferta</h1>
-    <p>Defina o nome da oferta, tipo de bot e traqueamento. Você poderá editar tudo depois.</p>
-  </div>
-
-  <form action="/ofertas/criar" method="POST" class="offer-create-form">
-    <!-- Nome da oferta -->
-    <div class="field-group">
-      <label for="name">Nome da Oferta <span>*</span></label>
-      <input
-        type="text"
-        id="name"
-        name="name"
-        required
-        placeholder="Ex: Mundo Oculto, VIP Premium, VIP Flix..."
-        autocomplete="off"
-      />
+  <div class="offer-create-inner">
+    <div class="offer-create-header">
+      <h1>Criar nova oferta</h1>
+      <p>Defina o nome da oferta e o tipo de bot. Você poderá editar tudo depois.</p>
     </div>
 
-    <!-- Tipo de Bot -->
-    <div class="field-group">
-      <label>Tipo de Bot</label>
-      <p class="small-helper">Escolha o estilo de automação que essa oferta vai usar.</p>
-
-      <input type="hidden" name="botType" id="botTypeInput" value="bot_padrao"/>
-
-      <div class="pill-row" data-group="botType">
-        <button type="button" class="pill active" data-value="bot_padrao">
-          <span class="pill-title">Bot Padrão</span>
-          <span class="pill-sub">Estilo Astron, Apex, Flexion — fluxo clássico.</span>
-        </button>
-
-        <button type="button" class="pill disabled" disabled>
-          <span class="pill-title">Bot Fluxo</span>
-          <span class="pill-tag">Em breve</span>
-        </button>
-
-        <button type="button" class="pill disabled" disabled>
-          <span class="pill-title">Bot Fluxo (Manychat)</span>
-          <span class="pill-tag">Em breve</span>
-        </button>
+    <form action="/ofertas/criar" method="POST" class="offer-create-form">
+      <!-- Nome da oferta -->
+      <div class="field-group">
+        <label for="name">Nome da Oferta <span>*</span></label>
+        <input
+          type="text"
+          id="name"
+          name="name"
+          required
+          placeholder="Ex: Mundo Oculto, VIP Premium, VIP Flix..."
+          autocomplete="off"
+        />
       </div>
-    </div>
 
-    <!-- Traqueamento -->
-    <div class="field-group">
-      <label>Traqueamento</label>
-      <p class="small-helper">Defina como essa oferta será rastreada nas campanhas.</p>
+      <!-- Tipo de Bot -->
+      <div class="field-group">
+        <label>Tipo de Bot</label>
+        <p class="small-helper">Escolha o estilo de automação que essa oferta vai usar.</p>
 
+        <input type="hidden" name="botType" id="botTypeInput" value="bot_padrao"/>
+
+        <div class="pill-row" data-group="botType">
+          <button type="button" class="pill active" data-value="bot_padrao">
+            <span class="pill-title">Bot Padrão</span>
+            <span class="pill-sub">Fluxo clássico de automação para ofertas padrão.</span>
+          </button>
+
+          <button type="button" class="pill disabled" disabled>
+            <span class="pill-title">Bot Fluxo</span>
+            <span class="pill-tag">Em breve</span>
+          </button>
+
+          <button type="button" class="pill disabled" disabled>
+            <span class="pill-title">Bot Fluxo (Manychat)</span>
+            <span class="pill-tag">Em breve</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Traqueamento (REMOVIDO da interface) -->
+      <!-- Mantém o backend vivo com o valor padrão -->
       <input type="hidden" name="trackingType" id="trackingTypeInput" value="fb_pixel"/>
 
-      <div class="pill-row" data-group="trackingType">
-        <button type="button" class="pill active" data-value="fb_pixel">
-          <span class="pill-title">Facebook Pixel</span>
-        </button>
-
-        <button type="button" class="pill" data-value="utmify_utmify_pixel">
-          <span class="pill-title">UTMify + UTMify Pixel</span>
-        </button>
-
-        <button type="button" class="pill" data-value="utmify_fb_pixel">
-          <span class="pill-title">UTMify + Pixel Facebook</span>
-        </button>
-
-        <button type="button" class="pill" data-value="track_proprio">
-          <span class="pill-title">Track Próprio</span>
-        </button>
+      <!-- Botão final -->
+      <div class="actions">
+        <a href="/ofertas" class="btn-secondary">Voltar</a>
+        <button type="submit" class="btn-primary big">Criar oferta</button>
       </div>
-    </div>
-
-    <!-- Botão final -->
-    <div class="actions">
-      <a href="/ofertas" class="btn-secondary">Voltar</a>
-      <button type="submit" class="btn-primary big">Criar oferta</button>
-    </div>
-  </form>
+    </form>
+  </div>
 </div>
 
 <style>
-  /* ===== Centralização (sem deslocar pra esquerda) ===== */
+  /* ===== Container da página (respeita sidebar, sem quebrar tema) ===== */
   .tiger-offer-create{
-    padding:60px 80px 100px 130px;     /* compensa a sidebar */
-    max-width:calc(100vw - 120px);
+    padding:60px 80px 100px 130px; /* mesmo padrão das outras telas do painel */
+    max-width:1200px;
     margin:0 auto;
     color:#fff;
   }
-  .offer-create-header{
+
+  /* ===== Wrapper centralizador do cabeçalho + card ===== */
+  .offer-create-inner{
     max-width:880px;
-    margin:0 auto 24px auto;           /* header centralizado */
+    margin:0 auto;                  /* centraliza tudo dentro da área de conteúdo */
+    display:flex;
+    flex-direction:column;
+    gap:24px;
   }
+
   .offer-create-header h1{
     font-size:2.1rem;
     color:#ffcc00;
@@ -102,15 +88,15 @@
     font-size:.95rem;
   }
 
-  /* ===== Card principal com mais contraste ===== */
+  /* ===== Card principal (visual TigerFy intacto) ===== */
   .offer-create-form{
     background:rgba(0,0,0,0.78);
     border-radius:20px;
     padding:28px 26px 24px;
     border:1px solid rgba(255,204,0,0.16);
     box-shadow:0 0 40px rgba(0,0,0,0.6);
-    max-width:880px;
-    margin:0 auto;                     /* centraliza o card */
+    margin:0 auto;                  /* reforça centralização do card */
+    width:100%;
   }
 
   /* ===== Campos ===== */
@@ -125,7 +111,7 @@
 
   .small-helper{
     font-size:.8rem;
-    color:#c9c9c9;                     /* mais legível */
+    color:#c9c9c9;
     margin:0 0 8px;
   }
 
@@ -140,15 +126,13 @@
     font-size:.95rem;
     transition:border-color .2s, box-shadow .2s;
   }
-  .field-group input[type="text"]::placeholder{
-    color:rgba(255,255,255,0.65);
-  }
+  .field-group input[type="text"]::placeholder{ color:rgba(255,255,255,0.65); }
   .field-group input[type="text"]:focus{
     border-color:#ffcc00;
     box-shadow:0 0 0 2px rgba(255,204,0,0.28);
   }
 
-  /* ===== Pills: contraste melhor + ativo legível ===== */
+  /* ===== Pills ===== */
   .pill-row{ display:flex; flex-wrap:wrap; gap:10px; }
   .pill{
     flex:1;
@@ -172,7 +156,6 @@
     border-color:rgba(255,204,0,0.45);
     background:rgba(255,255,255,0.10);
   }
-
   .pill.active{
     border-color:#ffcc00;
     background:radial-gradient(circle at top left,#fff7bf,#ffcc00 45%,#8a5a16 100%);
@@ -201,16 +184,17 @@
   /* ===== Responsivo ===== */
   @media (max-width: 980px){
     .tiger-offer-create{ padding:50px 18px 80px 18px; }
+    .offer-create-inner{ max-width:100%; }
     .offer-create-form{ padding:18px; }
   }
 </style>
 
 <script>
-  // lógica dos "pills" para botType e trackingType
+  // Lógica das "pills" (mantida). Tracking continua como hidden (valor padrão).
   document.addEventListener('DOMContentLoaded', () => {
     function setupPillGroup(groupName, hiddenInputId){
       const group = document.querySelector(`.pill-row[data-group="${groupName}"]`);
-      if(!group) return;
+      if(!group) return; // se não existir (caso do traqueamento), não faz nada
       const hiddenInput = document.getElementById(hiddenInputId);
       group.addEventListener('click', (e) => {
         const btn = e.target.closest('.pill');
@@ -222,6 +206,7 @@
       });
     }
     setupPillGroup('botType', 'botTypeInput');
-    setupPillGroup('trackingType', 'trackingTypeInput');
+    // Traqueamento removido da UI — mantemos apenas o hidden com valor padrão
+    // setupPillGroup('trackingType', 'trackingTypeInput'); // (intencionalmente não usado)
   });
 </script>
