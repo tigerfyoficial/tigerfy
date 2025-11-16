@@ -281,29 +281,67 @@ router.delete("/ofertas/:id/etapas/:stepId", authGuard, async (req, res) => {
   }
 });
 
-// EXCLUIR ETAPA — com proteção para Etapa 1
+// RENOMEAR ETAPA
+router.post("/ofertas/:id/etapas/:stepId/rename", authGuard, async (req, res) => {
+  try {
+    const owner = req.session.userId;
+    const { id: offerId, stepId } = req.params;
+    const { name } = req.body || {};
+    if (!name || typeof name !== "string") return res.status(400).json({ ok:false, error:"invalid_name" });
+
+    const gotOffer = await Steps.getOfferByIdForOwner(offerId, owner);
+    if (gotOffer.error || !gotOffer.data) return res.status(403).json({ ok:false, error:"forbidden" });
+
+    const upd = await Steps.renameStep({ offerId, stepId, name: name.trim() });
+    if (upd.error) return res.status(500).json({ ok:false, error:"rename_failed" });
+
+    return res.json({ ok:true, step: upd.data });
+  } catch (err) {
+    console.error("rename step error:", err);
+    return res.status(500).json({ ok:false, error:"server_error" });
+  }
+});
+
+// REORDENAR ETAPAS
+router.post("/ofertas/:id/etapas/reorder", authGuard, async (req, res) => {
+  try {
+    const owner = req.session.userId;
+    const { id: offerId } = req.params;
+    const { order } = req.body || {};
+    if (!Array.isArray(order) || !order.length) return res.status(400).json({ ok:false, error:"invalid_order" });
+
+    const gotOffer = await Steps.getOfferByIdForOwner(offerId, owner);
+    if (gotOffer.error || !gotOffer.data) return res.status(403).json({ ok:false, error:"forbidden" });
+
+    const re = await Steps.reorderSteps({ offerId, order });
+    if (re.error) return res.status(500).json({ ok:false, error:"reorder_failed" });
+
+    return res.json({ ok:true });
+  } catch (err) {
+    console.error("reorder steps error:", err);
+    return res.status(500).json({ ok:false, error:"server_error" });
+  }
+});
+
+// EXCLUIR ETAPA (protege a Etapa 1)
 router.post("/ofertas/:id/etapas/:stepId/delete", authGuard, async (req, res) => {
   try {
     const owner = req.session.userId;
     const { id: offerId, stepId } = req.params;
 
-    // Confere owner da oferta
     const gotOffer = await Steps.getOfferByIdForOwner(offerId, owner);
-    if (gotOffer.error || !gotOffer.data) {
-      return res.status(403).json({ ok: false, error: "forbidden" });
-    }
+    if (gotOffer.error || !gotOffer.data) return res.status(403).json({ ok:false, error:"forbidden" });
 
     const del = await Steps.deleteStep({ offerId, stepId });
     if (del.error) {
       if (String(del.error.message||'').includes('cannot_delete_first_step')) {
         return res.status(400).json({ ok:false, error:"cannot_delete_first_step" });
       }
-      console.error("[steps] delete error:", del.error);
       return res.status(500).json({ ok:false, error:"delete_failed" });
     }
     return res.json({ ok:true, id: stepId });
   } catch (err) {
-    console.error("Erro excluir etapa:", err);
+    console.error("delete step error:", err);
     return res.status(500).json({ ok:false, error:"server_error" });
   }
 });
