@@ -105,6 +105,11 @@
     </div>
 
     <div class="tf-steps-body">
+      <!-- Linha de instrução/contexto (extra, discreta) -->
+      <div class="tf-steps-instruction">
+        Selecione qual etapa deseja editar, arraste para organizar e clique em <strong>Salvar mudanças</strong> para aplicar.
+      </div>
+
       <div class="tf-steps-toolbar">
         <button type="button" class="tf-btn tf-btn-small" id="btnAddStepUnified" title="Adicionar nova etapa">＋</button>
         <small class="tf-hint">As alterações são aplicadas ao clicar em <strong>Salvar mudanças</strong>.</small>
@@ -129,21 +134,12 @@
     --accent:#ffcc00;
     --accent-dim:#d4a100;
     --shadow:0 8px 24px rgba(0,0,0,0.45);
-    /* largura “antiga” das pills (narrow) */
     --pills-width: 980px;
   }
 
-  /* ===== Centralização da área à direita da sidebar ===== */
-  .offer-panel-container{
-    width:100%;
-    max-width:1200px;            /* limite do bloco */
-    margin-left:auto;
-    margin-right:auto;           /* centraliza na área útil */
-  }
-  /* Override sutil apenas dentro do wrapper (mantém tema e proporções) */
-  .offer-panel-container .tf-offer-panel{
-    padding:60px 80px 100px 80px; /* esquerda = direita para não “puxar” pro lado */
-  }
+  /* ===== Centralização da área à direita da sidebar (sem mudar tema) ===== */
+  .offer-panel-container{ width:100%; max-width:1200px; margin-left:auto; margin-right:auto; }
+  .offer-panel-container .tf-offer-panel{ padding:60px 80px 100px 80px; } /* esquerda = direita */
 
   .tf-offer-panel{ color:var(--text); padding:60px 80px 100px 130px; max-width:1200px; margin:0 auto; }
   .tf-breadcrumb{ display:flex; align-items:center; gap:8px; color:var(--muted); font-size:.9rem; margin-bottom:10px; }
@@ -174,7 +170,7 @@
   .tf-subtabs .subtab:not([disabled]):hover{ background:rgba(255,255,255,0.07); }
   .tf-subtabs .subtab.active{ background:rgba(255,255,255,0.10); border-color:rgba(255,255,255,0.22); color:#fff; }
 
-  /* Conteúdo grande mais largo e centralizado */
+  /* Conteúdo */
   .tf-content-placeholder{
     min-height:360px; border:1px dashed rgba(255,255,255,0.12); border-radius:14px;
     background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
@@ -182,17 +178,17 @@
     margin-top:14px;
   }
 
-  /* ===== Modal central único de Etapas ===== */
+  /* ===== Modal central único de Etapas (visual premium) ===== */
   .tf-steps-overlay[hidden]{ display:none !important; }
   .tf-steps-overlay{
     position:fixed; inset:0; z-index:3000;
     display:flex; align-items:center; justify-content:center;
     background:rgba(0,0,0,0.45);
-    backdrop-filter: blur(6px);
+    backdrop-filter: blur(8px);
   }
   .tf-steps-dialog{
-    width:min(860px, calc(100vw - 40px));
-    max-height: min(76vh, 720px);
+    width:min(840px, calc(100vw - 40px));
+    max-height:min(76vh, 720px);
     overflow:hidden;
     background:
       radial-gradient(1200px 240px at 50% -80px, rgba(255,204,0,0.08), transparent),
@@ -200,20 +196,24 @@
     border:1px solid rgba(255,255,255,0.14);
     border-radius:16px;
     box-shadow:0 22px 60px rgba(0,0,0,0.6);
-    transform: translateY(6px) scale(0.99);
+    transform: translateY(6px) scale(0.985);
     animation: tfStepsIn .18s ease-out forwards;
   }
   @keyframes tfStepsIn { to { transform: translateY(0) scale(1); } }
 
-  .tf-steps-head{ position:relative; padding:18px 18px 8px 18px; }
-  .tf-steps-head h3{ margin:0; font-size:1.1rem; }
+  .tf-steps-head{ position:relative; padding:18px 18px 8px 18px; border-bottom:1px solid rgba(255,255,255,0.08); }
+  .tf-steps-head h3{ margin:0; font-size:1.12rem; letter-spacing:.2px; }
   .tf-steps-sub{ color:#cfcfcf; margin:6px 0 0 0; }
   .tf-steps-close{
     position:absolute; top:12px; right:12px; border:1px solid var(--border);
     background:var(--panel-strong); color:#eee; width:34px; height:34px; border-radius:10px; cursor:pointer;
   }
 
-  .tf-steps-body{ padding:10px 14px 6px 14px; }
+  .tf-steps-body{ padding:12px 14px 8px 14px; }
+  .tf-steps-instruction{
+    font-size:.92rem; color:#d3d3d3; padding:8px 10px; border:1px dashed rgba(255,255,255,0.12);
+    border-radius:10px; background:rgba(255,255,255,0.03); margin-bottom:10px;
+  }
   .tf-steps-toolbar{ display:flex; align-items:center; gap:10px; margin-bottom:10px; }
   .tf-hint{ color:#cfcfcf; }
 
@@ -226,11 +226,13 @@
     box-shadow: 0 10px 26px rgba(0,0,0,0.35), inset 0 0 0 1px rgba(255,255,255,0.04);
     transition: transform .08s ease, background .14s ease, border-color .14s ease;
   }
-  .tf-step-item:hover{
-    background: linear-gradient(180deg, rgba(255,255,255,0.07), rgba(255,255,255,0.04));
-    border-color: rgba(255,255,255,0.2);
-    transform: translateY(-1px);
+  .tf-step-item:hover{ background: linear-gradient(180deg, rgba(255,255,255,0.07), rgba(255,255,255,0.04)); border-color: rgba(255,255,255,0.2); transform: translateY(-1px); }
+  .tf-step-item.is-current{
+    border-color: rgba(255,204,0,0.40);
+    box-shadow: 0 0 0 1px rgba(255,204,0,0.22), 0 12px 28px rgba(0,0,0,0.45);
+    background: linear-gradient(180deg, rgba(255,204,0,0.06), rgba(255,255,255,0.03));
   }
+
   .tf-step-no{
     display:inline-flex; align-items:center; justify-content:center; width:42px; height:30px; border-radius:999px;
     background: rgba(255,255,255,0.08); color:#fff; font-weight:800; border:1px solid rgba(255,255,255,0.16);
@@ -240,9 +242,16 @@
     background: rgba(255,255,255,0.06); color:#fff; border:1px solid rgba(255,255,255,0.16);
   }
   .tf-step-name:focus{ border-color: rgba(255,204,0,0.6); box-shadow: 0 0 0 2px rgba(255,204,0,0.20); outline: none; }
+
   .tf-step-actions{ display:flex; align-items:center; gap:6px; }
-  .tf-step-btn{ appearance:none; border:1px solid var(--border); background:var(--panel-strong); color:#eee; padding:6px 10px; border-radius:10px; cursor:pointer; font-weight:600; transition:.18s ease; }
+  .tf-step-btn{
+    appearance:none; border:1px solid var(--border); background:var(--panel-strong); color:#eee;
+    padding:6px 10px; border-radius:10px; cursor:pointer; font-weight:600; transition:.18s ease;
+    display:inline-flex; align-items:center; justify-content:center; line-height:0;
+  }
   .tf-step-btn:hover{ background:rgba(255,255,255,0.08); }
+  .tf-step-btn svg{ width:14px; height:14px; }
+
   .tf-step-btn.danger{ border-color: rgba(255, 75, 75, .35); background: linear-gradient(90deg, #3a0000, #2a0000); color: #ffdada; }
 
   /* Controle de seleção (premium) */
@@ -259,10 +268,14 @@
   .tf-select-radio input[type="radio"]:checked{
     border-color: rgba(255,204,0,0.7); box-shadow: 0 0 0 2px rgba(255,204,0,0.15), inset 0 0 0 2px rgba(0,0,0,0.2);
   }
-  .tf-select-radio input[type="radio"]:checked::after{
-    background:linear-gradient(90deg, var(--accent), var(--accent-dim));
+  .tf-select-radio input[type="radio"]:checked::after{ background:linear-gradient(90deg, var(--accent), var(--accent-dim)); }
+  .tf-select-radio span{
+    color:#eaeaea; font-weight:700; letter-spacing:.2px; padding:4px 8px; border-radius:999px;
+    border:1px solid rgba(255,255,255,0.14); background:rgba(255,255,255,0.06); transition:.16s;
   }
-  .tf-select-radio span{ color:#eaeaea; font-weight:700; letter-spacing:.2px; }
+  .tf-step-item.is-current .tf-select-radio span{
+    background:linear-gradient(90deg,var(--accent),var(--accent-dim)); color:#171300; border-color:rgba(255,204,0,0.45);
+  }
 
   .tf-steps-actions{ display:flex; justify-content:flex-end; gap:8px; padding:12px 14px 16px 14px; border-top:1px solid rgba(255,255,255,0.12); }
 
@@ -307,7 +320,7 @@
   }
   buildBreadcrumb();
 
-  /* Tabs principais (mantém “Principal” ativo e subtabs visíveis) */
+  /* Tabs principais */
   var mainTabs = document.querySelectorAll('.tf-tabs-main .tab');
   var subTabsWrap = document.getElementById('subtabs-principal');
 
@@ -315,25 +328,21 @@
     btn.addEventListener('click', function(e){
       var t = btn.dataset.tab;
 
-      // Se clicar em "Etapas", abre o modal central e não troca de tab
+      // "Etapas" abre o modal e não troca de tab
       if (t === 'etapas') {
         e.preventDefault();
         openStepsModal();
         return;
       }
-
-      // Comportamento normal para outras tabs
       mainTabs.forEach(function(b){ b.classList.remove('active'); });
       btn.classList.add('active');
       var isPrincipal = t === 'principal';
       if (subTabsWrap) subTabsWrap.style.display = isPrincipal ? 'flex' : 'none';
     });
   });
-
-  // Garante subtabs da Principal visíveis por padrão:
   if (subTabsWrap) subTabsWrap.style.display = 'flex';
 
-  /* Toast premium (fade/slide) */
+  /* Toast premium */
   function showToast(type, text){
     var host = document.createElement('div');
     host.style.position='fixed'; host.style.top='20px'; host.style.right='20px';
@@ -405,6 +414,8 @@
     listEl.innerHTML = '';
     var ordered = steps.slice().sort(function(a,b){ return (a.stepNo||0)-(b.stepNo||0); });
     ordered.forEach(function(s){ addRowUnified({ id:s.id, name:s.name, stepNo:s.stepNo, isCurrent: currentStep && currentStep.id===s.id }); });
+    // marca visual da atual
+    syncCurrentClass();
   }
 
   function addRowUnified(opts){
@@ -418,8 +429,10 @@
     input.dataset.oldName = opts.name || '';
 
     var sort = document.createElement('div'); sort.className='tf-step-actions';
-    var up = document.createElement('button'); up.className='tf-step-btn'; up.textContent='↑'; up.title='Subir';
-    var down = document.createElement('button'); down.className='tf-step-btn'; down.textContent='↓'; down.title='Descer';
+    var up = document.createElement('button'); up.className='tf-step-btn'; up.title='Subir';
+    up.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>';
+    var down = document.createElement('button'); down.className='tf-step-btn'; down.title='Descer';
+    down.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>';
     up.addEventListener('click', function(){ var prev = li.previousElementSibling; if(prev) listEl.insertBefore(li, prev); recomputeNosUnified(); });
     down.addEventListener('click', function(){
       var next = li.nextElementSibling;
@@ -430,13 +443,14 @@
 
     var delWrap = document.createElement('div'); delWrap.className='tf-step-actions';
     var del = document.createElement('button'); del.className='tf-step-btn danger'; del.textContent='Excluir'; del.title='Excluir etapa';
-    if (opts.stepNo === 1 && opts.id) del.disabled = true; // protege a primeira persistida (ajuste se quiser)
+    if (opts.stepNo === 1 && opts.id) del.disabled = true;
     del.addEventListener('click', function(){ confirmDeleteUnified(li, input.value || 'Etapa'); });
     delWrap.appendChild(del);
 
     var selWrap = document.createElement('label'); selWrap.className='tf-select-radio';
     var radio = document.createElement('input'); radio.type='radio'; radio.name='tfStepCurrent';
     radio.checked = !!opts.isCurrent;
+    radio.addEventListener('change', syncCurrentClass);
     var lbl = document.createElement('span'); lbl.textContent='Atual';
     selWrap.appendChild(radio); selWrap.appendChild(lbl);
 
@@ -446,6 +460,13 @@
     li.appendChild(delWrap);
     li.appendChild(selWrap);
     listEl.appendChild(li);
+  }
+
+  function syncCurrentClass(){
+    Array.from(listEl.children).forEach(function(li){
+      var checked = li.querySelector('input[type="radio"]')?.checked;
+      if (checked) li.classList.add('is-current'); else li.classList.remove('is-current');
+    });
   }
 
   function recomputeNosUnified(){
@@ -462,7 +483,6 @@
   }
 
   function confirmDeleteUnified(li, displayName){
-    // mini modal de confirmação, usando mesmo overlay style
     var overlay = document.createElement('div'); overlay.className='tf-steps-overlay'; overlay.style.zIndex='4001';
     var box = document.createElement('div'); box.className='tf-steps-dialog'; box.style.maxWidth='460px';
     box.innerHTML = '<div class="tf-steps-head"><h3>Excluir etapa?</h3></div>' +
@@ -509,7 +529,6 @@
             body: JSON.stringify({ names: newNames })
           });
           const js = await r.json(); if (!js || !js.ok) throw new Error('batch_failed');
-          // vincula ids retornados às linhas novas
           let idx=0;
           Array.from(listEl.children).forEach(function(li){
             if (!li.dataset.id){
