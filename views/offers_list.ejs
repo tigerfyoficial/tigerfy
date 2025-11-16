@@ -23,7 +23,6 @@
            const botsCount = Number(o.botsCount || o.bots || 0);
            const btypeRaw = o.botType || o.bot_type || 'bot_padrao';
            const botLabel = (btypeRaw === 'bot_padrao') ? 'Padrão' : (btypeRaw.includes('wiin') ? 'Fluxo (Wiinbot)' : (btypeRaw.includes('many') ? 'Fluxo (Manychat)' : 'Fluxo'));
-           const status = o.status || 'incompleto';
       %>
         <a 
           class="offer-card" 
@@ -37,9 +36,6 @@
         >
           <div class="card-top">
             <h3 class="offer-name" data-offer-id="<%= id %>"><%- o.name %></h3>
-            <span class="status <%= status %>">
-              <% if (status === 'ativo') { %>Ativo<% } else if (status === 'erro') { %>Erro<% } else { %>Incompleto<% } %>
-            </span>
           </div>
 
           <div class="meta meta--with-actions">
@@ -98,17 +94,15 @@
   .offer-card:hover{ border-color:#ffcc00; box-shadow:0 0 16px rgba(255,204,0,0.3); }
   .card-top{ display:flex; align-items:center; justify-content:space-between; gap:8px; }
   .card-top h3{ margin:0; font-size:1rem; }
-  .status{ font-size:.75rem; padding:3px 7px; border-radius:999px; }
-  .status.ativo{ background:rgba(0,255,120,0.16); color:#4fff9a; }
-  .status.incompleto{ background:rgba(255,196,0,0.16); color:#ffdd66; }
-  .status.erro{ background:rgba(255,0,76,0.16); color:#ff6b9e; }
+
+  /* (STATUS REMOVIDO) — regras antigas .status foram eliminadas */
 
   .meta{
     display:flex; gap:10px; flex-wrap:wrap; margin-top:8px;
     font-size:.78rem; color:#c9c9c9;
   }
 
-  /* --- Botão “…” alinhado no canto da linha sem quebrar layout --- */
+  /* --- Botão “…” alinhado no canto da linha, hover sutil --- */
   .meta--with-actions{ position:relative; padding-right:34px; }
   .offer-actions-inline{
     position:absolute; right:10px; top:50%; transform:translateY(-50%);
@@ -117,14 +111,14 @@
     border:1px solid rgba(255,204,0,.20);
     background:rgba(255,204,0,.06);
     color:#ffcc00; cursor:pointer;
-    transition:box-shadow .18s, border-color .18s, background .18s;
+    /* transições/efeitos fortes removidos */
   }
   .offer-actions-inline:hover{
-    border-color:rgba(255,204,0,.45);
-    background:rgba(255,204,0,.10);
-    box-shadow:0 0 10px rgba(255,204,0,.28);
+    /* hover minimalista, sem brilho, sem crescimento */
+    background:rgba(255,204,0,.12);
   }
   .offer-actions-inline .dots{ line-height:1; font-size:13px; transform:translateY(-.5px) }
+
   .go{ position:absolute; right:12px; bottom:10px; opacity:.6; font-size:1.4rem; }
   .empty{ text-align:center; padding:30px 16px; background:rgba(0,0,0,0.70); border:1px solid rgba(255,204,0,0.12); border-radius:16px; }
   .btn-primary.small{ padding:8px 16px; font-size:.85rem; }
@@ -135,7 +129,7 @@
 </style>
 
 <!-- =========================
-     TigerFy • Manage Offer v2 (modal minimalista)
+     (Modal e JS existentes permanecem — somente ajustes acima)
      ========================= -->
 <div id="tf-manage-offer" class="tfm hidden" aria-hidden="true">
   <div class="tfm__backdrop" onclick="TFManage.close()"></div>
@@ -152,7 +146,6 @@
     </header>
 
     <div class="tfm__body">
-      <!-- Resumo -->
       <section class="tfm__sec">
         <h4>Resumo da Oferta</h4>
         <ul class="tfm__resume">
@@ -165,7 +158,6 @@
 
       <hr class="tfm__sep">
 
-      <!-- Renomear -->
       <section class="tfm__sec">
         <h4>Renomear Oferta</h4>
         <label class="tfm__label" for="tfm-input-name">Novo nome da oferta <span>*</span></label>
@@ -178,7 +170,6 @@
 
       <hr class="tfm__sep">
 
-      <!-- Duplicar -->
       <section class="tfm__sec">
         <h4>Duplicar Oferta</h4>
         <p class="tfm__muted">Crie uma cópia desta oferta com um novo ID, preservando configurações principais.</p>
@@ -188,7 +179,6 @@
 
       <hr class="tfm__sep">
 
-      <!-- Excluir -->
       <section class="tfm__sec">
         <h4>Excluir Oferta</h4>
         <p class="tfm__warn">Cuidado: esta ação é permanente.</p>
@@ -199,11 +189,9 @@
   </div>
 </div>
 
-<!-- Toasts minimalistas -->
 <div id="tf-toasts" class="tft"></div>
 
 <style>
-  /* ========= Modal minimalista, isolado (não altera tema global) ========= */
   .hidden{display:none}
   .tft{position:fixed;top:18px;right:18px;display:grid;gap:8px;z-index:100000}
   .tft__item{background:rgba(15,15,15,.95);color:#fff;border:1px solid rgba(255,204,0,.16);
@@ -258,7 +246,7 @@
     if (btn) { e.preventDefault(); e.stopPropagation(); TFManage.openFrom(btn); }
   });
 
-  // ================= TigerFy Manage Offer v2 =================
+  // ================= TigerFy Manage Offer (já existente) =================
   const TFManage = (() => {
     const modal = document.getElementById('tf-manage-offer');
     const elName = document.getElementById('tfm-name');
@@ -358,10 +346,10 @@
         card.dataset.trackingType=o.tracking_type || o.trackingType || '';
         card.dataset.botsCount=botsCount;
 
+        /* Status removido do HTML duplicado */
         card.innerHTML = `
           <div class="card-top">
             <h3 class="offer-name" data-offer-id="${o.id}">${o.name}</h3>
-            <span class="status ${o.status || 'incompleto'}">${(o.status==='ativo'?'Ativo':(o.status==='erro'?'Erro':'Incompleto'))}</span>
           </div>
           <div class="meta meta--with-actions">
             <span>ID: ${String(o.id).slice(-6)}</span><span> | </span>
