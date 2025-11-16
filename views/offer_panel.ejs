@@ -16,7 +16,7 @@
       </div>
     </header>
 
-    <!-- ====================== WRAP CENTRAL DAS PILLS (mantido) ====================== -->
+    <!-- PILLS (mantido) -->
     <div class="tf-pills-wrap">
       <div class="tf-tabs tf-tabs-main">
         <button class="tab active" data-tab="principal">
@@ -37,7 +37,9 @@
         </button>
         <button class="tab" id="tabEtapas" data-tab="etapas">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 3l9 4.5-9 4.5L3 7.5 12 3z"></path><path d="M21 12l-9 4.5L3 12"></path><path d="M21 16.5l-9 4.5-9-4.5"></path>
+            <path d="M12 3l9 4.5-9 4.5L3 7.5 12 3z"></path>
+            <path d="M21 12l-9 4.5L3 12"></path>
+            <path d="M21 16.5l-9 4.5-9-4.5"></path>
           </svg>
           Etapas
         </button>
@@ -70,28 +72,26 @@
         </button>
       </div>
     </div>
-    <!-- ====================== /WRAP CENTRAL DAS PILLS ====================== -->
 
+    <!-- Conteúdo (mantido) -->
     <section class="tf-content-placeholder"></section>
   </div>
 </div>
 <!-- /offer-panel-container -->
 
-<!-- ===================== MODAL — REFINO FLEXION-STYLE ===================== -->
+<!-- ===================== MODAL — ESTILO IGUAL “INTEGRAÇÃO – WIINPAY” ===================== -->
 <div class="tf-steps-overlay" id="stepsUnifiedModal" hidden>
-  <div class="tf-steps-dialog" role="dialog" aria-modal="true">
-    <!-- Cabeçalho -->
-    <div class="tf-steps-head">
+  <div class="tf-steps-dialog tf-steps-dialog--wiin" role="dialog" aria-modal="true">
+    <!-- Cabeçalho centralizado -->
+    <div class="tf-steps-head tf-steps-head--center">
       <h3>Gerenciar Etapas da Oferta</h3>
-      <p class="tf-steps-sub">
-        Crie, selecione e organize as etapas desta oferta. Arraste para reordenar e clique em “Salvar mudanças” para aplicar.
-      </p>
+      <p class="tf-steps-sub">Crie, selecione e organize as etapas desta oferta.</p>
       <button type="button" class="tf-steps-close" id="btnCloseStepsUnified" aria-label="Fechar">✕</button>
     </div>
 
     <!-- Corpo -->
-    <div class="tf-steps-body">
-      <div class="tf-steps-toolbar">
+    <div class="tf-steps-body tf-steps-body--compact">
+      <div class="tf-steps-toolbar tf-steps-toolbar--tight">
         <button type="button" class="tf-btn tf-btn-small" id="btnAddStepUnified" title="Adicionar nova etapa">
           <span class="tf-icon-plus">＋</span> Nova etapa
         </button>
@@ -102,8 +102,8 @@
       <ul class="tf-steps-list" id="tfStepsUnifiedList" aria-label="Lista de Etapas"></ul>
     </div>
 
-    <!-- Rodapé -->
-    <div class="tf-steps-actions">
+    <!-- Rodapé com mesma leitura do modal de integração -->
+    <div class="tf-steps-actions tf-steps-actions--wiin">
       <button type="button" class="tf-btn" id="btnCancelStepsUnified">Cancelar</button>
       <button type="button" class="tf-btn tf-btn-primary" id="btnSaveStepsUnified">Salvar mudanças</button>
     </div>
@@ -120,7 +120,7 @@
     --accent:#ffcc00;
     --accent-dim:#d4a100;
     --shadow:0 8px 24px rgba(0,0,0,0.45);
-    --pills-width: 980px;
+    --pills-width:980px;
   }
 
   /* Centralização da área útil (mantido) */
@@ -136,17 +136,15 @@
 
   .tf-btn{ appearance:none; border:1px solid var(--border); background:var(--panel-strong); color:#eee; padding:9px 14px; border-radius:10px; cursor:pointer; font-weight:600; box-shadow:var(--shadow); transition:.2s ease; }
   .tf-btn:hover{ border-color:rgba(255,255,255,0.2); background:rgba(255,255,255,0.08); }
-  .tf-btn-small{ padding:7px 10px; font-size:.85rem; border-radius:999px; }
+  .tf-btn-small{ padding:7px 12px; height:34px; border-radius:10px; } /* altura/raio no padrão dos Adquirentes */
   .tf-btn-primary{ background:linear-gradient(90deg,var(--accent),var(--accent-dim)); color:#171300; border:1px solid rgba(255,204,0,0.35); box-shadow:0 6px 22px rgba(255,204,0,0.25); }
 
   .tf-pills-wrap{ max-width:var(--pills-width); margin:16px auto 8px; }
   .tf-tabs{ display:flex; gap:8px; flex-wrap:wrap; justify-content:center; }
   .tf-subtabs{ display:flex; gap:8px; flex-wrap:wrap; justify-content:center; margin-top:10px; }
-
-  .tf-tabs .tab{ display:inline-flex; align-items:center; gap:8px; padding:9px 14px; border-radius:999px; border:1px solid var(--border); background:var(--panel); color:#dedede; font-weight:600; font-size:.92rem; cursor:pointer; line-height:1; height:38px; }
+  .tf-tabs .tab{ display:inline-flex; align-items:center; gap:8px; padding:9px 14px; border-radius:999px; border:1px solid var(--border); background:var(--panel); color:#dedede; font-weight:600; height:38px; }
   .tf-tabs .tab.active{ background:rgba(255,255,255,0.10); border-color:rgba(255,255,255,0.22); color:#fff; }
-  .tf-subtabs .subtab{ display:inline-flex; align-items:center; gap:8px; padding:7px 12px; border-radius:999px; border:1px solid var(--border); background:var(--panel); color:#dcdcdc; font-weight:600; font-size:.9rem; cursor:pointer; height:34px; }
-  .tf-subtabs .subtab[disabled]{ opacity:.45; cursor:not-allowed; }
+  .tf-subtabs .subtab{ display:inline-flex; align-items:center; gap:8px; padding:7px 12px; border-radius:999px; border:1px solid var(--border); background:var(--panel); color:#dcdcdc; font-weight:600; height:34px; }
 
   .tf-content-placeholder{
     min-height:360px; border:1px dashed rgba(255,255,255,0.12); border-radius:14px;
@@ -154,46 +152,62 @@
     box-shadow:var(--shadow); margin-top:14px;
   }
 
-  /* ===== Modal refinado ===== */
+  /* ===== Overlay igual ao modal de Integração ===== */
   .tf-steps-overlay[hidden]{ display:none !important; }
   .tf-steps-overlay{
     position:fixed; inset:0; z-index:3000;
     display:flex; align-items:center; justify-content:center;
-    background:rgba(0,0,0,0.46); backdrop-filter: blur(8px);
+    background:rgba(0,0,0,0.55);           /* escurecimento um pouco mais forte */
+    backdrop-filter: blur(10px);           /* blur mais marcante (efeito vidro) */
   }
+
+  /* ===== Card do modal no “peso” WiinPay ===== */
   .tf-steps-dialog{
-    width:min(820px, calc(100vw - 40px));
-    max-height:min(76vh, 720px); overflow:hidden;
+    width:min(760px, calc(100vw - 40px));  /* mais compacto */
+    max-height:min(70vh, 680px);
+    overflow:hidden;
+    border-radius:14px;                     /* raio igual família de modais */
+    border:1px solid rgba(255,255,255,0.10);
+    box-shadow:
+      0 20px 56px rgba(0,0,0,0.60),
+      0 0 0 1px rgba(255,204,0,0.08);       /* glow dourado MUITO discreto */
     background:
-      radial-gradient(1100px 220px at 50% -80px, rgba(255,204,0,0.07), transparent),
-      linear-gradient(180deg, rgba(255,255,255,0.065), rgba(255,255,255,0.04));
-    border:1px solid rgba(255,255,255,0.12);
-    border-radius:16px; box-shadow:0 20px 56px rgba(0,0,0,0.6);
-    transform: translateY(6px) scale(0.985);
+      radial-gradient(1000px 200px at 50% -80px, rgba(255,204,0,0.065), transparent),
+      linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.04)); /* gradiente escuro “vidro” */
+    transform: translateY(8px) scale(0.985);
     animation: tfStepsIn .18s ease-out forwards;
   }
+  .tf-steps-dialog--wiin{ /* alias semântico, caso precise isolar depois */ }
+
   @keyframes tfStepsIn { to { transform: translateY(0) scale(1); } }
 
+  /* Cabeçalho centralizado como o Integração – WiinPay */
   .tf-steps-head{ position:relative; padding:16px 18px 10px 18px; border-bottom:1px solid rgba(255,255,255,0.07); }
-  .tf-steps-head h3{ margin:0; font-size:1.12rem; }
-  .tf-steps-sub{ color:#cfcfcf; margin:4px 0 0 0; }
+  .tf-steps-head--center h3,
+  .tf-steps-head--center .tf-steps-sub{ text-align:center; }
+  .tf-steps-head h3{ margin:0; font-size:1.08rem; letter-spacing:.2px; }
+  .tf-steps-sub{ color:#cfcfcf; margin:6px 0 0 0; font-size:.92rem; }
   .tf-steps-close{
     position:absolute; top:10px; right:10px; width:34px; height:34px; border-radius:10px;
     border:1px solid rgba(255,255,255,0.12); background:rgba(255,255,255,0.06); color:#eee; cursor:pointer;
   }
 
+  /* Corpo mais compacto */
   .tf-steps-body{ padding:12px 14px 6px 14px; }
+  .tf-steps-body--compact{ padding:12px 16px; }
   .tf-steps-toolbar{ display:flex; align-items:center; gap:12px; margin-bottom:10px; }
-  .tf-toolbar-hint{ margin-left:auto; color:#cfcfcf; opacity:.9; }
+  .tf-steps-toolbar--tight .tf-btn-small{ height:34px; } /* mesma altura do Adquirentes */
+  .tf-toolbar-hint{ margin-left:auto; color:#cfcfcf; opacity:.9; font-size:.9rem; }
 
+  /* Lista com limite de altura para caber no card compacto */
   .tf-steps-list{
     list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:8px;
     max-height:48vh; overflow:auto;
   }
 
-  /* ===== Card da etapa (Flexion-like) ===== */
+  /* Linha/card da etapa — mantém a lógica, só ajusta respiro */
   .tf-step-item{
-    display:grid; grid-template-columns: 32px 42px 1fr auto auto; /* handle | # | input | selecionar/atual | excluir */
+    display:grid; grid-template-columns: 32px 40px 1fr auto auto; /* handle | # | input | select/atual | excluir */
     align-items:center; gap:10px; padding:10px 12px;
     border-radius:12px;
     background: linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.03));
@@ -203,12 +217,12 @@
   }
   .tf-step-item:hover{ transform: translateY(-1px); border-color: rgba(255,255,255,0.18); }
   .tf-step-item.is-current{
-    border-color: rgba(255,204,0,0.38);
-    box-shadow: 0 0 0 1px rgba(255,204,0,0.18), 0 12px 26px rgba(0,0,0,0.42);
+    border-color: rgba(255,204,0,0.35);
+    box-shadow: 0 0 0 1px rgba(255,204,0,0.16), 0 12px 26px rgba(0,0,0,0.42);
     background: linear-gradient(180deg, rgba(255,204,0,0.055), rgba(255,255,255,0.03));
   }
 
-  /* Handle (6 pontinhos) */
+  /* Handle de drag (seis pontinhos) */
   .tf-drag-handle{
     display:inline-flex; align-items:center; justify-content:center;
     width:24px; height:24px; border-radius:8px;
@@ -219,67 +233,55 @@
   .tf-drag-handle:active{ cursor:grabbing; }
   .tf-drag-handle svg{ width:14px; height:14px; opacity:.85; }
 
-  /* Número */
   .tf-step-no{
     display:inline-flex; align-items:center; justify-content:center;
-    width:38px; height:28px; border-radius:999px;
+    width:36px; height:28px; border-radius:999px;
     background: rgba(255,255,255,0.08);
     border:1px solid rgba(255,255,255,0.14);
     font-weight:800; color:#fff;
   }
-
-  /* Input nome */
   .tf-step-name{
     width:100%; padding:8px 10px; border-radius:10px;
-    background: rgba(255,255,255,0.06);
-    border:1px solid rgba(255,255,255,0.14);
-    color:#fff; transition:.16s;
+    background: rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.14); color:#fff;
   }
   .tf-step-name:focus{ border-color: rgba(255,204,0,0.55); box-shadow: 0 0 0 2px rgba(255,204,0,0.18); outline:none; }
 
-  /* Ações compactas */
   .tf-actions-inline{ display:flex; align-items:center; gap:8px; }
-
   .tf-btn-ghost{
     appearance:none; display:inline-flex; align-items:center; justify-content:center;
-    padding:7px 10px; border-radius:10px;
+    padding:7px 12px; border-radius:10px; height:34px;
     border:1px solid rgba(255,255,255,0.12); background:rgba(255,255,255,0.06);
     color:#eee; font-weight:700; transition:.16s;
   }
   .tf-btn-ghost:hover{ background:rgba(255,255,255,0.09); }
 
   .tf-badge{
-    display:inline-flex; align-items:center; gap:6px; padding:6px 10px; border-radius:999px;
+    display:inline-flex; align-items:center; gap:6px; padding:6px 10px; border-radius:999px; height:34px;
     border:1px solid rgba(255,255,255,0.12); background:rgba(255,255,255,0.06); color:#eaeaea; font-weight:700;
   }
-  .tf-badge.current{
-    background:linear-gradient(90deg,var(--accent),var(--accent-dim));
-    color:#171300; border-color:rgba(255,204,0,0.45);
-  }
+  .tf-badge.current{ background:linear-gradient(90deg,var(--accent),var(--accent-dim)); color:#171300; border-color:rgba(255,204,0,0.45); }
 
   .tf-step-btn{
     appearance:none; display:inline-flex; align-items:center; justify-content:center;
-    padding:7px 10px; border-radius:10px;
+    padding:7px 12px; border-radius:10px; height:34px;
     border:1px solid rgba(255,255,255,0.12); background:rgba(255,255,255,0.06);
     color:#eee; transition:.16s;
   }
   .tf-step-btn:hover{ background:rgba(255,255,255,0.09); }
+  .tf-step-btn.danger{ border-color: rgba(255, 85, 85, .35); background: linear-gradient(90deg, #320000, #250000); color:#ffdada; }
 
-  .tf-step-btn.danger{
-    border-color: rgba(255, 85, 85, .35);
-    background: linear-gradient(90deg, #320000, #250000);
-    color:#ffdada;
-  }
+  /* Radio “Atual” permanece no DOM (compat), mas escondido */
+  .tf-select-radio{ display:none; }
 
-  /* Radio escondido (mantém compatibilidade com a lógica atual) */
-  .tf-select-radio{ display:none; } /* ocultamos visualmente, mas continuamos criando o radio no DOM */
-
-  .tf-steps-actions{ display:flex; justify-content:flex-end; gap:8px; padding:12px 14px 16px 14px; border-top:1px solid rgba(255,255,255,0.08); }
+  /* Rodapé no mesmo alinhamento/sensação do Integração */
+  .tf-steps-actions{ display:flex; justify-content:flex-end; gap:8px; padding:12px 16px 16px 16px; border-top:1px solid rgba(255,255,255,0.08); }
+  .tf-steps-actions--wiin .tf-btn{ height:36px; }
 
   @media (max-width: 980px){
     .offer-panel-container{ padding: 0 12px; }
     .tf-offer-panel{ padding:40px 18px 80px 18px; }
     .tf-pills-wrap{ max-width: calc(100% - 24px); }
+    .tf-steps-dialog{ width:calc(100vw - 28px); }
     .tf-step-item{ grid-template-columns: 28px 36px 1fr auto auto; }
   }
 </style>
@@ -292,7 +294,7 @@
 
   function escapeHtml(s){ return (s || "").replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
-  /* Breadcrumb */
+  /* Breadcrumb (mantido) */
   function buildBreadcrumb(){
     var bc = document.getElementById('tfBreadcrumb'); if (!bc) return;
     var offerName = (offer && offer.name) ? offer.name : 'Nome da Oferta';
@@ -373,7 +375,7 @@
     });
   }
 
-  /* ===================== MODAL ===================== */
+  /* ===================== MODAL (lógica mantida) ===================== */
   var modal    = document.getElementById('stepsUnifiedModal');
   var btnClose = document.getElementById('btnCloseStepsUnified');
   var btnCancel= document.getElementById('btnCancelStepsUnified');
@@ -387,7 +389,6 @@
   if (btnCancel)btnCancel.addEventListener('click', closeStepsModal);
   if (modal){ modal.addEventListener('click', function(e){ if (e.target===modal) closeStepsModal(); }); }
 
-  /* ===== Render das linhas ===== */
   function renderListUnified(){
     listEl.innerHTML = '';
     var ordered = steps.slice().sort(function(a,b){ return (a.stepNo||0)-(b.stepNo||0); });
@@ -401,60 +402,47 @@
     if (opts.id) li.dataset.id = opts.id; else li.dataset.new='1';
     if (opts.isCurrent) li.classList.add('is-current');
 
-    /* Handle (draggable) */
     var handle = document.createElement('div');
     handle.className='tf-drag-handle';
     handle.setAttribute('draggable','true');
     handle.innerHTML = '<svg viewBox="0 0 20 20" fill="currentColor"><circle cx="6" cy="5" r="1.3"/><circle cx="10" cy="5" r="1.3"/><circle cx="14" cy="5" r="1.3"/><circle cx="6" cy="10" r="1.3"/><circle cx="10" cy="10" r="1.3"/><circle cx="14" cy="10" r="1.3"/></svg>';
 
-    /* Número */
     var no = document.createElement('span'); no.className='tf-step-no'; no.textContent = opts.stepNo || (listEl.children.length + 1);
 
-    /* Input nome */
     var input = document.createElement('input');
     input.className='tf-step-name'; input.type='text'; input.placeholder='Nova etapa';
     input.value = opts.name || ''; input.dataset.oldName = opts.name || '';
 
-    /* Botões Selecionar + badge Atual (mantendo radio oculto para compatibilidade) */
     var selectWrap = document.createElement('div'); selectWrap.className='tf-actions-inline';
-
-    var radioWrap = document.createElement('label'); radioWrap.className='tf-select-radio'; // oculto via CSS
+    var radioWrap = document.createElement('label'); radioWrap.className='tf-select-radio';
     var radio = document.createElement('input'); radio.type='radio'; radio.name='tfStepCurrent';
-    radio.checked = !!opts.isCurrent;
-    radioWrap.appendChild(radio);
+    radio.checked = !!opts.isCurrent; radioWrap.appendChild(radio);
 
     var selectBtn = document.createElement('button'); selectBtn.type='button'; selectBtn.className='tf-btn-ghost'; selectBtn.textContent='Selecionar';
     var badge = document.createElement('span'); badge.className = 'tf-badge' + (opts.isCurrent ? ' current' : ''); badge.textContent='Atual';
 
     selectBtn.addEventListener('click', function(){
-      // Marca como atual (visual + compatibilidade com radio) e navega
       Array.from(listEl.children).forEach(function(li2){
         li2.classList.remove('is-current');
         var b = li2.querySelector('.tf-badge'); if (b) b.classList.remove('current');
         var r = li2.querySelector('input[type="radio"]'); if (r) r.checked = false;
       });
       li.classList.add('is-current'); badge.classList.add('current'); radio.checked = true;
-
-      // Fecha modal e vai direto para a etapa
       var sid = li.dataset.id || null;
       closeStepsModal();
-      if (sid){
-        window.location.href = `/ofertas/painel/${offer.id}?stepId=${encodeURIComponent(sid)}`;
-      }
+      if (sid){ window.location.href = `/ofertas/painel/${offer.id}?stepId=${encodeURIComponent(sid)}`; }
     });
 
-    if (!radio.checked) badge.style.opacity = '.8';
+    if (!radio.checked) badge.style.opacity = '.9';
 
     selectWrap.appendChild(selectBtn);
     selectWrap.appendChild(badge);
     selectWrap.appendChild(radioWrap);
 
-    /* Botão Excluir */
     var delBtn = document.createElement('button'); delBtn.className='tf-step-btn danger'; delBtn.textContent='Excluir'; delBtn.title='Excluir etapa';
     if (opts.stepNo === 1 && opts.id) delBtn.disabled = true;
     delBtn.addEventListener('click', function(){ confirmDeleteUnified(li, input.value || 'Etapa'); });
 
-    /* Montagem */
     li.appendChild(handle);
     li.appendChild(no);
     li.appendChild(input);
@@ -462,10 +450,7 @@
     li.appendChild(delBtn);
     listEl.appendChild(li);
 
-    /* Drag & Drop via handle */
     initDragFor(handle, li);
-
-    /* Autofocus quando criada */
     if (!opts.id){ setTimeout(function(){ input.focus(); }, 0); }
   }
 
@@ -482,9 +467,8 @@
     });
   }
 
-  /* ===== Drag & Drop (ordenar por handle) ===== */
+  /* Drag & Drop (mantido) */
   var dragContext = { draggingLi: null };
-
   function initDragFor(handle, li){
     handle.addEventListener('dragstart', function(e){
       dragContext.draggingLi = li;
@@ -497,35 +481,30 @@
       recomputeNosUnified();
     });
   }
-
   listEl.addEventListener('dragover', function(e){
     if (!dragContext.draggingLi) return;
     e.preventDefault();
     const after = getDragAfterElement(listEl, e.clientY);
-    if (after == null){
-      listEl.appendChild(dragContext.draggingLi);
-    } else {
-      listEl.insertBefore(dragContext.draggingLi, after);
-    }
+    if (after == null){ listEl.appendChild(dragContext.draggingLi); }
+    else { listEl.insertBefore(dragContext.draggingLi, after); }
   });
-
   function getDragAfterElement(container, y){
     const els = [...container.querySelectorAll('.tf-step-item:not(.dragging)')];
     return els.reduce((closest, child) => {
       const box = child.getBoundingClientRect();
       const offset = y - box.top - box.height / 2;
-      if (offset < 0 && offset > closest.offset){ return { offset: offset, element: child }; }
-      else { return closest; }
+      if (offset < 0 && offset > closest.offset){ return { offset, element: child }; }
+      return closest;
     }, { offset: Number.NEGATIVE_INFINITY }).element;
   }
 
-  /* ===== Confirmação de deleção (mantida) ===== */
+  /* Confirmação de deleção (mantida) */
   function confirmDeleteUnified(li, displayName){
     var overlay = document.createElement('div'); overlay.className='tf-steps-overlay'; overlay.style.zIndex='4001';
-    var box = document.createElement('div'); box.className='tf-steps-dialog'; box.style.maxWidth='460px';
-    box.innerHTML = '<div class="tf-steps-head"><h3>Excluir etapa?</h3></div>' +
-      '<div class="tf-steps-body"><p>Tem certeza que deseja excluir <strong>'+ escapeHtml(displayName) +'</strong>? Essa ação não pode ser desfeita.</p></div>' +
-      '<div class="tf-steps-actions">' +
+    var box = document.createElement('div'); box.className='tf-steps-dialog tf-steps-dialog--wiin'; box.style.maxWidth='460px';
+    box.innerHTML = '<div class="tf-steps-head tf-steps-head--center"><h3>Excluir etapa?</h3></div>' +
+      '<div class="tf-steps-body tf-steps-body--compact"><p>Tem certeza que deseja excluir <strong>'+ escapeHtml(displayName) +'</strong>? Essa ação não pode ser desfeita.</p></div>' +
+      '<div class="tf-steps-actions tf-steps-actions--wiin">' +
       '<button type="button" class="tf-btn" id="cxCancel">Cancelar</button>' +
       '<button type="button" class="tf-btn tf-btn-primary" id="cxDelete">Excluir etapa</button>' +
       '</div>';
@@ -547,7 +526,7 @@
     });
   }
 
-  /* ===== Salvar mudanças (mantido, só lê a ordem atual do DOM) ===== */
+  /* Salvar mudanças (mantido) */
   var saveModalBtn = document.getElementById('btnSaveStepsUnified');
   if (saveModalBtn){
     saveModalBtn.addEventListener('click', async function(){
@@ -609,8 +588,7 @@
         // 4) Etapa marcada como atual (compat: radio oculto)
         let selectedId = null;
         for (const li of Array.from(listEl.children)){
-          const radio = li.querySelector('input[type="radio"]');
-          if (radio && radio.checked) { selectedId = li.dataset.id || null; break; }
+          const radio = li.querySelector('input[type="radio"]'); if (radio && radio.checked) { selectedId = li.dataset.id || null; break; }
         }
 
         showToast('success','Etapas salvas com sucesso.');
