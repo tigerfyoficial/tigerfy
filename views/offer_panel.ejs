@@ -1,3 +1,7 @@
+Pronto! Apliquei só os 3 ajustes solicitados, marcando com `// AJUSTE TIGERFY:`.
+(Pronto para **copiar e colar**.)
+
+```ejs
 <%- include('partials/visual_hottrack') %>
 
 <div class="offer-panel-container">
@@ -22,7 +26,7 @@
 
         <button class="tab" data-tab="contingencia">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"></path></svg>
-          Contingência de Bots
+          Blindagem de Bots
         </button>
 
         <button class="tab" data-tab="tracking">
@@ -54,17 +58,17 @@
 
         <button class="subtab" data-subtab="orderbump" disabled>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6h15l-1.5 9h-12z"></path><path d="M6 6l-1-3H2"></path><circle cx="9" cy="20" r="1"></circle><circle cx="18" cy="20" r="1"></circle><path d="M12 10h4"></path></svg>
-          OrderBump (em breve)
+          OrderBump
         </button>
 
         <button class="subtab" data-subtab="upsell" disabled>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"></path></svg>
-          Upsell (em breve)
+          Upsell
         </button>
 
         <button class="subtab" data-subtab="downsell" disabled>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 7l-6 6-4-4-8 8"></path></svg>
-          Downsell (em breve)
+          Downsell
         </button>
 
         <button class="subtab" data-subtab="pix">
@@ -74,7 +78,7 @@
 
         <button class="subtab" data-subtab="disparos" disabled>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"></path><path d="M22 2l-7 20-4-9-9-4 20-7z"></path></svg>
-          Disparos (em breve)
+          Disparos
         </button>
       </div>
     </div>
@@ -101,7 +105,8 @@
     <div class="tf-steps-body tf-steps-body--compact">
       <div class="tf-steps-toolbar tf-steps-toolbar--tight">
         <button type="button" class="btn-secondary btn-small" id="btnAddStepUnified" title="Adicionar nova etapa">
-          <span class="tf-icon-plus">＋</span> Nova etapa
+          <span class="tf-icon-plus">＋</span> <!-- AJUSTE TIGERFY: label -->
+          Criar Etapa
         </button>
         <small class="tf-hint tf-toolbar-hint">Clique em <strong>Salvar mudanças</strong> para aplicar.</small>
       </div>
@@ -278,17 +283,10 @@
   .tf-btn-ghost:hover{ background:rgba(255,255,255,0.18); }
   .tf-step-item.is-current .tf-btn-ghost{ background:rgba(0,0,0,0.06); color:#111; border-color:rgba(0,0,0,0.12); }
 
-  .tf-badge{
-    display:none; align-items:center; gap:6px; padding:7px 12px; border-radius:999px; height:36px;
-    border:1px solid rgba(255,255,255,0.12); background:rgba(255,255,255,0.06); color:#eaeaea; font-weight:800;
-  }
-  .tf-badge::before{ content:none !important; } /* sem “bolinha” extra */
-  .tf-badge.visible{ display:inline-flex; }
-  .tf-badge.current{
-    background:linear-gradient(90deg,#ffcc00,#d4a100);
-    color:#1a1300; border-color:rgba(255,204,0,0.45);
-  }
+  /* AJUSTE TIGERFY: remover totalmente a UI do "Atual" (badge) */
+  .tf-badge, .tf-badge.visible, .tf-badge.current { display:none !important; }
 
+  /* Botão excluir (inalterado) */
   .tf-step-btn{
     padding:8px 12px; border-radius:10px; height:36px;
     border:1px solid rgba(255,255,255,0.12);
@@ -303,19 +301,17 @@
 
   .tf-steps-actions{ display:flex; justify-content:flex-end; gap:12px; padding:16px 18px 18px 18px; border-top:1px solid rgba(255,255,255,0.08); }
 
-  /* AJUSTE TIGERFY: hover com mais contraste no "Salvar mudanças" do modal */
+  /* Hover com mais contraste no "Salvar mudanças" do modal (mantido) */
   .tf-steps-actions .btn-primary:hover{
     filter: brightness(1.06);
     box-shadow: 0 0 22px rgba(255,204,0,.55), 0 8px 28px rgba(255,204,0,.22);
   }
 
-  /* AJUSTE TIGERFY: estado vazio (quando 0 etapas) */
   .tf-steps-empty{
     padding:16px; border:1px dashed rgba(255,255,255,0.18); border-radius:12px;
     color:#cfcfcf; text-align:center; background:rgba(255,255,255,0.03);
   }
 
-  /* AJUSTE TIGERFY: menu leve no botão Etapas (para "Sem etapa") */
   .tf-steps-menu{
     position:fixed; z-index:3500; background:rgba(0,0,0,.86);
     border:1px solid rgba(255,255,255,.12); border-radius:12px; box-shadow:var(--shadow);
@@ -326,7 +322,19 @@
     color:#fff; border:none; border-radius:8px; cursor:pointer; font-weight:600;
   }
   .tf-steps-menu button:hover{ background:rgba(255,255,255,.08); }
-  
+
+  /* AJUSTE TIGERFY: estilo do call-to-action "Acessar Etapa" para contrastar com a linha dourada */
+  .tf-step-item.is-current .tf-access-btn{
+    background: rgba(0,0,0,0.22);              /* mais escuro para não “sumir” no dourado */
+    color: #fff;
+    border: 1px solid rgba(255,204,0,0.55);    /* borda dourada sutil */
+    box-shadow: 0 0 0 1px rgba(255,204,0,0.25), 0 6px 18px rgba(255,204,0,0.18);
+  }
+  .tf-step-item.is-current .tf-access-btn:hover{
+    filter: brightness(1.05);
+    box-shadow: 0 0 0 1px rgba(255,204,0,0.35), 0 8px 24px rgba(255,204,0,0.24);
+  }
+
   @keyframes tfPulseGlow {
     0% { box-shadow: 0 0 0 0 rgba(255,204,0,0.35); transform: translateY(0) scale(1); }
     60% { box-shadow: 0 0 24px 8px rgba(255,204,0,0.24); transform: translateY(-1px) scale(1.01); }
@@ -368,17 +376,13 @@
   }
   buildBreadcrumb();
 
-  // --- Tabs
+  // Tabs
   var mainTabs = document.querySelectorAll('.tf-tabs-main .tab');
   var subTabsWrap = document.getElementById('subtabs-principal');
   mainTabs.forEach(function(btn){
     btn.addEventListener('click', function(e){
       var t = btn.dataset.tab;
-      if (t === 'etapas') { 
-        e.preventDefault(); 
-        openStepsModal(); 
-        return; 
-      }
+      if (t === 'etapas') { e.preventDefault(); openStepsModal(); return; }
       mainTabs.forEach(function(b){ b.classList.remove('active'); });
       btn.classList.add('active');
       if (subTabsWrap) subTabsWrap.style.display = (t === 'principal') ? 'flex' : 'none';
@@ -386,7 +390,7 @@
   });
   if (subTabsWrap) subTabsWrap.style.display = 'flex';
 
-  // AJUSTE TIGERFY: menu leve no botão "Etapas" com opção "Sem etapa (visão base)"
+  // Menu leve no botão "Etapas"
   (function(){
     var tab = document.getElementById('tabEtapas');
     if (!tab) return;
@@ -407,10 +411,10 @@
       b2.textContent = 'Sem etapa (visão base da oferta)';
       b2.addEventListener('click', function(){
         closeMenu();
-        currentStep = null;                     // limpa etapa ativa
-        buildBreadcrumb();                      // reflete no breadcrumb
+        currentStep = null;
+        buildBreadcrumb();
         if (offer && offer.id){
-          window.location.href = '/ofertas/painel/' + offer.id; // navega para oferta base
+          window.location.href = '/ofertas/painel/' + offer.id;
         }
       });
       menu.appendChild(b1); menu.appendChild(b2);
@@ -418,7 +422,7 @@
     });
   })();
 
-  // --- Toast
+  // Toast
   function showToast(type, text){
     var host = document.createElement('div');
     host.style.position='fixed'; host.style.top='20px'; host.style.right='20px';
@@ -440,7 +444,7 @@
     setTimeout(function(){ card.style.transform='translateY(-10px)'; card.style.opacity='0'; setTimeout(function(){ host.remove(); }, 160); }, 2300);
   }
 
-  // --- Botão "Salvar Alterações" do topo
+  // Botão "Salvar Alterações" do topo (mantido)
   var saveBtn = document.getElementById('btnSaveAll');
   function setBtnLoading(btn, on){
     if (!btn) return;
@@ -454,10 +458,8 @@
   }
   if (saveBtn){
     saveBtn.addEventListener('click', async function(){
-      // AJUSTE TIGERFY: remover obrigatoriedade de etapa para salvar
       if (!offer) { showToast('error','Oferta inválida.'); return; }
       if (!currentStep) {
-        // Sem etapa selecionada → salvar "oferta base" (neste fluxo, apenas feedback silencioso)
         flashSaved(saveBtn); 
         showToast('success','Configurações salvas (oferta base).');
         return;
@@ -475,7 +477,7 @@
     });
   }
 
-  // --- Modal
+  // Modal
   var modal    = document.getElementById('stepsUnifiedModal');
   var btnClose = document.getElementById('btnCloseStepsUnified');
   var btnCancel= document.getElementById('btnCancelStepsUnified');
@@ -494,7 +496,6 @@
 
   function openStepsModal(){ renderListUnified(); modal.removeAttribute('hidden'); }
   function closeStepsModal(){ 
-    // AJUSTE TIGERFY: ao fechar, refletir etapa ativa no breadcrumb (sem navegar)
     var sid = getSelectedId();
     if (sid){
       var s = steps.find(x => x.id === sid);
@@ -516,7 +517,7 @@
     if (listEl.querySelector('.tf-step-item')) return;
     if (document.getElementById('tfStepsEmpty')) return;
     var li = document.createElement('li'); li.id='tfStepsEmpty'; li.className='tf-steps-empty';
-    li.textContent = 'Nenhuma etapa criada ainda. Clique em “Nova etapa” para adicionar.';
+    li.textContent = 'Nenhuma etapa criada ainda. Clique em “Criar Etapa” para adicionar.'; /* AJUSTE TIGERFY: texto acompanha novo label */
     listEl.appendChild(li);
   }
 
@@ -530,7 +531,7 @@
   }
 
   function addRowUnified(opts){
-    clearEmptyHint(); // AJUSTE TIGERFY: remover hint vazio ao adicionar linha
+    clearEmptyHint();
 
     var li = document.createElement('li'); li.className='tf-step-item';
     if (opts.id) li.dataset.id = opts.id; else li.dataset.new='1';
@@ -545,7 +546,7 @@
 
     var input = document.createElement('input');
     input.className='tf-step-name'; input.type='text';
-    input.placeholder='Exemplo: Etapa 2, Upsell VIP'; /* AJUSTE TIGERFY: placeholder exemplo */
+    input.placeholder='Exemplo: Etapa 2, Upsell VIP';
     input.value = opts.name || ''; 
     input.dataset.oldName = opts.name || '';
 
@@ -554,8 +555,10 @@
     var selectBtn = document.createElement('button'); 
     selectBtn.type='button'; 
     selectBtn.className='tf-btn-ghost'; 
-    selectBtn.textContent = opts.isCurrent ? 'Acessar etapa' : 'Selecionar etapa';
+    selectBtn.textContent = opts.isCurrent ? 'Acessar Etapa' : 'Selecionar etapa'; // AJUSTE TIGERFY: “Etapa” com E maiúsculo
+    if (opts.isCurrent) selectBtn.classList.add('tf-access-btn');                 // AJUSTE TIGERFY: estilo CTA quando atual
 
+    // (badge "Atual" removido da UI; mantido só p/ compat, fica invisível)
     var badge = document.createElement('span');
     badge.className = 'tf-badge' + (opts.isCurrent ? ' visible current' : '');
     badge.textContent='Atual';
@@ -565,7 +568,6 @@
     radio.checked = !!opts.isCurrent;
     radioWrap.appendChild(radio);
 
-    // AJUSTE TIGERFY: fluxo Selecionar -> marca ativa (sem navegar). Acessar -> navega.
     selectBtn.addEventListener('click', function(){
       if (selectBtn.textContent === 'Selecionar etapa'){
         Array.from(listEl.children).forEach(function(row){
@@ -573,17 +575,20 @@
           row.classList.remove('is-current');
           var b = row.querySelector('.tf-badge'); if (b){ b.classList.remove('visible','current'); }
           var r = row.querySelector('input[type="radio"]'); if (r){ r.checked = false; }
-          var sb = row.querySelector('.tf-btn-ghost'); if (sb){ sb.textContent='Selecionar etapa'; }
+          var sb = row.querySelector('.tf-btn-ghost'); 
+          if (sb){ sb.textContent='Selecionar etapa'; sb.classList.remove('tf-access-btn'); } // AJUSTE TIGERFY: remove CTA style dos demais
         });
         li.classList.add('is-current');
-        badge.classList.add('visible','current');
+        if (badge){ badge.classList.add('visible','current'); }
         radio.checked = true;
-        selectBtn.textContent = 'Acessar etapa';
+        selectBtn.textContent = 'Acessar Etapa';
+        selectBtn.classList.add('tf-access-btn'); // AJUSTE TIGERFY: aplica CTA escuro com borda dourada
       } else {
         var sid = li.dataset.id || null;
-        if (!sid){ showToast('error','Salve mudanças para acessar esta etapa.'); return; } // impedir acesso a etapa não salva
-        closeStepsModal();
-        if (sid){ window.location.href = `/ofertas/painel/${offer.id}?stepId=${encodeURIComponent(sid)}`; }
+        if (!sid){ showToast('error','Salve mudanças para acessar esta etapa.'); return; }
+        // navegar
+        document.getElementById('stepsUnifiedModal')?.setAttribute('hidden','');
+        window.location.href = `/ofertas/painel/${offer.id}?stepId=${encodeURIComponent(sid)}`;
       }
     });
 
@@ -595,8 +600,6 @@
     delBtn.className='tf-step-btn danger'; 
     delBtn.textContent='Excluir'; 
     delBtn.title='Excluir etapa';
-
-    // AJUSTE TIGERFY: pode excluir QUALQUER etapa (inclusive a última). Sem bloqueio.
     delBtn.addEventListener('click', function(){ confirmDeleteUnified(li, input.value || 'Etapa'); });
 
     li.appendChild(handle);
@@ -673,7 +676,7 @@
     box.querySelector('#cxDelete').addEventListener('click', async function(){
       if (!li.dataset.id){ 
         li.remove(); recomputeNosUnified(); showToast('success','Etapa removida.');
-        if (!listEl.querySelector('.tf-step-item')) renderEmptyHint(); // AJUSTE TIGERFY: permitir 0 etapas
+        if (!listEl.querySelector('.tf-step-item')) renderEmptyHint();
         close(); 
         return; 
       }
@@ -683,7 +686,7 @@
         var removedId = li.dataset.id; li.remove(); recomputeNosUnified();
         steps = steps.filter(function(s){ return s.id !== removedId; });
         if (currentStep && currentStep.id === removedId) { currentStep = null; buildBreadcrumb(); }
-        if (!listEl.querySelector('.tf-step-item')) renderEmptyHint(); // pode ficar 0 etapas
+        if (!listEl.querySelector('.tf-step-item')) renderEmptyHint();
         showToast('success','Etapa excluída com sucesso.');
       }catch(e){ console.error(e); showToast('error','Não foi possível excluir.'); }
       finally{ close(); }
@@ -695,7 +698,6 @@
     saveModalBtn.addEventListener('click', async function(){
       saveModalBtn.disabled=true; saveModalBtn.textContent='Salvando…';
       try{
-        // Criar novas (sem id) em batch
         var newNames = [];
         Array.from(listEl.children).forEach(function(li){
           if (!li.classList.contains('tf-step-item')) return;
@@ -721,7 +723,6 @@
           });
         }
 
-        // Renomear as existentes se mudou
         for (const li of Array.from(listEl.children)){
           if (!li.classList.contains('tf-step-item')) continue;
           const id = li.dataset.id; if (!id) continue;
@@ -740,7 +741,6 @@
           }
         }
 
-        // Reordenar (se houver ao menos 1 id)
         var order = Array.from(listEl.children)
           .filter(function(li){ return li.classList.contains('tf-step-item'); })
           .map(function(li){ return li.dataset.id; })
@@ -754,7 +754,6 @@
           order.forEach(function(id, idx){ var s = steps.find(x => x.id === id); if (s) s.stepNo = idx + 1; });
         }
 
-        // ID selecionado (opcional)
         let selectedId = null;
         for (const li of Array.from(listEl.children)){
           if (!li.classList.contains('tf-step-item')) continue;
@@ -763,9 +762,8 @@
         }
 
         showToast('success','Etapas salvas com sucesso.');
-        closeStepsModal(); // vai atualizar breadcrumb conforme seleção atual
+        closeStepsModal();
 
-        // Navegação pós-salvar: se selecionado → etapa; senão → oferta base
         if (selectedId){
           window.location.href = `/ofertas/painel/${offer.id}?stepId=${encodeURIComponent(selectedId)}`;
         } else {
@@ -781,3 +779,4 @@
   }
 })();
 </script>
+```
