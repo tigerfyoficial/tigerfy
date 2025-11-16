@@ -62,25 +62,30 @@
 </div>
 
 <style>
-  .tiger-offer-create{
-    color:#fff;
+  :root{
+    /* usado só nesta página; calculo via JS */
+    --tf-sidebar-half: 0px;
   }
 
-  /* AJUSTE TIGERFY: padding simétrico (antes: 60 80 100 130) */
+  /* Área de conteúdo (não altera tema global) */
   .offer-create-shell{
     max-width:1200px;
     margin:0 auto;
-    padding:60px 80px 100px 80px; /* ← centraliza na área útil sem puxar pra direita */
+    padding:60px 80px 100px 80px; /* simétrico */
     box-sizing:border-box;
+    color:#fff;
   }
 
-  /* AJUSTE TIGERFY: centro vertical mais fiel (antes: -200px, deixava “baixo”) */
+  /* CENTRO REAL H/V + compensação da sidebar */
   .offer-create-wrapper{
-    min-height: calc(100dvh - 160px);
-    display:flex;
-    align-items:center;     /* centro vertical */
-    justify-content:center; /* centro horizontal */
-    padding:12px 0;
+    min-height: 100dvh;                 /* centro vertical real */
+    display: grid;
+    place-items: center;                 /* centro horizontal/vertical */
+    /* AJUSTE TIGERFY: compensa metade da sidebar e um ajuste vertical leve */
+    transform: translate(
+      calc(-1 * var(--tf-sidebar-half)),
+      -8px
+    );
   }
 
   .offer-create-inner{
@@ -92,7 +97,7 @@
     gap:24px;
   }
 
-  /* Cabeçalho */
+  /* Cabeçalho (sem mudança visual) */
   .offer-create-header h1{
     font-size:2.1rem;
     color:#ffcc00;
@@ -104,7 +109,7 @@
     font-size:.95rem;
   }
 
-  /* Card */
+  /* Card (visual intacto) */
   .offer-create-form{
     background:rgba(0,0,0,0.78);
     border-radius:20px;
@@ -202,6 +207,7 @@
     .offer-create-shell{ padding:50px 18px 80px 18px; }
     .offer-create-wrapper{
       min-height:auto;
+      transform:none;        /* no mobile não precisa compensar sidebar */
       align-items:flex-start;
       padding-top:12px;
     }
@@ -211,7 +217,7 @@
 </style>
 
 <script>
-  // lógica das pills (inalterada)
+  // Lógica das pills (inalterada)
   document.addEventListener('DOMContentLoaded', () => {
     function setupPillGroup(groupName, hiddenInputId){
       const group = document.querySelector(`.pill-row[data-group="${groupName}"]`);
@@ -228,4 +234,23 @@
     }
     setupPillGroup('botType', 'botTypeInput');
   });
+
+  // AJUSTE TIGERFY: mede a sidebar e compensa metade para centralizar a área útil
+  (function(){
+    function setSidebarHalf(){
+      const candidates = [
+        'aside', '.sidebar', '.tf-sidebar', '.tigerfy-sidebar',
+        'nav.sidebar', '[data-sidebar]'
+      ];
+      let sb = null;
+      for (const sel of candidates){
+        sb = document.querySelector(sel);
+        if (sb) break;
+      }
+      const w = sb ? sb.getBoundingClientRect().width : 0;
+      document.documentElement.style.setProperty('--tf-sidebar-half', (w/2) + 'px');
+    }
+    setSidebarHalf();
+    window.addEventListener('resize', setSidebarHalf);
+  })();
 </script>
