@@ -245,6 +245,42 @@ router.patch("/ofertas/:id/etapas/:stepId", authGuard, async (req, res) => {
   }
 });
 
+// ➕ ADICIONE abaixo das outras rotas de etapas
+router.delete("/ofertas/:id/etapas/:stepId", authGuard, async (req, res) => {
+  try {
+    const owner = req.session.userId;
+    const { id: offerId, stepId } = req.params;
+
+    // valida dono
+    const offerRes = await Steps.getOfferByIdForOwner(offerId, owner);
+    if (offerRes.error || !offerRes.data) {
+      return res.status(403).json({ ok: false, error: "forbidden" });
+    }
+
+    // deleta
+    const del = await Steps.deleteStep({ offerId, stepId });
+    if (del.error) {
+      const msg = (del.error && del.error.message) || "delete_failed";
+      return res.status(400).json({ ok: false, error: msg });
+    }
+
+    // devolve a lista atualizada
+    const list = await Steps.listSteps(offerId);
+    const steps = (list.data || []).map(s => ({
+      id: s.id,
+      offerId: s.offer_id,
+      name: s.name,
+      stepNo: s.step_no,
+      createdAt: s.created_at,
+    }));
+
+    return res.json({ ok: true, steps });
+  } catch (err) {
+    console.error("Erro delete step:", err);
+    return res.status(500).json({ ok: false, error: "server_error" });
+  }
+});
+
 /* ---------- Salvar alterações (compat: POST /save) ---------- */
 router.post("/ofertas/:id/etapas/:stepId/save", authGuard, async (req, res) => {
   try {
