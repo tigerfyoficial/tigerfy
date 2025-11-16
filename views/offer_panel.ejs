@@ -4,98 +4,82 @@
   <!-- Breadcrumb dinâmico -->
   <nav class="tf-breadcrumb" id="tfBreadcrumb"></nav>
 
-  <!-- Header: Título | Etapas (dropdown + gerenciar) | Salvar -->
+  <!-- Header (mantido) -->
   <header class="tf-header">
     <div class="tf-header-left">
       <h1 class="tf-offer-title" id="offerTitle"><%= offer?.name || 'Nome da Oferta' %></h1>
-
-      <!-- Botão Etapas (mesma posição/tamanho; agora com dropdown + gerenciar) -->
-      <div class="tf-steps-trigger" id="tfStepsTriggerWrap">
-        <button type="button" id="btnSteps" class="tf-btn tf-btn-small" title="Etapas">
-          <!-- Ícone minimalista de “steps” / camadas -->
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-               stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"
-               aria-hidden="true" style="margin-right:6px">
-            <path d="M12 3l9 4.5-9 4.5L3 7.5 12 3z"></path>
-            <path d="M21 12l-9 4.5L3 12"></path>
-            <path d="M21 16.5l-9 4.5-9-4.5"></path>
-          </svg>
-          Etapas
-        </button>
-
-        <!-- Dropdown de seleção de etapas (criado/atualizado via JS) -->
-        <div class="tf-steps-dd" id="tfStepsDropdown" hidden>
-          <div class="tf-steps-dd-head">Selecionar etapa</div>
-          <div class="tf-steps-dd-list" id="tfStepsDdList"></div>
-          <div class="tf-steps-dd-footer">
-            <button type="button" class="tf-steps-manage-btn" id="tfOpenManageFromDd">
-              <!-- ícone “ajustes” -->
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
-                   stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"
-                   aria-hidden="true" style="margin-right:6px">
-                <circle cx="12" cy="12" r="3"></circle>
-                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06A2 2 0 1 1 7.04 3.4l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9c0 .66.39 1.26 1 1.51.18.08.37.12.57.12H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
-              </svg>
-              Gerenciar etapas…
-            </button>
-          </div>
-        </div>
-      </div>
-      <!-- /Botão Etapas -->
     </div>
-
     <div class="tf-header-right">
       <button type="button" class="tf-btn tf-btn-primary" id="btnSaveAll">Salvar Alterações</button>
     </div>
   </header>
 
-  <!-- Abas principais -->
-  <div class="tf-tabs">
+  <!-- Colunas PRINCIPAIS (tabs de topo) + botão Etapas alinhado -->
+  <div class="tf-tabs tf-tabs-main">
     <button class="tab active" data-tab="principal">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="2"></rect><rect x="14" y="3" width="7" height="7" rx="2"></rect><rect x="14" y="14" width="7" height="7" rx="2"></rect><rect x="3" y="14" width="7" height="7" rx="2"></rect></svg>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="2"></rect><rect x="14" y="3" width="7" height="7" rx="2"></rect><rect x="14" y="14" width="7" height="7" rx="2"></rect><rect x="3" y="14" width="7" height="7" rx="2"></rect></svg>
       Principal
     </button>
-
     <button class="tab" data-tab="contingencia">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"></path></svg>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"></path></svg>
       Contingência de Bots
     </button>
-
     <button class="tab" data-tab="tracking">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15A1.65 1.65 0 0 0 21 13.35 8 8 0 0 0 12 4a8 8 0 0 0-8 9.35A1.65 1.65 0 0 0 5.6 15"></path></svg>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15A1.65 1.65 0 0 0 21 13.35 8 8 0 0 0 12 4a8 8 0 0 0-8 9.35A1.65 1.65 0 0 0 5.6 15"></path></svg>
       Traqueamento
     </button>
-
     <button class="tab" data-tab="relatorios">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"></path><path d="M19 17V7"></path><path d="M13 17V3"></path><path d="M7 17v-7"></path></svg>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"></path><path d="M19 17V7"></path><path d="M13 17V3"></path><path d="M7 17v-7"></path></svg>
       Fluxo de Relatórios
     </button>
+
+    <!-- spacer flexível -->
+    <div class="tf-tabs-spacer"></div>
+
+    <!-- Botão Etapas (abre modal único central) -->
+    <button type="button" id="btnSteps" class="tf-btn tf-btn-small" title="Etapas">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"
+           aria-hidden="true" style="margin-right:6px">
+        <path d="M12 3l9 4.5-9 4.5L3 7.5 12 3z"></path>
+        <path d="M21 12l-9 4.5L3 12"></path>
+        <path d="M21 16.5l-9 4.5-9-4.5"></path>
+      </svg>
+      Etapas
+    </button>
+
+    <!-- Espaço reservado (mantém alinhamento que você desenhou) -->
+    <button type="button" class="tf-btn tf-btn-small tf-btn-ghost" style="visibility:hidden">Reservado</button>
   </div>
 
-  <!-- Subtabs (mantidas) -->
+  <!-- Linha SECUNDÁRIA (sub-abas da Principal) -->
   <div class="tf-subtabs" id="subtabs-principal">
     <button class="subtab active" data-subtab="front">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h8"></path><path d="M17 8h.01"></path><path d="M19 4v6h6"></path></svg>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h8"></path><path d="M17 8h.01"></path><path d="M19 4v6h6"></path></svg>
       Front
     </button>
     <button class="subtab" data-subtab="orderbump" disabled>
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6h15l-1.5 9h-12z"></path><path d="M6 6l-1-3H2"></path><circle cx="9" cy="20" r="1"></circle><circle cx="18" cy="20" r="1"></circle><path d="M12 10h4"></path></svg>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6h15l-1.5 9h-12z"></path><path d="M6 6l-1-3H2"></path><circle cx="9" cy="20" r="1"></circle><circle cx="18" cy="20" r="1"></circle><path d="M12 10h4"></path></svg>
       OrderBump (em breve)
     </button>
     <button class="subtab" data-subtab="upsell" disabled>
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17l6-6 4 4 8-8"></path></svg>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"></path></svg>
       Upsell (em breve)
     </button>
     <button class="subtab" data-subtab="downsell" disabled>
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 7l-6 6-4-4-8 8"></path></svg>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 7l-6 6-4-4-8 8"></path></svg>
       Downsell (em breve)
     </button>
+
+    <!-- Mensagem PIX AGORA AQUI -->
     <button class="subtab" data-subtab="pix">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="14" width="7" height="7" rx="1"></rect><rect x="3" y="14" width="7" height="7" rx="1"></rect></svg>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="14" width="7" height="7" rx="1"></rect><rect x="3" y="14" width="7" height="7" rx="1"></rect></svg>
       Mensagem PIX
     </button>
+
+    <!-- Disparos no FINAL, em breve -->
     <button class="subtab" data-subtab="disparos" disabled>
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 2L11 13"></path><path d="M22 2l-7 20-4-9-9-4 20-7z"></path></svg>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"></path><path d="M22 2l-7 20-4-9-9-4 20-7z"></path></svg>
       Disparos (em breve)
     </button>
   </div>
@@ -104,33 +88,33 @@
   <section class="tf-content-placeholder"></section>
 </div>
 
-<!-- Modal: Gerenciar Etapas -->
-<div class="tf-modal-backdrop" id="manageStepsModal" hidden>
-  <div class="tf-modal tf-manage-steps" role="dialog" aria-modal="true">
+<!-- Modal ÚNICO: Selecionar + Gerenciar Etapas (central, blur) -->
+<div class="tf-modal-backdrop" id="stepsUnifiedModal" hidden>
+  <div class="tf-modal tf-steps-modal" role="dialog" aria-modal="true">
     <div class="tf-modal-head">
-      <h3>Gerenciar Etapas</h3>
-      <button type="button" class="tf-modal-close" id="btnCloseManageSteps" aria-label="Fechar">✕</button>
+      <h3>Gerenciar Etapas da Oferta</h3>
+      <p class="tf-modal-sub">Crie, selecione e organize as etapas desta oferta.</p>
+      <button type="button" class="tf-modal-close" id="btnCloseStepsUnified" aria-label="Fechar">✕</button>
     </div>
 
-    <div class="tf-modal-body tf-manage-body">
-      <div class="tf-manage-toolbar">
-        <button type="button" class="tf-btn tf-btn-small" id="btnAddStepRow" title="Adicionar nova etapa">＋</button>
-        <small class="tf-hint">Novas linhas são salvas ao clicar em <strong>Salvar mudanças</strong>.</small>
+    <div class="tf-modal-body tf-steps-body">
+      <div class="tf-steps-toolbar">
+        <button type="button" class="tf-btn tf-btn-small" id="btnAddStepUnified" title="Adicionar nova etapa">＋</button>
+        <small class="tf-hint">As alterações são aplicadas ao clicar em <strong>Salvar mudanças</strong>.</small>
       </div>
 
-      <ul class="tf-steps-list" id="tfStepsList" aria-label="Lista de Etapas"></ul>
+      <ul class="tf-steps-list" id="tfStepsUnifiedList" aria-label="Lista de Etapas"></ul>
     </div>
 
     <div class="tf-modal-actions">
-      <button type="button" class="tf-btn" id="btnCancelManage">Cancelar</button>
-      <button type="button" class="tf-btn tf-btn-primary" id="btnSaveManage">Salvar mudanças</button>
+      <button type="button" class="tf-btn" id="btnCancelStepsUnified">Cancelar</button>
+      <button type="button" class="tf-btn tf-btn-primary" id="btnSaveStepsUnified">Salvar mudanças</button>
     </div>
   </div>
 </div>
 
 <style>
   :root{
-    --bg:#0b0b0b;
     --panel:rgba(255,255,255,0.04);
     --panel-strong:rgba(255,255,255,0.06);
     --border:rgba(255,255,255,0.12);
@@ -139,26 +123,24 @@
     --accent:#ffcc00;
     --accent-dim:#d4a100;
     --shadow:0 8px 24px rgba(0,0,0,0.45);
-    --radius:14px;
   }
-
   .tf-offer-panel{ color:var(--text); padding:60px 80px 100px 130px; max-width:1200px; margin:0 auto; }
   .tf-breadcrumb{ display:flex; align-items:center; gap:8px; color:var(--muted); font-size:.9rem; margin-bottom:10px; }
   .tf-breadcrumb a{ color:var(--muted); text-decoration:none; }
   .tf-breadcrumb a:hover{ color:#e0e0e0; }
-
   .tf-header{ display:flex; align-items:flex-start; justify-content:space-between; gap:16px; margin-bottom:18px; }
   .tf-header-left{ display:flex; align-items:center; gap:14px; flex-wrap:wrap; }
   .tf-offer-title{ margin:0; font-size:1.75rem; letter-spacing:.3px; background:linear-gradient(90deg,#fff,#d8d8d8); -webkit-background-clip:text; background-clip:text; color:transparent; }
 
   .tf-btn{ appearance:none; border:1px solid var(--border); background:var(--panel-strong); color:#eee; padding:9px 14px; border-radius:10px; cursor:pointer; font-weight:600; box-shadow:var(--shadow); transition:.2s ease; }
   .tf-btn:hover{ border-color:rgba(255,255,255,0.2); background:rgba(255,255,255,0.08); }
-  .tf-btn:active{ transform:translateY(1px); }
   .tf-btn-small{ padding:7px 10px; font-size:.85rem; border-radius:999px; }
   .tf-btn-primary{ background:linear-gradient(90deg,var(--accent),var(--accent-dim)); color:#171300; border:1px solid rgba(255,204,0,0.35); box-shadow:0 6px 22px rgba(255,204,0,0.25); }
-  .tf-btn-primary:hover{ filter:brightness(1.02); }
+  .tf-btn-ghost{ background:transparent; border-color:transparent; box-shadow:none; }
 
-  .tf-tabs{ display:flex; gap:8px; flex-wrap:wrap; margin:16px 0 10px 0; justify-content:center; }
+  .tf-tabs{ display:flex; gap:8px; flex-wrap:wrap; margin:16px 0 10px 0; }
+  .tf-tabs-main{ align-items:center; }
+  .tf-tabs-spacer{ flex:1; }
   .tf-tabs .tab{ display:inline-flex; align-items:center; gap:8px; padding:9px 14px; border-radius:999px; border:1px solid var(--border); background:var(--panel); color:#dedede; font-weight:600; font-size:.92rem; cursor:pointer; transition:.2s; }
   .tf-tabs .tab:hover{ background:rgba(255,255,255,0.07); }
   .tf-tabs .tab.active{ background:rgba(255,255,255,0.10); border-color:rgba(255,255,255,0.22); color:#fff; }
@@ -169,63 +151,13 @@
   .tf-subtabs .subtab:not([disabled]):hover{ background:rgba(255,255,255,0.07); }
   .tf-subtabs .subtab.active{ background:rgba(255,255,255,0.10); border-color:rgba(255,255,255,0.22); color:#fff; }
 
-  .tf-content-placeholder{ min-height:360px; border:1px dashed rgba(255,255,255,0.12); border-radius:var(--radius);
+  .tf-content-placeholder{ min-height:360px; border:1px dashed rgba(255,255,255,0.12); border-radius:14px;
     background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02)); box-shadow:var(--shadow); }
 
-  /* ---------- Dropdown Etapas ---------- */
-  .tf-steps-trigger{ position:relative; display:inline-block; }
-  .tf-steps-dd[hidden]{ display:none !important; }
-  .tf-steps-dd{
-    position:absolute; top:calc(100% + 8px); right:0; width:280px;
-    background:linear-gradient(180deg, rgba(255,255,255,0.07), rgba(255,255,255,0.045));
-    border:1px solid rgba(255,255,255,0.14); border-radius:14px;
-    box-shadow:0 18px 44px rgba(0,0,0,0.55);
-    backdrop-filter: blur(8px);
-    transform: translateY(-6px) scale(.98); opacity:0;
-    transition: transform .14s ease, opacity .14s ease;
-    overflow:hidden;
-  }
-  .tf-steps-dd.show{ transform: translateY(0) scale(1); opacity:1; }
-  .tf-steps-dd-head{
-    padding:10px 12px; font-weight:700; font-size:.9rem; color:#fff;
-    background:rgba(255,255,255,0.05); border-bottom:1px solid rgba(255,255,255,0.09);
-  }
-  .tf-steps-dd-list{ max-height:270px; overflow:auto; }
-  .tf-steps-dd-item{
-    display:flex; align-items:center; gap:8px; padding:10px 12px; cursor:pointer;
-    border-bottom:1px solid rgba(255,255,255,0.06);
-  }
-  .tf-steps-dd-item:last-child{ border-bottom:0; }
-  .tf-steps-dd-item:hover{ background:rgba(255,255,255,0.06); }
-  .tf-steps-dd-item .dot{ width:8px; height:8px; border-radius:999px; background:rgba(255,255,255,0.3); }
-  .tf-steps-dd-item.current .dot{
-    background:linear-gradient(90deg,var(--accent),var(--accent-dim));
-    box-shadow:0 0 0 2px rgba(255,204,0,0.25);
-  }
-  .tf-steps-dd-item .name{ color:#fff; font-size:.92rem; flex:1; }
-  .tf-steps-dd-item .tag{
-    font-size:.72rem; font-weight:800; color:#171300;
-    padding:2px 6px; border-radius:999px;
-    background:linear-gradient(90deg,var(--accent),var(--accent-dim));
-    border:1px solid rgba(255,204,0,0.35);
-  }
-  .tf-steps-dd-empty{
-    padding:12px; color:#d7d7d7; font-size:.9rem;
-  }
-  .tf-steps-dd-footer{
-    padding:8px; border-top:1px solid rgba(255,255,255,0.09);
-    display:flex; justify-content:flex-end;
-  }
-  .tf-steps-manage-btn{
-    display:inline-flex; align-items:center; padding:8px 10px; border-radius:10px;
-    background:rgba(255,255,255,0.06); color:#fff; border:1px solid rgba(255,255,255,0.16);
-    cursor:pointer; transition:.16s ease;
-  }
-  .tf-steps-manage-btn:hover{ background:rgba(255,255,255,0.08); }
-
-  /* ---------- Modal Gerenciar Etapas (refino visual) ---------- */
-  #manageStepsModal { backdrop-filter: blur(6px); }
-  .tf-manage-steps{
+  /* ---------- Modal único de Etapas ---------- */
+  #stepsUnifiedModal{ backdrop-filter: blur(6px); }
+  .tf-steps-modal{
+    max-width: 860px;
     background:
       radial-gradient(1200px 240px at 50% -80px, rgba(255,204,0,0.08), transparent),
       linear-gradient(180deg, rgba(255,255,255,0.07), rgba(255,255,255,0.045));
@@ -234,12 +166,13 @@
     animation: tfManageIn .18s ease-out forwards;
   }
   @keyframes tfManageIn { to { transform: translateY(0) scale(1); } }
-  .tf-modal-head h3{ letter-spacing:.3px; }
-  .tf-hint { color:#cfcfcf; }
+  .tf-modal-sub{ color:#cfcfcf; margin:6px 0 0 0; }
+  .tf-steps-toolbar{ display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+  .tf-hint{ color:#cfcfcf; }
 
-  .tf-steps-list { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:8px; }
+  .tf-steps-list{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:8px; }
   .tf-step-item{
-    display:grid; grid-template-columns: 48px 1fr auto auto; align-items:center; gap:10px; padding:10px;
+    display:grid; grid-template-columns: 48px 1fr auto auto auto; align-items:center; gap:10px; padding:10px;
     border-radius:14px;
     background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.03));
     border:1px solid rgba(255,255,255,0.14);
@@ -259,35 +192,24 @@
     width:100%; padding:8px 10px; border-radius:10px;
     background: rgba(255,255,255,0.06); color:#fff; border:1px solid rgba(255,255,255,0.16);
   }
-  .tf-step-name:focus{
-    border-color: rgba(255,204,0,0.6); box-shadow: 0 0 0 2px rgba(255,204,0,0.20); outline: none;
-  }
+  .tf-step-name:focus{ border-color: rgba(255,204,0,0.6); box-shadow: 0 0 0 2px rgba(255,204,0,0.20); outline: none; }
   .tf-step-actions{ display:flex; align-items:center; gap:6px; }
-  .tf-step-btn{
-    appearance:none; border:1px solid var(--border); background:var(--panel-strong);
-    color:#eee; padding:6px 10px; border-radius:10px; cursor:pointer; font-weight:600; transition:.18s ease;
-  }
+  .tf-step-btn{ appearance:none; border:1px solid var(--border); background:var(--panel-strong); color:#eee; padding:6px 10px; border-radius:10px; cursor:pointer; font-weight:600; transition:.18s ease; }
   .tf-step-btn:hover{ background:rgba(255,255,255,0.08); }
   .tf-step-btn.danger{ border-color: rgba(255, 75, 75, .35); background: linear-gradient(90deg, #3a0000, #2a0000); color: #ffdada; }
-  .tf-step-btn[disabled]{ opacity:.45; cursor:not-allowed; }
-  .tf-step-badge{
-    margin-left:6px; padding:2px 6px; border-radius:999px; font-size:.75rem; font-weight:800; color:#171300;
-    background: linear-gradient(90deg,var(--accent),var(--accent-dim)); border:1px solid rgba(255,204,0,0.35);
-  }
+  .tf-select-radio{ display:flex; align-items:center; gap:6px; color:#eaeaea; font-weight:700; }
 
-  /* ---------- Efeito de pulso/glow no salvar ---------- */
+  /* Efeito de pulso/glow no salvar */
   @keyframes tfPulseGlow {
     0% { box-shadow: 0 0 0 0 rgba(255,204,0,0.35); transform: translateY(0) scale(1); }
     60% { box-shadow: 0 0 24px 8px rgba(255,204,0,0.24); transform: translateY(-1px) scale(1.01); }
     100% { box-shadow: 0 0 0 0 rgba(255,204,0,0.0); transform: translateY(0) scale(1); }
   }
-  .tf-pulse-once {
-    animation: tfPulseGlow .5s ease-out 1;
-  }
+  .tf-pulse-once { animation: tfPulseGlow .5s ease-out 1; }
 
   @media (max-width: 980px){
     .tf-offer-panel{ padding:40px 18px 80px 18px; }
-    .tf-header{ flex-direction:column; align-items:flex-start; gap:10px; }
+    .tf-tabs{ justify-content:center; }
   }
 </style>
 
@@ -299,7 +221,7 @@
 
   function escapeHtml(s){ return (s || "").replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
-  /* ---------- Breadcrumb (Oferta raiz > Etapa se houver) ---------- */
+  /* ---------- Breadcrumb (Oferta > Etapa se houver) ---------- */
   function buildBreadcrumb(){
     var bc = document.getElementById('tfBreadcrumb'); if (!bc) return;
     var offerName = (offer && offer.name) ? offer.name : 'Nome da Oferta';
@@ -317,8 +239,8 @@
   }
   buildBreadcrumb();
 
-  /* ---------- Tabs/subtabs (comportamento original) ---------- */
-  var mainTabs = document.querySelectorAll('.tf-tabs .tab');
+  /* ---------- Tabs principais mostram sub-abas da Principal ---------- */
+  var mainTabs = document.querySelectorAll('.tf-tabs-main .tab');
   var subTabsWrap = document.getElementById('subtabs-principal');
   mainTabs.forEach(function(btn){
     btn.addEventListener('click', function(){
@@ -343,250 +265,126 @@
     card.style.color = (type==='error') ? '#ffd5d5' : '#171300';
     card.style.fontWeight='800'; card.style.letterSpacing='.3px';
     card.style.transform='translateY(-6px) scale(.98)'; card.style.opacity='0';
-
-    // mini ícone
-    var icon = document.createElement('span');
-    icon.style.marginRight='8px';
-    icon.innerHTML = (type==='error')
-      ? '⚠️'
-      : '✔️';
-    var txt = document.createElement('span');
-    txt.textContent = text || (type==='error' ? 'Falhou' : 'Sucesso');
-
-    var row = document.createElement('div');
-    row.style.display='flex'; row.style.alignItems='center';
-    row.appendChild(icon); row.appendChild(txt);
-    card.appendChild(row);
-
-    host.appendChild(card); document.body.appendChild(host);
-    requestAnimationFrame(function(){
-      card.style.transition='transform .16s ease, opacity .16s ease';
-      card.style.transform='translateY(0) scale(1)'; card.style.opacity='1';
-    });
-    setTimeout(function(){
-      card.style.transform='translateY(-6px) scale(.98)'; card.style.opacity='0';
-      setTimeout(function(){ host.remove(); }, 140);
-    }, 2300);
+    var icon = document.createElement('span'); icon.style.marginRight='8px'; icon.innerHTML = (type==='error') ? '⚠️' : '✔️';
+    var txt = document.createElement('span'); txt.textContent = text || (type==='error' ? 'Falhou' : 'Sucesso');
+    var row = document.createElement('div'); row.style.display='flex'; row.style.alignItems='center'; row.appendChild(icon); row.appendChild(txt);
+    card.appendChild(row); host.appendChild(card); document.body.appendChild(host);
+    requestAnimationFrame(function(){ card.style.transition='transform .16s ease, opacity .16s ease'; card.style.transform='translateY(0) scale(1)'; card.style.opacity='1'; });
+    setTimeout(function(){ card.style.transform='translateY(-6px) scale(.98)'; card.style.opacity='0'; setTimeout(function(){ host.remove(); }, 140); }, 2300);
   }
 
-  /* ---------- Botão Salvar com micro-efeito TigerFy ---------- */
+  /* ---------- Botão Salvar (conteúdo da etapa atual) com micro-efeito ---------- */
   var saveBtn = document.getElementById('btnSaveAll');
-  function setButtonLoading(btn, isLoading){
+  function setBtnLoading(btn, on){
     if (!btn) return;
-    if (isLoading){
-      btn.disabled = true;
-      if (!btn.dataset._txt) btn.dataset._txt = btn.textContent;
-      btn.textContent = 'Salvando…';
-      btn.style.filter='brightness(1.03)';
-      btn.style.boxShadow='0 8px 26px rgba(255,204,0,0.35)';
-    } else {
-      btn.disabled = false;
-      btn.textContent = btn.dataset._txt || 'Salvar Alterações';
-      btn.style.filter=''; btn.style.boxShadow='';
-    }
+    if (on){ btn.disabled=true; if(!btn.dataset._txt) btn.dataset._txt=btn.textContent; btn.textContent='Salvando…'; btn.style.filter='brightness(1.03)'; btn.style.boxShadow='0 8px 26px rgba(255,204,0,0.35)'; }
+    else { btn.disabled=false; btn.textContent = btn.dataset._txt || 'Salvar Alterações'; btn.style.filter=''; btn.style.boxShadow=''; }
   }
   function flashSaved(btn){
     if (!btn) return;
-    btn.classList.remove('tf-pulse-once'); // reset
-    void btn.offsetWidth;                  // reflow
-    btn.classList.add('tf-pulse-once');
-    const old = btn.textContent;
-    btn.textContent = 'Salvo!';
-    setTimeout(function(){ btn.textContent = btn.dataset._txt || 'Salvar Alterações'; }, 1100);
+    btn.classList.remove('tf-pulse-once'); void btn.offsetWidth; btn.classList.add('tf-pulse-once');
+    const old = btn.textContent; btn.textContent='Salvo!'; setTimeout(function(){ btn.textContent = btn.dataset._txt || 'Salvar Alterações'; }, 1100);
   }
-
   if (saveBtn){
     saveBtn.addEventListener('click', async function(){
-      if (!offer || !currentStep) {
-        showToast('error','Selecione uma etapa para salvar.');
-        return;
-      }
-      var draftSettings = (window.tfDraftSettings && typeof window.tfDraftSettings === 'object')
-        ? window.tfDraftSettings
-        : {};
+      if (!offer || !currentStep) { showToast('error','Selecione uma etapa para salvar.'); return; }
+      var draftSettings = (window.tfDraftSettings && typeof window.tfDraftSettings === 'object') ? window.tfDraftSettings : {};
       try{
-        setButtonLoading(saveBtn, true);
-        const r = await fetch('/ofertas/' + encodeURIComponent(offer.id) + '/etapas/' + encodeURIComponent(currentStep.id) + '/save', {
-          method:'POST', headers:{'Content-Type':'application/json'},
-          body: JSON.stringify({ settings: draftSettings })
+        setBtnLoading(saveBtn,true);
+        const r = await fetch(`/ofertas/${encodeURIComponent(offer.id)}/etapas/${encodeURIComponent(currentStep.id)}/save`, {
+          method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ settings: draftSettings })
         });
-        const js = await r.json();
-        if (!js || !js.ok) throw new Error('save_failed');
-        flashSaved(saveBtn);
-        showToast('success','Etapa salva com sucesso.');
-      }catch(e){
-        console.error(e);
-        showToast('error','Não foi possível salvar. Tente novamente.');
-      }finally{
-        setButtonLoading(saveBtn, false);
-      }
+        const js = await r.json(); if (!js || !js.ok) throw new Error('save_failed');
+        flashSaved(saveBtn); showToast('success','Etapa salva com sucesso.');
+      }catch(e){ console.error(e); showToast('error','Não foi possível salvar.'); }
+      finally{ setBtnLoading(saveBtn,false); }
     });
   }
 
-  /* ===================== DROPDOWN ETAPAS (selecionar + gerenciar) ===================== */
-  var stepsWrap = document.getElementById('tfStepsTriggerWrap');
-  var stepsBtn  = document.getElementById('btnSteps');
-  var dd        = document.getElementById('tfStepsDropdown');
-  var ddList    = document.getElementById('tfStepsDdList');
-  var ddManage  = document.getElementById('tfOpenManageFromDd');
+  /* ===================== MODAL ÚNICO: Selecionar + Gerenciar ===================== */
+  var modal    = document.getElementById('stepsUnifiedModal');
+  var btnOpen  = document.getElementById('btnSteps');
+  var btnClose = document.getElementById('btnCloseStepsUnified');
+  var btnCancel= document.getElementById('btnCancelStepsUnified');
+  var btnSave  = document.getElementById('btnSaveStepsUnified');
+  var btnAdd   = document.getElementById('btnAddStepUnified');
+  var listEl   = document.getElementById('tfStepsUnifiedList');
 
-  function renderStepsDd(){
-    if (!ddList) return;
-    ddList.innerHTML = '';
-    var ordered = steps.slice().sort(function(a,b){ return (a.stepNo||0)-(b.stepNo||0); });
-    if (!ordered.length){
-      var empty = document.createElement('div');
-      empty.className = 'tf-steps-dd-empty';
-      empty.textContent = 'Nenhuma etapa criada.';
-      ddList.appendChild(empty);
-      return;
-    }
-    ordered.forEach(function(s){
-      var item = document.createElement('div');
-      item.className = 'tf-steps-dd-item' + ((currentStep && currentStep.id===s.id) ? ' current' : '');
-      var dot  = document.createElement('span'); dot.className='dot';
-      var name = document.createElement('span'); name.className='name'; name.textContent = s.name || ('Etapa ' + (s.stepNo||''));
-      item.appendChild(dot); item.appendChild(name);
-      if (currentStep && currentStep.id===s.id){
-        var tag = document.createElement('span'); tag.className='tag'; tag.textContent='Atual';
-        item.appendChild(tag);
-      }
-      item.addEventListener('click', function(){
-        // navegar para etapa
-        window.location.href = '/ofertas/painel/' + offer.id + '?stepId=' + encodeURIComponent(s.id);
-      });
-      ddList.appendChild(item);
-    });
-  }
-
-  function toggleDd(force){
-    if (!dd) return;
-    var show = (typeof force==='boolean') ? force : dd.hasAttribute('hidden');
-    if (show){
-      renderStepsDd();
-      dd.removeAttribute('hidden');
-      requestAnimationFrame(function(){ dd.classList.add('show'); });
-      document.addEventListener('click', outsideClose);
-    } else {
-      dd.classList.remove('show');
-      setTimeout(function(){ dd.setAttribute('hidden',''); }, 120);
-      document.removeEventListener('click', outsideClose);
-    }
-  }
-  function outsideClose(e){
-    if (!dd || !stepsWrap) return;
-    if (!stepsWrap.contains(e.target)) toggleDd(false);
-  }
-  if (stepsBtn){ stepsBtn.addEventListener('click', function(){ toggleDd(); }); }
-  if (ddManage){ ddManage.addEventListener('click', function(){ toggleDd(false); openManage(); }); }
-
-  /* ===================== GERENCIAR ETAPAS (modal) ===================== */
-  var modal   = document.getElementById('manageStepsModal');
-  var btnClose= document.getElementById('btnCloseManageSteps');
-  var btnCancel = document.getElementById('btnCancelManage');
-  var btnSave = document.getElementById('btnSaveManage');
-  var btnAdd  = document.getElementById('btnAddStepRow');
-  var listEl  = document.getElementById('tfStepsList');
-
-  function openManage(){
-    if (!modal) return;
-    renderList();
+  function openStepsModal(){
+    renderListUnified();
     modal.removeAttribute('hidden');
   }
-  function closeManage(){
-    if (!modal) return;
-    modal.setAttribute('hidden','');
-  }
-  if (btnClose) btnClose.addEventListener('click', closeManage);
-  if (btnCancel) btnCancel.addEventListener('click', closeManage);
-  if (modal){
-    modal.addEventListener('click', function(e){ if (e.target === modal) closeManage(); });
-  }
+  function closeStepsModal(){ modal.setAttribute('hidden',''); }
 
-  function renderList(){
-    if (!listEl) return;
+  if (btnOpen)  btnOpen.addEventListener('click', openStepsModal);
+  if (btnClose) btnClose.addEventListener('click', closeStepsModal);
+  if (btnCancel)btnCancel.addEventListener('click', closeStepsModal);
+  if (modal){ modal.addEventListener('click', function(e){ if (e.target===modal) closeStepsModal(); }); }
+
+  function renderListUnified(){
     listEl.innerHTML = '';
     var ordered = steps.slice().sort(function(a,b){ return (a.stepNo||0)-(b.stepNo||0); });
-    ordered.forEach(function(s){ addRow({ id:s.id, name:s.name, stepNo:s.stepNo, isCurrent: currentStep && currentStep.id===s.id }); });
+    if (!ordered.length){
+      // nenhuma etapa ainda → apenas vazio até criar
+    }
+    ordered.forEach(function(s){ addRowUnified({ id:s.id, name:s.name, stepNo:s.stepNo, isCurrent: currentStep && currentStep.id===s.id }); });
   }
 
-  function addRow(opts){
-    var li = document.createElement('li');
-    li.className = 'tf-step-item';
-    if (opts.id) li.dataset.id = opts.id; else li.dataset.new = '1';
+  function addRowUnified(opts){
+    var li = document.createElement('li'); li.className='tf-step-item';
+    if (opts.id) li.dataset.id = opts.id; else li.dataset.new='1';
 
-    var no = document.createElement('span');
-    no.className = 'tf-step-no';
-    no.textContent = opts.stepNo || (listEl.children.length + 1);
+    var no = document.createElement('span'); no.className='tf-step-no'; no.textContent = opts.stepNo || (listEl.children.length + 1);
 
     var input = document.createElement('input');
-    input.className = 'tf-step-name';
-    input.type = 'text';
-    input.placeholder = 'Nova Etapa';
-    input.value = opts.name || '';
+    input.className='tf-step-name'; input.type='text'; input.placeholder='Nova etapa'; input.value = opts.name || '';
     input.dataset.oldName = opts.name || '';
 
-    if (opts.isCurrent){
-      var badge = document.createElement('span');
-      badge.className = 'tf-step-badge';
-      badge.textContent = 'Atual';
-      input.after(badge);
-    }
+    var sort = document.createElement('div'); sort.className='tf-step-actions';
+    var up = document.createElement('button'); up.className='tf-step-btn'; up.textContent='↑'; up.title='Subir';
+    var down = document.createElement('button'); down.className='tf-step-btn'; down.textContent='↓'; down.title='Descer';
+    up.addEventListener('click', function(){ var prev = li.previousElementSibling; if(prev) listEl.insertBefore(li, prev); recomputeNosUnified(); });
+    down.addEventListener('click', function(){ var next = li.nextElementSibling; if(next) listEl.insertBefore(next.nextElementSibling ? next.nextElementSibling : li, li); recomputeNosUnified(); });
+    sort.appendChild(up); sort.appendChild(down);
 
-    var actSort = document.createElement('div');
-    actSort.className = 'tf-step-actions';
-    var up = document.createElement('button');
-    up.className = 'tf-step-btn'; up.textContent = '↑'; up.title='Subir';
-    var down = document.createElement('button');
-    down.className = 'tf-step-btn'; down.textContent = '↓'; down.title='Descer';
-    up.addEventListener('click', function(){
-      var prev = li.previousElementSibling;
-      if (prev) listEl.insertBefore(li, prev);
-      recomputeNos();
-    });
-    down.addEventListener('click', function(){
-      var next = li.nextElementSibling;
-      if (next) listEl.insertBefore(next, next.nextElementSibling);
-      recomputeNos();
-    });
-    actSort.appendChild(up); actSort.appendChild(down);
+    var delWrap = document.createElement('div'); delWrap.className='tf-step-actions';
+    var del = document.createElement('button'); del.className='tf-step-btn danger'; del.textContent='Excluir'; del.title='Excluir etapa';
+    if (opts.stepNo === 1 && opts.id) del.disabled = true; // protege Etapa 1 persistida (ajuste se quiser permitir)
+    del.addEventListener('click', function(){ confirmDeleteUnified(li, input.value || 'Etapa'); });
+    delWrap.appendChild(del);
 
-    var actDel = document.createElement('div');
-    actDel.className = 'tf-step-actions';
-    var del = document.createElement('button');
-    del.className = 'tf-step-btn danger';
-    del.textContent = 'Excluir';
-    del.title = 'Excluir etapa';
-    if (opts.stepNo === 1 && opts.id) del.disabled = true; // protege Etapa 1 persistida (ajuste de regra se quiser)
-    del.addEventListener('click', function(){ confirmDelete(li, input.value || 'Etapa'); });
-    actDel.appendChild(del);
+    var selWrap = document.createElement('label'); selWrap.className='tf-select-radio';
+    var radio = document.createElement('input'); radio.type='radio'; radio.name='tfStepCurrent';
+    radio.checked = !!opts.isCurrent;
+    radio.addEventListener('change', function(){ /* apenas marcação visual */ });
+    var lbl = document.createElement('span'); lbl.textContent='Atual';
+    selWrap.appendChild(radio); selWrap.appendChild(lbl);
+    li.dataset.radio = '1';
 
     li.appendChild(no);
     li.appendChild(input);
-    li.appendChild(actSort);
-    li.appendChild(actDel);
+    li.appendChild(sort);
+    li.appendChild(delWrap);
+    li.appendChild(selWrap);
     listEl.appendChild(li);
   }
 
-  function recomputeNos(){
+  function recomputeNosUnified(){
     Array.from(listEl.children).forEach(function(li, idx){
-      var no = li.querySelector('.tf-step-no');
-      if (no) no.textContent = idx + 1;
+      var no = li.querySelector('.tf-step-no'); if (no) no.textContent = idx + 1;
     });
   }
 
-  if (btnAdd) {
+  if (btnAdd){
     btnAdd.addEventListener('click', function(){
-      addRow({ name:'', stepNo: listEl.children.length + 1, isCurrent:false });
-      recomputeNos();
+      addRowUnified({ name:'', stepNo: listEl.children.length + 1, isCurrent:false });
+      recomputeNosUnified();
     });
   }
 
-  function confirmDelete(li, displayName){
-    var overlay = document.createElement('div');
-    overlay.className = 'tf-modal-backdrop'; overlay.style.backdropFilter = 'blur(6px)';
-    var box = document.createElement('div');
-    box.className = 'tf-modal'; box.style.maxWidth='460px';
+  function confirmDeleteUnified(li, displayName){
+    var overlay = document.createElement('div'); overlay.className='tf-modal-backdrop'; overlay.style.backdropFilter='blur(6px)';
+    var box = document.createElement('div'); box.className='tf-modal'; box.style.maxWidth='460px';
     box.innerHTML = '<div class="tf-modal-head"><h3>Excluir etapa?</h3></div>' +
       '<div class="tf-modal-body"><p>Tem certeza que deseja excluir <strong>'+ escapeHtml(displayName) +'</strong>? Essa ação não pode ser desfeita.</p></div>' +
       '<div class="tf-modal-actions">' +
@@ -594,46 +392,29 @@
       '<button type="button" class="tf-btn tf-btn-primary" id="cxDelete">Excluir etapa</button>' +
       '</div>';
     overlay.appendChild(box); document.body.appendChild(overlay);
-
     function close(){ overlay.remove(); }
     box.querySelector('#cxCancel').addEventListener('click', close);
     overlay.addEventListener('click', function(e){ if (e.target === overlay) close(); });
-
     box.querySelector('#cxDelete').addEventListener('click', async function(){
-      // Se a linha ainda não foi persistida, só remove local
-      if (!li.dataset.id) {
-        li.remove(); recomputeNos(); showToast('success','Etapa removida.');
-        close(); return;
-      }
+      if (!li.dataset.id){ li.remove(); recomputeNosUnified(); showToast('success','Etapa removida.'); close(); return; }
       try{
-        const r = await fetch('/ofertas/' + encodeURIComponent(offer.id) + '/etapas/' + encodeURIComponent(li.dataset.id), { method:'DELETE' });
-        const js = await r.json();
-        if (!js || !js.ok) throw new Error('delete_failed');
-        // remove da lista e do array local
-        var removedId = li.dataset.id;
-        li.remove(); recomputeNos();
+        const r = await fetch(`/ofertas/${encodeURIComponent(offer.id)}/etapas/${encodeURIComponent(li.dataset.id)}`, { method:'DELETE' });
+        const js = await r.json(); if (!js || !js.ok) throw new Error('delete_failed');
+        var removedId = li.dataset.id; li.remove(); recomputeNosUnified();
         steps = steps.filter(function(s){ return s.id !== removedId; });
-
-        // se era a etapa atual → volta para visão raiz (só oferta no breadcrumb)
-        if (currentStep && currentStep.id === removedId) {
-          currentStep = null;
-          buildBreadcrumb();
-        }
+        if (currentStep && currentStep.id === removedId) { currentStep = null; buildBreadcrumb(); }
         showToast('success','Etapa excluída com sucesso.');
-      }catch(e){
-        console.error(e);
-        showToast('error','Não foi possível excluir.');
-      }finally{
-        close();
-      }
+      }catch(e){ console.error(e); showToast('error','Não foi possível excluir.'); }
+      finally{ close(); }
     });
   }
 
+  // Salvar mudanças do modal único:
   if (btnSave){
     btnSave.addEventListener('click', async function(){
-      btnSave.disabled = true; btnSave.textContent = 'Salvando…';
+      btnSave.disabled=true; btnSave.textContent='Salvando…';
       try{
-        // a) Criar novas (linhas sem id)
+        // 1) Criar novas linhas (sem id)
         var newNames = [];
         Array.from(listEl.children).forEach(function(li){
           if (!li.dataset.id){
@@ -641,69 +422,74 @@
             if (nm) newNames.push(nm);
           }
         });
+        let createdMap = []; // manter ids de novas na ordem de criação
         if (newNames.length){
-          const r = await fetch('/ofertas/' + encodeURIComponent(offer.id) + '/etapas/batch', {
+          const r = await fetch(`/ofertas/${encodeURIComponent(offer.id)}/etapas/batch`, {
             method:'POST', headers:{'Content-Type':'application/json'},
             body: JSON.stringify({ names: newNames })
           });
-          const js = await r.json();
-          if (!js || !js.ok) throw new Error('batch_failed');
-          let i = 0;
+          const js = await r.json(); if (!js || !js.ok) throw new Error('batch_failed');
+          // Anexar ids retornados às linhas novas
+          let idx=0;
           Array.from(listEl.children).forEach(function(li){
             if (!li.dataset.id){
-              li.dataset.id = js.steps[i].id;
-              steps.push(js.steps[i]);
-              i++;
+              li.dataset.id = js.steps[idx].id;
+              createdMap.push(js.steps[idx].id);
+              steps.push(js.steps[idx]);
+              idx++;
             }
           });
         }
 
-        // b) Renomear modificados
+        // 2) Renomear as modificadas
         for (const li of Array.from(listEl.children)){
-          const id = li.dataset.id;
-          if (!id) continue;
+          const id = li.dataset.id; if (!id) continue;
           const input = li.querySelector('.tf-step-name');
           const oldName = input?.dataset.oldName || '';
           const newName = (input?.value || '').trim();
           if (newName && newName !== oldName){
-            const r = await fetch('/ofertas/' + encodeURIComponent(offer.id) + '/etapas/' + encodeURIComponent(id) + '/rename', {
+            const r = await fetch(`/ofertas/${encodeURIComponent(offer.id)}/etapas/${encodeURIComponent(id)}/rename`, {
               method:'PATCH', headers:{'Content-Type':'application/json'},
               body: JSON.stringify({ name: newName })
             });
-            const js = await r.json();
-            if (!js || !js.ok) throw new Error('rename_failed');
+            const js = await r.json(); if (!js || !js.ok) throw new Error('rename_failed');
             input.dataset.oldName = newName;
-            var s = steps.find(x => x.id === id);
-            if (s){ s.name = newName; }
-            if (currentStep && currentStep.id === id){
-              currentStep.name = newName;
-              buildBreadcrumb();
-            }
+            var s = steps.find(x => x.id === id); if (s) s.name = newName;
+            if (currentStep && currentStep.id === id){ currentStep.name = newName; }
           }
         }
 
-        // c) Reordenar conforme UI
+        // 3) Reordenar conforme UI
         var order = Array.from(listEl.children).map(function(li){ return li.dataset.id; }).filter(Boolean);
         if (order.length){
-          const r = await fetch('/ofertas/' + encodeURIComponent(offer.id) + '/etapas/reorder', {
+          const r = await fetch(`/ofertas/${encodeURIComponent(offer.id)}/etapas/reorder`, {
             method:'PUT', headers:{'Content-Type':'application/json'},
             body: JSON.stringify({ order })
           });
-          const js = await r.json();
-          if (!js || !js.ok) throw new Error('reorder_failed');
-          order.forEach(function(id, idx){
-            var s = steps.find(x => x.id === id);
-            if (s) s.stepNo = idx + 1;
-          });
+          const js = await r.json(); if (!js || !js.ok) throw new Error('reorder_failed');
+          order.forEach(function(id, idx){ var s = steps.find(x => x.id === id); if (s) s.stepNo = idx + 1; });
+        }
+
+        // 4) Qual etapa ficou marcada como atual?
+        let selectedId = null;
+        for (const li of Array.from(listEl.children)){
+          const radio = li.querySelector('input[type="radio"]'); if (radio && radio.checked) { selectedId = li.dataset.id || null; break; }
         }
 
         showToast('success','Mudanças salvas com sucesso.');
-        closeManage();
+        closeStepsModal();
+
+        // Navegar para a etapa escolhida (ou raiz da oferta)
+        if (selectedId){
+          window.location.href = `/ofertas/painel/${offer.id}?stepId=${encodeURIComponent(selectedId)}`;
+        } else {
+          window.location.href = `/ofertas/painel/${offer.id}`;
+        }
       }catch(e){
         console.error(e);
         showToast('error','Falha ao salvar mudanças.');
       }finally{
-        btnSave.disabled = false; btnSave.textContent = 'Salvar mudanças';
+        btnSave.disabled=false; btnSave.textContent='Salvar mudanças';
       }
     });
   }
