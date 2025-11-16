@@ -14,76 +14,80 @@
     </div>
   </header>
 
-  <!-- PILLS PRINCIPAIS (Etapas integrado na sequência) -->
-  <div class="tf-tabs tf-tabs-main">
-    <button class="tab active" data-tab="principal">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="2"></rect><rect x="14" y="3" width="7" height="7" rx="2"></rect><rect x="14" y="14" width="7" height="7" rx="2"></rect><rect x="3" y="14" width="7" height="7" rx="2"></rect></svg>
-      Principal
-    </button>
+  <!-- ====================== WRAP CENTRAL DAS PILLS (proporção antiga) ====================== -->
+  <div class="tf-pills-wrap">
+    <!-- PILLS PRINCIPAIS (Etapas integrado na sequência) -->
+    <div class="tf-tabs tf-tabs-main">
+      <button class="tab active" data-tab="principal">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="2"></rect><rect x="14" y="3" width="7" height="7" rx="2"></rect><rect x="14" y="14" width="7" height="7" rx="2"></rect><rect x="3" y="14" width="7" height="7" rx="2"></rect></svg>
+        Principal
+      </button>
 
-    <button class="tab" data-tab="contingencia">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"></path></svg>
-      Contingência de Bots
-    </button>
+      <button class="tab" data-tab="contingencia">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"></path></svg>
+        Contingência de Bots
+      </button>
 
-    <button class="tab" data-tab="tracking">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15A1.65 1.65 0 0 0 21 13.35 8 8 0 0 0 12 4a8 8 0 0 0-8 9.35A1.65 1.65 0 0 0 5.6 15"></path></svg>
-      Traqueamento
-    </button>
+      <button class="tab" data-tab="tracking">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15A1.65 1.65 0 0 0 21 13.35 8 8 0 0 0 12 4a8 8 0 0 0-8 9.35A1.65 1.65 0 0 0 5.6 15"></path></svg>
+        Traqueamento
+      </button>
 
-    <button class="tab" data-tab="relatorios">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"></path><path d="M19 17V7"></path><path d="M13 17V3"></path><path d="M7 17v-7"></path></svg>
-      Fluxo de Relatórios
-    </button>
+      <button class="tab" data-tab="relatorios">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"></path><path d="M19 17V7"></path><path d="M13 17V3"></path><path d="M7 17v-7"></path></svg>
+        Fluxo de Relatórios
+      </button>
 
-    <!-- NOVA PILL: Etapas (abre o modal central) -->
-    <button class="tab" id="tabEtapas" data-tab="etapas">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-           stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M12 3l9 4.5-9 4.5L3 7.5 12 3z"></path>
-        <path d="M21 12l-9 4.5L3 12"></path>
-        <path d="M21 16.5l-9 4.5-9-4.5"></path>
-      </svg>
-      Etapas
-    </button>
+      <!-- PILL: Etapas (abre modal central) -->
+      <button class="tab" id="tabEtapas" data-tab="etapas">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 3l9 4.5-9 4.5L3 7.5 12 3z"></path>
+          <path d="M21 12l-9 4.5L3 12"></path>
+          <path d="M21 16.5l-9 4.5-9-4.5"></path>
+        </svg>
+        Etapas
+      </button>
+    </div>
+
+    <!-- SUB-ABAS DA PRINCIPAL (ordem garantida: PIX no lugar de Disparos; Disparos no final) -->
+    <div class="tf-subtabs" id="subtabs-principal">
+      <button class="subtab active" data-subtab="front">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h8"></path><path d="M17 8h.01"></path><path d="M19 4v6h6"></path></svg>
+        Front
+      </button>
+
+      <button class="subtab" data-subtab="orderbump" disabled>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6h15l-1.5 9h-12z"></path><path d="M6 6l-1-3H2"></path><circle cx="9" cy="20" r="1"></circle><circle cx="18" cy="20" r="1"></circle><path d="M12 10h4"></path></svg>
+        OrderBump (em breve)
+      </button>
+
+      <button class="subtab" data-subtab="upsell" disabled>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"></path></svg>
+        Upsell (em breve)
+      </button>
+
+      <button class="subtab" data-subtab="downsell" disabled>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 7l-6 6-4-4-8 8"></path></svg>
+        Downsell (em breve)
+      </button>
+
+      <!-- Mensagem PIX na posição de Disparos -->
+      <button class="subtab" data-subtab="pix">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="14" width="7" height="7" rx="1"></rect><rect x="3" y="14" width="7" height="7" rx="1"></rect></svg>
+        Mensagem PIX
+      </button>
+
+      <!-- Disparos (em breve) no final -->
+      <button class="subtab" data-subtab="disparos" disabled>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"></path><path d="M22 2l-7 20-4-9-9-4 20-7z"></path></svg>
+        Disparos (em breve)
+      </button>
+    </div>
   </div>
+  <!-- ====================== /WRAP CENTRAL DAS PILLS ====================== -->
 
-  <!-- SUB-ABAS DA PRINCIPAL (ordem ajustada: PIX no lugar de Disparos; Disparos no final) -->
-  <div class="tf-subtabs" id="subtabs-principal">
-    <button class="subtab active" data-subtab="front">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h8"></path><path d="M17 8h.01"></path><path d="M19 4v6h6"></path></svg>
-      Front
-    </button>
-
-    <button class="subtab" data-subtab="orderbump" disabled>
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6h15l-1.5 9h-12z"></path><path d="M6 6l-1-3H2"></path><circle cx="9" cy="20" r="1"></circle><circle cx="18" cy="20" r="1"></circle><path d="M12 10h4"></path></svg>
-      OrderBump (em breve)
-    </button>
-
-    <button class="subtab" data-subtab="upsell" disabled>
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"></path></svg>
-      Upsell (em breve)
-    </button>
-
-    <button class="subtab" data-subtab="downsell" disabled>
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 7l-6 6-4-4-8 8"></path></svg>
-      Downsell (em breve)
-    </button>
-
-    <!-- Mensagem PIX na posição de Disparos -->
-    <button class="subtab" data-subtab="pix">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="14" width="7" height="7" rx="1"></rect><rect x="3" y="14" width="7" height="7" rx="1"></rect></svg>
-      Mensagem PIX
-    </button>
-
-    <!-- Disparos (em breve) no final -->
-    <button class="subtab" data-subtab="disparos" disabled>
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"></path><path d="M22 2l-7 20-4-9-9-4 20-7z"></path></svg>
-      Disparos (em breve)
-    </button>
-  </div>
-
-  <!-- Conteúdo -->
+  <!-- Conteúdo central (mais largo/centralizado) -->
   <section class="tf-content-placeholder"></section>
 </div>
 
@@ -121,37 +125,47 @@
     --accent:#ffcc00;
     --accent-dim:#d4a100;
     --shadow:0 8px 24px rgba(0,0,0,0.45);
+    /* largura “antiga” das pills (narrow) */
+    --pills-width: 980px;
   }
   .tf-offer-panel{ color:var(--text); padding:60px 80px 100px 130px; max-width:1200px; margin:0 auto; }
   .tf-breadcrumb{ display:flex; align-items:center; gap:8px; color:var(--muted); font-size:.9rem; margin-bottom:10px; }
   .tf-breadcrumb a{ color:var(--muted); text-decoration:none; }
   .tf-breadcrumb a:hover{ color:#e0e0e0; }
 
-  .tf-header{ display:flex; align-items:flex-start; justify-content:space-between; gap:16px; margin-bottom:18px; }
+  .tf-header{ display:flex; align-items:flex-start; justify-content:space-between; gap:16px; margin-bottom:12px; }
   .tf-offer-title{ margin:0; font-size:1.75rem; letter-spacing:.3px; background:linear-gradient(90deg,#fff,#d8d8d8); -webkit-background-clip:text; background-clip:text; color:transparent; }
 
   .tf-btn{ appearance:none; border:1px solid var(--border); background:var(--panel-strong); color:#eee; padding:9px 14px; border-radius:10px; cursor:pointer; font-weight:600; box-shadow:var(--shadow); transition:.2s ease; }
   .tf-btn:hover{ border-color:rgba(255,255,255,0.2); background:rgba(255,255,255,0.08); }
   .tf-btn-small{ padding:7px 10px; font-size:.85rem; border-radius:999px; }
-  .tf-btn-primary{ background:linear-gradient(90deg,var(--accent),var(--accent-dim)); color:#171300; border:1px solid rgba(255,204,0,0.35); box-shadow:0 6px 22px rgba(255,204,0,0.25); }
+  .tf-btn-primary{ background:linear-gradient(90deg,var(--accent),var(--accent-dim)); color: #171300; border:1px solid rgba(255,204,0,0.35); box-shadow:0 6px 22px rgba(255,204,0,0.25); }
   .tf-btn-ghost{ background:transparent; border-color:transparent; box-shadow:none; }
 
+  /* ===== Proporção antiga: pills mais estreitas que o conteúdo, centralizadas ===== */
+  .tf-pills-wrap{ max-width:var(--pills-width); margin:16px auto 8px; }
+  .tf-tabs{ display:flex; gap:8px; flex-wrap:wrap; justify-content:center; }
+  .tf-subtabs{ display:flex; gap:8px; flex-wrap:wrap; justify-content:center; margin-top:10px; }
+
   /* PILLS */
-  .tf-tabs{ display:flex; gap:8px; flex-wrap:wrap; margin:16px 0 10px 0; }
-  .tf-tabs .tab{ display:inline-flex; align-items:center; gap:8px; padding:9px 14px; border-radius:999px; border:1px solid var(--border); background:var(--panel); color:#dedede; font-weight:600; font-size:.92rem; cursor:pointer; transition:.2s; }
+  .tf-tabs .tab{ display:inline-flex; align-items:center; gap:8px; padding:9px 14px; border-radius:999px; border:1px solid var(--border); background:var(--panel); color:#dedede; font-weight:600; font-size:.92rem; cursor:pointer; transition:.2s; line-height:1; height:38px; }
   .tf-tabs .tab:hover{ background:rgba(255,255,255,0.07); }
   .tf-tabs .tab.active{ background:rgba(255,255,255,0.10); border-color:rgba(255,255,255,0.22); color:#fff; }
 
-  .tf-subtabs{ display:flex; gap:8px; flex-wrap:wrap; justify-content:center; margin-bottom:18px; }
-  .tf-subtabs .subtab{ display:inline-flex; align-items:center; gap:8px; padding:7px 12px; border-radius:999px; border:1px solid var(--border); background:var(--panel); color:#dcdcdc; font-weight:600; font-size:.9rem; cursor:pointer; transition:.2s; }
+  .tf-subtabs .subtab{ display:inline-flex; align-items:center; gap:8px; padding:7px 12px; border-radius:999px; border:1px solid var(--border); background:var(--panel); color:#dcdcdc; font-weight:600; font-size:.9rem; cursor:pointer; transition:.2s; line-height:1; height:34px; }
   .tf-subtabs .subtab[disabled]{ opacity:.45; cursor:not-allowed; }
   .tf-subtabs .subtab:not([disabled]):hover{ background:rgba(255,255,255,0.07); }
   .tf-subtabs .subtab.active{ background:rgba(255,255,255,0.10); border-color:rgba(255,255,255,0.22); color:#fff; }
 
-  .tf-content-placeholder{ min-height:360px; border:1px dashed rgba(255,255,255,0.12); border-radius:14px;
-    background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02)); box-shadow:var(--shadow); }
+  /* Conteúdo grande mais largo e centralizado */
+  .tf-content-placeholder{
+    min-height:360px; border:1px dashed rgba(255,255,255,0.12); border-radius:14px;
+    background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
+    box-shadow:var(--shadow);
+    margin-top:14px;
+  }
 
-  /* ===== Modal central único de Etapas (classes exclusivas p/ evitar conflito com “barra”) ===== */
+  /* ===== Modal central único de Etapas ===== */
   .tf-steps-overlay[hidden]{ display:none !important; }
   .tf-steps-overlay{
     position:fixed; inset:0; z-index:3000;
@@ -188,7 +202,7 @@
 
   .tf-steps-list{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:8px; max-height:48vh; overflow:auto; }
   .tf-step-item{
-    display:grid; grid-template-columns: 48px 1fr auto auto auto; align-items:center; gap:10px; padding:10px;
+    display:grid; grid-template-columns: 56px 1fr auto auto auto; align-items:center; gap:10px; padding:10px;
     border-radius:14px;
     background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.03));
     border:1px solid rgba(255,255,255,0.14);
@@ -201,8 +215,8 @@
     transform: translateY(-1px);
   }
   .tf-step-no{
-    display:inline-flex; align-items:center; justify-content:center; width:36px; height:28px; border-radius:999px;
-    background: rgba(255,255,255,0.08); color:#fff; font-weight:700; border:1px solid rgba(255,255,255,0.16);
+    display:inline-flex; align-items:center; justify-content:center; width:42px; height:30px; border-radius:999px;
+    background: rgba(255,255,255,0.08); color:#fff; font-weight:800; border:1px solid rgba(255,255,255,0.16);
   }
   .tf-step-name{
     width:100%; padding:8px 10px; border-radius:10px;
@@ -213,7 +227,25 @@
   .tf-step-btn{ appearance:none; border:1px solid var(--border); background:var(--panel-strong); color:#eee; padding:6px 10px; border-radius:10px; cursor:pointer; font-weight:600; transition:.18s ease; }
   .tf-step-btn:hover{ background:rgba(255,255,255,0.08); }
   .tf-step-btn.danger{ border-color: rgba(255, 75, 75, .35); background: linear-gradient(90deg, #3a0000, #2a0000); color: #ffdada; }
-  .tf-select-radio{ display:flex; align-items:center; gap:6px; color:#eaeaea; font-weight:700; }
+
+  /* Controle de seleção (premium) */
+  .tf-select-radio{ display:flex; align-items:center; gap:10px; }
+  .tf-select-radio input[type="radio"]{
+    appearance:none; width:18px; height:18px; border-radius:999px;
+    border:1px solid rgba(255,255,255,0.22); background:rgba(255,255,255,0.06);
+    box-shadow: inset 0 0 0 2px rgba(0,0,0,0.3); position:relative; cursor:pointer; transition:.16s;
+  }
+  .tf-select-radio input[type="radio"]:hover{ border-color: rgba(255,255,255,0.33); }
+  .tf-select-radio input[type="radio"]::after{
+    content:""; position:absolute; inset:3px; border-radius:999px; background:transparent; transition:.16s;
+  }
+  .tf-select-radio input[type="radio"]:checked{
+    border-color: rgba(255,204,0,0.7); box-shadow: 0 0 0 2px rgba(255,204,0,0.15), inset 0 0 0 2px rgba(0,0,0,0.2);
+  }
+  .tf-select-radio input[type="radio"]:checked::after{
+    background:linear-gradient(90deg, var(--accent), var(--accent-dim));
+  }
+  .tf-select-radio span{ color:#eaeaea; font-weight:700; letter-spacing:.2px; }
 
   .tf-steps-actions{ display:flex; justify-content:flex-end; gap:8px; padding:12px 14px 16px 14px; border-top:1px solid rgba(255,255,255,0.12); }
 
@@ -227,7 +259,7 @@
 
   @media (max-width: 980px){
     .tf-offer-panel{ padding:40px 18px 80px 18px; }
-    .tf-tabs{ justify-content:center; }
+    .tf-pills-wrap{ max-width: calc(100% - 24px); }
   }
 </style>
 
@@ -265,7 +297,7 @@
     btn.addEventListener('click', function(e){
       var t = btn.dataset.tab;
 
-      // Se clicar em "Etapas", NÃO troca de tab: abre o modal central.
+      // Se clicar em "Etapas", abre o modal central e não troca de tab
       if (t === 'etapas') {
         e.preventDefault();
         openStepsModal();
@@ -283,7 +315,7 @@
   // Garante subtabs da Principal visíveis por padrão:
   if (subTabsWrap) subTabsWrap.style.display = 'flex';
 
-  /* Toast premium */
+  /* Toast premium (fade/slide) */
   function showToast(type, text){
     var host = document.createElement('div');
     host.style.position='fixed'; host.style.top='20px'; host.style.right='20px';
@@ -295,13 +327,14 @@
     card.style.background = (type==='error') ? 'linear-gradient(90deg,#2a0000,#3a0000)' : 'linear-gradient(90deg,#ffcc00,#d4a100)';
     card.style.color = (type==='error') ? '#ffd5d5' : '#171300';
     card.style.fontWeight='800'; card.style.letterSpacing='.3px';
-    card.style.transform='translateY(-6px) scale(.98)'; card.style.opacity='0';
-    var icon = document.createElement('span'); icon.style.marginRight='8px'; icon.innerHTML = (type==='error') ? '⚠️' : '✔️';
-    var txt = document.createElement('span'); txt.textContent = text || (type==='error' ? 'Falhou' : 'Sucesso');
+    card.style.transform='translateY(-10px) scale(.98)'; card.style.opacity='0';
+    card.style.transition='transform .16s ease, opacity .16s ease';
+    var icon = document.createElement('span'); icon.style.marginRight='8px'; icon.textContent = (type==='error') ? '⚠️' : '✔️';
+    var txt = document.createElement('span'); txt.textContent = text || (type==='error' ? 'Falha' : 'Sucesso');
     var row = document.createElement('div'); row.style.display='flex'; row.style.alignItems='center'; row.appendChild(icon); row.appendChild(txt);
     card.appendChild(row); host.appendChild(card); document.body.appendChild(host);
-    requestAnimationFrame(function(){ card.style.transition='transform .16s ease, opacity .16s ease'; card.style.transform='translateY(0) scale(1)'; card.style.opacity='1'; });
-    setTimeout(function(){ card.style.transform='translateY(-6px) scale(.98)'; card.style.opacity='0'; setTimeout(function(){ host.remove(); }, 140); }, 2300);
+    requestAnimationFrame(function(){ card.style.transform='translateY(0) scale(1)'; card.style.opacity='1'; });
+    setTimeout(function(){ card.style.transform='translateY(-10px) scale(.98)'; card.style.opacity='0'; setTimeout(function(){ host.remove(); }, 160); }, 2300);
   }
 
   /* Botão “Salvar Alterações” com micro feedback */
@@ -326,7 +359,7 @@
           method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ settings: draftSettings })
         });
         const js = await r.json(); if (!js || !js.ok) throw new Error('save_failed');
-        flashSaved(saveBtn); showToast('success','Etapa salva com sucesso.');
+        flashSaved(saveBtn); showToast('success','Configurações salvas com sucesso.');
       }catch(e){ console.error(e); showToast('error','Não foi possível salvar.'); }
       finally{ setBtnLoading(saveBtn,false); }
     });
@@ -370,7 +403,11 @@
     var up = document.createElement('button'); up.className='tf-step-btn'; up.textContent='↑'; up.title='Subir';
     var down = document.createElement('button'); down.className='tf-step-btn'; down.textContent='↓'; down.title='Descer';
     up.addEventListener('click', function(){ var prev = li.previousElementSibling; if(prev) listEl.insertBefore(li, prev); recomputeNosUnified(); });
-    down.addEventListener('click', function(){ var next = li.nextElementSibling; if(next) listEl.insertBefore(next.nextElementSibling ? next.nextElementSibling : li, li); recomputeNosUnified(); });
+    down.addEventListener('click', function(){
+      var next = li.nextElementSibling;
+      if(next && next.nextElementSibling){ listEl.insertBefore(li, next.nextElementSibling); } else if (next){ listEl.appendChild(li); }
+      recomputeNosUnified();
+    });
     sort.appendChild(up); sort.appendChild(down);
 
     var delWrap = document.createElement('div'); delWrap.className='tf-step-actions';
@@ -407,7 +444,7 @@
   }
 
   function confirmDeleteUnified(li, displayName){
-    // mini modal de confirmação (central) reaproveitando overlay
+    // mini modal de confirmação, usando mesmo overlay style
     var overlay = document.createElement('div'); overlay.className='tf-steps-overlay'; overlay.style.zIndex='4001';
     var box = document.createElement('div'); box.className='tf-steps-dialog'; box.style.maxWidth='460px';
     box.innerHTML = '<div class="tf-steps-head"><h3>Excluir etapa?</h3></div>' +
@@ -435,10 +472,10 @@
   }
 
   // Salvar mudanças do modal:
-  var btnSave = document.getElementById('btnSaveStepsUnified');
-  if (btnSave){
-    btnSave.addEventListener('click', async function(){
-      btnSave.disabled=true; btnSave.textContent='Salvando…';
+  var saveModalBtn = document.getElementById('btnSaveStepsUnified');
+  if (saveModalBtn){
+    saveModalBtn.addEventListener('click', async function(){
+      saveModalBtn.disabled=true; saveModalBtn.textContent='Salvando…';
       try{
         // 1) Criar novas
         var newNames = [];
@@ -513,7 +550,7 @@
         console.error(e);
         showToast('error','Falha ao salvar mudanças.');
       }finally{
-        btnSave.disabled=false; btnSave.textContent='Salvar mudanças';
+        saveModalBtn.disabled=false; saveModalBtn.textContent='Salvar mudanças';
       }
     });
   }
