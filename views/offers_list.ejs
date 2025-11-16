@@ -48,7 +48,7 @@
                  else { %>Fluxo<% } %>
             </span>
 
-            <!-- botão (…) inline -->
+            <!-- Botão de ações (…) (inline, minimalista) -->
             <button
               type="button"
               class="offer-actions-inline"
@@ -75,115 +75,7 @@
 <!-- Toasts -->
 <div id="tf-toasts" class="tf-toasts"></div>
 
-<!-- ===== Modal Gerenciar Oferta ===== -->
-<div class="modal-gerenciar-oferta" id="manageOfferModal" aria-hidden="true">
-  <div class="modal-backdrop" onclick="closeManageOfferModal()"></div>
-
-  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="manageOfferTitle">
-    <header class="m-header">
-      <div class="m-titles">
-        <h3 id="manageOfferTitle">Gerenciar Oferta</h3>
-        <p class="m-sub">Veja o resumo desta oferta e gerencie ações rápidas.</p>
-      </div>
-      <button class="m-close" type="button" aria-label="Fechar" onclick="closeManageOfferModal()">
-        <span>×</span>
-      </button>
-    </header>
-
-    <section class="m-body">
-      <!-- Resumo -->
-      <div class="m-section">
-        <h4>Resumo da Oferta</h4>
-        <div class="m-resume">
-          <div><strong>Nome atual:</strong> <span id="resumeName">—</span></div>
-          <div><strong>ID:</strong> <span id="resumeId">—</span></div>
-          <div><strong>Quantidade de bots vinculados:</strong> <span id="resumeBots">0</span></div>
-          <div><strong>Tipo de Bot:</strong> <span id="resumeBotType">—</span></div>
-        </div>
-      </div>
-
-      <div class="m-sep"></div>
-
-      <!-- Renomear -->
-      <div class="m-section">
-        <h4>Renomear Oferta</h4>
-        <label for="newOfferName" class="m-label">Novo nome da oferta <span>*</span></label>
-        <input id="newOfferName" type="text" class="m-input" placeholder="Ex: Mundo VIP 2.0, Oferta Principal, etc..." />
-        <div class="m-actions">
-          <button class="btn-gold" type="button" onclick="submitRename()">Salvar novo nome</button>
-          <small id="renameError" class="m-error" style="display:none;"></small>
-        </div>
-      </div>
-
-      <div class="m-sep"></div>
-
-      <!-- Duplicar -->
-      <div class="m-section">
-        <h4>Duplicar Oferta</h4>
-        <p class="m-muted">Crie uma cópia desta oferta com um novo ID, preservando configurações principais.</p>
-        <button class="btn-gold slim" type="button" onclick="submitDuplicate()">Duplicar oferta</button>
-        <small id="duplicateError" class="m-error" style="display:none;"></small>
-      </div>
-
-      <div class="m-sep"></div>
-
-      <!-- Excluir -->
-      <div class="m-section">
-        <h4>Excluir Oferta</h4>
-        <p class="m-warning">Cuidado: esta ação é permanente.</p>
-        <button class="btn-danger slim" type="button" onclick="submitDelete()">Excluir oferta</button>
-        <small id="deleteError" class="m-error" style="display:none;"></small>
-      </div>
-    </section>
-  </div>
-</div>
-
-<style>
-  /* ===== Lista (inalterada) ===== */
-  .tiger-offers-list{ padding:60px 80px 100px 130px; max-width:calc(100vw - 120px); margin:0 auto; color:#fff; }
-  .list-header{ display:flex; align-items:center; justify-content:space-between; margin-bottom:18px; }
-  .list-header h1{ margin:0 0 6px; font-size:2rem; color:#ffcc00; }
-  .list-header p{ margin:0; color:#b4b4b4; font-size:.95rem; }
-
-  .list-grid{ display:grid; gap:12px; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); }
-  .offer-card{ position:relative; display:block; text-decoration:none; color:#fff; background:rgba(0,0,0,0.70); border:1px solid rgba(255,204,0,0.12); border-radius:16px; padding:14px; transition:.2s; }
-  .offer-card:hover{ border-color:#ffcc00; box-shadow:0 0 16px rgba(255,204,0,0.3); }
-  .card-top{ display:flex; align-items:center; justify-content:space-between; gap:8px; }
-  .card-top h3{ margin:0; font-size:1rem; }
-  .status{ font-size:.75rem; padding:3px 7px; border-radius:999px; }
-  .status.ativo{ background:rgba(0,255,120,0.16); color:#4fff9a; }
-  .status.incompleto{ background:rgba(255,196,0,0.16); color:#ffdd66; }
-  .status.erro{ background:rgba(255,0,76,0.16); color:#ff6b9e; }
-
-  .meta{ display:flex; align-items:center; gap:10px; white-space:nowrap; margin-top:8px; font-size:.78rem; color:#c9c9c9; padding-right:42px; }
-  .offer-card .go{ position:absolute; right:12px; top:50%; transform:translateY(-50%); opacity:.6; font-size:1.4rem; }
-
-  .empty{ text-align:center; padding:30px 16px; background:rgba(0,0,0,0.70); border:1px solid rgba(255,204,0,0.12); border-radius:16px; }
-  .btn-primary.small{ padding:8px 16px; font-size:.85rem; }
-  .btn-primary{ border:none; border-radius:10px; padding:10px 22px; font-weight:600; cursor:pointer; text-decoration:none; background:linear-gradient(90deg,#ffcc00,#d4a100); color:#1a1300; box-shadow:0 0 12px rgba(255,204,0,0.4); font-size:.95rem; }
-
-  /* botão (…) inline */
-  .offer-actions-inline{
-    margin-left:12px; margin-right:6px;
-    width:28px; height:28px; border-radius:999px;
-    display:flex; align-items:center; justify-content:center;
-    background:rgba(255,204,0,0.08);
-    border:1px solid rgba(255,204,0,0.18);
-    color:#ffcc00; cursor:pointer;
-    transition: box-shadow .16s ease, transform .08s ease, background .16s ease, border-color .16s ease;
-    flex:0 0 auto;
-  }
-  .offer-actions-inline:hover{ background:rgba(255,204,0,0.14); border-color:rgba(255,204,0,0.35); box-shadow:0 0 10px rgba(255,204,0,0.25); }
-  .offer-actions-inline .dots{ display:block; line-height:0; transform:translateY(-0.5px); letter-spacing:2px; font-size:14px; pointer-events:none; }
-
-  /* ===== Toasts ===== */
-  .tf-toasts{ position:fixed; top:18px; right:18px; display:grid; gap:8px; z-index:10000; }
-  .tf-toast{ background:rgba(15,15,15,.95); color:#fff; border:1px solid rgba(255,204,0,.15); border-radius:12px; padding:10px 12px; box-shadow:0 0 14px rgba(255,204,0,.18); transform:translateY(-6px); opacity:0; animation:toast-in .18s ease forwards; }
-  .tf-toast.success{ border-color:rgba(0,255,120,.25); box-shadow:0 0 14px rgba(0,255,120,.18); }
-  .tf-toast.error{ border-color:rgba(255,59,107,.35); box-shadow:0 0 14px rgba(255,59,107,.22); }
-  @keyframes toast-in{ to{ transform:translateY(0); opacity:1; } }
-
-  /* ================================
+ /* ================================
      MODAL MINIMALISTA (override)
      — mantêm visual da tela “Criar oferta”
      — alta especificidade pra garantir efeito
