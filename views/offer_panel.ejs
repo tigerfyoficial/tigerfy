@@ -1,18 +1,24 @@
 <%- include('partials/visual_hottrack') %>
 
 <div class="tf-offer-panel">
-  <!-- Breadcrumb dinâmico (clicável) -->
-  <nav class="tf-breadcrumb" id="tfBreadcrumb">
-    <!-- preenchido via script para manter o mesmo visual -->
-  </nav>
+  <!-- Breadcrumb -->
+  <nav class="tf-breadcrumb" id="tfBreadcrumb"></nav>
 
-  <!-- Header: Título + Etapas (à esquerda) | Salvar (à direita) -->
+  <!-- Header -->
   <header class="tf-header">
     <div class="tf-header-left">
       <h1 class="tf-offer-title" id="offerTitle"><%= offer?.name || 'Nome da Oferta' %></h1>
+
+      <!-- Chip de etapa + dropdown -->
       <div class="tf-step-inline">
-        <span class="tf-step-chip">Etapa: <strong id="tfStepName"><%= (currentStep && currentStep.name) ? currentStep.name : 'Etapa 1' %></strong></span>
+        <button type="button" id="tfStepChip" class="tf-step-chip tf-step-chip--click">
+          Etapa: <strong id="tfStepName"><%= (currentStep && currentStep.name) ? currentStep.name : 'Etapa 1' %></strong>
+          <span class="tf-caret" aria-hidden="true">▾</span>
+        </button>
         <button type="button" id="btnCreateStep" class="tf-btn tf-btn-small">Criar etapa</button>
+
+        <!-- Dropdown de etapas -->
+        <div id="tfStepDropdown" class="tf-step-dropdown" hidden></div>
       </div>
     </div>
 
@@ -24,76 +30,57 @@
   <!-- Abas principais -->
   <div class="tf-tabs">
     <button class="tab active" data-tab="principal">
-      <!-- dashboard icon -->
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="2"></rect><rect x="14" y="3" width="7" height="7" rx="2"></rect><rect x="14" y="14" width="7" height="7" rx="2"></rect><rect x="3" y="14" width="7" height="7" rx="2"></rect></svg>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="2"></rect><rect x="14" y="3" width="7" height="7" rx="2"></rect><rect x="14" y="14" width="7" height="7" rx="2"></rect><rect x="3" y="14" width="7" height="7" rx="2"></rect></svg>
       Principal
     </button>
-
     <button class="tab" data-tab="contingencia">
-      <!-- shield -->
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"></path></svg>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"></path></svg>
       Contingência de Bots
     </button>
-
     <button class="tab" data-tab="tracking">
-      <!-- target -->
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15A1.65 1.65 0 0 0 21 13.35 8 8 0 0 0 12 4a8 8 0 0 0-8 9.35A1.65 1.65 0 0 0 5.6 15"></path></svg>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15A1.65 1.65 0 0 0 21 13.35 8 8 0 0 0 12 4a8 8 0 0 0-8 9.35A1.65 1.65 0 0 0 5.6 15"></path></svg>
       Traqueamento
     </button>
-
     <button class="tab" data-tab="relatorios">
-      <!-- chart -->
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"></path><path d="M19 17V7"></path><path d="M13 17V3"></path><path d="M7 17v-7"></path></svg>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"></path><path d="M19 17V7"></path><path d="M13 17V3"></path><path d="M7 17v-7"></path></svg>
       Fluxo de Relatórios
     </button>
   </div>
 
-  <!-- Abas secundárias (visíveis apenas quando Principal estiver ativo) -->
+  <!-- Subtabs -->
   <div class="tf-subtabs" id="subtabs-principal">
     <button class="subtab active" data-subtab="front">
-      <!-- chat bubble -->
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h8"></path><path d="M17 8h.01"></path><path d="M19 4v6h6"></path></svg>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h8"></path><path d="M17 8h.01"></path><path d="M19 4v6h6"></path></svg>
       Front
     </button>
-
     <button class="subtab" data-subtab="orderbump" disabled>
-      <!-- cart plus -->
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6h15l-1.5 9h-12z"></path><path d="M6 6l-1-3H2"></path><circle cx="9" cy="20" r="1"></circle><circle cx="18" cy="20" r="1"></circle><path d="M12 10h4"></path></svg>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6h15l-1.5 9h-12z"></path><path d="M6 6l-1-3H2"></path><circle cx="9" cy="20" r="1"></circle><circle cx="18" cy="20" r="1"></circle><path d="M12 10h4"></path></svg>
       OrderBump (em breve)
     </button>
-
     <button class="subtab" data-subtab="upsell" disabled>
-      <!-- trend up -->
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17l6-6 4 4 8-8"></path></svg>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"></path></svg>
       Upsell (em breve)
     </button>
-
     <button class="subtab" data-subtab="downsell" disabled>
-      <!-- trend down -->
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 7l-6 6-4-4-8 8"></path></svg>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 7l-6 6-4-4-8 8"></path></svg>
       Downsell (em breve)
     </button>
-
     <button class="subtab" data-subtab="pix">
-      <!-- grid qr -->
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="14" width="7" height="7" rx="1"></rect><rect x="3" y="14" width="7" height="7" rx="1"></rect></svg>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="14" width="7" height="7" rx="1"></rect><rect x="3" y="14" width="7" height="7" rx="1"></rect></svg>
       Mensagem PIX
     </button>
-
     <button class="subtab" data-subtab="disparos" disabled>
-      <!-- paper plane -->
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 2L11 13"></path><path d="M22 2l-7 20-4-9-9-4 20-7z"></path></svg>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"></path><path d="M22 2l-7 20-4-9-9-4 20-7z"></path></svg>
       Disparos (em breve)
     </button>
   </div>
 
-  <!-- Área de conteúdo (placeholder) -->
   <section class="tf-content-placeholder"></section>
 </div>
 
-<!-- Modal "Nova etapa" -->
+<!-- Modal "Nova etapa" (simplificado) -->
 <div class="tf-modal-backdrop" id="stepModal" hidden>
-  <div class="tf-modal">
+  <div class="tf-modal tf-modal-animate">
     <div class="tf-modal-head">
       <h3>Nova etapa</h3>
       <button type="button" class="tf-modal-close" id="btnCloseModal" aria-label="Fechar">✕</button>
@@ -102,20 +89,7 @@
     <div class="tf-modal-body">
       <div class="tf-field">
         <label for="inpStepName">Nome da etapa</label>
-        <input type="text" id="inpStepName" placeholder="Ex.: Etapa 2, Upsell Bot de Taxa, Funil Pós-Compra" />
-      </div>
-
-      <div class="tf-radio-group">
-        <span class="tf-radio-title">Configurações iniciais</span>
-        <label class="tf-radio">
-          <input type="radio" name="dupMode" value="0" checked />
-          <span>Criar etapa do zero</span>
-        </label>
-
-        <label class="tf-radio">
-          <input type="radio" name="dupMode" value="1" />
-          <span>Duplicar configurações da etapa atual (sem relatórios)</span>
-        </label>
+        <input type="text" id="inpStepName" placeholder="Ex.: Etapa 2" />
       </div>
     </div>
 
@@ -128,228 +102,109 @@
 
 <style>
   :root{
-    --bg:#0b0b0b;
-    --panel:rgba(255,255,255,0.04);
-    --panel-strong:rgba(255,255,255,0.06);
-    --border:rgba(255,255,255,0.12);
-    --muted:#b8b8b8;
-    --text:#ffffff;
-    --accent:#ffcc00;
-    --accent-dim:#d4a100;
-    --shadow:0 8px 24px rgba(0,0,0,0.45);
+    --bg:#0b0b0b; --panel:rgba(255,255,255,0.04); --panel-strong:rgba(255,255,255,0.06);
+    --border:rgba(255,255,255,0.12); --muted:#b8b8b8; --text:#ffffff;
+    --accent:#ffcc00; --accent-dim:#d4a100; --shadow:0 8px 24px rgba(0,0,0,0.45);
     --radius:14px;
   }
 
-  .tf-offer-panel{
-    color:var(--text);
-    padding:60px 80px 100px 130px;
-    max-width:1200px;
-    margin:0 auto;
-  }
-
-  .tf-breadcrumb{
-    display:flex; align-items:center; gap:8px;
-    color:var(--muted);
-    font-size:.9rem;
-    margin-bottom:10px;
-  }
-  .tf-breadcrumb a{
-    color:var(--muted); text-decoration:none;
-  }
+  .tf-offer-panel{ color:var(--text); padding:60px 80px 100px 130px; max-width:1200px; margin:0 auto; }
+  .tf-breadcrumb{ display:flex; align-items:center; gap:8px; color:var(--muted); font-size:.9rem; margin-bottom:10px; }
+  .tf-breadcrumb a{ color:var(--muted); text-decoration:none; }
   .tf-breadcrumb a:hover{ color:#e0e0e0; }
 
-  .tf-header{
-    display:flex; align-items:flex-start; justify-content:space-between;
-    gap:16px; margin-bottom:18px;
-  }
+  .tf-header{ display:flex; align-items:flex-start; justify-content:space-between; gap:16px; margin-bottom:18px; }
   .tf-header-left{ display:flex; align-items:center; gap:14px; flex-wrap:wrap; }
-  .tf-offer-title{
-    margin:0; font-size:1.75rem; letter-spacing:.3px;
-    background:linear-gradient(90deg,#fff,#d8d8d8);
-    -webkit-background-clip:text; background-clip:text; color:transparent;
-  }
+  .tf-offer-title{ margin:0; font-size:1.75rem; letter-spacing:.3px; background:linear-gradient(90deg,#fff,#d8d8d8); -webkit-background-clip:text; background-clip:text; color:transparent; }
 
-  .tf-step-inline{ display:flex; align-items:center; gap:8px; }
+  .tf-step-inline{ position:relative; display:flex; align-items:center; gap:8px; }
   .tf-step-chip{
-    display:inline-flex; align-items:center; gap:6px;
-    padding:6px 10px; border-radius:999px;
-    background:var(--panel); border:1px solid var(--border);
-    font-size:.85rem; color:#ddd;
+    display:inline-flex; align-items:center; gap:8px; padding:6px 12px; border-radius:999px;
+    background:var(--panel); border:1px solid var(--border); font-size:.9rem; color:#ddd;
   }
+  .tf-step-chip--click{ cursor:pointer; transition:.2s; }
+  .tf-step-chip--click:hover{ background:rgba(255,255,255,0.08); }
+  .tf-caret{ opacity:.85; transform:translateY(1px); }
 
-  .tf-btn{
-    appearance:none; border:1px solid var(--border);
-    background:var(--panel-strong); color:#eee;
-    padding:9px 14px; border-radius:10px; cursor:pointer;
-    font-weight:600; box-shadow:var(--shadow);
-    transition:.2s ease;
+  /* Dropdown das etapas (visual claro + hover/ativo) */
+  .tf-step-dropdown{
+    position:absolute; top:36px; left:0; min-width:240px; max-height:320px; overflow:auto;
+    background:linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.04));
+    border:1px solid var(--border); border-radius:12px; box-shadow:0 14px 42px rgba(0,0,0,0.55);
+    padding:6px; z-index:1100; backdrop-filter:blur(6px);
   }
+  .tf-step-item{
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    padding:8px 10px; border-radius:10px; font-weight:600; color:#eaeaea;
+    transition:background .15s ease, transform .08s ease;
+  }
+  .tf-step-item:hover{ background:rgba(255,255,255,0.08); }
+  .tf-step-item.active{ background:rgba(255,255,255,0.12); color:#fff; border:1px solid rgba(255,255,255,0.18); }
+  .tf-step-item .lbl{ display:flex; align-items:center; gap:8px; }
+  .tf-step-item .pill{ font-size:.72rem; padding:3px 6px; border-radius:6px; color:#171300; background:linear-gradient(90deg,var(--accent),var(--accent-dim)); font-weight:800; letter-spacing:.3px; }
+  .tf-step-del{
+    appearance:none; background:transparent; border:0; color:#ffb3b3; cursor:pointer; font-weight:800;
+    padding:2px 6px; border-radius:8px; transition:.15s;
+  }
+  .tf-step-del:hover{ color:#ffd5d5; background:rgba(255,0,0,.08); }
+
+  .tf-btn{ appearance:none; border:1px solid var(--border); background:var(--panel-strong); color:#eee; padding:9px 14px; border-radius:10px; cursor:pointer; font-weight:600; box-shadow:var(--shadow); transition:.2s ease; }
   .tf-btn:hover{ border-color:rgba(255,255,255,0.2); background:rgba(255,255,255,0.08); }
   .tf-btn:active{ transform:translateY(1px); }
   .tf-btn-small{ padding:7px 10px; font-size:.85rem; border-radius:999px; }
-  .tf-btn-primary{
-    background:linear-gradient(90deg,var(--accent),var(--accent-dim));
-    color:#171300; border:1px solid rgba(255,204,0,0.35);
-    box-shadow:0 6px 22px rgba(255,204,0,0.25);
-  }
+  .tf-btn-primary{ background:linear-gradient(90deg,var(--accent),var(--accent-dim)); color:#171300; border:1px solid rgba(255,204,0,0.35); box-shadow:0 6px 22px rgba(255,204,0,0.25); }
   .tf-btn-primary:hover{ filter:brightness(1.02); }
 
-  .tf-tabs{
-    display:flex; gap:8px; flex-wrap:wrap; margin:16px 0 10px 0; justify-content:center;
-  }
-  .tf-tabs .tab{
-    display:inline-flex; align-items:center; gap:8px;
-    padding:9px 14px; border-radius:999px; border:1px solid var(--border);
-    background:var(--panel); color:#dedede; font-weight:600; font-size:.92rem;
-    cursor:pointer; transition:.2s;
-  }
+  .tf-tabs{ display:flex; gap:8px; flex-wrap:wrap; margin:16px 0 10px 0; justify-content:center; }
+  .tf-tabs .tab{ display:inline-flex; align-items:center; gap:8px; padding:9px 14px; border-radius:999px; border:1px solid var(--border); background:var(--panel); color:#dedede; font-weight:600; font-size:.92rem; cursor:pointer; transition:.2s; }
   .tf-tabs .tab:hover{ background:rgba(255,255,255,0.07); }
-  .tf-tabs .tab.active{
-    background:rgba(255,255,255,0.10);
-    border-color:rgba(255,255,255,0.22);
-    color:#fff;
-  }
+  .tf-tabs .tab.active{ background:rgba(255,255,255,0.10); border-color:rgba(255,255,255,0.22); color:#fff; }
 
-  .tf-subtabs{
-    display:flex; gap:8px; flex-wrap:wrap; justify-content:center; margin-bottom:18px;
-  }
-  .tf-subtabs .subtab{
-    display:inline-flex; align-items:center; gap:8px;
-    padding:7px 12px; border-radius:999px; border:1px solid var(--border);
-    background:var(--panel); color:#dcdcdc; font-weight:600; font-size:.9rem;
-    cursor:pointer; transition:.2s;
-  }
+  .tf-subtabs{ display:flex; gap:8px; flex-wrap:wrap; justify-content:center; margin-bottom:18px; }
+  .tf-subtabs .subtab{ display:inline-flex; align-items:center; gap:8px; padding:7px 12px; border-radius:999px; border:1px solid var(--border); background:var(--panel); color:#dcdcdc; font-weight:600; font-size:.9rem; cursor:pointer; transition:.2s; }
   .tf-subtabs .subtab[disabled]{ opacity:.45; cursor:not-allowed; }
   .tf-subtabs .subtab:not([disabled]):hover{ background:rgba(255,255,255,0.07); }
-  .tf-subtabs .subtab.active{
-    background:rgba(255,255,255,0.10);
-    border-color:rgba(255,255,255,0.22);
-    color:#fff;
-  }
+  .tf-subtabs .subtab.active{ background:rgba(255,255,255,0.10); border-color:rgba(255,255,255,0.22); color:#fff; }
 
-  .tf-content-placeholder{
-    min-height:360px;
-    border:1px dashed rgba(255,255,255,0.12);
-    border-radius:var(--radius);
-    background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
-    box-shadow:var(--shadow);
-  }
+  .tf-content-placeholder{ min-height:360px; border:1px dashed rgba(255,255,255,0.12); border-radius:var(--radius); background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02)); box-shadow:var(--shadow); }
 
-  /* Modal */
-  .tf-modal-backdrop{
-    position:fixed; inset:0; background:rgba(0,0,0,0.55);
-    display:flex; align-items:center; justify-content:center;
-    padding:20px; z-index:1000;
-  }
+  /* Modal + animação leve */
+  .tf-modal-backdrop{ position:fixed; inset:0; background:rgba(0,0,0,0.55); display:flex; align-items:center; justify-content:center; padding:20px; z-index:1000; }
   .tf-modal-backdrop[hidden]{ display:none !important; }
-
-  .tf-modal{
-    width:100%; max-width:560px;
-    background:linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.04));
-    border:1px solid var(--border);
-    border-radius:16px; box-shadow:0 14px 42px rgba(0,0,0,0.55);
-    backdrop-filter: blur(6px);
-  }
-  .tf-modal-head{
-    display:flex; align-items:center; justify-content:space-between;
-    padding:16px 16px 10px 16px;
-    border-bottom:1px solid rgba(255,255,255,0.09);
-  }
-  .tf-modal-head h3{ margin:0; font-size:1.05rem; color:#fff; }
-  .tf-modal-close{
-    background:transparent; border:0; color:#ccc; cursor:pointer; font-size:16px; padding:4px;
-  }
+  .tf-modal{ width:100%; max-width:560px; background:linear-gradient(180deg, rgba(255,255,255,0.07), rgba(255,255,255,0.045)); border:1px solid var(--border); border-radius:16px; box-shadow:0 14px 42px rgba(0,0,0,0.55); backdrop-filter: blur(6px); }
+  .tf-modal-animate{ animation: tfModalIn .18s ease-out; transform-origin: 50% 45%; }
+  @keyframes tfModalIn{ from{ opacity:0; transform:scale(.98); } to{ opacity:1; transform:scale(1); } }
+  .tf-modal-head{ display:flex; align-items:center; justify-content:space-between; padding:16px 16px 10px 16px; border-bottom:1px solid rgba(255,255,255,0.09); }
+  .tf-modal-head h3{ margin:0; font-size:1.06rem; color:#fff; letter-spacing:.2px; }
+  .tf-modal-close{ background:transparent; border:0; color:#ccc; cursor:pointer; font-size:16px; padding:4px; }
   .tf-modal-close:hover{ color:#fff; }
-
   .tf-modal-body{ padding:16px; display:flex; flex-direction:column; gap:14px; }
-  .tf-field label{
-    display:block; font-weight:600; margin-bottom:6px; color:#efefef; font-size:.92rem;
-  }
-  .tf-field input[type="text"]{
-    width:100%; padding:10px 12px; border-radius:10px;
-    background:rgba(255,255,255,0.06); color:#fff;
-    border:1px solid rgba(255,255,255,0.16); outline:none;
-    font-size:.95rem;
-  }
+  .tf-field label{ display:block; font-weight:700; margin-bottom:6px; color:#efefef; font-size:.95rem; letter-spacing:.2px; }
+  .tf-field input[type="text"]{ width:100%; padding:10px 12px; border-radius:10px; background:rgba(255,255,255,0.07); color:#fff; border:1px solid rgba(255,255,255,0.18); outline:none; font-size:.98rem; }
   .tf-field input[type="text"]::placeholder{ color:#bfbfbf; }
-  .tf-field input[type="text"]:focus{
-    border-color:rgba(255,204,0,0.6);
-    box-shadow:0 0 0 2px rgba(255,204,0,0.20);
-  }
+  .tf-field input[type="text"]:focus{ border-color:rgba(255,204,0,0.6); box-shadow:0 0 0 2px rgba(255,204,0,0.20); }
+  .tf-modal-actions{ display:flex; align-items:center; justify-content:flex-end; gap:10px; padding:12px 16px 16px 16px; border-top:1px solid rgba(255,255,255,0.09); }
 
-  .tf-radio-group{ display:flex; flex-direction:column; gap:8px; }
-  .tf-radio-title{ font-size:.9rem; color:#e8e8e8; font-weight:600; margin-bottom:4px; }
-  .tf-radio{ display:flex; align-items:center; gap:8px; color:#cfcfcf; }
-  .tf-radio input{ transform:translateY(1px); }
-
-  .tf-modal-actions{
-    display:flex; align-items:center; justify-content:flex-end; gap:10px;
-    padding:12px 16px 16px 16px; border-top:1px solid rgba(255,255,255,0.09);
+  /* Botão "3D" após salvar (efeito rápido e discreto) */
+  @keyframes tfSavedPulse {
+    0%   { transform: perspective(600px) translateZ(0); box-shadow: 0 6px 22px rgba(255,204,0,0.25); }
+    40%  { transform: perspective(600px) translateZ(6px); box-shadow: 0 10px 30px rgba(255,204,0,0.45); }
+    100% { transform: perspective(600px) translateZ(0); box-shadow: 0 6px 22px rgba(255,204,0,0.25); }
   }
 
   @media (max-width: 980px){
     .tf-offer-panel{ padding:40px 18px 80px 18px; }
     .tf-header{ flex-direction:column; align-items:flex-start; gap:10px; }
   }
-
-  /* ------ ADIÇÕES CIRÚRGICAS (UX/feedback) ------ */
-
-  /* Destaque sutil da etapa atual (não muda layout) */
-  #tfStepName{ text-shadow:0 0 10px rgba(255,204,0,0.12); }
-
-  /* Popover de etapas (apenas quando aberto via JS) */
-  .tf-step-popover{
-    position:absolute;
-    background:linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.06));
-    border:1px solid rgba(255,255,255,0.16);
-    border-radius:12px; box-shadow:0 18px 40px rgba(0,0,0,0.45);
-    backdrop-filter:blur(6px);
-    min-width:220px; max-height:320px; overflow:auto; z-index:1500;
-    opacity:0; transform:translateY(6px) scale(0.98);
-    transition:opacity .16s ease, transform .16s ease;
-  }
-  .tf-step-popover[data-open="1"]{ opacity:1; transform:translateY(0) scale(1); }
-  .tf-step-popover .itm{
-    display:flex; align-items:center; justify-content:space-between;
-    padding:10px 12px; cursor:pointer; user-select:none;
-    color:#eaeaea; border-bottom:1px solid rgba(255,255,255,0.06);
-  }
-  .tf-step-popover .itm:last-child{ border-bottom:0; }
-  .tf-step-popover .itm:hover{ background:rgba(255,255,255,0.06); }
-  .tf-step-popover .badge{
-    font-size:.78rem; padding:3px 8px; border-radius:999px;
-    border:1px solid rgba(255,204,0,0.35);
-    background:rgba(255,204,0,0.08); color:#ffdb4d;
-  }
-  .tf-step-chip{ position:relative; } /* âncora */
-
-  /* Micro animações do modal (sem mudar estrutura) */
-  .tf-modal-backdrop{ opacity:0; transition:opacity .18s ease; }
-  .tf-modal-backdrop:not([hidden]){ opacity:1; }
-  .tf-modal{ transform:translateY(8px) scale(.98); opacity:0; transition:transform .18s ease, opacity .18s ease; }
-  .tf-modal-backdrop:not([hidden]) .tf-modal{ transform:translateY(0) scale(1); opacity:1; }
-
-  /* Radios com highlight suave */
-  .tf-radio{ transition:background .15s ease; border-radius:10px; padding:6px 8px; }
-  .tf-radio:hover{ background:rgba(255,255,255,0.05); }
-  .tf-radio input:checked + span{ color:#fff; text-shadow:0 0 10px rgba(255,204,0,0.18); }
 </style>
 
 <script>
 (function(){
-  // Dados do EJS -> JS
   var offer = <%- JSON.stringify(offer || null) %>;
   var steps = <%- JSON.stringify(steps || []) %>;
   var currentStep = <%- JSON.stringify(currentStep || null) %>;
 
-  /* ------- Atualiza chip e breadcrumb (sem alterar visual) ------- */
-  try{
-    var chip = document.getElementById('tfStepName');
-    if (chip && currentStep){
-      chip.textContent = currentStep.name || ('Etapa ' + (currentStep.stepNo || ''));
-    }
-  }catch(_){}
-
+  /* breadcrumb */
   function escapeHtml(s){ return (s || "").replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
   (function buildBreadcrumb(){
     var bc = document.getElementById('tfBreadcrumb'); if (!bc) return;
@@ -359,7 +214,7 @@
     items.push('<a href="/ofertas">Minhas Ofertas</a>');
     items.push('<span>›</span>');
     items.push('<a href="'+ offerHref +'">'+ escapeHtml(offerName) +'</a>');
-    if (currentStep && currentStep.id){
+    if (currentStep && currentStep.id) {
       items.push('<span>›</span>');
       var stepUrl = offerHref + "?stepId=" + encodeURIComponent(currentStep.id);
       items.push('<a href="'+ stepUrl +'">'+ escapeHtml(currentStep.name || ('Etapa ' + (currentStep.stepNo||''))) +'</a>');
@@ -367,7 +222,13 @@
     bc.innerHTML = items.join('');
   })();
 
-  /* ------- Tabs principais (comportamento original) ------- */
+  /* chip texto da etapa atual */
+  try {
+    var chipTxt = document.getElementById('tfStepName');
+    if (chipTxt && currentStep) chipTxt.textContent = currentStep.name || ('Etapa ' + (currentStep.stepNo || ''));
+  } catch(_) {}
+
+  /* tabs principais */
   var mainTabs = document.querySelectorAll('.tf-tabs .tab');
   var subTabsWrap = document.getElementById('subtabs-principal');
   mainTabs.forEach(function(btn){
@@ -380,28 +241,29 @@
   });
   if (subTabsWrap) subTabsWrap.style.display = 'flex';
 
-  /* ------- Toast Premium (discreto) ------- */
+  /* Toast premium (topo) */
   function showToast(type, text){
     var wrap = document.createElement('div');
-    wrap.style.position='fixed'; wrap.style.inset='0';
-    wrap.style.display='flex'; wrap.style.alignItems='center'; wrap.style.justifyContent='center';
-    wrap.style.background='rgba(0,0,0,0.35)'; wrap.style.backdropFilter='blur(2px)';
-    wrap.style.zIndex='2000'; wrap.style.opacity='0'; wrap.style.transition='opacity .16s ease';
+    wrap.style.position='fixed'; wrap.style.top='22px'; wrap.style.left='50%'; wrap.style.transform='translateX(-50%)';
+    wrap.style.zIndex='3000';
 
     var card = document.createElement('div');
-    card.style.padding='14px 18px'; card.style.borderRadius='12px';
+    card.style.padding='10px 14px'; card.style.borderRadius='10px';
     card.style.border='1px solid rgba(255,204,0,0.35)';
     card.style.boxShadow='0 10px 30px rgba(0,0,0,0.45)';
-    card.style.background = (type==='error') ? 'linear-gradient(90deg,#2a0000,#3a0000)' : 'linear-gradient(90deg,#ffcc00,#d4a100)';
+    card.style.background = (type==='error')
+      ? 'linear-gradient(90deg,#2a0000,#3a0000)'
+      : 'linear-gradient(90deg,#ffcc00,#d4a100)';
     card.style.color = (type==='error') ? '#ffd5d5' : '#171300';
     card.style.fontWeight='800'; card.style.letterSpacing='.3px';
     card.textContent = text || (type==='error' ? 'Falhou' : 'Salvo!');
-    wrap.appendChild(card); document.body.appendChild(wrap);
-    requestAnimationFrame(function(){ wrap.style.opacity='1'; });
-    setTimeout(function(){ wrap.style.opacity='0'; setTimeout(function(){ wrap.remove(); },160); }, 1400);
+    wrap.appendChild(card);
+    document.body.appendChild(wrap);
+    setTimeout(function(){ wrap.remove(); }, 1400);
   }
 
-  /* ------- Botão salvar: loading + salvo ------- */
+  /* Botão salvar: estados + efeito 3D no sucesso */
+  var saveBtn = document.getElementById('btnSaveAll');
   function setButtonLoading(btn, isLoading){
     if (!btn) return;
     if (isLoading){
@@ -418,142 +280,28 @@
   }
   function flashSaved(btn){
     if (!btn) return;
+    const old = btn.textContent;
     btn.textContent = 'Salvo!';
-    setTimeout(function(){ btn.textContent = btn.dataset._txt || 'Salvar Alterações'; }, 1100);
+    btn.style.animation = 'tfSavedPulse .55s ease-out';
+    setTimeout(function(){
+      btn.style.animation = '';
+      btn.textContent = btn.dataset._txt || 'Salvar Alterações';
+    }, 900);
   }
 
-  /* ------- Popover de etapas no chip (UX mais óbvia) ------- */
-  (function stepsPopover(){
-    var chipStrong = document.getElementById('tfStepName');
-    var chipWrap = chipStrong ? chipStrong.closest('.tf-step-chip') : null;
-    var pop=null, outside=null;
-
-    function openPop(){
-      if (!chipWrap || !steps || !steps.length) return;
-      if (pop) closePop();
-      pop = document.createElement('div');
-      pop.className = 'tf-step-popover';
-
-      var rect = chipWrap.getBoundingClientRect();
-      pop.style.top = (rect.bottom + window.scrollY + 8) + 'px';
-      pop.style.left = (rect.left + window.scrollX) + 'px';
-
-      steps.forEach(function(s){
-        var row = document.createElement('div');
-        row.className = 'itm';
-        var name = s.name || ('Etapa ' + (s.stepNo || s.step_no || ''));
-        row.innerHTML = '<span>'+ name +'</span>' + (currentStep && currentStep.id === s.id ? '<span class="badge">Atual</span>' : '');
-        row.addEventListener('click', function(){
-          window.location.href = '/ofertas/painel/' + offer.id + '?stepId=' + encodeURIComponent(s.id);
-        });
-        pop.appendChild(row);
-      });
-
-      document.body.appendChild(pop);
-      requestAnimationFrame(function(){ pop.setAttribute('data-open','1'); });
-
-      outside = function(ev){
-        if (!pop) return;
-        if (!pop.contains(ev.target) && !chipWrap.contains(ev.target)) closePop();
-      };
-      document.addEventListener('mousedown', outside);
-      window.addEventListener('resize', closePop);
-      window.addEventListener('scroll', closePop, true);
-    }
-    function closePop(){
-      if (!pop) return;
-      pop.remove(); pop=null;
-      document.removeEventListener('mousedown', outside);
-      window.removeEventListener('resize', closePop);
-      window.removeEventListener('scroll', closePop, true);
-    }
-    if (chipWrap) chipWrap.addEventListener('click', function(){ if(pop) closePop(); else openPop(); });
-  })();
-
-  /* ------- Modal "Nova etapa" com micro animações ------- */
-  var stepModal = document.getElementById('stepModal');
-  var openBtn = document.getElementById('btnCreateStep');
-  var closeBtn = document.getElementById('btnCloseModal');
-  var cancelBtn = document.getElementById('btnCancelStep');
-  var confirmBtn = document.getElementById('btnConfirmStep');
-  var nameInput = document.getElementById('inpStepName');
-
-  if (stepModal) stepModal.setAttribute('hidden','');
-  function escToClose(e){ if(e.key==='Escape') closeModal(); }
-  function openModal(){
-    if (!stepModal) return;
-    var nextNo = 1;
-    if (Array.isArray(steps) && steps.length){
-      nextNo = Math.max.apply(null, steps.map(function(s){ return Number(s.stepNo||s.step_no||0); })) + 1;
-    }
-    if (nameInput) nameInput.value = 'Etapa ' + nextNo;
-    stepModal.removeAttribute('hidden');
-    nameInput && nameInput.focus();
-    document.addEventListener('keydown', escToClose);
-  }
-  function closeModal(){
-    if (!stepModal) return;
-    stepModal.setAttribute('hidden','');
-    document.removeEventListener('keydown', escToClose);
-  }
-  if (openBtn) openBtn.addEventListener('click', openModal);
-  if (closeBtn) closeBtn.addEventListener('click', closeModal);
-  if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
-  if (stepModal){ stepModal.addEventListener('click', function(e){ if (e.target === stepModal) closeModal(); }); }
-
-  // Radios: highlight suave ao trocar
-  Array.prototype.forEach.call(document.querySelectorAll('input[name="dupMode"]'), function(r){
-    r.addEventListener('change', function(){
-      document.querySelectorAll('.tf-radio').forEach(function(lbl){ lbl.style.background='transparent'; });
-      var p = r.closest('.tf-radio'); if (p) p.style.background='rgba(255,255,255,0.05)';
-    });
-  });
-
-  // Criar Etapa → sempre INSERT (backend garante), redireciona pra nova
-  if (confirmBtn){
-    confirmBtn.addEventListener('click', async function(){
-      var dupVal = document.querySelector('input[name="dupMode"]:checked')?.value || '0';
-      var stepName = (nameInput?.value || '').trim();
-      if (!stepName){
-        var n = 1;
-        if (Array.isArray(steps) && steps.length){
-          n = Math.max.apply(null, steps.map(function(s){ return Number(s.stepNo||s.step_no||0); })) + 1;
-        }
-        stepName = 'Etapa ' + n;
-      }
-      try{
-        var r = await fetch('/ofertas/' + encodeURIComponent(offer.id) + '/etapas', {
-          method:'POST',
-          headers:{ 'Content-Type':'application/json' },
-          body: JSON.stringify({
-            name: stepName,
-            duplicate: dupVal === '1',
-            fromStepId: (dupVal === '1' && currentStep && currentStep.id) ? currentStep.id : null
-          })
-        });
-        var js = await r.json();
-        if (!js || !js.ok) throw new Error('create_failed');
-        window.location.href = '/ofertas/painel/' + offer.id + '?stepId=' + encodeURIComponent(js.step.id);
-      }catch(e){
-        console.error(e);
-        showToast('error','Não foi possível criar a etapa.');
-      }
-    });
-  }
-
-  /* ------- Salvar Alterações: loading + toast ------- */
-  var saveBtn = document.getElementById('btnSaveAll');
   if (saveBtn){
     saveBtn.addEventListener('click', async function(){
-      var draftSettings = (window.tfDraftSettings && typeof window.tfDraftSettings === 'object') ? window.tfDraftSettings : {};
+      var draftSettings = (window.tfDraftSettings && typeof window.tfDraftSettings === 'object')
+        ? window.tfDraftSettings
+        : {};
       try{
         setButtonLoading(saveBtn, true);
-        var resp = await fetch('/ofertas/' + encodeURIComponent(offer.id) + '/etapas/' + encodeURIComponent(currentStep.id), {
-          method:'PATCH', headers:{ 'Content-Type':'application/json' },
+        const r = await fetch('/ofertas/' + encodeURIComponent(offer.id) + '/etapas/' + encodeURIComponent(currentStep.id) + '/save', {
+          method:'POST', headers:{'Content-Type':'application/json'},
           body: JSON.stringify({ settings: draftSettings })
         });
-        var js = await resp.json();
-        if (!js || !js.ok) throw new Error('patch_failed');
+        const js = await r.json();
+        if (!js || !js.ok) throw new Error('save_failed');
         flashSaved(saveBtn);
         showToast('success','Etapa salva com sucesso.');
       }catch(e){
@@ -563,6 +311,137 @@
         setButtonLoading(saveBtn, false);
       }
     });
+  }
+
+  /* Modal criar etapa (simples) */
+  var stepModal = document.getElementById('stepModal');
+  var openBtn = document.getElementById('btnCreateStep');
+  var closeBtn = document.getElementById('btnCloseModal');
+  var cancelBtn = document.getElementById('btnCancelStep');
+  var confirmBtn = document.getElementById('btnConfirmStep');
+  var nameInput = document.getElementById('inpStepName');
+
+  function escToClose(e){ if(e.key==='Escape') closeModal(); }
+  function openModal(){
+    if(!stepModal) return;
+    var nextNo = 1;
+    if (Array.isArray(steps) && steps.length){
+      nextNo = Math.max.apply(null, steps.map(function(s){return Number(s.stepNo||0)})) + 1;
+    }
+    if (nameInput) nameInput.value = 'Etapa ' + nextNo;
+    stepModal.removeAttribute('hidden'); nameInput && nameInput.focus();
+    document.addEventListener('keydown', escToClose);
+  }
+  function closeModal(){ if(stepModal){ stepModal.setAttribute('hidden',''); document.removeEventListener('keydown',escToClose); } }
+
+  if (openBtn) openBtn.addEventListener('click', openModal);
+  if (closeBtn) closeBtn.addEventListener('click', closeModal);
+  if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
+  if (stepModal){ stepModal.addEventListener('click', function(e){ if (e.target === stepModal) closeModal(); }); }
+
+  if (confirmBtn){
+    confirmBtn.addEventListener('click', async function(){
+      var stepName = (nameInput?.value || '').trim() || 'Etapa';
+      try {
+        const r = await fetch('/ofertas/' + encodeURIComponent(offer.id) + '/etapas', {
+          method:'POST', headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({ name: stepName, duplicate: false })
+        });
+        const js = await r.json();
+        if (!js || !js.ok) throw new Error('create_failed');
+        window.location.href = '/ofertas/painel/' + offer.id + '?stepId=' + encodeURIComponent(js.step.id);
+      } catch(e){
+        console.error(e);
+        showToast('error','Não foi possível criar a etapa.');
+      }
+    });
+  }
+
+  /* Dropdown de etapas (UX clara + excluir) */
+  var chip = document.getElementById('tfStepChip');
+  var dd = document.getElementById('tfStepDropdown');
+
+  function renderDropdown(){
+    if (!dd) return;
+    dd.innerHTML = '';
+    (steps || []).forEach(function(s){
+      var item = document.createElement('div');
+      item.className = 'tf-step-item' + ((currentStep && s.id === currentStep.id) ? ' active' : '');
+      item.dataset.id = s.id;
+
+      var lbl = document.createElement('div');
+      lbl.className = 'lbl';
+      lbl.textContent = s.name || ('Etapa ' + (s.stepNo || ''));
+
+      if (currentStep && s.id === currentStep.id){
+        var pill = document.createElement('span');
+        pill.className = 'pill';
+        pill.textContent = 'Atual';
+        lbl.appendChild(pill);
+      }
+
+      var del = document.createElement('button');
+      del.className = 'tf-step-del';
+      del.type = 'button';
+      del.textContent = '🗑'; // discreto; mantém estilo minimalista
+      del.title = 'Excluir etapa';
+
+      del.addEventListener('click', async function(ev){
+        ev.stopPropagation();
+        // protege Etapa 1 no cliente também
+        if ((s.stepNo || 0) === 1){
+          showToast('error','A Etapa 1 não pode ser excluída.');
+          return;
+        }
+        try{
+          const r = await fetch('/ofertas/' + encodeURIComponent(offer.id) + '/etapas/' + encodeURIComponent(s.id), { method:'DELETE' });
+          const js = await r.json();
+          if (!js || !js.ok) throw new Error('delete_failed');
+          // atualiza steps na memória
+          steps = js.steps || [];
+          // se deletou a atual, redireciona para a primeira da lista
+          if (currentStep && currentStep.id === s.id){
+            var next = steps[0];
+            if (next) {
+              window.location.href = '/ofertas/painel/' + offer.id + '?stepId=' + encodeURIComponent(next.id);
+            } else {
+              window.location.href = '/ofertas/painel/' + offer.id;
+            }
+            return;
+          }
+          renderDropdown();
+          showToast('success','Etapa excluída.');
+        }catch(e){
+          console.error(e);
+          showToast('error','Não foi possível excluir a etapa.');
+        }
+      });
+
+      item.appendChild(lbl);
+      item.appendChild(del);
+
+      item.addEventListener('click', function(){
+        if (s.id === (currentStep && currentStep.id)) { dd.hidden = true; return; }
+        window.location.href = '/ofertas/painel/' + offer.id + '?stepId=' + encodeURIComponent(s.id);
+      });
+
+      dd.appendChild(item);
+    });
+  }
+
+  if (chip){
+    chip.addEventListener('click', function(){
+      if (dd.hidden){
+        renderDropdown();
+        dd.hidden = false;
+        document.addEventListener('click', outsideClose, { once:true });
+      } else {
+        dd.hidden = true;
+      }
+    });
+  }
+  function outsideClose(ev){
+    if (!dd.contains(ev.target) && ev.target !== chip) dd.hidden = true;
   }
 })();
 </script>
