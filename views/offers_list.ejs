@@ -17,44 +17,33 @@
         <a href="/ofertas/criar" class="btn-primary small">Criar oferta</a>
       </div>
     <% } else { %>
-      <% offers.forEach(function(o){
-           const oid = o._id || o.id;
-           const idShort = String(oid).slice(0,8);
-           const botCount = (typeof o.botCount === 'number') ? o.botCount
-                           : (typeof o.botsCount === 'number') ? o.botsCount : 0;
-           const botLabel = (o.botType === 'bot_padrao') ? 'Padrão'
-                           : (o.botType && o.botType.startsWith('bot_fluxo')) ? 'Fluxo'
-                           : 'Padrão';
+      <% offers.forEach(function(o){ 
+          const idShort = String(o._id || o.id).slice(0,8);
+          const botCount = (typeof o.botCount === 'number') ? o.botCount : 0;
+          const botLabel =
+            (o.botType === 'bot_padrao') ? 'Padrão' :
+            (o.botType && String(o.botType).startsWith('bot_fluxo')) ? 'Fluxo' :
+            'Padrão';
+          const status = o.status || 'incompleto';
+          const statusLabel = status === 'ativo' ? 'Ativo' : (status === 'erro' ? 'Erro' : 'Incompleto');
       %>
-        <a
-          class="offer-card"
-          href="/ofertas/painel/<%= oid %>"
-          data-offer-id="<%= oid %>"
-          data-offer-name="<%- o.name %>"
-          data-offer-bot-count="<%= botCount %>"
-          data-offer-bot-type-label="<%= botLabel %>"
-        >
+        <a class="offer-card"
+           href="/ofertas/painel/<%= o._id %>"
+           data-offer-id="<%= o._id %>"
+           data-offer-name="<%= o.name %>"
+           data-offer-bot-count="<%= botCount %>"
+           data-offer-bot-type-label="<%= botLabel %>">
           <div class="card-top">
-            <h3 class="offer-title"><%- o.name %></h3>
-            <span class="status <%= o.status %>">
-              <% if (o.status === 'ativo') { %>Ativo<% } %>
-              <% if (o.status === 'incompleto') { %>Incompleto<% } %>
-              <% if (o.status === 'erro') { %>Erro<% } %>
-            </span>
+            <h3 class="offer-title"><%= o.name %></h3>
+            <span class="status <%= status %>"><%= statusLabel %></span>
           </div>
 
-          <!-- Mini-resumo: ID | Bots | Tipo  +  botão (…) ao lado -->
           <div class="meta meta-line">
-            <span class="meta-text">
-              ID: <%= idShort %> &nbsp;|&nbsp; Bots: <%= botCount %> &nbsp;|&nbsp; Tipo: <%= botLabel %>
-            </span>
-            <button
-              type="button"
-              class="offer-actions-inline"
-              title="Gerenciar"
-              onclick="event.preventDefault(); event.stopPropagation(); window.tfOpenOfferManager(this);"
-            >
-              <!-- ícone minimalista TigerFy -->
+            <span class="meta-text">ID: <%= idShort %> &nbsp;|&nbsp; Bots: <%= botCount %> &nbsp;|&nbsp; Tipo: <%= botLabel %></span>
+
+            <!-- Botão (…) de ações: abre modal (não navega) -->
+            <button type="button" class="offer-actions-inline" title="Gerenciar"
+              onclick="event.preventDefault(); event.stopPropagation(); window.tfOpenOfferManager(this);">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                 <circle cx="5" cy="12" r="2"></circle>
                 <circle cx="12" cy="12" r="2"></circle>
@@ -70,112 +59,379 @@
   </div>
 </div>
 
-// Renomear oferta
-router.post("/ofertas/:id/renomear", authGuard, async (req, res) => {
-  try {
-    const owner = req.session.userId;
-    const { id } = req.params;
-    const { novoNome } = req.body || {};
-    if (!novoNome || !String(novoNome).trim()) {
-      return res.status(400).json({ ok: false, error: "invalid_name" });
+<!-- Host de toasts -->
+<div id="tfToastHost" class="tf-toast-host"></div>
+
+<style>
+  .tiger-offers-list{ padding:60px 80px 100px 130px; max-width:calc(100vw - 120px); margin:0 auto; color:#fff; }
+  .list-header{ display:flex; align-items:center; justify-content:space-between; margin-bottom:18px; }
+  .list-header h1{ margin:0 0 6px; font-size:2rem; color:#ffcc00; }
+  .list-header p{ margin:0; color:#b4b4b4; font-size:.95rem; }
+
+  .list-grid{ display:grid; gap:12px; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); }
+  .offer-card{
+    position:relative; display:block; text-decoration:none; color:#fff;
+    background:rgba(0,0,0,0.70); border:1px solid rgba(255,204,0,0.12);
+    border-radius:16px; padding:14px; transition:.2s;
+  }
+  .offer-card:hover{ border-color:#ffcc00; box-shadow:0 0 16px rgba(255,204,0,0.3); }
+  .card-top{ display:flex; align-items:center; justify-content:space-between; gap:8px; }
+  .card-top h3{ margin:0; font-size:1rem; }
+  .status{ font-size:.75rem; padding:3px 7px; border-radius:999px; }
+  .status.ativo{ background:rgba(0,255,120,0.16); color:#4fff9a; }
+  .status.incompleto{ background:rgba(255,196,0,0.16); color:#ffdd66; }
+  .status.erro{ background:rgba(255,0,76,0.16); color:#ff6b9e; }
+
+  .meta{ font-size:.78rem; color:#c9c9c9; }
+  .meta-line{ display:flex; align-items:center; gap:10px; margin-top:8px; }
+  .meta-text{ white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+
+  /* Botão (…) discreto, sem quebrar layout */
+  .offer-actions-inline{
+    margin-left:auto;
+    display:grid; place-items:center;
+    width:28px; height:28px; border-radius:999px;
+    background:rgba(255,204,0,0.08);
+    border:1px solid rgba(255,204,0,0.18);
+    color:#ffcc00; cursor:pointer;
+    transition:box-shadow .16s ease, transform .08s ease, background .16s ease, border-color .16s ease;
+  }
+  .offer-actions-inline:hover{ background:rgba(255,204,0,0.14); border-color:rgba(255,204,0,0.35); box-shadow:0 0 10px rgba(255,204,0,0.25); }
+
+  .go{ position:absolute; right:12px; bottom:10px; opacity:.6; font-size:1.4rem; }
+  .empty{ text-align:center; padding:30px 16px; background:rgba(0,0,0,0.70); border:1px solid rgba(255,204,0,0.12); border-radius:16px; }
+  .btn-primary.small{ padding:8px 16px; font-size:.85rem; }
+  .btn-primary{
+    border:none; border-radius:10px; padding:10px 22px; font-weight:600; cursor:pointer; text-decoration:none;
+    background:linear-gradient(90deg,#ffcc00,#d4a100); color:#1a1300; box-shadow:0 0 12px rgba(255,204,0,0.4); font-size:.95rem;
+  }
+
+  /* ===== Modal: Gerenciar Oferta ===== */
+  .modal-gerenciar-oferta-overlay{
+    position:fixed; inset:0; display:none; align-items:center; justify-content:center;
+    backdrop-filter: blur(8px); background:rgba(0,0,0,0.45); z-index:9999;
+  }
+  .modal-gerenciar-oferta{
+    width:min(620px, calc(100vw - 40px));
+    background:rgba(12,12,12,0.9);
+    border:1px solid rgba(255,204,0,0.12);
+    border-radius:18px; box-shadow:0 0 24px rgba(255,204,0,0.25);
+    padding:18px 18px 16px;
+    transform:translateY(4px); opacity:0; animation:tfModalIn .18s ease forwards;
+  }
+  @keyframes tfModalIn{
+    from{ opacity:0; transform:translateY(6px) scale(.995); }
+    to{ opacity:1; transform:translateY(0) scale(1); }
+  }
+  .m-header{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:8px; }
+  .m-header h3{ margin:0; color:#ffcc00; }
+  .m-sub{ margin:.25rem 0 0; color:#b4b4b4; font-size:.9rem; }
+
+  /* X centralizado perfeitamente */
+  .m-close{
+    display:grid; place-items:center;
+    width:34px; height:34px; border-radius:999px;
+    background:rgba(255,255,255,0.06);
+    border:1px solid rgba(255,255,255,0.14);
+    color:#fff; cursor:pointer; flex:0 0 auto;
+    padding:0; line-height:0;
+    transition:box-shadow .16s ease, transform .08s ease, background .16s ease, border-color .16s ease;
+  }
+  .m-close:hover{ background:rgba(255,255,255,0.12); border-color:rgba(255,255,255,0.22); box-shadow:0 0 10px rgba(255,204,0,0.25); }
+  .m-close svg{ display:block; }
+
+  .m-body{ display:flex; flex-direction:column; gap:14px; }
+  .m-section{ padding:12px; border:1px solid rgba(255,204,0,0.10); border-radius:14px; background:rgba(0,0,0,0.35); }
+  .m-section h4{ margin:0 0 8px; color:#fff; }
+  .m-resumo{ list-style:none; margin:0; padding:0; display:grid; gap:6px; color:#cfcfcf; }
+  .m-resumo strong{ color:#fff; font-weight:600; }
+  .m-field{ display:flex; flex-direction:column; gap:6px; margin-bottom:8px; }
+  .m-field label{ color:#cfcfcf; font-size:.9rem; }
+  .m-field input{
+    background:#111; border:1px solid rgba(255,204,0,0.12); border-radius:10px; padding:10px 12px; color:#fff; outline:none;
+  }
+  .m-field input:focus{ border-color:#ffcc00; box-shadow:0 0 10px rgba(255,204,0,0.25); }
+
+  .btn-danger{
+    border:1px solid rgba(255,80,80,0.5); background:rgba(255,0,64,0.12); color:#ff7a95;
+    padding:10px 16px; border-radius:10px; cursor:pointer; font-weight:600;
+    transition:box-shadow .16s ease, transform .08s ease, background .16s ease, border-color .16s ease;
+  }
+  .btn-danger:hover{ background:rgba(255,0,64,0.18); border-color:rgba(255,80,80,0.7); box-shadow:0 0 10px rgba(255,0,64,0.25); }
+  .m-section.danger{ border-color:rgba(255,0,64,0.25); }
+  .m-danger-text{ margin:0 0 8px; color:#ff95aa; font-size:.92rem; }
+
+  .m-error{ display:block; margin-top:6px; color:#ff8aa1; }
+
+  /* Toasts (se não existirem no seu CSS global) */
+  .tf-toast-host{ position:fixed; right:18px; top:18px; display:flex; flex-direction:column; gap:8px; z-index:10000; }
+  .tf-toast{
+    display:flex; align-items:center; gap:8px; padding:10px 12px; border-radius:12px;
+    background:rgba(0,0,0,0.75); border:1px solid rgba(255,204,0,0.2); color:#fff;
+    box-shadow:0 0 14px rgba(255,204,0,0.22); transition:opacity .25s ease, transform .25s ease;
+  }
+  .tf-toast .ticon{ display:grid; place-items:center; width:22px; height:22px; border-radius:999px; background:rgba(255,204,0,0.12); color:#ffcc00; }
+  .tf-toast.error{ border-color:rgba(255,70,110,0.35); box-shadow:0 0 14px rgba(255,70,110,0.22); }
+  .tf-toast.error .ticon{ background:rgba(255,70,110,0.12); color:#ff6e90; }
+</style>
+
+<!-- ===== Modal ===== -->
+<div class="modal-gerenciar-oferta-overlay" id="offerManagerOverlay" style="display:none;">
+  <div class="modal-gerenciar-oferta">
+    <div class="m-header">
+      <div>
+        <h3>Gerenciar Oferta</h3>
+        <p class="m-sub">Veja o resumo desta oferta e gerencie as ações rápidas.</p>
+      </div>
+      <button class="m-close" type="button" id="offerManagerClose" aria-label="Fechar">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true">
+          <path d="M18.3 5.71a1 1 0 0 0-1.41 0L12 10.59 7.11 5.7A1 1 0 0 0 5.7 7.11L10.59 12l-4.9 4.89a1 1 0 1 0 1.41 1.41L12 13.41l4.89 4.9a1 1 0 0 0 1.41-1.41L13.41 12l4.9-4.89a1 1 0 0 0-.01-1.4Z"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="m-body">
+      <section class="m-section">
+        <h4>Resumo da Oferta</h4>
+        <ul class="m-resumo">
+          <li><strong>Nome atual:</strong> <span id="resNome">—</span></li>
+          <li><strong>ID:</strong> <span id="resId">—</span></li>
+          <li><strong>Quantidade de bots vinculados:</strong> <span id="resBots">0</span></li>
+          <li><strong>Tipo de Bot:</strong> <span id="resTipo">—</span></li>
+        </ul>
+      </section>
+
+      <section class="m-section">
+        <h4>Renomear Oferta</h4>
+        <div class="m-field">
+          <label for="novoNome">Novo nome da oferta</label>
+          <input type="text" id="novoNome" placeholder="Ex: Mundo VIP 2.0, Oferta Principal, etc..." />
+        </div>
+        <button class="btn-primary" id="btnSalvarNome" type="button">Salvar novo nome</button>
+        <small class="m-error" id="renameError" style="display:none;">Não foi possível renomear. Tente novamente.</small>
+      </section>
+
+      <section class="m-section">
+        <h4>Duplicar Oferta</h4>
+        <p class="m-sub" style="margin-top:0;">Crie uma cópia desta oferta com um novo ID, preservando configurações principais.</p>
+        <button class="btn-primary" id="btnDuplicar" type="button">Duplicar oferta</button>
+        <small class="m-error" id="dupError" style="display:none;">Não foi possível duplicar. Tente novamente.</small>
+      </section>
+
+      <section class="m-section danger">
+        <h4>Atenção</h4>
+        <p class="m-danger-text">Cuidado: esta ação é permanente.</p>
+        <button class="btn-danger" id="btnExcluir" type="button">Excluir oferta</button>
+        <small class="m-error" id="delError" style="display:none;">Não foi possível excluir. Tente novamente.</small>
+      </section>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const $overlay = document.getElementById('offerManagerOverlay');
+  const $close   = document.getElementById('offerManagerClose');
+
+  const $resNome = document.getElementById('resNome');
+  const $resId   = document.getElementById('resId');
+  const $resBots = document.getElementById('resBots');
+  const $resTipo = document.getElementById('resTipo');
+
+  const $novoNome    = document.getElementById('novoNome');
+  const $btnSalvar   = document.getElementById('btnSalvarNome');
+  const $btnExcluir  = document.getElementById('btnExcluir');
+  const $btnDuplicar = document.getElementById('btnDuplicar');
+
+  const $renameError = document.getElementById('renameError');
+  const $delError    = document.getElementById('delError');
+  const $dupError    = document.getElementById('dupError');
+
+  const $grid = document.getElementById('offersGrid');
+  const $toastHost = document.getElementById('tfToastHost');
+
+  let currentCard = null;
+
+  function toast(type, msg){
+    if(!$toastHost){ alert(msg); return; }
+    const node = document.createElement('div');
+    node.className = 'tf-toast ' + (type || 'success');
+    node.innerHTML = `
+      <span class="ticon" aria-hidden="true">
+        ${type === 'error'
+          ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 1 0 .001 20.001A10 10 0 0 0 12 2Zm1 15h-2v-2h2v2Zm0-4h-2V7h2v6Z"/></svg>'
+          : '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>'
+        }
+      </span>
+      <span>${msg}</span>`;
+    $toastHost.appendChild(node);
+    setTimeout(()=>{ node.style.opacity='0'; node.style.transform='translateY(-6px)'; }, 2200);
+    setTimeout(()=>{ node.remove(); }, 2600);
+  }
+
+  function showOverlay(){ $overlay.style.display='flex'; }
+  function hideOverlay(){ $overlay.style.display='none'; }
+
+  // Exposta para o botão (…) do card
+  window.tfOpenOfferManager = function(btnEl){
+    currentCard = btnEl.closest('.offer-card');
+    if(!currentCard) return;
+
+    const id       = currentCard.dataset.offerId;
+    const name     = currentCard.dataset.offerName || currentCard.querySelector('.offer-title')?.textContent || '';
+    const botCount = currentCard.dataset.offerBotCount || '0';
+    const tipo     = currentCard.dataset.offerBotTypeLabel || 'Padrão';
+
+    $resNome.textContent = name || '—';
+    $resId.textContent   = id || '—';
+    $resBots.textContent = String(botCount);
+    $resTipo.textContent = tipo;
+
+    $novoNome.value = name || '';
+    $renameError.style.display='none';
+    $delError.style.display='none';
+    $dupError.style.display='none';
+
+    showOverlay();
+  };
+
+  // Fechar modal
+  $close.addEventListener('click', hideOverlay);
+  $overlay.addEventListener('click', (e)=>{ if(e.target === $overlay) hideOverlay(); });
+
+  // Renomear
+  $btnSalvar.addEventListener('click', async ()=>{
+    if(!currentCard) return;
+    const id = currentCard.dataset.offerId;
+    const novoNome = ($novoNome.value || '').trim();
+    if(!novoNome){
+      $renameError.style.display='block';
+      $renameError.textContent='Digite um nome válido.';
+      return;
     }
+    try{
+      $renameError.style.display='none';
+      const res = await fetch(`/ofertas/${encodeURIComponent(id)}/renomear`, {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ novoNome })
+      });
+      const payload = await res.json().catch(()=>({}));
+      if(!res.ok || payload?.ok === false) throw new Error(payload?.error || 'Falha ao renomear');
 
-    // Confirma que a oferta é do usuário
-    const { data: exists, error: getErr } = await supabase
-      .from("offers")
-      .select("id, owner")
-      .eq("id", id)
-      .eq("owner", owner)
-      .single();
-    if (getErr || !exists) return res.status(404).json({ ok: false, error: "not_found" });
+      const titleEl = currentCard.querySelector('.offer-title');
+      if(titleEl) titleEl.textContent = novoNome;
+      currentCard.dataset.offerName = novoNome;
+      $resNome.textContent = novoNome;
 
-    const { data, error } = await supabase
-      .from("offers")
-      .update({ name: String(novoNome).trim() })
-      .eq("id", id)
-      .eq("owner", owner)
-      .select("id, name")
-      .single();
+      toast('success','Nome atualizado com sucesso.');
+      hideOverlay();
+    }catch(err){
+      console.error(err);
+      $renameError.style.display='block';
+      $renameError.textContent='Não foi possível renomear. Tente novamente.';
+      toast('error','Falha ao renomear.');
+    }
+  });
 
-    if (error) return res.status(500).json({ ok: false, error: error.message });
-    return res.json({ ok: true, offer: data });
-  } catch (err) {
-    console.error("rename error:", err);
-    return res.status(500).json({ ok: false, error: "server_error" });
-  }
-});
+  // Excluir
+  $btnExcluir.addEventListener('click', async ()=>{
+    if(!currentCard) return;
+    const id = currentCard.dataset.offerId;
+    const ok = confirm('Tem certeza que deseja excluir esta oferta? Esta ação é permanente.');
+    if(!ok) return;
 
-// Excluir oferta (remove etapas antes se não houver ON DELETE CASCADE)
-router.post("/ofertas/:id/excluir", authGuard, async (req, res) => {
-  try {
-    const owner = req.session.userId;
-    const { id } = req.params;
+    try{
+      $delError.style.display='none';
+      const res = await fetch(`/ofertas/${encodeURIComponent(id)}/excluir`, {
+        method:'POST',
+        headers:{'Content-Type':'application/json'}
+      });
+      const payload = await res.json().catch(()=>({}));
+      if(!res.ok || payload?.ok === false) throw new Error(payload?.error || 'Falha ao excluir');
 
-    const { data: exists, error: getErr } = await supabase
-      .from("offers")
-      .select("id, owner")
-      .eq("id", id)
-      .eq("owner", owner)
-      .single();
-    if (getErr || !exists) return res.status(404).json({ ok: false, error: "not_found" });
+      currentCard.remove();
+      currentCard = null;
+      hideOverlay();
+      toast('success','Oferta excluída com sucesso.');
 
-    // Apaga etapas relacionadas (seguro para ausência de CASCADE)
-    await supabase.from("offer_steps").delete().eq("offer_id", id);
+      if($grid && !$grid.querySelector('.offer-card')){
+        const empty = document.getElementById('emptyState');
+        if(empty) empty.style.display='block';
+      }
+    }catch(err){
+      console.error(err);
+      $delError.style.display='block';
+      $delError.textContent='Não foi possível excluir. Tente novamente.';
+      toast('error','Falha ao excluir.');
+    }
+  });
 
-    const { error } = await supabase
-      .from("offers")
-      .delete()
-      .eq("id", id)
-      .eq("owner", owner);
+  // Duplicar
+  $btnDuplicar.addEventListener('click', async ()=>{
+    if(!currentCard) return;
+    const id = currentCard.dataset.offerId;
+    try{
+      $dupError.style.display='none';
+      $btnDuplicar.disabled = true;
+      const oldText = $btnDuplicar.textContent;
+      $btnDuplicar.textContent = 'Duplicando…';
 
-    if (error) return res.status(500).json({ ok: false, error: error.message });
-    return res.json({ ok: true });
-  } catch (err) {
-    console.error("delete offer error:", err);
-    return res.status(500).json({ ok: false, error: "server_error" });
-  }
-});
+      const res = await fetch(`/ofertas/${encodeURIComponent(id)}/duplicar`, {
+        method:'POST',
+        headers:{'Content-Type':'application/json'}
+      });
+      const payload = await res.json().catch(()=>({}));
+      if(!res.ok || !payload?.ok || !payload?.offer) throw new Error(payload?.error || 'Falha ao duplicar');
 
-// Duplicar oferta
-router.post("/ofertas/:id/duplicar", authGuard, async (req, res) => {
-  try {
-    const owner = req.session.userId;
-    const { id } = req.params;
+      const o = payload.offer;
+      const oid = o.id || o._id;
+      const idShort = String(oid).slice(0,8);
+      const botCount = (typeof o.botCount === 'number') ? o.botCount : 0;
+      const botLabel = (o.bot_type === 'bot_padrao') ? 'Padrão'
+                      : (o.bot_type && String(o.bot_type).startsWith('bot_fluxo')) ? 'Fluxo'
+                      : 'Padrão';
+      const status = o.status || 'incompleto';
+      const statusLabel = status === 'ativo' ? 'Ativo' : (status === 'erro' ? 'Erro' : 'Incompleto');
 
-    // Carrega original
-    const { data: orig, error: getErr } = await supabase
-      .from("offers")
-      .select("id, owner, name, bot_type, tracking_type, status, telegram_username, bot_token")
-      .eq("id", id)
-      .eq("owner", owner)
-      .single();
+      const html = `
+        <a class="offer-card"
+           href="/ofertas/painel/${oid}"
+           data-offer-id="${oid}"
+           data-offer-name="${o.name}"
+           data-offer-bot-count="${botCount}"
+           data-offer-bot-type-label="${botLabel}">
+          <div class="card-top">
+            <h3 class="offer-title">${o.name}</h3>
+            <span class="status ${status}">${statusLabel}</span>
+          </div>
+          <div class="meta meta-line">
+            <span class="meta-text">ID: ${idShort} &nbsp;|&nbsp; Bots: ${botCount} &nbsp;|&nbsp; Tipo: ${botLabel}</span>
+            <button type="button" class="offer-actions-inline" title="Gerenciar"
+              onclick="event.preventDefault(); event.stopPropagation(); window.tfOpenOfferManager(this);">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <circle cx="5" cy="12" r="2"></circle>
+                <circle cx="12" cy="12" r="2"></circle>
+                <circle cx="19" cy="12" r="2"></circle>
+              </svg>
+            </button>
+          </div>
+          <span class="go">›</span>
+        </a>`;
+      $grid.insertAdjacentHTML('afterbegin', html);
 
-    if (getErr || !orig) return res.status(404).json({ ok: false, error: "not_found" });
-
-    const payload = {
-      owner: orig.owner,
-      name: `${orig.name} (cópia)`,
-      bot_type: orig.bot_type || "bot_padrao",
-      tracking_type: orig.tracking_type || "fb_pixel",
-      status: orig.status || "incompleto",
-      telegram_username: orig.telegram_username || null,
-      bot_token: orig.bot_token || null
-    };
-
-    const { data: created, error: insErr } = await supabase
-      .from("offers")
-      .insert([payload])
-      .select("id, owner, name, bot_type, tracking_type, status, telegram_username, bot_token")
-      .single();
-
-    if (insErr) return res.status(500).json({ ok: false, error: insErr.message });
-
-    // (Opcional futuro: duplicar offer_steps, configs, etc.)
-
-    return res.json({ ok: true, offer: created });
-  } catch (err) {
-    console.error("duplicate offer error:", err);
-    return res.status(500).json({ ok: false, error: "server_error" });
-  }
-});
-
+      toast('success','Oferta duplicada com sucesso.');
+      $btnDuplicar.disabled = false;
+      $btnDuplicar.textContent = oldText;
+      hideOverlay();
+    }catch(err){
+      console.error(err);
+      $dupError.style.display='block';
+      $dupError.textContent='Não foi possível duplicar. Tente novamente.';
+      toast('error','Falha ao duplicar.');
+      $btnDuplicar.disabled = false;
+      $btnDuplicar.textContent = 'Duplicar oferta';
+    }
+  });
+})();
+</script>
