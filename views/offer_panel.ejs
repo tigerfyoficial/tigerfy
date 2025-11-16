@@ -1,420 +1,219 @@
-<%- include('partials/visual_hottrack') %>
-
-<!-- WRAPPER PARA CENTRALIZAR O BLOCO (área à direita da sidebar) -->
-<div class="offer-panel-container">
-  <div class="tf-offer-panel">
-    <!-- Breadcrumb -->
-    <nav class="tf-breadcrumb" id="tfBreadcrumb"></nav>
-
-    <!-- Header (mantido) -->
-    <header class="tf-header">
-      <div class="tf-header-left">
-        <h1 class="tf-offer-title" id="offerTitle"><%= offer?.name || 'Nome da Oferta' %></h1>
-      </div>
-      <div class="tf-header-right">
-        <button type="button" class="tf-btn tf-btn-primary" id="btnSaveAll">Salvar Alterações</button>
-      </div>
-    </header>
-
-    <!-- ====================== WRAP CENTRAL DAS PILLS (mantido) ====================== -->
-    <div class="tf-pills-wrap">
-      <!-- PILLS PRINCIPAIS -->
-      <div class="tf-tabs tf-tabs-main">
-        <button class="tab active" data-tab="principal">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="2"></rect><rect x="14" y="3" width="7" height="7" rx="2"></rect><rect x="14" y="14" width="7" height="7" rx="2"></rect><rect x="3" y="14" width="7" height="7" rx="2"></rect></svg>
-          Principal
-        </button>
-
-        <button class="tab" data-tab="contingencia">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"></path></svg>
-          Contingência de Bots
-        </button>
-
-        <button class="tab" data-tab="tracking">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15A1.65 1.65 0 0 0 21 13.35 8 8 0 0 0 12 4a8 8 0 0 0-8 9.35A1.65 1.65 0 0 0 5.6 15"></path></svg>
-          Traqueamento
-        </button>
-
-        <button class="tab" data-tab="relatorios">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"></path><path d="M19 17V7"></path><path d="M13 17V3"></path><path d="M7 17v-7"></path></svg>
-          Fluxo de Relatórios
-        </button>
-
-        <!-- PILL: Etapas (abre modal central) -->
-        <button class="tab" id="tabEtapas" data-tab="etapas">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-               stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 3l9 4.5-9 4.5L3 7.5 12 3z"></path>
-            <path d="M21 12l-9 4.5L3 12"></path>
-            <path d="M21 16.5l-9 4.5-9-4.5"></path>
-          </svg>
-          Etapas
-        </button>
-      </div>
-
-      <!-- SUB-ABAS DA PRINCIPAL (mantido) -->
-      <div class="tf-subtabs" id="subtabs-principal">
-        <button class="subtab active" data-subtab="front">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h8"></path><path d="M17 8h.01"></path><path d="M19 4v6h6"></path></svg>
-          Front
-        </button>
-
-        <button class="subtab" data-subtab="orderbump" disabled>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6h15l-1.5 9h-12z"></path><path d="M6 6l-1-3H2"></path><circle cx="9" cy="20" r="1"></circle><circle cx="18" cy="20" r="1"></circle><path d="M12 10h4"></path></svg>
-          OrderBump (em breve)
-        </button>
-
-        <button class="subtab" data-subtab="upsell" disabled>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"></path></svg>
-          Upsell (em breve)
-        </button>
-
-        <button class="subtab" data-subtab="downsell" disabled>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 7l-6 6-4-4-8 8"></path></svg>
-          Downsell (em breve)
-        </button>
-
-        <!-- Mensagem PIX na posição de Disparos -->
-        <button class="subtab" data-subtab="pix">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="14" width="7" height="7" rx="1"></rect><rect x="3" y="14" width="7" height="7" rx="1"></rect></svg>
-          Mensagem PIX
-        </button>
-
-        <!-- Disparos (em breve) no final -->
-        <button class="subtab" data-subtab="disparos" disabled>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"></path><path d="M22 2l-7 20-4-9-9-4 20-7z"></path></svg>
-          Disparos (em breve)
-        </button>
-      </div>
-    </div>
-    <!-- ====================== /WRAP CENTRAL DAS PILLS ====================== -->
-
-    <!-- Conteúdo central (mantido) -->
-    <section class="tf-content-placeholder"></section>
-  </div>
-</div>
-<!-- /offer-panel-container -->
-
-<!-- ===================== MODAL (refinado) ===================== -->
+<!-- ===== MODAL: Gerenciar Etapas da Oferta (estilo "Criar nova oferta") ===== -->
 <div class="tf-steps-overlay" id="stepsUnifiedModal" hidden>
-  <div class="tf-steps-dialog tf-steps-dialog--wiin" role="dialog" aria-modal="true">
+  <div class="tf-steps-dialog steps-card" role="dialog" aria-modal="true">
     <!-- Cabeçalho -->
-    <div class="tf-steps-head tf-steps-head--center">
-      <h3>Gerenciar Etapas da Oferta</h3>
-      <p class="tf-steps-sub">Crie, selecione e organize as etapas desta oferta.</p>
-      <button type="button" class="tf-steps-close" id="btnCloseStepsUnified" aria-label="Fechar">✕</button>
+    <div class="steps-head">
+      <div class="steps-head-titles">
+        <h3>Gerenciar Etapas da Oferta</h3>
+        <p class="steps-sub">
+          Crie, selecione e organize as etapas desta oferta. As alterações só são aplicadas ao clicar em <strong>Salvar mudanças</strong>.
+        </p>
+      </div>
+      <button type="button" class="steps-close" id="btnCloseStepsUnified" aria-label="Fechar">
+        <!-- X centralizado -->
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
     </div>
 
-    <!-- Corpo -->
-    <div class="tf-steps-body tf-steps-body--compact">
-      <div class="tf-steps-toolbar tf-steps-toolbar--tight">
-        <button type="button" class="tf-btn tf-btn-small" id="btnAddStepUnified" title="Adicionar nova etapa">
-          <span class="tf-icon-plus">＋</span> Nova etapa
-        </button>
-        <small class="tf-hint tf-toolbar-hint">Clique em <strong>Salvar mudanças</strong> para aplicar.</small>
-      </div>
+    <!-- Barra de ação superior -->
+    <div class="steps-toolbar">
+      <button type="button" class="btn-primary small" id="btnAddStepUnified">＋ Nova etapa</button>
+      <span class="steps-hint">Clique em <strong>Salvar mudanças</strong> para aplicar.</span>
+    </div>
 
-      <!-- Lista (cards) -->
-      <ul class="tf-steps-list" id="tfStepsUnifiedList" aria-label="Lista de Etapas"></ul>
+    <!-- Lista -->
+    <div class="steps-body">
+      <ul class="steps-list" id="tfStepsUnifiedList" aria-label="Lista de Etapas"></ul>
     </div>
 
     <!-- Rodapé -->
-    <div class="tf-steps-actions tf-steps-actions--wiin">
-      <button type="button" class="tf-btn" id="btnCancelStepsUnified">Cancelar</button>
-      <button type="button" class="tf-btn tf-btn-primary" id="btnSaveStepsUnified">Salvar mudanças</button>
+    <div class="steps-actions">
+      <button type="button" class="btn-secondary" id="btnCancelStepsUnified">Cancelar</button>
+      <button type="button" class="btn-primary" id="btnSaveStepsUnified">Salvar mudanças</button>
     </div>
   </div>
 </div>
 
 <style>
-  :root{
-    --panel:rgba(255,255,255,0.04);
-    --panel-strong:rgba(255,255,255,0.06);
-    --border:rgba(255,255,255,0.12);
-    --muted:#b8b8b8;
-    --text:#ffffff;
-    --accent:#ffcc00;
-    --accent-dim:#d4a100;
-    --shadow:0 8px 24px rgba(0,0,0,0.45);
-    --pills-width: 980px;
-    --radius: 14px;
-  }
-
-  /* ===== Centralização da área à direita da sidebar ===== */
-  .offer-panel-container{ width:100%; max-width:1200px; margin-left:auto; margin-right:auto; }
-  .offer-panel-container .tf-offer-panel{ padding:60px 80px 100px 80px; }
-
-  .tf-offer-panel{ color:var(--text); padding:60px 80px 100px 130px; max-width:1200px; margin:0 auto; }
-  .tf-breadcrumb{ display:flex; align-items:center; gap:8px; color:var(--muted); font-size:.9rem; margin-bottom:10px; }
-  .tf-breadcrumb a{ color:var(--muted); text-decoration:none; }
-  .tf-breadcrumb a:hover{ color:#e0e0e0; }
-  .tf-header{ display:flex; align-items:flex-start; justify-content:space-between; gap:16px; margin-bottom:12px; }
-  .tf-offer-title{ margin:0; font-size:1.8rem; letter-spacing:.3px; background:linear-gradient(90deg,#fff,#d8d8d8); -webkit-background-clip:text; background-clip:text; color:transparent; }
-
-  .tf-btn{ appearance:none; border:1px solid var(--border); background:var(--panel-strong); color:#eee; padding:9px 14px; border-radius:var(--radius); cursor:pointer; font-weight:600; box-shadow:var(--shadow); transition:.18s ease; }
-  .tf-btn:hover{ border-color:rgba(255,255,255,0.2); background:rgba(255,255,255,0.09); }
-  .tf-btn-small{ padding:7px 12px; height:34px; border-radius:var(--radius); }
-  .tf-btn-primary{ background:linear-gradient(90deg,var(--accent),var(--accent-dim)); color:#171300; border:1px solid rgba(255,204,0,0.35); box-shadow:0 6px 22px rgba(255,204,0,0.25); }
-
-  .tf-pills-wrap{ max-width:var(--pills-width); margin:16px auto 8px; }
-  .tf-tabs{ display:flex; gap:8px; flex-wrap:wrap; justify-content:center; }
-  .tf-subtabs{ display:flex; gap:8px; flex-wrap:wrap; justify-content:center; margin-top:10px; }
-
-  .tf-tabs .tab{ display:inline-flex; align-items:center; gap:8px; padding:9px 14px; border-radius:999px; border:1px solid var(--border); background:var(--panel); color:#dedede; font-weight:600; font-size:.92rem; height:38px; transition:.18s ease; }
-  .tf-tabs .tab:hover{ background:rgba(255,255,255,0.09); }
-  .tf-tabs .tab.active{ background:rgba(255,255,255,0.10); border-color:rgba(255,255,255,0.22); color:#fff; }
-
-  .tf-subtabs .subtab{ display:inline-flex; align-items:center; gap:8px; padding:7px 12px; border-radius:999px; border:1px solid var(--border); background:var(--panel); color:#dcdcdc; font-weight:600; font-size:.9rem; height:34px; transition:.18s ease; }
-  .tf-subtabs .subtab:not([disabled]):hover{ background:rgba(255,255,255,0.09); }
-  .tf-subtabs .subtab[disabled]{ opacity:.45; cursor:not-allowed; }
-
-  .tf-content-placeholder{
-    min-height:360px; border:1px dashed rgba(255,255,255,0.12); border-radius:var(--radius);
-    background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
-    box-shadow:var(--shadow); margin-top:14px;
-  }
-
-  /* ===== Overlay / Card do modal no “peso” WiinPay ===== */
+  /* ===== Base do modal: replica o card da tela "Criar nova oferta" ===== */
   .tf-steps-overlay[hidden]{ display:none !important; }
   .tf-steps-overlay{
     position:fixed; inset:0; z-index:3000;
     display:flex; align-items:center; justify-content:center;
     background:rgba(0,0,0,0.55);
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(6px);
   }
-  .tf-steps-dialog{
+  .tf-steps-dialog.steps-card{
     width:min(760px, calc(100vw - 40px));
-    max-height:min(70vh, 680px);
+    max-height:min(78vh, 760px);
     overflow:hidden;
-    border-radius:var(--radius);
-    border:1px solid rgba(255,255,255,0.10);
-    box-shadow: 0 20px 56px rgba(0,0,0,0.60), 0 0 0 1px rgba(255,204,0,0.08);
-    background:
-      radial-gradient(1000px 200px at 50% -80px, rgba(255,204,0,0.065), transparent),
-      linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.04));
-    transform: translateY(8px) scale(0.985);
-    animation: tfStepsIn .18s ease-out forwards;
+    background:rgba(0,0,0,0.78);
+    border:1px solid rgba(255,204,0,0.16);
+    border-radius:20px;
+    box-shadow:0 0 40px rgba(0,0,0,0.6);
+    display:flex; flex-direction:column;
+    transform: translateY(6px) scale(.99);
+    animation: stepsIn .18s ease-out forwards;
   }
-  @keyframes tfStepsIn { to { transform: translateY(0) scale(1); } }
+  @keyframes stepsIn { to { transform: translateY(0) scale(1); } }
 
-  /* Cabeçalho (X centralizado) */
-  .tf-steps-head{ position:relative; padding:18px 18px 12px 18px; border-bottom:1px solid rgba(255,255,255,0.07); }
-  .tf-steps-head--center h3,
-  .tf-steps-head--center .tf-steps-sub{ text-align:center; }
-  .tf-steps-head h3{ margin:0; font-size:1.14rem; font-weight:800; letter-spacing:.2px; }
-  .tf-steps-sub{ color:#cfcfcf; margin:6px 0 0 0; font-size:.92rem; }
-  .tf-steps-close{
-    position:absolute; top:10px; right:10px;
-    width:34px; height:34px; border-radius:999px;
-    border:1px solid rgba(255,255,255,0.12); background:rgba(255,255,255,0.06); color:#eee;
-    display:inline-flex; align-items:center; justify-content:center; padding:0; line-height:1; cursor:pointer;
-    transition:.18s ease;
+  .steps-head{
+    position:relative;
+    padding:22px 22px 8px 22px;
+    display:flex; gap:12px; align-items:flex-start; justify-content:space-between;
   }
-  .tf-steps-close:hover{ background:rgba(255,255,255,0.10); border-color:rgba(255,255,255,0.20); }
-
-  /* Corpo compacto */
-  .tf-steps-body{ padding:12px 14px 6px 14px; }
-  .tf-steps-body--compact{ padding:12px 16px; }
-  .tf-steps-toolbar{ display:flex; align-items:center; gap:12px; margin-bottom:10px; }
-  .tf-steps-toolbar--tight .tf-btn-small{ height:34px; }
-  .tf-toolbar-hint{ margin-left:auto; color:#cfcfcf; opacity:.9; font-size:.9rem; }
-
-  /* Lista com limite de altura */
-  .tf-steps-list{
-    list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:10px;
-    max-height:48vh; overflow:auto;
+  .steps-head h3{
+    margin:0; font-size:1.35rem; color:#ffcc00; letter-spacing:.2px;
   }
-
-  /* Linha/card da etapa — polimento + espaçamento */
-  .tf-step-item{
-    display:grid;
-    grid-template-columns: 32px 40px 1fr auto auto; /* handle | # | input | ações | excluir */
-    align-items:center; gap:12px;
-    padding:12px 14px;
-    border-radius:var(--radius);
-    background: linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.03));
-    border:1px solid rgba(255,255,255,0.11);
-    box-shadow: 0 10px 24px rgba(0,0,0,0.35);
-    transition: transform .08s ease, border-color .16s ease, background .16s ease;
-  }
-  .tf-step-item:hover{ transform: translateY(-1px); border-color: rgba(255,255,255,0.18); }
-  .tf-step-item.is-current{
-    border-color: rgba(255,204,0,0.35);
-    box-shadow: 0 0 0 1px rgba(255,204,0,0.16), 0 12px 26px rgba(0,0,0,0.42);
-    background: linear-gradient(180deg, rgba(255,204,0,0.055), rgba(255,255,255,0.03));
-  }
-
-  /* Handle drag (seis pontinhos) */
-  .tf-drag-handle{
-    display:inline-flex; align-items:center; justify-content:center;
-    width:26px; height:26px; border-radius:10px;
-    border:1px solid rgba(255,255,255,0.10);
-    background:rgba(255,255,255,0.06);
-    cursor:grab; user-select:none; transition:.16s ease;
-  }
-  .tf-drag-handle:hover{ background:rgba(255,255,255,0.10); }
-  .tf-drag-handle:active{ cursor:grabbing; }
-  .tf-drag-handle svg{ width:14px; height:14px; opacity:.85; }
-
-  .tf-step-no{
-    display:inline-flex; align-items:center; justify-content:center;
-    width:36px; height:28px; border-radius:999px;
-    background: rgba(255,255,255,0.08);
+  .steps-sub{ margin:6px 0 0 0; color:#c9c9c9; font-size:.92rem; }
+  .steps-close{
+    display:flex; align-items:center; justify-content:center;
+    width:36px; height:36px; border-radius:12px; cursor:pointer;
     border:1px solid rgba(255,255,255,0.14);
-    font-weight:800; color:#fff;
+    background:rgba(255,255,255,0.06); color:#eee;
+    transition: background .2s, border-color .2s, transform .12s;
   }
+  .steps-close:hover{ background:rgba(255,255,255,0.1); border-color:rgba(255,255,255,0.22); }
+  .steps-close:active{ transform: scale(.98); }
+
+  .steps-toolbar{
+    padding:8px 22px 4px 22px;
+    display:flex; align-items:center; gap:12px; justify-content:space-between;
+  }
+  .steps-hint{ color:#c9c9c9; font-size:.85rem; }
+
+  .steps-body{ padding:12px 16px 8px 16px; }
+  .steps-list{
+    list-style:none; margin:0; padding:0;
+    display:flex; flex-direction:column; gap:10px;
+    max-height:52vh; overflow:auto;
+  }
+
+  /* ===== Linha/card da etapa (inspirado no bloco de "Tipo de Bot") ===== */
+  .step-item{
+    display:grid;
+    grid-template-columns: 34px 46px 1fr auto auto;
+    align-items:center; gap:10px;
+    padding:12px 12px;
+    background:rgba(255,255,255,0.05);
+    border:1px solid rgba(255,255,255,0.10);
+    border-radius:14px;
+    transition: border-color .2s, background .2s, box-shadow .2s, transform .12s;
+  }
+  .step-item:hover{
+    border-color:rgba(255,204,0,0.35);
+    background:rgba(255,255,255,0.08);
+  }
+  .step-item.current{
+    border-color:#ffcc00;
+    box-shadow:0 0 18px rgba(255,204,0,0.35);
+  }
+
+  /* Handle de drag (6 pontinhos) */
+  .step-drag{
+    display:flex; align-items:center; justify-content:center;
+    width:30px; height:30px; border-radius:10px;
+    background:rgba(255,255,255,0.06);
+    border:1px solid rgba(255,255,255,0.1);
+    cursor:grab; user-select:none;
+  }
+  .step-drag:active{ cursor:grabbing; }
+  .dots6{
+    display:grid; grid-template-columns: repeat(2, 4px); grid-auto-rows:4px; gap:4px;
+  }
+  .dots6 span{
+    width:4px; height:4px; border-radius:50%;
+    background:rgba(255,255,255,0.75);
+  }
+
+  .step-no{
+    display:flex; align-items:center; justify-content:center;
+    width:40px; height:30px; border-radius:999px;
+    background:rgba(255,255,255,0.08);
+    border:1px solid rgba(255,255,255,0.16);
+    color:#fff; font-weight:800;
+  }
+
   .tf-step-name{
-    width:100%; padding:10px 12px; border-radius:12px;
-    background: rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.14); color:#fff;
-    transition: border-color .16s ease, box-shadow .16s ease;
+    width:100%; padding:10px 12px; border-radius:10px;
+    border:1px solid rgba(255,255,255,0.22);
+    background:rgba(255,255,255,0.06);
+    color:#fff; font-size:.95rem; outline:none;
+    transition:border-color .2s, box-shadow .2s;
   }
-  .tf-step-name:focus{ border-color: rgba(255,204,0,0.55); box-shadow: 0 0 0 2px rgba(255,204,0,0.18); outline:none; }
-
-  .tf-actions-inline{ display:flex; align-items:center; gap:8px; }
-
-  /* Botão Selecionar (ghost) */
-  .tf-btn-ghost{
-    appearance:none; display:inline-flex; align-items:center; justify-content:center;
-    padding:8px 14px; border-radius:12px; height:36px;
-    border:1px solid rgba(255,255,255,0.12); background:rgba(255,255,255,0.06);
-    color:#eee; font-weight:700; transition:.16s ease;
+  .tf-step-name:focus{
+    border-color:#ffcc00;
+    box-shadow:0 0 0 2px rgba(255,204,0,0.28);
   }
-  .tf-btn-ghost:hover{ background:rgba(255,255,255,0.10); border-color:rgba(255,255,255,0.20); }
 
-  /* Badge “Atual” — só visível na etapa ativa */
-  .tf-badge{
-    display:none; align-items:center; gap:6px; padding:7px 12px; border-radius:999px; height:36px;
-    border:1px solid rgba(255,255,255,0.12); background:rgba(255,255,255,0.06); color:#eaeaea; font-weight:800;
+  .step-actions{
+    display:flex; align-items:center; gap:8px;
   }
-  .tf-badge.visible{ display:inline-flex; }
-  .tf-badge.current{ background:linear-gradient(90deg,var(--accent),var(--accent-dim)); color:#171300; border-color:rgba(255,204,0,0.45); }
-
-  /* Excluir */
-  .tf-step-btn{
-    appearance:none; display:inline-flex; align-items:center; justify-content:center;
-    padding:8px 12px; border-radius:12px; height:36px;
-    border:1px solid rgba(255,255,255,0.12); background:rgba(255,255,255,0.06);
-    color:#eee; transition:.16s ease;
+  .btn-primary, .btn-secondary, .btn-danger, .btn-ghost{
+    border:none; border-radius:10px; padding:9px 14px;
+    font-weight:600; cursor:pointer; font-size:.92rem;
+    display:inline-flex; align-items:center; justify-content:center;
+    transition: filter .2s, opacity .2s, transform .12s, background .2s, border-color .2s, box-shadow .2s;
+    text-decoration:none;
   }
-  .tf-step-btn:hover{ background:rgba(255,255,255,0.10); border-color:rgba(255,255,255,0.20); }
-  .tf-step-btn.danger{ border-color: rgba(255, 85, 85, .35); background: linear-gradient(90deg, #320000, #250000); color:#ffdada; }
-  .tf-step-btn.danger:hover{ filter:brightness(1.05); }
-
-  /* Radio compat (permanece no DOM para a lógica de salvar), mas escondido */
-  .tf-select-radio{ display:none !important; }
-
-  /* Rodapé */
-  .tf-steps-actions{ display:flex; justify-content:flex-end; gap:8px; padding:12px 16px 16px 16px; border-top:1px solid rgba(255,255,255,0.08); }
-  .tf-steps-actions--wiin .tf-btn{ height:36px; }
-
-  /* Efeito “Salvo!” */
-  @keyframes tfPulseGlow {
-    0% { box-shadow: 0 0 0 0 rgba(255,204,0,0.35); transform: translateY(0) scale(1); }
-    60% { box-shadow: 0 0 24px 8px rgba(255,204,0,0.24); transform: translateY(-1px) scale(1.01); }
-    100% { box-shadow: 0 0 0 0 rgba(255,204,0,0.0); transform: translateY(0) scale(1); }
+  .btn-primary{
+    background:linear-gradient(90deg,#ffcc00,#d4a100);
+    color:#1a1300; box-shadow:0 0 16px rgba(255,204,0,0.35);
   }
-  .tf-pulse-once { animation: tfPulseGlow .5s ease-out 1; }
+  .btn-primary.small{ padding:8px 12px; font-size:.9rem; }
+  .btn-primary:hover{ filter:brightness(1.03); }
 
-  @media (max-width: 980px){
-    .offer-panel-container{ padding: 0 12px; }
-    .tf-offer-panel{ padding:40px 18px 80px 18px; }
-    .tf-pills-wrap{ max-width: calc(100% - 24px); }
-    .tf-steps-dialog{ width:calc(100vw - 28px); }
-    .tf-step-item{ grid-template-columns: 28px 36px 1fr auto auto; }
+  .btn-secondary{
+    background:rgba(255,255,255,0.12); color:#fff;
+  }
+  .btn-secondary:hover{ background:rgba(255,255,255,0.18); }
+
+  .btn-ghost{
+    background:rgba(255,255,255,0.08); color:#fff; border:1px solid rgba(255,255,255,0.14);
+  }
+  .btn-ghost:hover{ background:rgba(255,255,255,0.12); }
+
+  .btn-danger{
+    background:linear-gradient(90deg,#470000,#2a0000); color:#ffdada;
+    border:1px solid rgba(255, 80, 80, .35);
+  }
+  .btn-danger:hover{ filter:brightness(1.05); }
+
+  .badge-current{
+    padding:6px 10px; border-radius:999px;
+    background:linear-gradient(90deg,#ffcc00,#d4a100);
+    color:#1a1300; font-weight:800; font-size:.78rem;
+    border:1px solid rgba(255,204,0,0.35);
+  }
+
+  .steps-actions{
+    padding:14px 16px 18px 16px;
+    display:flex; justify-content:flex-end; gap:10px;
+    border-top:1px solid rgba(255,255,255,0.12);
+  }
+
+  /* Drag UX */
+  .step-item.dragging{ opacity:.7; transform: scale(.998); }
+  .step-item.drag-over{ outline:2px dashed rgba(255,204,0,0.45); outline-offset:2px; }
+
+  @media (max-width: 720px){
+    .step-item{ grid-template-columns: 30px 40px 1fr auto; }
+    .step-actions .btn-ghost{ padding:8px 10px; }
+    .badge-current{ display:none; } /* reduz ruído no mobile */
   }
 </style>
 
 <script>
 (function(){
-  var offer = <%- JSON.stringify(offer || null) %>;
-  var steps = <%- JSON.stringify(steps || []) %>;
-  var currentStep = <%- JSON.stringify(currentStep || null) %>;
+  // Reaproveita variáveis existentes no escopo da página:
+  var offer = (typeof offer !== 'undefined') ? offer : null;
+  var steps = (typeof steps !== 'undefined') ? steps : [];
+  var currentStep = (typeof currentStep !== 'undefined') ? currentStep : null;
 
-  function escapeHtml(s){ return (s || "").replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-
-  /* Breadcrumb */
-  function buildBreadcrumb(){
-    var bc = document.getElementById('tfBreadcrumb'); if (!bc) return;
-    var offerName = (offer && offer.name) ? offer.name : 'Nome da Oferta';
-    var offerHref = offer ? ("/ofertas/painel/" + offer.id) : "/ofertas";
-    var items = [];
-    items.push('<a href="/ofertas">Minhas Ofertas</a>');
-    items.push('<span>›</span>');
-    items.push('<a href="'+ offerHref +'">'+ escapeHtml(offerName) +'</a>');
-    if (currentStep && currentStep.id) {
-      items.push('<span>›</span>');
-      var stepUrl = offerHref + "?stepId=" + encodeURIComponent(currentStep.id);
-      items.push('<a href="'+ stepUrl +'">'+ escapeHtml(currentStep.name || ('Etapa ' + (currentStep.stepNo||''))) +'</a>');
-    }
-    bc.innerHTML = items.join('');
-  }
-  buildBreadcrumb();
-
-  /* Tabs (mantido) */
-  var mainTabs = document.querySelectorAll('.tf-tabs-main .tab');
-  var subTabsWrap = document.getElementById('subtabs-principal');
-  mainTabs.forEach(function(btn){
-    btn.addEventListener('click', function(e){
-      var t = btn.dataset.tab;
-      if (t === 'etapas') { e.preventDefault(); openStepsModal(); return; }
-      mainTabs.forEach(function(b){ b.classList.remove('active'); });
-      btn.classList.add('active');
-      if (subTabsWrap) subTabsWrap.style.display = (t === 'principal') ? 'flex' : 'none';
-    });
-  });
-  if (subTabsWrap) subTabsWrap.style.display = 'flex';
-
-  /* Toast premium (mantido) */
-  function showToast(type, text){
-    var host = document.createElement('div');
-    host.style.position='fixed'; host.style.top='20px'; host.style.right='20px';
-    host.style.zIndex='4000'; host.style.display='flex'; host.style.flexDirection='column'; host.style.gap='10px';
-    var card = document.createElement('div');
-    card.style.padding='10px 14px'; card.style.borderRadius='12px';
-    card.style.border='1px solid rgba(255,204,0,0.35)';
-    card.style.boxShadow='0 10px 30px rgba(0,0,0,0.45)';
-    card.style.background = (type==='error') ? 'linear-gradient(90deg,#2a0000,#3a0000)' : 'linear-gradient(90deg,#ffcc00,#d4a100)';
-    card.style.color = (type==='error') ? '#ffd5d5' : '#171300';
-    card.style.fontWeight='800'; card.style.letterSpacing='.3px';
-    card.style.transform='translateY(-10px) scale(.98)'; card.style.opacity='0';
-    card.style.transition='transform .16s ease, opacity .16s ease';
-    var icon = document.createElement('span'); icon.style.marginRight='8px'; icon.textContent = (type==='error') ? '⚠️' : '✔️';
-    var txt = document.createElement('span'); txt.textContent = text || (type==='error' ? 'Falha' : 'Sucesso');
-    var row = document.createElement('div'); row.style.display='flex'; row.style.alignItems='center'; row.appendChild(icon); row.appendChild(txt);
-    card.appendChild(row); host.appendChild(card); document.body.appendChild(host);
-    requestAnimationFrame(function(){ card.style.transform='translateY(0) scale(1)'; card.style.opacity='1'; });
-    setTimeout(function(){ card.style.transform='translateY(-10px) scale(.98)'; card.style.opacity='0'; setTimeout(function(){ host.remove(); }, 160); }, 2300);
-  }
-
-  /* Botão “Salvar Alterações” (mantido) */
-  var saveBtn = document.getElementById('btnSaveAll');
-  function setBtnLoading(btn, on){
-    if (!btn) return;
-    if (on){ btn.disabled=true; if(!btn.dataset._txt) btn.dataset._txt=btn.textContent; btn.textContent='Salvando…'; btn.style.filter='brightness(1.03)'; btn.style.boxShadow='0 8px 26px rgba(255,204,0,0.35)'; }
-    else { btn.disabled=false; btn.textContent = btn.dataset._txt || 'Salvar Alterações'; btn.style.filter=''; btn.style.boxShadow=''; }
-  }
-  function flashSaved(btn){
-    if (!btn) return;
-    btn.classList.remove('tf-pulse-once'); void btn.offsetWidth; btn.classList.add('tf-pulse-once');
-    btn.textContent='Salvo!'; setTimeout(function(){ btn.textContent = btn.dataset._txt || 'Salvar Alterações'; }, 1100);
-  }
-  if (saveBtn){
-    saveBtn.addEventListener('click', async function(){
-      if (!offer || !currentStep) { showToast('error','Selecione uma etapa para salvar.'); return; }
-      var draftSettings = (window.tfDraftSettings && typeof window.tfDraftSettings === 'object') ? window.tfDraftSettings : {};
-      try{
-        setBtnLoading(saveBtn,true);
-        const r = await fetch(`/ofertas/${encodeURIComponent(offer.id)}/etapas/${encodeURIComponent(currentStep.id)}/save`, {
-          method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ settings: draftSettings })
-        });
-        const js = await r.json(); if (!js || !js.ok) throw new Error('save_failed');
-        flashSaved(saveBtn); showToast('success','Configurações salvas com sucesso.');
-      }catch(e){ console.error(e); showToast('error','Não foi possível salvar.'); }
-      finally{ setBtnLoading(saveBtn,false); }
-    });
-  }
-
-  /* ===================== MODAL (lógica mantida; UX refinada) ===================== */
   var modal    = document.getElementById('stepsUnifiedModal');
   var btnClose = document.getElementById('btnCloseStepsUnified');
   var btnCancel= document.getElementById('btnCancelStepsUnified');
@@ -422,169 +221,201 @@
   var btnAdd   = document.getElementById('btnAddStepUnified');
   var listEl   = document.getElementById('tfStepsUnifiedList');
 
+  /* ---------- Abertura / Fechamento ---------- */
   function openStepsModal(){ renderListUnified(); modal.removeAttribute('hidden'); }
   function closeStepsModal(){ modal.setAttribute('hidden',''); }
   if (btnClose) btnClose.addEventListener('click', closeStepsModal);
   if (btnCancel)btnCancel.addEventListener('click', closeStepsModal);
-  if (modal){ modal.addEventListener('click', function(e){ if (e.target===modal) closeStepsModal(); }); }
+  if (modal){ modal.addEventListener('click', function(e){ if (e.target === modal) closeStepsModal(); }); }
 
+  // Se já existe um botão com id="tabEtapas" em outro lugar, reaproveite:
+  var tabEtapas = document.getElementById('tabEtapas');
+  if (tabEtapas){ tabEtapas.addEventListener('click', function(ev){ ev.preventDefault(); openStepsModal(); }); }
+
+  /* ---------- Renderização da lista ---------- */
   function renderListUnified(){
     listEl.innerHTML = '';
     var ordered = steps.slice().sort(function(a,b){ return (a.stepNo||0)-(b.stepNo||0); });
-    ordered.forEach(function(s){
-      addRowUnified({ id:s.id, name:s.name, stepNo:s.stepNo, isCurrent: currentStep && currentStep.id===s.id });
+    ordered.forEach(function(s, idx){
+      addRowUnified({
+        id: s.id,
+        name: s.name,
+        stepNo: s.stepNo || (idx+1),
+        isCurrent: currentStep && currentStep.id === s.id
+      });
     });
+    attachDnD(); // ativa drag & drop após montar
   }
 
   function addRowUnified(opts){
-    var li = document.createElement('li'); li.className='tf-step-item';
-    if (opts.id) li.dataset.id = opts.id; else li.dataset.new='1';
-    if (opts.isCurrent) li.classList.add('is-current');
+    var li = document.createElement('li');
+    li.className = 'step-item';
+    if (opts.id) li.dataset.id = opts.id; else li.dataset.new = '1';
 
-    // Handle drag
+    // handle drag (visual) + ícones 6-pontinhos
     var handle = document.createElement('div');
-    handle.className='tf-drag-handle';
-    handle.setAttribute('draggable','true');
-    handle.innerHTML = '<svg viewBox="0 0 20 20" fill="currentColor"><circle cx="6" cy="5" r="1.3"/><circle cx="10" cy="5" r="1.3"/><circle cx="14" cy="5" r="1.3"/><circle cx="6" cy="10" r="1.3"/><circle cx="10" cy="10" r="1.3"/><circle cx="14" cy="10" r="1.3"/></svg>';
+    handle.className = 'step-drag'; handle.setAttribute('data-handle','1');
+    var dots = document.createElement('div'); dots.className = 'dots6';
+    for (var i=0;i<6;i++){ dots.appendChild(document.createElement('span')); }
+    handle.appendChild(dots);
 
-    // Número
-    var no = document.createElement('span'); no.className='tf-step-no'; no.textContent = opts.stepNo || (listEl.children.length + 1);
+    // número da etapa
+    var no = document.createElement('div'); no.className='step-no';
+    no.textContent = opts.stepNo || (listEl.children.length + 1);
 
-    // Nome
+    // input nome
     var input = document.createElement('input');
-    input.className='tf-step-name'; input.type='text'; input.placeholder='Nova etapa';
+    input.className='tf-step-name';
+    input.type='text'; input.placeholder='Nova etapa';
     input.value = opts.name || ''; input.dataset.oldName = opts.name || '';
 
-    // Ações (Selecionar + Badge "Atual" + radio oculto p/ compat)
-    var actions = document.createElement('div'); actions.className='tf-actions-inline';
+    // ações: Selecionar + Excluir + badge Atual (o radio fica oculto para compatibilidade)
+    var actions = document.createElement('div'); actions.className='step-actions';
 
-    var selectBtn = document.createElement('button'); selectBtn.type='button'; selectBtn.className='tf-btn-ghost'; selectBtn.textContent='Selecionar';
-
-    var badge = document.createElement('span');
-    badge.className = 'tf-badge' + (opts.isCurrent ? ' visible current' : '');
-    badge.textContent='Atual';
-
-    // radio oculto mantém compat com rotina de "Salvar mudanças"
-    var radioWrap = document.createElement('label'); radioWrap.className='tf-select-radio';
-    var radio = document.createElement('input'); radio.type='radio'; radio.name='tfStepCurrent';
+    // radio oculto (compatível com a lógica existente de "etapa atual")
+    var radio = document.createElement('input');
+    radio.type='radio'; radio.name='tfStepCurrent'; radio.hidden = true;
     radio.checked = !!opts.isCurrent;
-    radioWrap.appendChild(radio);
 
-    // Clique em Selecionar => marca atual, mostra badge, (opcional) fecha modal e navega
+    var selectBtn = document.createElement('button');
+    selectBtn.type='button'; selectBtn.className='btn-ghost'; selectBtn.textContent='Selecionar';
     selectBtn.addEventListener('click', function(){
-      // desmarca todos
-      Array.from(listEl.children).forEach(function(row){
-        row.classList.remove('is-current');
-        var b = row.querySelector('.tf-badge'); if (b){ b.classList.remove('visible','current'); }
-        var r = row.querySelector('input[type="radio"]'); if (r){ r.checked = false; }
-      });
-      // marca este
-      li.classList.add('is-current');
-      badge.classList.add('visible','current');
+      // marca como atual (radio) e atualiza visual
+      Array.from(listEl.querySelectorAll('input[type="radio"][name="tfStepCurrent"]'))
+        .forEach(function(r){ r.checked = false; });
       radio.checked = true;
-
-      // fecha modal e aplica etapa (mantendo comportamento atual)
-      var sid = li.dataset.id || null;
-      closeStepsModal();
-      if (sid){ window.location.href = `/ofertas/painel/${offer.id}?stepId=${encodeURIComponent(sid)}`; }
+      updateCurrentVisual();
     });
 
-    actions.appendChild(selectBtn);
-    actions.appendChild(badge);
-    actions.appendChild(radioWrap);
-
-    // Excluir
-    var delBtn = document.createElement('button'); delBtn.className='tf-step-btn danger'; delBtn.textContent='Excluir'; delBtn.title='Excluir etapa';
-    if (opts.stepNo === 1 && opts.id) delBtn.disabled = true; // proteção opcional da primeira
+    var delBtn = document.createElement('button');
+    delBtn.type='button'; delBtn.className='btn-danger'; delBtn.textContent='Excluir';
+    if (opts.stepNo === 1 && opts.id) delBtn.disabled = true; // (proteção opcional da 1ª etapa persistida)
     delBtn.addEventListener('click', function(){ confirmDeleteUnified(li, input.value || 'Etapa'); });
 
-    // Monta linha
+    var badge = document.createElement('span');
+    badge.className='badge-current'; badge.textContent='Atual';
+    if (!radio.checked) badge.style.display='none';
+
+    actions.appendChild(selectBtn);
+    actions.appendChild(delBtn);
+    actions.appendChild(badge);
+
+    // monta a linha
     li.appendChild(handle);
     li.appendChild(no);
     li.appendChild(input);
     li.appendChild(actions);
-    li.appendChild(delBtn);
+    li.appendChild(radio); // mantém no DOM para o salvamento
+
     listEl.appendChild(li);
+  }
 
-    // Drag
-    initDragFor(handle, li);
-
-    if (!opts.id){ setTimeout(function(){ input.focus(); }, 0); }
+  function updateCurrentVisual(){
+    Array.from(listEl.children).forEach(function(li){
+      var r = li.querySelector('input[type="radio"][name="tfStepCurrent"]');
+      var badge = li.querySelector('.badge-current');
+      if (r && r.checked){
+        li.classList.add('current');
+        if (badge) badge.style.display='inline-flex';
+      } else{
+        li.classList.remove('current');
+        if (badge) badge.style.display='none';
+      }
+    });
   }
 
   function recomputeNosUnified(){
     Array.from(listEl.children).forEach(function(li, idx){
-      var no = li.querySelector('.tf-step-no'); if (no) no.textContent = idx + 1;
+      var no = li.querySelector('.step-no'); if (no) no.textContent = idx + 1;
     });
   }
 
   if (btnAdd){
     btnAdd.addEventListener('click', function(){
       addRowUnified({ name:'', stepNo: listEl.children.length + 1, isCurrent:false });
+      attachDnD(); // reativa drag
       recomputeNosUnified();
     });
   }
 
-  /* Drag & Drop */
-  var dragContext = { draggingLi: null };
-  function initDragFor(handle, li){
-    handle.addEventListener('dragstart', function(e){
-      dragContext.draggingLi = li;
-      li.classList.add('dragging');
-      e.dataTransfer.effectAllowed = 'move';
-      try { e.dataTransfer.setData('text/plain','drag'); } catch(_) {}
-    });
-    handle.addEventListener('dragend', function(){
-      if (dragContext.draggingLi){ dragContext.draggingLi.classList.remove('dragging'); dragContext.draggingLi = null; }
-      recomputeNosUnified();
-    });
-  }
-  listEl.addEventListener('dragover', function(e){
-    if (!dragContext.draggingLi) return;
-    e.preventDefault();
-    const after = getDragAfterElement(listEl, e.clientY);
-    if (after == null){ listEl.appendChild(dragContext.draggingLi); }
-    else { listEl.insertBefore(dragContext.draggingLi, after); }
-  });
-  function getDragAfterElement(container, y){
-    const els = [...container.querySelectorAll('.tf-step-item:not(.dragging)')];
-    return els.reduce((closest, child) => {
-      const box = child.getBoundingClientRect();
-      const offset = y - box.top - box.height / 2;
-      if (offset < 0 && offset > closest.offset){ return { offset, element: child }; }
-      return closest;
-    }, { offset: Number.NEGATIVE_INFINITY }).element;
-  }
-
-  /* Confirmação de deleção (mantida) */
+  /* ---------- Confirmação de exclusão (reutiliza overlay) ---------- */
   function confirmDeleteUnified(li, displayName){
     var overlay = document.createElement('div'); overlay.className='tf-steps-overlay'; overlay.style.zIndex='4001';
-    var box = document.createElement('div'); box.className='tf-steps-dialog tf-steps-dialog--wiin'; box.style.maxWidth='460px';
-    box.innerHTML = '<div class="tf-steps-head tf-steps-head--center"><h3>Excluir etapa?</h3></div>' +
-      '<div class="tf-steps-body tf-steps-body--compact"><p>Tem certeza que deseja excluir <strong>'+ escapeHtml(displayName) +'</strong>? Essa ação não pode ser desfeita.</p></div>' +
-      '<div class="tf-steps-actions tf-steps-actions--wiin">' +
-      '<button type="button" class="tf-btn" id="cxCancel">Cancelar</button>' +
-      '<button type="button" class="tf-btn tf-btn-primary" id="cxDelete">Excluir etapa</button>' +
+    var box = document.createElement('div'); box.className='tf-steps-dialog steps-card'; box.style.maxWidth='460px';
+    box.innerHTML =
+      '<div class="steps-head"><div class="steps-head-titles"><h3>Excluir etapa?</h3></div></div>' +
+      '<div class="steps-body" style="padding: 0 18px 8px 18px;"><p style="color:#eaeaea;margin:0 0 6px 0;">Tem certeza que deseja excluir <strong>'+ (displayName||'Etapa') +'</strong>? Essa ação não pode ser desfeita.</p></div>' +
+      '<div class="steps-actions">' +
+        '<button type="button" class="btn-secondary" id="cxCancel">Cancelar</button>' +
+        '<button type="button" class="btn-danger" id="cxDelete">Excluir etapa</button>' +
       '</div>';
     overlay.appendChild(box); document.body.appendChild(overlay);
+
     function close(){ overlay.remove(); }
-    box.querySelector('#cxCancel').addEventListener('click', close);
     overlay.addEventListener('click', function(e){ if (e.target === overlay) close(); });
+    box.querySelector('#cxCancel').addEventListener('click', close);
     box.querySelector('#cxDelete').addEventListener('click', async function(){
-      if (!li.dataset.id){ li.remove(); recomputeNosUnified(); showToast('success','Etapa removida.'); close(); return; }
+      if (!li.dataset.id){ li.remove(); recomputeNosUnified(); updateCurrentVisual(); close(); return; }
       try{
         const r = await fetch(`/ofertas/${encodeURIComponent(offer.id)}/etapas/${encodeURIComponent(li.dataset.id)}`, { method:'DELETE' });
         const js = await r.json(); if (!js || !js.ok) throw new Error('delete_failed');
-        var removedId = li.dataset.id; li.remove(); recomputeNosUnified();
+        var removedId = li.dataset.id; li.remove(); recomputeNosUnified(); updateCurrentVisual();
         steps = steps.filter(function(s){ return s.id !== removedId; });
-        if (currentStep && currentStep.id === removedId) { currentStep = null; buildBreadcrumb(); }
-        showToast('success','Etapa excluída com sucesso.');
-      }catch(e){ console.error(e); showToast('error','Não foi possível excluir.'); }
+        if (currentStep && currentStep.id === removedId) { currentStep = null; }
+      }catch(e){ console.error(e); }
       finally{ close(); }
     });
   }
 
-  /* Salvar mudanças (mantido) */
+  /* ---------- DRAG & DROP por handle ---------- */
+  function attachDnD(){
+    Array.from(listEl.children).forEach(function(li){
+      li.setAttribute('draggable','true');
+
+      li.addEventListener('dragstart', function(e){
+        // só inicia se arrastar pelo handle
+        if (!e.target.closest('[data-handle="1"]')) { e.preventDefault(); return; }
+        li.classList.add('dragging');
+        e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.setData('text/plain', 'drag'); // necessário para Firefox
+      });
+
+      li.addEventListener('dragend', function(){
+        li.classList.remove('dragging');
+        Array.from(listEl.children).forEach(el => el.classList.remove('drag-over'));
+        recomputeNosUnified();
+      });
+    });
+
+    listEl.addEventListener('dragover', function(e){
+      e.preventDefault();
+      const dragging = listEl.querySelector('.dragging');
+      if (!dragging) return;
+      const afterElement = getDragAfterElement(listEl, e.clientY);
+      Array.from(listEl.children).forEach(el => el.classList.remove('drag-over'));
+      if (afterElement == null) {
+        listEl.appendChild(dragging);
+      } else {
+        listEl.insertBefore(dragging, afterElement);
+        afterElement.classList.add('drag-over');
+      }
+    });
+  }
+
+  function getDragAfterElement(container, y){
+    const els = [...container.querySelectorAll('.step-item:not(.dragging)')];
+    return els.reduce((closest, child) => {
+      const box = child.getBoundingClientRect();
+      const offset = y - box.top - box.height / 2;
+      if (offset < 0 && offset > closest.offset) {
+        return { offset: offset, element: child };
+      } else {
+        return closest;
+      }
+    }, { offset: Number.NEGATIVE_INFINITY }).element;
+  }
+
+  /* ---------- Salvamento (mantém sua lógica) ---------- */
   var saveModalBtn = document.getElementById('btnSaveStepsUnified');
   if (saveModalBtn){
     saveModalBtn.addEventListener('click', async function(){
@@ -608,8 +439,7 @@
           Array.from(listEl.children).forEach(function(li){
             if (!li.dataset.id){
               li.dataset.id = js.steps[idx].id;
-              steps.push(js.steps[idx]);
-              idx++;
+              steps.push(js.steps[idx]); idx++;
             }
           });
         }
@@ -632,7 +462,7 @@
           }
         }
 
-        // 3) Reordenar (DOM após drag)
+        // 3) Reordenar (ordem = DOM atual pós-drag)
         var order = Array.from(listEl.children).map(function(li){ return li.dataset.id; }).filter(Boolean);
         if (order.length){
           const r = await fetch(`/ofertas/${encodeURIComponent(offer.id)}/etapas/reorder`, {
@@ -643,15 +473,17 @@
           order.forEach(function(id, idx){ var s = steps.find(x => x.id === id); if (s) s.stepNo = idx + 1; });
         }
 
-        // 4) Etapa atual (compat: lê o radio oculto da linha atual)
+        // 4) Etapa atual (via radio oculto marcado pelo botão "Selecionar")
         let selectedId = null;
         for (const li of Array.from(listEl.children)){
-          const radio = li.querySelector('input[type="radio"]'); if (radio && radio.checked) { selectedId = li.dataset.id || null; break; }
+          const radio = li.querySelector('input[type="radio"][name="tfStepCurrent"]');
+          if (radio && radio.checked) { selectedId = li.dataset.id || null; break; }
         }
 
-        showToast('success','Etapas salvas com sucesso.');
+        // feedback + fechar
         closeStepsModal();
 
+        // Redireciona com/sem etapa
         if (selectedId){
           window.location.href = `/ofertas/painel/${offer.id}?stepId=${encodeURIComponent(selectedId)}`;
         } else {
@@ -659,11 +491,14 @@
         }
       }catch(e){
         console.error(e);
-        showToast('error','Falha ao salvar mudanças.');
       }finally{
         saveModalBtn.disabled=false; saveModalBtn.textContent='Salvar mudanças';
       }
     });
   }
+
+  // Atualiza visual "Atual" sempre que abrir / alterar algo
+  const obs = new MutationObserver(updateCurrentVisual);
+  obs.observe(listEl, { childList:true, subtree:true });
 })();
 </script>
