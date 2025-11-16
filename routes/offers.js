@@ -281,6 +281,34 @@ router.delete("/ofertas/:id/etapas/:stepId", authGuard, async (req, res) => {
   }
 });
 
+// EXCLUIR ETAPA — com proteção para Etapa 1
+router.post("/ofertas/:id/etapas/:stepId/delete", authGuard, async (req, res) => {
+  try {
+    const owner = req.session.userId;
+    const { id: offerId, stepId } = req.params;
+
+    // Confere owner da oferta
+    const gotOffer = await Steps.getOfferByIdForOwner(offerId, owner);
+    if (gotOffer.error || !gotOffer.data) {
+      return res.status(403).json({ ok: false, error: "forbidden" });
+    }
+
+    const del = await Steps.deleteStep({ offerId, stepId });
+    if (del.error) {
+      if (String(del.error.message||'').includes('cannot_delete_first_step')) {
+        return res.status(400).json({ ok:false, error:"cannot_delete_first_step" });
+      }
+      console.error("[steps] delete error:", del.error);
+      return res.status(500).json({ ok:false, error:"delete_failed" });
+    }
+    return res.json({ ok:true, id: stepId });
+  } catch (err) {
+    console.error("Erro excluir etapa:", err);
+    return res.status(500).json({ ok:false, error:"server_error" });
+  }
+});
+
+
 /* ---------- Salvar alterações (compat: POST /save) ---------- */
 router.post("/ofertas/:id/etapas/:stepId/save", authGuard, async (req, res) => {
   try {
