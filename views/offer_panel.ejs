@@ -1,232 +1,107 @@
-esse codigo abaixo nao tinha tela dourada, refaca a nova mini tela de gerenciar etapas com oque eu pedi, e sem os bugs da tela dourada
-
-<!-- ============ MODAL CENTRAL: GERENCIAR ETAPAS DA OFERTA ============ -->
-<div class="tf-steps2-overlay" id="tfSteps2Modal" hidden aria-hidden="true">
-  <div class="tf-steps2-dialog" role="dialog" aria-modal="true" aria-labelledby="tfSteps2Title">
-    <header class="tf-steps2-head">
-      <div>
-        <h3 id="tfSteps2Title">Gerenciar Etapas da Oferta</h3>
-        <p class="tf-steps2-sub">Crie, selecione e organize as etapas desta oferta.</p>
-      </div>
+<!-- ================== GERENCIAR ETAPAS — MODAL SIMPLES (TigerFy) ================== -->
+<div id="tfSteps2Modal" class="tf-steps2-overlay" hidden aria-hidden="true" role="dialog" aria-labelledby="tfSteps2Title">
+  <div class="tf-steps2-card">
+    <header class="tf-steps2-header">
+      <h3 id="tfSteps2Title">Gerenciar Etapas da Oferta</h3>
       <button type="button" class="tf-steps2-close" id="tfSteps2Close" aria-label="Fechar">✕</button>
     </header>
 
-    <section class="tf-steps2-info">
-      <div class="tf-steps2-left">
-        <button type="button" class="tf-btn tf-btn-small" id="tfSteps2Add">＋ Nova etapa</button>
-      </div>
-      <small class="tf-steps2-hint">As alterações só entram no painel ao clicar em <strong>Salvar mudanças</strong>.</small>
-    </section>
+    <div class="tf-steps2-toolbar">
+      <button type="button" class="tf-btn tf-btn--ghost" id="tfSteps2Add">+ Nova etapa</button>
+      <small class="tf-steps2-hint">As alterações só são aplicadas ao painel ao clicar em <b>Salvar</b>.</small>
+    </div>
 
-    <section class="tf-steps2-body">
-      <ul class="tf-steps2-list" id="tfSteps2List" aria-label="Lista de Etapas"></ul>
-    </section>
+    <ul class="tf-steps2-list" id="tfSteps2List" aria-label="Etapas"></ul>
 
-    <footer class="tf-steps2-actions">
+    <footer class="tf-steps2-footer">
       <button type="button" class="tf-btn" id="tfSteps2Cancel">Cancelar</button>
-      <button type="button" class="tf-btn tf-btn-primary" id="tfSteps2Save">Salvar mudanças</button>
+      <button type="button" class="tf-btn tf-btn--gold" id="tfSteps2Save">Salvar</button>
     </footer>
   </div>
 </div>
 
-<!-- ============ MINI CONFIRM (usa o mesmo overlay) ============ -->
-<template id="tfSteps2ConfirmTpl">
-  <div class="tf-steps2-confirm">
-    <div class="tf-steps2-confirm-card">
-      <h4>Excluir etapa?</h4>
-      <p class="tf-steps2-confirm-text">Tem certeza que deseja excluir <strong class="nm">esta etapa</strong>? Essa ação não pode ser desfeita.</p>
-      <div class="tf-steps2-confirm-actions">
-        <button type="button" class="tf-btn tf-btn-ghost js-cancel">Cancelar</button>
-        <button type="button" class="tf-btn tf-btn-primary js-delete">Excluir etapa</button>
-      </div>
-    </div>
-  </div>
-</template>
-
 <style>
-  /* ======== PALETA/BASE LOCAL (não interfere no tema global) ======== */
+  /* ====== Isolado: não interfere no tema global ====== */
   .tf-steps2-overlay[hidden]{ display:none !important; }
   .tf-steps2-overlay{
     position:fixed; inset:0; z-index:3000;
     display:flex; align-items:center; justify-content:center;
-    background: rgba(0,0,0,.48);
-    backdrop-filter: blur(8px);
+    background:rgba(0,0,0,.55); backdrop-filter:blur(2px);
   }
-  .tf-steps2-dialog{
-    width:min(880px, calc(100vw - 32px));
-    max-height:min(78vh, 760px);
+  .tf-steps2-card{
+    width:min(560px,calc(100vw - 32px));
+    max-height:min(78vh,720px);
     display:flex; flex-direction:column;
-    background:
-      radial-gradient(1200px 280px at 50% -180px, rgba(255,204,0,0.10), transparent),
-      linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.05));
-    border:1px solid rgba(255,255,255,0.14);
-    border-radius:18px;
-    box-shadow:
-      0 26px 70px rgba(0,0,0,0.55),
-      inset 0 0 0 1px rgba(255,255,255,0.06);
-    transform: translateY(8px) scale(.985);
-    opacity:.98;
-    animation: tfSteps2In .18s ease-out forwards;
+    background:#111; border:1px solid rgba(255,204,0,.18);
+    border-radius:14px; box-shadow:0 20px 60px rgba(0,0,0,.6);
+    overflow:hidden;
   }
-  @keyframes tfSteps2In { to{ transform: translateY(0) scale(1); opacity:1; } }
-
-  .tf-steps2-head{
-    display:flex; align-items:flex-start; justify-content:space-between; gap:8px;
-    padding:16px 16px 8px 16px;
+  .tf-steps2-header{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:12px 14px; border-bottom:1px solid rgba(255,255,255,.08);
   }
-  .tf-steps2-head h3{ margin:0; font-size:1.1rem; letter-spacing:.2px; }
-  .tf-steps2-sub{ margin:6px 0 0 0; color:#d8d8d8; font-size:.92rem; }
+  .tf-steps2-header h3{ margin:0; font-size:1rem; }
   .tf-steps2-close{
-    appearance:none; cursor:pointer;
-    width:36px; height:36px; border-radius:12px;
-    border:1px solid rgba(255,255,255,0.18);
-    background: rgba(255,255,255,0.06); color:#eee;
-    transition:.16s ease;
+    appearance:none; border:0; background:transparent; color:#ddd; cursor:pointer; font-size:18px;
   }
-  .tf-steps2-close:hover{ background: rgba(255,255,255,0.10); }
-
-  .tf-steps2-info{
+  .tf-steps2-toolbar{
     display:flex; align-items:center; justify-content:space-between; gap:10px;
-    padding:6px 16px 10px 16px; border-bottom:1px solid rgba(255,255,255,0.12);
+    padding:10px 14px; border-bottom:1px solid rgba(255,255,255,.06);
   }
-  .tf-steps2-left{ display:flex; align-items:center; gap:8px; }
+  .tf-steps2-hint{ color:#bbb }
+  .tf-steps2-list{
+    list-style:none; margin:0; padding:10px 12px; display:flex; flex-direction:column; gap:8px; overflow:auto;
+  }
+  .tf-step-row{
+    display:grid; grid-template-columns:36px 1fr 84px 86px; gap:8px; align-items:center;
+    background:#151515; border:1px solid rgba(255,255,255,.08); border-radius:10px; padding:8px;
+  }
+  .tf-step-row.is-del{ opacity:.45; filter:grayscale(40%); }
+  .tf-step-idx{
+    display:flex; align-items:center; justify-content:center; height:28px; border-radius:999px;
+    background:#1b1b1b; border:1px solid rgba(255,255,255,.08); font-weight:700; color:#fff;
+  }
+  .tf-step-name{
+    width:100%; padding:8px 10px; border-radius:8px; border:1px solid rgba(255,255,255,.10);
+    background:#1a1a1a; color:#fff;
+  }
+  .tf-step-current{ display:flex; align-items:center; gap:6px; justify-content:center; color:#eee; }
+  .tf-step-current input{ accent-color:#ffcc00; }
+
   .tf-btn{
-    appearance:none; border:1px solid rgba(255,255,255,0.14);
-    background: rgba(255,255,255,0.06); color:#eee;
-    padding:9px 14px; border-radius:12px; font-weight:700; cursor:pointer;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.35);
-    transition:.16s ease;
+    appearance:none; cursor:pointer; border:1px solid rgba(255,255,255,.14);
+    background:#1b1b1b; color:#eee; padding:8px 12px; border-radius:10px; font-weight:700;
   }
-  .tf-btn:hover{ background: rgba(255,255,255,0.10); }
-  .tf-btn-small{ padding:7px 12px; border-radius:999px; font-size:.9rem; }
-  .tf-btn-primary{
-    background: linear-gradient(90deg, #ffcc00, #d4a100);
-    color:#181100; border:1px solid rgba(255,204,0,0.35);
-    box-shadow: 0 8px 26px rgba(255,204,0,0.25);
+  .tf-btn--ghost{ background:transparent; }
+  .tf-btn--red{ border-color:rgba(255,80,80,.35); color:#ffdede; background:#2a0000; }
+  .tf-btn--gold{
+    border-color:rgba(255,204,0,.45);
+    background:linear-gradient(90deg,#ffcc00,#d4a100); color:#171300;
   }
-  .tf-btn-ghost{ background:transparent; border-color:transparent; box-shadow:none; color:#eee; }
-  .tf-steps2-hint{ color:#d2d2d2; }
-
-  .tf-steps2-body{ padding:10px 14px; overflow:auto; }
-  .tf-steps2-list{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:10px; }
-
-  /* Linha da Etapa */
-  .tf-steps2-item{
-    display:grid;
-    grid-template-columns:56px 30px 1fr 140px 110px;
-    align-items:center; gap:10px;
-    padding:10px 12px; border-radius:14px;
-    background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.04));
-    border:1px solid rgba(255,255,255,0.14);
-    box-shadow: 0 10px 26px rgba(0,0,0,0.35), inset 0 0 0 1px rgba(255,255,255,0.04);
-    transition: transform .08s ease, background .14s ease, border-color .14s ease, opacity .14s ease;
+  .tf-steps2-footer{
+    display:flex; justify-content:flex-end; gap:8px; padding:12px 14px; border-top:1px solid rgba(255,255,255,.08);
   }
-  .tf-steps2-item:hover{ background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.05)); border-color: rgba(255,255,255,0.2); transform: translateY(-1px); }
-  .tf-steps2-item.dragging{ opacity:.6; }
-  .tf-steps2-index{
-    display:inline-flex; align-items:center; justify-content:center;
-    width:42px; height:30px; border-radius:999px;
-    background: rgba(255,255,255,0.09); border:1px solid rgba(255,255,255,0.18); color:#fff; font-weight:800;
-  }
-  .tf-steps2-handle{
-    cursor:grab; user-select:none; display:flex; align-items:center; justify-content:center;
-    width:30px; height:30px; border-radius:10px;
-    background: rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.16);
-  }
-  .tf-steps2-handle:active{ cursor:grabbing; }
-  .tf-steps2-name{
-    width:100%; padding:8px 10px; border-radius:10px;
-    background: rgba(255,255,255,0.06); color:#fff; border:1px solid rgba(255,255,255,0.16);
-  }
-  .tf-steps2-name:focus{ border-color: rgba(255,204,0,0.6); box-shadow: 0 0 0 2px rgba(255,204,0,0.20); outline: none; }
-
-  .tf-steps2-actions{ display:flex; align-items:center; gap:6px; justify-content:flex-start; }
-  .tf-steps2-del{ border-color: rgba(255, 75, 75, .35) !important; background: linear-gradient(90deg, #3a0000, #2a0000) !important; color:#ffdada !important; }
-  .tf-steps2-del:hover{ filter: brightness(1.06); }
-
-  /* Radio premium */
-  .tf-steps2-radio{
-    display:inline-flex; align-items:center; gap:8px; justify-content:flex-end;
-  }
-  .tf-steps2-radio input[type="radio"]{
-    appearance:none; width:18px; height:18px; border-radius:999px;
-    border:1px solid rgba(255,255,255,0.24); background:rgba(255,255,255,0.06);
-    box-shadow: inset 0 0 0 2px rgba(0,0,0,0.3); position:relative; cursor:pointer; transition:.16s;
-  }
-  .tf-steps2-radio input[type="radio"]::after{
-    content:""; position:absolute; inset:3px; border-radius:999px; background:transparent; transition:.16s;
-  }
-  .tf-steps2-radio input[type="radio"]:checked{
-    border-color: rgba(255,204,0,0.7); box-shadow: 0 0 0 2px rgba(255,204,0,0.15), inset 0 0 0 2px rgba(0,0,0,0.2);
-  }
-  .tf-steps2-radio input[type="radio"]:checked::after{
-    background:linear-gradient(90deg, #ffcc00, #d4a100);
-  }
-  .tf-steps2-radio span{ color:#eaeaea; font-weight:800; letter-spacing:.2px; }
-
-  .tf-steps2-actions,
-  .tf-steps2-ghost{ /* footer */ }
-  .tf-steps2-actions{
-    display:flex; justify-content:flex-end; align-items:center; gap:8px;
-    padding:12px 14px 16px 14px; border-top:1px solid rgba(255,255,255,0.12);
-  }
-
-  /* Confirm mini modal (montado dentro do overlay) */
-  .tf-steps2-confirm{
-    position:fixed; inset:0; display:flex; align-items:center; justify-content:center;
-    background: rgba(0,0,0,.35); backdrop-filter: blur(2px); z-index:3100;
-  }
-  .tf-steps2-confirm-card{
-    width:min(480px, calc(100vw - 40px));
-    background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.05));
-    border:1px solid rgba(255,255,255,0.16); border-radius:14px; padding:16px;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.6);
-    animation: tfSteps2In .18s ease-out forwards;
-  }
-  .tf-steps2-confirm-card h4{ margin:0 0 8px 0; }
-  .tf-steps2-confirm-text{ margin:0 0 12px 0; color:#e8e8e8; }
-  .tf-steps2-confirm-actions{ display:flex; justify-content:flex-end; gap:8px; }
-
-  /* Toast */
-  .tf-steps2-toast{
-    position:fixed; top:18px; right:18px; z-index:3200;
-    padding:10px 14px; border-radius:12px; font-weight:800; letter-spacing:.3px;
-    border:1px solid rgba(255,204,0,0.35);
-    background: linear-gradient(90deg,#ffcc00,#d4a100); color:#171300;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.45);
-    transform: translateY(-10px) scale(.98); opacity:0;
-    transition: transform .16s ease, opacity .16s ease;
-  }
-  .tf-steps2-toast.error{
-    background: linear-gradient(90deg,#370000,#4a0000); color:#ffd5d5; border-color: rgba(255,100,100,.35);
-  }
-  .tf-steps2-toast.show{ transform: translateY(0) scale(1); opacity:1; }
-
-  /* micro feedback salvar */
-  @keyframes tfSteps2Pulse {
-    0% { box-shadow: 0 0 0 0 rgba(255,204,0,0.35); transform: translateY(0) scale(1); }
-    60% { box-shadow: 0 0 24px 8px rgba(255,204,0,0.24); transform: translateY(-1px) scale(1.01); }
-    100% { box-shadow: 0 0 0 0 rgba(255,204,0,0.0); transform: translateY(0) scale(1); }
-  }
-  .tf-steps2-saved { animation: tfSteps2Pulse .5s ease-out 1; }
 </style>
 
 <script>
 (function(){
-  /* ===== Boot de contexto ===== */
+  "use strict";
+
+  // ==== Contexto do painel (não altera nada fora do modal) ====
   const Ctx = (window.__TigerFyCtx && typeof window.__TigerFyCtx === 'object') ? window.__TigerFyCtx : {};
-  let OFFER = Ctx.offer || window.offer || null;
-  let STEPS = (Ctx.steps || window.steps || []);
+  let OFFER   = Ctx.offer || window.offer || null;
+  let STEPS   = (Ctx.steps || window.steps || []) || [];
   let CURRENT = Ctx.currentStep || window.currentStep || null;
 
-  const modal      = document.getElementById('tfSteps2Modal');
-  const btnClose   = document.getElementById('tfSteps2Close');
-  const btnCancel  = document.getElementById('tfSteps2Cancel');
-  const btnSave    = document.getElementById('tfSteps2Save');
-  const btnAdd     = document.getElementById('tfSteps2Add');
-  const listEl     = document.getElementById('tfSteps2List');
+  // ==== Elements ====
+  const modal   = document.getElementById('tfSteps2Modal');
+  const btnX    = document.getElementById('tfSteps2Close');
+  const btnAdd  = document.getElementById('tfSteps2Add');
+  const btnSave = document.getElementById('tfSteps2Save');
+  const btnCanc = document.getElementById('tfSteps2Cancel');
+  const listEl  = document.getElementById('tfSteps2List');
 
-  /* ===== Public API ===== */
+  // ==== API pública para a pill "Etapas" existente ====
   window.TigerFyEtapas = {
     open(ctxOffer, ctxSteps, ctxCurrent){
       OFFER   = ctxOffer   || OFFER;
@@ -238,262 +113,180 @@ esse codigo abaixo nao tinha tela dourada, refaca a nova mini tela de gerenciar 
     close: closeModal
   };
 
-  /* Abre via botão existente (se houver) */
+  // Abre via botão/pill já existente (#tabEtapas), se houver
   const openBtn = document.getElementById('tabEtapas');
   if (openBtn){
-    openBtn.addEventListener('click', function(e){
-      e.preventDefault();
-      window.TigerFyEtapas.open();
-    });
+    openBtn.addEventListener('click', function(e){ e.preventDefault(); window.TigerFyEtapas.open(); });
   }
 
-  /* ===== Helpers ===== */
-  function bodyLock(lock){
-    if (lock){ document.documentElement.style.overflow='hidden'; document.body.style.overflow='hidden'; }
-    else { document.documentElement.style.overflow=''; document.body.style.overflow=''; }
-  }
-  function openModal(){ modal.hidden=false; modal.setAttribute('aria-hidden','false'); bodyLock(true); }
-  function closeModal(){ modal.hidden=true; modal.setAttribute('aria-hidden','true'); bodyLock(false); }
+  // ==== Modal helpers ====
+  function lockBody(on){ document.documentElement.style.overflow = on ? 'hidden' : ''; document.body.style.overflow = on ? 'hidden' : ''; }
+  function openModal(){ modal.hidden=false; modal.setAttribute('aria-hidden','false'); lockBody(true); }
+  function closeModal(){ modal.hidden=true;  modal.setAttribute('aria-hidden','true');  lockBody(false); }
 
-  if (btnClose)  btnClose.addEventListener('click', closeModal);
-  if (btnCancel) btnCancel.addEventListener('click', closeModal);
-  modal?.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+  btnX && btnX.addEventListener('click', closeModal);
+  btnCanc && btnCanc.addEventListener('click', closeModal);
+  modal && modal.addEventListener('click', (e)=>{ if (e.target===modal) closeModal(); });
+  document.addEventListener('keydown', (e)=>{ if (e.key==='Escape' && modal.getAttribute('aria-hidden')==='false') closeModal(); });
 
-  function showToast(msg, isErr){
-    const t = document.createElement('div');
-    t.className = 'tf-steps2-toast'+(isErr?' error':'');
-    t.textContent = msg || (isErr?'Falha':'Sucesso');
-    document.body.appendChild(t);
-    requestAnimationFrame(()=> t.classList.add('show'));
-    setTimeout(()=> { t.classList.remove('show'); setTimeout(()=> t.remove(), 160); }, 2300);
-  }
-
-  function escapeHtml(s){ return (s||'').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-
-  /* ===== Render ===== */
+  // ==== Render da lista ====
   function renderList(){
     listEl.innerHTML = '';
-    const ordered = (STEPS || []).slice().sort((a,b)=> (a.stepNo||0) - (b.stepNo||0));
-    ordered.forEach(s => addRow({ id:s.id, name:s.name, stepNo:s.stepNo, isCurrent: CURRENT && CURRENT.id===s.id }));
-  }
-
-  /* Drag & Drop */
-  let dragging = null;
-  function enableDnD(li){
-    li.draggable = true;
-    li.addEventListener('dragstart', (e)=>{ dragging = li; li.classList.add('dragging'); e.dataTransfer.effectAllowed='move'; });
-    li.addEventListener('dragend',   ()=>{ dragging = null; li.classList.remove('dragging'); recomputeIndexes(); });
-    li.addEventListener('dragover',  (e)=>{
-      e.preventDefault();
-      const target = li;
-      if (!dragging || dragging===target) return;
-      const rect = target.getBoundingClientRect();
-      const before = (e.clientY - rect.top) < (rect.height/2);
-      if (before) listEl.insertBefore(dragging, target);
-      else listEl.insertBefore(dragging, target.nextSibling);
-    });
+    const ordered = (STEPS || []).slice().sort((a,b)=> (a.stepNo||a.step_no||0) - (b.stepNo||b.step_no||0));
+    if (!ordered.length){
+      // inicia com uma linha vazia amigável
+      addRow({ name:'', stepNo:1, isCurrent:false });
+      return;
+    }
+    ordered.forEach(s => addRow({ id:s.id, name:s.name, stepNo:s.stepNo || s.step_no, isCurrent: CURRENT && CURRENT.id===s.id }));
+    recomputeIndexes();
   }
 
   function addRow(opts){
     const li = document.createElement('li');
-    li.className = 'tf-steps2-item';
+    li.className = 'tf-step-row';
     if (opts.id) li.dataset.id = opts.id; else li.dataset.new = '1';
 
-    const colIndex = document.createElement('div');
-    colIndex.className = 'tf-steps2-index';
-    colIndex.textContent = opts.stepNo || (listEl.children.length + 1);
-
-    const handle = document.createElement('div');
-    handle.className = 'tf-steps2-handle';
-    handle.title = 'Arraste para reordenar';
-    handle.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M9 12h6M9 6h6"/></svg>';
+    const idx = document.createElement('div');
+    idx.className = 'tf-step-idx';
+    idx.textContent = opts.stepNo || (listEl.children.length + 1);
 
     const name = document.createElement('input');
-    name.type='text'; name.className='tf-steps2-name';
-    name.placeholder='Nova etapa'; name.value = opts.name || '';
+    name.type='text'; name.className='tf-step-name';
+    name.placeholder='Nova etapa';
+    name.value = opts.name || '';
     name.dataset.oldName = opts.name || '';
 
-    const actions = document.createElement('div');
-    actions.className = 'tf-steps2-actions';
-    const btnDel = document.createElement('button');
-    btnDel.type='button'; btnDel.className='tf-btn tf-steps2-del'; btnDel.textContent='Excluir';
-    if (opts.stepNo === 1 && opts.id) btnDel.disabled = true; // opcional: proteger primeira persistida
-    btnDel.addEventListener('click', ()=> askDelete(li, name.value || 'Etapa'));
-
-    actions.appendChild(btnDel);
-
-    const radioWrap = document.createElement('label');
-    radioWrap.className = 'tf-steps2-radio';
+    const currentWrap = document.createElement('label');
+    currentWrap.className = 'tf-step-current';
     const rb = document.createElement('input');
     rb.type='radio'; rb.name='tfSteps2Current'; rb.checked = !!opts.isCurrent;
-    const rbLbl = document.createElement('span'); rbLbl.textContent='Atual';
-    radioWrap.appendChild(rb); radioWrap.appendChild(rbLbl);
+    currentWrap.appendChild(rb);
+    currentWrap.appendChild(document.createTextNode('Atual'));
 
-    li.appendChild(colIndex);
-    li.appendChild(handle);
+    const del = document.createElement('button');
+    del.type='button'; del.className='tf-btn tf-btn--red'; del.textContent='Excluir';
+    del.addEventListener('click', ()=>{
+      if (confirm('Excluir esta etapa?')) {
+        li.dataset.toDelete = '1';
+        li.classList.add('is-del');
+        // se estava marcada como atual, desmarca
+        if (rb.checked) rb.checked = false;
+      }
+    });
+
+    li.appendChild(idx);
     li.appendChild(name);
-    li.appendChild(actions);
-    li.appendChild(radioWrap);
+    li.appendChild(currentWrap);
+    li.appendChild(del);
 
     listEl.appendChild(li);
-    enableDnD(li);
   }
 
   function recomputeIndexes(){
-    Array.from(listEl.children).forEach((li, i)=>{
-      const idx = li.querySelector('.tf-steps2-index');
-      if (idx) idx.textContent = i+1;
+    Array.from(listEl.children).forEach((li,i)=>{
+      const b = li.querySelector('.tf-step-idx');
+      if (b) b.textContent = i+1;
     });
   }
 
-  if (btnAdd){
-    btnAdd.addEventListener('click', ()=>{
-      addRow({ name:'', stepNo: listEl.children.length + 1, isCurrent:false });
-      recomputeIndexes();
-    });
-  }
+  btnAdd && btnAdd.addEventListener('click', ()=>{ addRow({ name:'', stepNo:listEl.children.length+1 }); recomputeIndexes(); });
 
-  /* ===== Confirm Delete ===== */
-  function askDelete(li, displayName){
-    const tpl = document.getElementById('tfSteps2ConfirmTpl');
-    const frag = tpl.content.cloneNode(true);
-    const layer = frag.querySelector('.tf-steps2-confirm');
-    const nm    = frag.querySelector('.nm');
-    const bCancel = frag.querySelector('.js-cancel');
-    const bDelete = frag.querySelector('.js-delete');
-    nm.textContent = displayName;
-
-    function close(){ layer.remove(); }
-    bCancel.addEventListener('click', close);
-    layer.addEventListener('click', (e)=>{ if (e.target===layer) close(); });
-
-    bDelete.addEventListener('click', ()=>{
-      // marca para excluir (aplicado no salvar)
-      li.dataset.toDelete = '1';
-      li.style.opacity = .35;
-      li.style.filter = 'grayscale(30%)';
-      close();
-    });
-
-    modal.appendChild(layer);
-  }
-
-  /* ===== Salvar Mudanças ===== */
+  // ==== Persistência (mesma lógica/rotas já usadas) ====
   function setSaving(on){
     if (!btnSave) return;
-    if (on){ btnSave.disabled = true; if(!btnSave.dataset._txt) btnSave.dataset._txt = btnSave.textContent; btnSave.textContent='Salvando…'; }
-    else { btnSave.disabled = false; btnSave.textContent = btnSave.dataset._txt || 'Salvar mudanças'; }
+    if (on){ btnSave.disabled=true; if(!btnSave.dataset._t) btnSave.dataset._t=btnSave.textContent; btnSave.textContent='Salvando…'; }
+    else { btnSave.disabled=false; btnSave.textContent=btnSave.dataset._t || 'Salvar'; }
   }
 
   async function apiBatchCreate(names){
     const r = await fetch(`/ofertas/${encodeURIComponent(OFFER.id)}/etapas/batch`,{
       method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ names })
     });
-    const js = await r.json();
-    if (!js || !js.ok) throw new Error('batch_failed');
-    return js.steps || [];
+    const js = await r.json(); if (!js || !js.ok) throw new Error('batch_failed'); return js.steps || [];
   }
   async function apiRename(id, name){
     const r = await fetch(`/ofertas/${encodeURIComponent(OFFER.id)}/etapas/${encodeURIComponent(id)}/rename`,{
       method:'PATCH', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ name })
     });
-    const js = await r.json(); if (!js || !js.ok) throw new Error('rename_failed');
-    return js.step || null;
+    const js = await r.json(); if (!js || !js.ok) throw new Error('rename_failed'); return js.step || null;
   }
   async function apiDelete(id){
     const r = await fetch(`/ofertas/${encodeURIComponent(OFFER.id)}/etapas/${encodeURIComponent(id)}`,{ method:'DELETE' });
-    const js = await r.json(); if (!js || !js.ok) throw new Error('delete_failed');
-    return true;
+    const js = await r.json(); if (!js || !js.ok) throw new Error('delete_failed'); return true;
   }
   async function apiReorder(orderIds){
     const r = await fetch(`/ofertas/${encodeURIComponent(OFFER.id)}/etapas/reorder`,{
       method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ order: orderIds })
     });
-    const js = await r.json(); if (!js || !js.ok) throw new Error('reorder_failed');
-    return true;
+    const js = await r.json(); if (!js || !js.ok) throw new Error('reorder_failed'); return true;
   }
 
-  if (btnSave){
-    btnSave.addEventListener('click', async ()=>{
-      try{
-        setSaving(true);
+  btnSave && btnSave.addEventListener('click', async ()=>{
+    try{
+      setSaving(true);
 
-        // 1) Coleta: novos, renomes, deletions e seleção atual
-        const rows = Array.from(listEl.children);
-        const newNames = [];
-        const renameOps = [];
-        const deleteIds = [];
-        let selectedId = null;
+      const rows = Array.from(listEl.children);
+      const newNames = [];
+      const renameOps = [];
+      const deleteIds = [];
+      let selectedId = null;
+      let selectedIdResolved = false;
 
+      for (const li of rows){
+        const id    = li.dataset.id || null;
+        const isNew = !id;
+        const toDel = li.dataset.toDelete === '1';
+        const nameEl= li.querySelector('.tf-step-name');
+        const name  = (nameEl?.value || '').trim();
+        const old   = (nameEl?.dataset.oldName || '').trim();
+        const rb    = li.querySelector('input[type="radio"]');
+
+        if (rb && rb.checked){ selectedId = id || '__will_select_new__'; }
+        if (isNew && !toDel && name){ newNames.push(name); }
+        if (!isNew && toDel){ deleteIds.push(id); }
+        if (!isNew && !toDel && name && name !== old){ renameOps.push({ id, name }); }
+      }
+
+      if (newNames.length){
+        const created = await apiBatchCreate(newNames); // [{id,name,stepNo}]
+        let idx=0;
         for (const li of rows){
-          const id   = li.dataset.id || null;
-          const isNew= !id;
-          const toDel= li.dataset.toDelete === '1';
-          const name = (li.querySelector('.tf-steps2-name')?.value || '').trim();
-          const old  = (li.querySelector('.tf-steps2-name')?.dataset.oldName || '').trim();
-          const rb   = li.querySelector('input[type="radio"]');
-
-          if (rb && rb.checked){
-            selectedId = id || '__will_select_new__'; // marcador se selecionar um novo
-          }
-          if (isNew && !toDel && name){ newNames.push(name); }
-          if (!isNew && toDel){ deleteIds.push(id); }
-          if (!isNew && !toDel && name && name !== old){ renameOps.push({ id, name }); }
-        }
-
-        // 2) Criar novos (retorna ids)
-        let createdMap = {};
-        if (newNames.length){
-          const created = await apiBatchCreate(newNames); // [{id,name,stepNo...}]
-          // vincula aos rows novos na ordem em que aparecem
-          let idx=0;
-          for (const li of rows){
-            if (!li.dataset.id && li.dataset.toDelete !== '1'){
-              li.dataset.id = created[idx]?.id;
-              li.querySelector('.tf-steps2-name').dataset.oldName = created[idx]?.name || '';
-              createdMap[li] = created[idx];
-              idx++;
-              if (selectedId === '__will_select_new__' && !selectedIdResolved){
-                // se o usuário marcou radio de um "novo", pegamos o primeiro correspondente
-                var selectedIdResolved = true;
-                selectedId = li.dataset.id;
-              }
+          if (!li.dataset.id && li.dataset.toDelete !== '1'){
+            const c = created[idx++]; if (!c) continue;
+            li.dataset.id = c.id;
+            const nameEl = li.querySelector('.tf-step-name');
+            if (nameEl) nameEl.dataset.oldName = c.name || nameEl.value || '';
+            if (selectedId === '__will_select_new__' && !selectedIdResolved){
+              selectedIdResolved = true; selectedId = c.id;
             }
           }
         }
-
-        // 3) Renomear existentes
-        for (const op of renameOps){ await apiRename(op.id, op.name); }
-
-        // 4) Deletar marcados
-        for (const id of deleteIds){ await apiDelete(id); }
-
-        // 5) Reordenar (lista final sem deletados)
-        const orderIds = Array.from(listEl.children)
-          .filter(li => li.dataset.toDelete !== '1')
-          .map(li => li.dataset.id)
-          .filter(Boolean);
-        if (orderIds.length){ await apiReorder(orderIds); }
-
-        // 6) Feedback + redirect respeitando etapa atual
-        btnSave.classList.add('tf-steps2-saved');
-        setTimeout(()=> btnSave.classList.remove('tf-steps2-saved'), 600);
-        showToast('Etapas salvas com sucesso.');
-        closeModal();
-
-        // Atualiza a navegação/etapa atual (se marcada). Se nenhuma marcada, vai sem stepId.
-        if (selectedId && selectedId !== '__will_select_new__'){
-          window.location.href = `/ofertas/painel/${encodeURIComponent(OFFER.id)}?stepId=${encodeURIComponent(selectedId)}`;
-        } else {
-          window.location.href = `/ofertas/painel/${encodeURIComponent(OFFER.id)}`;
-        }
-      }catch(err){
-        console.error(err);
-        showToast('Falha ao salvar mudanças.', true);
-      }finally{
-        setSaving(false);
       }
-    });
-  }
+
+      for (const op of renameOps){ await apiRename(op.id, op.name); }
+      for (const id of deleteIds){ await apiDelete(id); }
+
+      // Reordenar conforme a ordem das linhas (não há drag aqui; mantém sequência atual)
+      const orderIds = Array.from(listEl.children)
+        .filter(li => li.dataset.toDelete !== '1')
+        .map(li => li.dataset.id)
+        .filter(Boolean);
+      if (orderIds.length){ await apiReorder(orderIds); }
+
+      // Fecha + navega respeitando etapa atual
+      closeModal();
+      if (selectedId && selectedId !== '__will_select_new__'){
+        window.location.href = `/ofertas/painel/${encodeURIComponent(OFFER.id)}?stepId=${encodeURIComponent(selectedId)}`;
+      } else {
+        window.location.href = `/ofertas/painel/${encodeURIComponent(OFFER.id)}`;
+      }
+    }catch(err){
+      console.error(err);
+      alert('Falha ao salvar as etapas. Tente novamente.');
+    }finally{
+      setSaving(false);
+    }
+  });
 })();
 </script>
