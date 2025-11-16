@@ -102,20 +102,22 @@
     font-size:.78rem; color:#c9c9c9;
   }
 
-  /* --- Botão “…” alinhado no canto da linha, hover sutil --- */
-  .meta--with-actions{ position:relative; padding-right:34px; }
-  .offer-actions-inline{
-    position:absolute; right:10px; top:50%; transform:translateY(-50%);
-    width:26px; height:26px; display:flex; align-items:center; justify-content:center;
-    border-radius:999px;
-    border:1px solid rgba(255,204,0,.20);
-    background:rgba(255,204,0,.06);
-    color:#ffcc00; cursor:pointer;
-    /* transições/efeitos fortes removidos */
-  }
-  .offer-actions-inline:hover{
-    /* hover minimalista, sem brilho, sem crescimento */
-    background:rgba(255,204,0,.12);
+  /* fica fixo no centro vertical da linha */
+.offer-actions-inline{
+  position:absolute;
+  right:10px;
+  top:50%;
+  transform: translateY(-50%);
+  /* ✅ não animamos transform; só cor/borda */
+  transition: background-color .15s ease, border-color .15s ease;
+}
+
+/* ✅ hover minimalista, sem translate/top/scale */
+.offer-actions-inline:hover{
+  background: rgba(255,204,0,.12);
+  border-color: rgba(255,204,0,.28);
+}
+
   }
   .offer-actions-inline .dots{ line-height:1; font-size:13px; transform:translateY(-.5px) }
 
