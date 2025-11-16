@@ -9,46 +9,12 @@
     <div class="tf-header-left">
       <h1 class="tf-offer-title" id="offerTitle"><%= offer?.name || 'Nome da Oferta' %></h1>
 
-      <!-- Área de Etapas: seletor + criar -->
-      <div class="tf-step-area">
-        <!-- Seletor -->
-        <button class="tf-step-current" id="btnStepSelector" aria-haspopup="true" aria-expanded="false">
-          <span class="dot"></span>
-          <span id="tfStepNameInline"><%= (currentStep && currentStep.name) ? currentStep.name : 'Etapa 1' %></span>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-        </button>
-
-        <div class="tf-step-menu" id="stepMenu" hidden>
-          <% (steps || []).forEach(function(s){ %>
-            <div class="tf-step-item <%= (currentStep && currentStep.id===s.id) ? 'is-active' : '' %>" data-step-id="<%= s.id %>">
-              <div class="info">
-                <span class="no">#<%= s.step_no %></span>
-                <span class="nm"><%= s.name %></span>
-                <% if (currentStep && currentStep.id===s.id) { %>
-                  <span class="tag">Atual</span>
-                <% } %>
-              </div>
-
-              <% if (s.step_no !== 1) { %>
-                <button class="trash" data-del-step-id="<%= s.id %>" title="Excluir etapa">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                    <polyline points="3 6 5 6 21 6"></polyline>
-                    <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path>
-                    <path d="M10 11v6"></path><path d="M14 11v6"></path>
-                    <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"></path>
-                  </svg>
-                </button>
-              <% } %>
-            </div>
-          <% }) %>
-        </div>
-
-        <!-- Criar -->
-        <button type="button" id="btnCreateStep" class="tf-btn tf-btn-small tf-create-ripple" data-ripple>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
-          Criar Etapa
-        </button>
-      </div>
+      <!-- Botão único: Etapas -->
+      <button type="button" id="btnManageSteps" class="tf-btn tf-btn-small tf-create-ripple" data-ripple>
+        <!-- ícone + -->
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+        Etapas
+      </button>
     </div>
 
     <div class="tf-header-right">
@@ -107,24 +73,45 @@
   <section class="tf-content-placeholder"></section>
 </div>
 
-<!-- Modal Nova Etapa (simples) -->
-<div class="tf-modal-backdrop" id="stepModal" hidden>
-  <div class="tf-modal tf-animate-in">
+<!-- Mini TELA: Gerenciar Etapas -->
+<div class="tf-modal-backdrop" id="stepsManager" hidden>
+  <div class="tf-modal tf-animate-in" style="max-width:720px">
     <div class="tf-modal-head">
-      <h3>Nova etapa</h3>
-      <button type="button" class="tf-modal-close" id="btnCloseModal" aria-label="Fechar">✕</button>
+      <h3>Gerenciar Etapas</h3>
+      <button type="button" class="tf-modal-close" id="btnCloseSteps" aria-label="Fechar">✕</button>
     </div>
 
-    <div class="tf-modal-body">
-      <div class="tf-field">
-        <label for="inpStepName">Nome da etapa</label>
-        <input type="text" id="inpStepName" placeholder="Ex.: Etapa 2, Pós-compra, Fluxo VIP…" />
+    <div class="tf-modal-body" style="padding-top:8px">
+      <div id="stepsList" class="tf-steps-list">
+        <% (steps || []).forEach(function(s){ %>
+          <div class="tf-step-row" data-id="<%= s.id %>">
+            <div class="drag" title="Arrastar para reordenar">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="9" cy="5" r="1"></circle><circle cx="15" cy="5" r="1"></circle>
+                <circle cx="9" cy="12" r="1"></circle><circle cx="15" cy="12" r="1"></circle>
+                <circle cx="9" cy="19" r="1"></circle><circle cx="15" cy="19" r="1"></circle>
+              </svg>
+            </div>
+
+            <span class="no">#<%= s.step_no %></span>
+
+            <input class="nm" value="<%= s.name %>" data-id="<%= s.id %>" <%= s.step_no===1 ? 'data-locked="1"' : '' %> />
+
+            <div class="actions">
+              <% if (s.step_no !== 1) { %>
+                <button class="tf-btn tf-btn-small tf-btn-danger" data-del="<%= s.id %>">Excluir</button>
+              <% } else { %>
+                <span class="tag">Base</span>
+              <% } %>
+            </div>
+          </div>
+        <% }) %>
       </div>
     </div>
 
     <div class="tf-modal-actions">
-      <button type="button" class="tf-btn" id="btnCancelStep">Cancelar</button>
-      <button type="button" class="tf-btn tf-btn-primary" id="btnConfirmStep">Criar etapa</button>
+      <button type="button" class="tf-btn" id="btnCancelSteps">Fechar</button>
+      <button type="button" class="tf-btn tf-btn-primary" id="btnSaveOrder">Salvar ordem</button>
     </div>
   </div>
 </div>
@@ -151,17 +138,10 @@
 
 <style>
   :root{
-    --bg:#0b0b0b;
-    --panel:rgba(255,255,255,0.04);
-    --panel-strong:rgba(255,255,255,0.06);
-    --border:rgba(255,255,255,0.12);
-    --muted:#b8b8b8;
-    --text:#ffffff;
-    --accent:#ffcc00;
-    --accent-dim:#d4a100;
-    --shadow:0 8px 24px rgba(0,0,0,0.45);
-    --radius:14px;
-    --danger:#ee5555;
+    --bg:#0b0b0b; --panel:rgba(255,255,255,0.04); --panel-strong:rgba(255,255,255,0.06);
+    --border:rgba(255,255,255,0.12); --muted:#b8b8b8; --text:#ffffff;
+    --accent:#ffcc00; --accent-dim:#d4a100; --shadow:0 8px 24px rgba(0,0,0,0.45);
+    --radius:14px; --danger:#ee5555;
   }
 
   .tf-offer-panel{ color:var(--text); padding:60px 80px 100px 130px; max-width:1200px; margin:0 auto; }
@@ -172,43 +152,6 @@
   .tf-header{ display:flex; align-items:flex-start; justify-content:space-between; gap:16px; margin-bottom:18px; }
   .tf-header-left{ display:flex; align-items:center; gap:16px; flex-wrap:wrap; }
   .tf-offer-title{ margin:0; font-size:1.75rem; letter-spacing:.3px; background:linear-gradient(90deg,#fff,#d8d8d8); -webkit-background-clip:text; background-clip:text; color:transparent; }
-
-  /* Área de etapas */
-  .tf-step-area{ display:flex; align-items:center; gap:10px; position:relative; }
-
-  .tf-step-current{
-    display:inline-flex; align-items:center; gap:8px;
-    padding:8px 12px; border-radius:999px; border:1px solid var(--border);
-    background:var(--panel); color:#e8e8e8; font-weight:700; letter-spacing:.2px;
-    cursor:pointer; transition:.18s ease; position:relative; overflow:hidden;
-    box-shadow:0 8px 26px rgba(0,0,0,.25);
-  }
-  .tf-step-current .dot{ width:6px; height:6px; border-radius:50%; background:var(--accent); box-shadow:0 0 10px rgba(255,204,0,.6); }
-  .tf-step-current:hover{ transform:translateY(-1px); border-color:rgba(255,255,255,.22); background:rgba(255,255,255,.08); }
-  .tf-step-current[aria-expanded="true"]{ box-shadow:0 10px 30px rgba(0,0,0,.35); }
-
-  .tf-step-menu{
-    position:absolute; top:44px; left:0; min-width:260px; background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.05));
-    border:1px solid var(--border); border-radius:14px; box-shadow:0 18px 42px rgba(0,0,0,.45); backdrop-filter:blur(6px);
-    padding:6px; z-index:30; animation:tfFadeSlide .18s ease;
-  }
-  .tf-step-item{
-    display:flex; align-items:center; justify-content:space-between;
-    gap:8px; padding:9px 10px; border-radius:12px; cursor:pointer; transition:.14s;
-  }
-  .tf-step-item .info{ display:flex; align-items:center; gap:8px; }
-  .tf-step-item .no{ opacity:.7; font-weight:700; font-size:.85rem; }
-  .tf-step-item .nm{ font-weight:700; }
-  .tf-step-item .tag{
-    margin-left:6px; padding:2px 8px; border-radius:999px; font-size:.72rem; font-weight:800;
-    background:rgba(255,204,0,.15); color:#ffd74d; border:1px solid rgba(255,204,0,.25);
-  }
-  .tf-step-item:hover{ background:rgba(255,255,255,.08); transform:scale(1.01); }
-  .tf-step-item.is-active{ border:1px solid rgba(255,204,0,.25); background:rgba(255,204,0,.10); }
-  .tf-step-item .trash{
-    appearance:none; border:0; background:transparent; color:#d7d7d7; padding:6px; border-radius:10px; cursor:pointer; transition:.15s;
-  }
-  .tf-step-item .trash:hover{ color:#fff; background:rgba(255,255,255,.08); box-shadow:0 0 0 1px rgba(255,255,255,.10) inset; }
 
   /* Botões */
   .tf-btn{ appearance:none; border:1px solid var(--border); background:var(--panel-strong); color:#eee; padding:9px 14px; border-radius:10px; cursor:pointer; font-weight:600; box-shadow:var(--shadow); transition:.2s ease; }
@@ -234,7 +177,7 @@
   .tf-subtabs .subtab.active{ background:rgba(255,255,255,0.10); border-color:rgba(255,255,255,0.22); color:#fff; }
   .tf-content-placeholder{ min-height:360px; border:1px dashed rgba(255,255,255,0.12); border-radius:var(--radius); background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02)); box-shadow:var(--shadow); }
 
-  /* Modal */
+  /* Modal base */
   .tf-modal-backdrop{ position:fixed; inset:0; background:rgba(0,0,0,0.55); display:flex; align-items:center; justify-content:center; padding:20px; z-index:1000; }
   .tf-modal-backdrop[hidden]{ display:none !important; }
   .tf-modal{ width:100%; max-width:560px; background:linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.04)); border:1px solid var(--border); border-radius:16px; box-shadow:0 14px 42px rgba(0,0,0,0.55); backdrop-filter: blur(6px); }
@@ -243,17 +186,28 @@
   .tf-modal-close{ background:transparent; border:0; color:#ccc; cursor:pointer; font-size:16px; padding:4px; }
   .tf-modal-close:hover{ color:#fff; }
   .tf-modal-body{ padding:16px; display:flex; flex-direction:column; gap:14px; }
-  .tf-field label{ display:block; font-weight:700; margin-bottom:6px; color:#efefef; font-size:.95rem; letter-spacing:.2px; }
-  .tf-field input[type="text"]{ width:100%; padding:12px 14px; border-radius:12px; background:rgba(255,255,255,0.07); color:#fff; border:1px solid rgba(255,255,255,0.16); outline:none; font-size:.98rem; }
-  .tf-field input[type="text"]::placeholder{ color:#bfbfbf; }
-  .tf-field input[type="text"]:focus{ border-color:rgba(255,204,0,0.6); box-shadow:0 0 0 2px rgba(255,204,0,0.20); }
   .tf-modal-actions{ display:flex; align-items:center; justify-content:flex-end; gap:10px; padding:12px 16px 16px 16px; border-top:1px solid rgba(255,255,255,0.09); }
-
   .tf-animate-in{ animation:tfZoomIn .16s ease; }
   @keyframes tfZoomIn{ from{ transform:scale(.98); opacity:0 } to{ transform:scale(1); opacity:1 } }
-  @keyframes tfFadeSlide{ from{ opacity:0; transform:translateY(-6px) } to{ opacity:1; transform:translateY(0) } }
 
-  /* Toasts premium */
+  /* Lista de etapas (manager) */
+  .tf-steps-list{ display:flex; flex-direction:column; gap:8px; }
+  .tf-step-row{
+    display:grid; grid-template-columns:28px 56px 1fr auto; align-items:center; gap:10px;
+    padding:10px 12px; border:1px solid var(--border); border-radius:12px; background:var(--panel);
+  }
+  .tf-step-row .drag{ display:flex; align-items:center; justify-content:center; color:#cfcfcf; cursor:grab; }
+  .tf-step-row .drag:active{ cursor:grabbing; }
+  .tf-step-row .no{ opacity:.7; font-weight:800; }
+  .tf-step-row .nm{
+    width:100%; padding:9px 10px; border-radius:10px; background:rgba(255,255,255,0.07); color:#fff; border:1px solid rgba(255,255,255,0.12);
+    outline:none; font-weight:700; letter-spacing:.2px;
+  }
+  .tf-step-row .nm[data-locked="1"]{ opacity:.85; background:rgba(255,255,255,0.04); }
+  .tf-step-row .actions{ display:flex; align-items:center; gap:8px; }
+  .tf-step-row .tag{ padding:4px 8px; border-radius:999px; font-size:.72rem; font-weight:800; background:rgba(255,255,255,.08); color:#dcdcdc; border:1px solid rgba(255,255,255,.14); }
+
+  /* Toasts */
   .tf-toast-container{ position:fixed; right:26px; top:24px; display:flex; flex-direction:column; gap:10px; z-index:1400; }
   .tf-toast{
     display:flex; align-items:center; gap:10px; padding:12px 14px; border-radius:12px; font-weight:800; letter-spacing:.25px;
@@ -262,33 +216,23 @@
     transform:translateY(-6px); opacity:0; animation:toastIn .18s ease forwards;
   }
   .tf-toast.error{ color:#2b0f0f; background:linear-gradient(135deg,#ff8a8a,#f35e5e); }
-  .tf-toast .ico{ display:inline-flex; align-items:center; justify-content:center; width:18px; height:18px; }
   @keyframes toastIn{ to{ transform:translateY(0); opacity:1 } }
   .tf-toast.out{ animation:toastOut .18s ease forwards; }
   @keyframes toastOut{ to{ transform:translateY(-6px); opacity:0 } }
 
-  /* Glow rápido no salvar */
-  .tf-saved-glow{ box-shadow:0 0 0 0 rgba(255,204,0,.0), 0 0 0 0 rgba(255,204,0,.0); animation:btnGlow .8s ease; }
-  @keyframes btnGlow{
-    0%{ box-shadow:0 0 0 0 rgba(255,204,0,.4); transform:translateZ(0) }
-    100%{ box-shadow:0 0 0 18px rgba(255,204,0,0); }
-  }
-
   @media (max-width: 980px){
     .tf-offer-panel{ padding:40px 18px 80px 18px; }
     .tf-header{ flex-direction:column; align-items:flex-start; gap:10px; }
-    .tf-step-menu{ left:auto; right:0; }
   }
 </style>
 
 <script>
 (function(){
-  // Dados do EJS
   var offer = <%- JSON.stringify(offer || null) %>;
   var steps = <%- JSON.stringify(steps || []) %>;
   var currentStep = <%- JSON.stringify(currentStep || null) %>;
 
-  /* Breadcrumb */
+  /* Breadcrumb — oferta sempre; etapa só quando houver step selecionado */
   function escapeHtml(s){ return (s || "").replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
   (function buildBreadcrumb(){
     var bc = document.getElementById('tfBreadcrumb'); if (!bc) return;
@@ -301,30 +245,28 @@
     if (currentStep && currentStep.id) {
       items.push('<span>›</span>');
       var stepUrl = offerHref + "?stepId=" + encodeURIComponent(currentStep.id);
-      items.push('<a href="'+ stepUrl +'">'+ escapeHtml(currentStep.name || ('Etapa ' + (currentStep.step_no||''))) +'</a>');
+      var stepName = currentStep.name || ('Etapa ' + (currentStep.step_no||''));
+      items.push('<a href="'+ stepUrl +'">'+ escapeHtml(stepName) +'</a>');
     }
     bc.innerHTML = items.join('');
   })();
 
-  /* Toast premium */
+  /* Toast */
   function showToast(type, text){
     var cont = document.getElementById('tfToastContainer');
     if (!cont) return;
     var el = document.createElement('div');
     el.className = 'tf-toast' + (type==='error' ? ' error' : '');
     el.innerHTML =
-      '<span class="ico">'+
-        (type==='error'
-          ? '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>'
-          : '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"></path></svg>'
-        )+
-      '</span>'+
-      '<span>'+ (text || (type==='error' ? 'Falhou' : 'Concluído')) +'</span>';
+      (type==='error'
+        ? '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>'
+        : '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px"><path d="M20 6L9 17l-5-5"></path></svg>'
+      ) + '<span>'+ (text || (type==='error' ? 'Falhou' : 'Concluído')) +'</span>';
     cont.appendChild(el);
     setTimeout(function(){ el.classList.add('out'); setTimeout(function(){ el.remove(); }, 180); }, 2400);
   }
 
-  /* Subtabs visíveis só na principal */
+  /* Tabs */
   var mainTabs = document.querySelectorAll('.tf-tabs .tab');
   var subTabsWrap = document.getElementById('subtabs-principal');
   mainTabs.forEach(function(btn){
@@ -337,162 +279,7 @@
   });
   if (subTabsWrap) subTabsWrap.style.display = 'flex';
 
-  /* Seletor de etapas */
-  var stepBtn = document.getElementById('btnStepSelector');
-  var stepMenu = document.getElementById('stepMenu');
-  var stepNameInline = document.getElementById('tfStepNameInline');
-  if (stepNameInline && currentStep) stepNameInline.textContent = currentStep.name || ('Etapa ' + (currentStep.step_no||''));
-
-  function closeMenu(){ if(stepMenu){ stepMenu.setAttribute('hidden',''); stepBtn && stepBtn.setAttribute('aria-expanded','false'); } }
-  function openMenu(){ if(stepMenu){ stepMenu.removeAttribute('hidden'); stepBtn && stepBtn.setAttribute('aria-expanded','true'); } }
-  if (stepBtn) stepBtn.addEventListener('click', function(e){
-    var isOpen = stepMenu && !stepMenu.hasAttribute('hidden');
-    isOpen ? closeMenu() : openMenu();
-  });
-  document.addEventListener('click', function(e){
-    if (!stepMenu || !stepBtn) return;
-    if (e.target === stepBtn || stepBtn.contains(e.target)) return;
-    if (stepMenu.contains(e.target)) return;
-    closeMenu();
-  });
-
-  // Navegar para etapa selecionada
-  if (stepMenu){
-    stepMenu.addEventListener('click', function(e){
-      var item = e.target.closest('.tf-step-item');
-      if (!item) return;
-      var trashBtn = e.target.closest('.trash');
-      if (trashBtn) return; // exclusão tem seu fluxo
-      var id = item.getAttribute('data-step-id');
-      if (!id) return;
-      window.location.href = '/ofertas/painel/' + encodeURIComponent(offer.id) + '?stepId=' + encodeURIComponent(id);
-    });
-  }
-
-  /* Exclusão com confirmação */
-  var confirmModal = document.getElementById('confirmModal');
-  var btnCloseConfirm = document.getElementById('btnCloseConfirm');
-  var btnCancelConfirm = document.getElementById('btnCancelConfirm');
-  var btnConfirmDelete = document.getElementById('btnConfirmDelete');
-  var confirmText = document.getElementById('confirmText');
-  var toDeleteStepId = null;
-
-  function openConfirm(stepObj){
-    toDeleteStepId = stepObj.id;
-    if (confirmText) confirmText.textContent = 'Tem certeza que deseja excluir a ' + (stepObj.name || ('Etapa ' + stepObj.step_no)) + '? Essa ação não pode ser desfeita.';
-    confirmModal && confirmModal.removeAttribute('hidden');
-    document.addEventListener('keydown', escCloseConfirm);
-  }
-  function closeConfirm(){
-    confirmModal && confirmModal.setAttribute('hidden','');
-    toDeleteStepId = null;
-    document.removeEventListener('keydown', escCloseConfirm);
-  }
-  function escCloseConfirm(e){ if(e.key==='Escape') closeConfirm(); }
-  [btnCloseConfirm, btnCancelConfirm].forEach(function(b){ if(b) b.addEventListener('click', closeConfirm); });
-  if (confirmModal){
-    confirmModal.addEventListener('click', function(e){ if(e.target === confirmModal) closeConfirm(); });
-  }
-
-  // Abrir confirmação ao clicar na lixeira
-  document.querySelectorAll('.tf-step-item .trash').forEach(function(b){
-    b.addEventListener('click', function(e){
-      e.stopPropagation();
-      var sid = b.getAttribute('data-del-step-id');
-      var stepObj = (steps || []).find(function(s){ return s.id === sid; });
-      if (!stepObj) return;
-      openConfirm(stepObj);
-    });
-  });
-
-  // Executa exclusão
-  if (btnConfirmDelete){
-    btnConfirmDelete.addEventListener('click', async function(){
-      if (!toDeleteStepId) return;
-      try {
-        const r = await fetch('/ofertas/' + encodeURIComponent(offer.id) + '/etapas/' + encodeURIComponent(toDeleteStepId) + '/delete', {
-          method:'POST', headers:{'Content-Type':'application/json'}
-        });
-        const js = await r.json();
-        if (!js || !js.ok) throw new Error('delete_failed');
-        closeConfirm();
-        showToast('success','Etapa excluída com sucesso.');
-        // redireciona para o painel da oferta (backend seleciona a etapa correta)
-        setTimeout(function(){
-          window.location.href = '/ofertas/painel/' + encodeURIComponent(offer.id);
-        }, 300);
-      } catch(e){
-        console.error(e);
-        showToast('error','Não foi possível excluir. Tente novamente.');
-      }
-    });
-  }
-
-  /* Modal Nova Etapa (sem duplicar) */
-  var stepModal = document.getElementById('stepModal');
-  var openBtn = document.getElementById('btnCreateStep');
-  var closeBtn = document.getElementById('btnCloseModal');
-  var cancelBtn = document.getElementById('btnCancelStep');
-  var confirmBtn = document.getElementById('btnConfirmStep');
-  var nameInput = document.getElementById('inpStepName');
-
-  function openModal(){
-    if(!stepModal) return;
-    // sugestão de nome (maior step_no + 1)
-    var nextNo = 1;
-    if (Array.isArray(steps) && steps.length){ nextNo = Math.max.apply(null, steps.map(function(s){return Number(s.step_no||0)})) + 1; }
-    if (nameInput) nameInput.value = 'Etapa ' + nextNo;
-    stepModal.removeAttribute('hidden'); nameInput && nameInput.focus();
-    document.addEventListener('keydown', escToClose);
-  }
-  function closeModal(){ if(stepModal){ stepModal.setAttribute('hidden',''); document.removeEventListener('keydown',escToClose); } }
-  function escToClose(e){ if(e.key==='Escape') closeModal(); }
-  if (openBtn) openBtn.addEventListener('click', function(e){
-    // ripple simples
-    const r = openBtn.getBoundingClientRect();
-    const circle = document.createElement('span');
-    const size = Math.max(r.width, r.height);
-    circle.style.position='absolute'; circle.style.width=size+'px'; circle.style.height=size+'px';
-    circle.style.left=(e.clientX - r.left - size/2)+'px';
-    circle.style.top=(e.clientY - r.top - size/2)+'px';
-    circle.style.borderRadius='50%';
-    circle.style.background='rgba(255,204,0,.12)';
-    circle.style.pointerEvents='none';
-    circle.style.transform='scale(0)';
-    circle.style.transition='transform .35s ease, opacity .4s ease';
-    openBtn.appendChild(circle);
-    requestAnimationFrame(()=>{ circle.style.transform='scale(1)'; circle.style.opacity='0'; setTimeout(()=>circle.remove(), 400); });
-    openModal();
-  });
-  if (closeBtn) closeBtn.addEventListener('click', closeModal);
-  if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
-  if (stepModal){ stepModal.addEventListener('click', function(e){ if (e.target === stepModal) closeModal(); }); }
-
-  if (confirmBtn){
-    confirmBtn.addEventListener('click', async function(){
-      var stepName = (nameInput?.value || '').trim();
-      if (!stepName){
-        var nextNo = 1;
-        if (Array.isArray(steps) && steps.length){ nextNo = Math.max.apply(null, steps.map(function(s){return Number(s.step_no||0)})) + 1; }
-        stepName = 'Etapa ' + nextNo;
-      }
-      try {
-        const r = await fetch('/ofertas/' + encodeURIComponent(offer.id) + '/etapas', {
-          method:'POST', headers:{'Content-Type':'application/json'},
-          body: JSON.stringify({ name: stepName, duplicate: false })
-        });
-        const js = await r.json();
-        if (!js || !js.ok) throw new Error('create_failed');
-        showToast('success','Etapa criada.');
-        window.location.href = '/ofertas/painel/' + offer.id + '?stepId=' + encodeURIComponent(js.step.id);
-      } catch(e){
-        console.error(e);
-        showToast('error','Não foi possível criar a etapa.');
-      }
-    });
-  }
-
-  /* Salvar Alterações (usa rota /save existente) */
+  /* Salvar Alterações — glow + toast */
   var saveBtn = document.getElementById('btnSaveAll');
   function setButtonLoading(btn, isLoading){
     if (!btn) return;
@@ -507,26 +294,170 @@
   }
   if (saveBtn){
     saveBtn.addEventListener('click', async function(){
-      var draftSettings = (window.tfDraftSettings && typeof window.tfDraftSettings === 'object')
-        ? window.tfDraftSettings : {};
-
+      var draftSettings = (window.tfDraftSettings && typeof window.tfDraftSettings === 'object') ? window.tfDraftSettings : {};
       try{
         setButtonLoading(saveBtn, true);
-        const r = await fetch('/ofertas/' + encodeURIComponent(offer.id) + '/etapas/' + encodeURIComponent(currentStep.id) + '/save', {
+        const r = await fetch('/ofertas/' + encodeURIComponent(offer.id) + '/etapas/' + encodeURIComponent(currentStep?.id || '' ) + '/save', {
           method:'POST', headers:{'Content-Type':'application/json'},
           body: JSON.stringify({ settings: draftSettings })
         });
         const js = await r.json();
         if (!js || !js.ok) throw new Error('save_failed');
-        // glow curto 3D + toast
         saveBtn.classList.remove('tf-saved-glow'); void saveBtn.offsetWidth; saveBtn.classList.add('tf-saved-glow');
-        showToast('success', 'Etapa salva com sucesso ✅');
+        showToast('success','Etapa salva com sucesso ✅');
       }catch(e){
         console.error(e);
         showToast('error','Não foi possível salvar. Tente novamente.');
       }finally{
         setButtonLoading(saveBtn, false);
       }
+    });
+  }
+
+  /* -------- Mini TELA Etapas -------- */
+  var stepsModal = document.getElementById('stepsManager');
+  var btnManage = document.getElementById('btnManageSteps');
+  var btnCloseSteps = document.getElementById('btnCloseSteps');
+  var btnCancelSteps = document.getElementById('btnCancelSteps');
+  var btnSaveOrder = document.getElementById('btnSaveOrder');
+  var stepsList = document.getElementById('stepsList');
+
+  function openSteps(){ stepsModal && stepsModal.removeAttribute('hidden'); document.addEventListener('keydown', escSteps); }
+  function closeSteps(){ stepsModal && stepsModal.setAttribute('hidden',''); document.removeEventListener('keydown', escSteps); }
+  function escSteps(e){ if(e.key==='Escape') closeSteps(); }
+
+  function ripple(e, el){
+    const r = el.getBoundingClientRect();
+    const circle = document.createElement('span');
+    const size = Math.max(r.width, r.height);
+    circle.style.position='absolute'; circle.style.width=size+'px'; circle.style.height=size+'px';
+    circle.style.left=(e.clientX - r.left - size/2)+'px'; circle.style.top=(e.clientY - r.top - size/2)+'px';
+    circle.style.borderRadius='50%'; circle.style.background='rgba(255,204,0,.12)';
+    circle.style.pointerEvents='none'; circle.style.transform='scale(0)';
+    circle.style.transition='transform .35s ease, opacity .4s ease';
+    el.appendChild(circle);
+    requestAnimationFrame(()=>{ circle.style.transform='scale(1)'; circle.style.opacity='0'; setTimeout(()=>circle.remove(), 400); });
+  }
+
+  if (btnManage) btnManage.addEventListener('click', (e)=>{ ripple(e, btnManage); openSteps(); });
+  if (btnCloseSteps) btnCloseSteps.addEventListener('click', closeSteps);
+  if (btnCancelSteps) btnCancelSteps.addEventListener('click', closeSteps);
+  if (stepsModal){ stepsModal.addEventListener('click', function(e){ if(e.target === stepsModal) closeSteps(); }); }
+
+  // Renomear (inline onBlur ou Enter)
+  if (stepsList){
+    stepsList.addEventListener('keydown', function(e){
+      if (e.key === 'Enter' && e.target.classList.contains('nm')) { e.preventDefault(); e.target.blur(); }
+    });
+    stepsList.addEventListener('blur', async function(e){
+      if (!e.target.classList.contains('nm')) return;
+      const input = e.target;
+      const sid = input.getAttribute('data-id');
+      const locked = input.getAttribute('data-locked') === '1';
+      if (!sid || locked) return;
+      const name = (input.value || '').trim();
+      if (!name) return;
+      try{
+        const r = await fetch('/ofertas/' + encodeURIComponent(offer.id) + '/etapas/' + encodeURIComponent(sid) + '/rename', {
+          method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ name })
+        });
+        const js = await r.json();
+        if (!js || !js.ok) throw new Error('rename_failed');
+        showToast('success','Etapa renomeada.');
+      }catch(err){ console.error(err); showToast('error','Falha ao renomear.'); }
+    }, true);
+
+    // Excluir (com confirmação)
+    stepsList.addEventListener('click', function(e){
+      const btn = e.target.closest('button[data-del]');
+      if (!btn) return;
+      const sid = btn.getAttribute('data-del');
+      const row = btn.closest('.tf-step-row');
+      const nm = row?.querySelector('.nm')?.value || 'Etapa';
+      openConfirm({ id: sid, name: nm });
+    });
+  }
+
+  // Drag & Drop simples
+  let dragRow = null;
+  stepsList?.addEventListener('dragstart', (e)=>{
+    const row = e.target.closest('.tf-step-row'); if (!row) return;
+    dragRow = row;
+    e.dataTransfer.effectAllowed = 'move';
+  });
+  stepsList?.addEventListener('dragover', (e)=>{
+    e.preventDefault();
+    const target = e.target.closest('.tf-step-row'); if (!target || target === dragRow) return;
+    const rect = target.getBoundingClientRect();
+    const after = (e.clientY - rect.top) > rect.height/2;
+    if (after) target.after(dragRow); else target.before(dragRow);
+  });
+  stepsList?.addEventListener('dragend', ()=>{ dragRow = null; });
+
+  // habilitar draggable nas alças
+  document.querySelectorAll('.tf-step-row .drag').forEach(el=>{
+    const row = el.closest('.tf-step-row');
+    row.setAttribute('draggable','true');
+  });
+
+  // Salvar ordem
+  if (btnSaveOrder){
+    btnSaveOrder.addEventListener('click', async function(){
+      const ids = Array.from(document.querySelectorAll('.tf-step-row')).map(r => r.getAttribute('data-id'));
+      try{
+        const r = await fetch('/ofertas/' + encodeURIComponent(offer.id) + '/etapas/reorder', {
+          method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ order: ids })
+        });
+        const js = await r.json();
+        if (!js || !js.ok) throw new Error('reorder_failed');
+        showToast('success','Ordem salva.');
+        // atualiza # numerados localmente
+        document.querySelectorAll('.tf-step-row .no').forEach((el, i)=>{ el.textContent = '#'+(i+1); });
+      }catch(err){ console.error(err); showToast('error','Falha ao salvar ordem.'); }
+    });
+  }
+
+  /* Confirmação de exclusão (reuso) */
+  var confirmModal = document.getElementById('confirmModal');
+  var btnCloseConfirm = document.getElementById('btnCloseConfirm');
+  var btnCancelConfirm = document.getElementById('btnCancelConfirm');
+  var btnConfirmDelete = document.getElementById('btnConfirmDelete');
+  var confirmText = document.getElementById('confirmText');
+  var toDeleteStepId = null;
+
+  function openConfirm(stepObj){
+    toDeleteStepId = stepObj.id;
+    if (confirmText) confirmText.textContent = 'Tem certeza que deseja excluir a "' + (stepObj.name || 'Etapa') + '"? Essa ação não pode ser desfeita.';
+    confirmModal && confirmModal.removeAttribute('hidden');
+    document.addEventListener('keydown', escCloseConfirm);
+  }
+  function closeConfirm(){
+    confirmModal && confirmModal.setAttribute('hidden','');
+    toDeleteStepId = null; document.removeEventListener('keydown', escCloseConfirm);
+  }
+  function escCloseConfirm(e){ if(e.key==='Escape') closeConfirm(); }
+  [btnCloseConfirm, btnCancelConfirm].forEach(function(b){ if(b) b.addEventListener('click', closeConfirm); });
+  if (confirmModal){ confirmModal.addEventListener('click', function(e){ if(e.target === confirmModal) closeConfirm(); }); }
+
+  if (btnConfirmDelete){
+    btnConfirmDelete.addEventListener('click', async function(){
+      if (!toDeleteStepId) return;
+      try{
+        const r = await fetch('/ofertas/' + encodeURIComponent(offer.id) + '/etapas/' + encodeURIComponent(toDeleteStepId) + '/delete', {
+          method:'POST', headers:{'Content-Type':'application/json'}
+        });
+        const js = await r.json();
+        if (!js || !js.ok) throw new Error('delete_failed');
+
+        // remove da lista visual
+        const row = document.querySelector('.tf-step-row[data-id="'+toDeleteStepId+'"]');
+        row && row.remove();
+        // reindexar # localmente
+        document.querySelectorAll('.tf-step-row .no').forEach((el, i)=>{ el.textContent = '#'+(i+1); });
+
+        closeConfirm();
+        showToast('success','Etapa excluída com sucesso.');
+      }catch(err){ console.error(err); showToast('error','Não foi possível excluir.'); }
     });
   }
 })();
