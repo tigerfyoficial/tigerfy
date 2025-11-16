@@ -1,99 +1,95 @@
 <%- include('partials/visual_hottrack') %>
 
-<!-- WRAPPER PARA CENTRALIZAR O BLOCO (área à direita da sidebar) -->
-<div class="offer-panel-container">
-  <div class="tf-offer-panel">
-    <!-- Breadcrumb -->
-    <nav class="tf-breadcrumb" id="tfBreadcrumb"></nav>
+<div class="tf-offer-panel">
+  <!-- Breadcrumb -->
+  <nav class="tf-breadcrumb" id="tfBreadcrumb"></nav>
 
-    <!-- Header (mantido) -->
-    <header class="tf-header">
-      <div class="tf-header-left">
-        <h1 class="tf-offer-title" id="offerTitle"><%= offer?.name || 'Nome da Oferta' %></h1>
-      </div>
-      <div class="tf-header-right">
-        <button type="button" class="tf-btn tf-btn-primary" id="btnSaveAll">Salvar Alterações</button>
-      </div>
-    </header>
-
-    <!-- ====================== WRAP CENTRAL DAS PILLS (proporção antiga) ====================== -->
-    <div class="tf-pills-wrap">
-      <!-- PILLS PRINCIPAIS (Etapas integrado na sequência) -->
-      <div class="tf-tabs tf-tabs-main">
-        <button class="tab active" data-tab="principal">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="2"></rect><rect x="14" y="3" width="7" height="7" rx="2"></rect><rect x="14" y="14" width="7" height="7" rx="2"></rect><rect x="3" y="14" width="7" height="7" rx="2"></rect></svg>
-          Principal
-        </button>
-
-        <button class="tab" data-tab="contingencia">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"></path></svg>
-          Contingência de Bots
-        </button>
-
-        <button class="tab" data-tab="tracking">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15A1.65 1.65 0 0 0 21 13.35 8 8 0 0 0 12 4a8 8 0 0 0-8 9.35A1.65 1.65 0 0 0 5.6 15"></path></svg>
-          Traqueamento
-        </button>
-
-        <button class="tab" data-tab="relatorios">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"></path><path d="M19 17V7"></path><path d="M13 17V3"></path><path d="M7 17v-7"></path></svg>
-          Fluxo de Relatórios
-        </button>
-
-        <!-- PILL: Etapas (abre modal central) -->
-        <button class="tab" id="tabEtapas" data-tab="etapas">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-               stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 3l9 4.5-9 4.5L3 7.5 12 3z"></path>
-            <path d="M21 12l-9 4.5L3 12"></path>
-            <path d="M21 16.5l-9 4.5-9-4.5"></path>
-          </svg>
-          Etapas
-        </button>
-      </div>
-
-      <!-- SUB-ABAS DA PRINCIPAL (ordem garantida: PIX no lugar de Disparos; Disparos no final) -->
-      <div class="tf-subtabs" id="subtabs-principal">
-        <button class="subtab active" data-subtab="front">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h8"></path><path d="M17 8h.01"></path><path d="M19 4v6h6"></path></svg>
-          Front
-        </button>
-
-        <button class="subtab" data-subtab="orderbump" disabled>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6h15l-1.5 9h-12z"></path><path d="M6 6l-1-3H2"></path><circle cx="9" cy="20" r="1"></circle><circle cx="18" cy="20" r="1"></circle><path d="M12 10h4"></path></svg>
-          OrderBump (em breve)
-        </button>
-
-        <button class="subtab" data-subtab="upsell" disabled>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"></path></svg>
-          Upsell (em breve)
-        </button>
-
-        <button class="subtab" data-subtab="downsell" disabled>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 7l-6 6-4-4-8 8"></path></svg>
-          Downsell (em breve)
-        </button>
-
-        <!-- Mensagem PIX na posição de Disparos -->
-        <button class="subtab" data-subtab="pix">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="14" width="7" height="7" rx="1"></rect><rect x="3" y="14" width="7" height="7" rx="1"></rect></svg>
-          Mensagem PIX
-        </button>
-
-        <!-- Disparos (em breve) no final -->
-        <button class="subtab" data-subtab="disparos" disabled>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"></path><path d="M22 2l-7 20-4-9-9-4 20-7z"></path></svg>
-          Disparos (em breve)
-        </button>
-      </div>
+  <!-- Header (mantido) -->
+  <header class="tf-header">
+    <div class="tf-header-left">
+      <h1 class="tf-offer-title" id="offerTitle"><%= offer?.name || 'Nome da Oferta' %></h1>
     </div>
-    <!-- ====================== /WRAP CENTRAL DAS PILLS ====================== -->
+    <div class="tf-header-right">
+      <button type="button" class="tf-btn tf-btn-primary" id="btnSaveAll">Salvar Alterações</button>
+    </div>
+  </header>
 
-    <!-- Conteúdo central (mais largo/centralizado) -->
-    <section class="tf-content-placeholder"></section>
+  <!-- ====================== WRAP CENTRAL DAS PILLS (proporção antiga) ====================== -->
+  <div class="tf-pills-wrap">
+    <!-- PILLS PRINCIPAIS (Etapas integrado na sequência) -->
+    <div class="tf-tabs tf-tabs-main">
+      <button class="tab active" data-tab="principal">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="2"></rect><rect x="14" y="3" width="7" height="7" rx="2"></rect><rect x="14" y="14" width="7" height="7" rx="2"></rect><rect x="3" y="14" width="7" height="7" rx="2"></rect></svg>
+        Principal
+      </button>
+
+      <button class="tab" data-tab="contingencia">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"></path></svg>
+        Contingência de Bots
+      </button>
+
+      <button class="tab" data-tab="tracking">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15A1.65 1.65 0 0 0 21 13.35 8 8 0 0 0 12 4a8 8 0 0 0-8 9.35A1.65 1.65 0 0 0 5.6 15"></path></svg>
+        Traqueamento
+      </button>
+
+      <button class="tab" data-tab="relatorios">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"></path><path d="M19 17V7"></path><path d="M13 17V3"></path><path d="M7 17v-7"></path></svg>
+        Fluxo de Relatórios
+      </button>
+
+      <!-- PILL: Etapas (abre modal central) -->
+      <button class="tab" id="tabEtapas" data-tab="etapas">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 3l9 4.5-9 4.5L3 7.5 12 3z"></path>
+          <path d="M21 12l-9 4.5L3 12"></path>
+          <path d="M21 16.5l-9 4.5-9-4.5"></path>
+        </svg>
+        Etapas
+      </button>
+    </div>
+
+    <!-- SUB-ABAS DA PRINCIPAL (ordem garantida: PIX no lugar de Disparos; Disparos no final) -->
+    <div class="tf-subtabs" id="subtabs-principal">
+      <button class="subtab active" data-subtab="front">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h8"></path><path d="M17 8h.01"></path><path d="M19 4v6h6"></path></svg>
+        Front
+      </button>
+
+      <button class="subtab" data-subtab="orderbump" disabled>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6h15l-1.5 9h-12z"></path><path d="M6 6l-1-3H2"></path><circle cx="9" cy="20" r="1"></circle><circle cx="18" cy="20" r="1"></circle><path d="M12 10h4"></path></svg>
+        OrderBump (em breve)
+      </button>
+
+      <button class="subtab" data-subtab="upsell" disabled>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"></path></svg>
+        Upsell (em breve)
+      </button>
+
+      <button class="subtab" data-subtab="downsell" disabled>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 7l-6 6-4-4-8 8"></path></svg>
+        Downsell (em breve)
+      </button>
+
+      <!-- Mensagem PIX na posição de Disparos -->
+      <button class="subtab" data-subtab="pix">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="14" width="7" height="7" rx="1"></rect><rect x="3" y="14" width="7" height="7" rx="1"></rect></svg>
+        Mensagem PIX
+      </button>
+
+      <!-- Disparos (em breve) no final -->
+      <button class="subtab" data-subtab="disparos" disabled>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"></path><path d="M22 2l-7 20-4-9-9-4 20-7z"></path></svg>
+        Disparos (em breve)
+      </button>
+    </div>
   </div>
+  <!-- ====================== /WRAP CENTRAL DAS PILLS ====================== -->
+
+  <!-- Conteúdo central (mais largo/centralizado) -->
+  <section class="tf-content-placeholder"></section>
 </div>
-<!-- /offer-panel-container -->
 
 <!-- MODAL CENTRAL ÚNICO (blur) PARA SELECIONAR/GERENCIAR ETAPAS -->
 <div class="tf-steps-overlay" id="stepsUnifiedModal" hidden>
@@ -132,19 +128,6 @@
     /* largura “antiga” das pills (narrow) */
     --pills-width: 980px;
   }
-
-  /* ===== Centralização da área à direita da sidebar ===== */
-  .offer-panel-container{
-    width:100%;
-    max-width:1200px;            /* limite do bloco */
-    margin-left:auto;
-    margin-right:auto;           /* centraliza na área útil */
-  }
-  /* Override sutil apenas dentro do wrapper (mantém tema e proporções) */
-  .offer-panel-container .tf-offer-panel{
-    padding:60px 80px 100px 80px; /* esquerda = direita para não “puxar” pro lado */
-  }
-
   .tf-offer-panel{ color:var(--text); padding:60px 80px 100px 130px; max-width:1200px; margin:0 auto; }
   .tf-breadcrumb{ display:flex; align-items:center; gap:8px; color:var(--muted); font-size:.9rem; margin-bottom:10px; }
   .tf-breadcrumb a{ color:var(--muted); text-decoration:none; }
@@ -156,7 +139,7 @@
   .tf-btn{ appearance:none; border:1px solid var(--border); background:var(--panel-strong); color:#eee; padding:9px 14px; border-radius:10px; cursor:pointer; font-weight:600; box-shadow:var(--shadow); transition:.2s ease; }
   .tf-btn:hover{ border-color:rgba(255,255,255,0.2); background:rgba(255,255,255,0.08); }
   .tf-btn-small{ padding:7px 10px; font-size:.85rem; border-radius:999px; }
-  .tf-btn-primary{ background:linear-gradient(90deg,var(--accent),var(--accent-dim)); color:#171300; border:1px solid rgba(255,204,0,0.35); box-shadow:0 6px 22px rgba(255,204,0,0.25); }
+  .tf-btn-primary{ background:linear-gradient(90deg,var(--accent),var(--accent-dim)); color: #171300; border:1px solid rgba(255,204,0,0.35); box-shadow:0 6px 22px rgba(255,204,0,0.25); }
   .tf-btn-ghost{ background:transparent; border-color:transparent; box-shadow:none; }
 
   /* ===== Proporção antiga: pills mais estreitas que o conteúdo, centralizadas ===== */
@@ -275,7 +258,6 @@
   .tf-pulse-once { animation: tfPulseGlow .5s ease-out 1; }
 
   @media (max-width: 980px){
-    .offer-panel-container{ padding: 0 12px; }
     .tf-offer-panel{ padding:40px 18px 80px 18px; }
     .tf-pills-wrap{ max-width: calc(100% - 24px); }
   }
