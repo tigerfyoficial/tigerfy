@@ -1,6 +1,6 @@
 <!-- =========================================
      TIGERFY — MODAL CENTRAL: GERENCIAR ETAPAS
-     (colar perto do </body>)
+     (cole este bloco completo antes de </body>)
 ========================================= -->
 <div class="tf-steps2-overlay" id="tfSteps2Modal" aria-hidden="true" hidden>
   <div class="tf-steps2-dialog" role="dialog" aria-modal="true" aria-labelledby="tfSteps2Title">
@@ -47,19 +47,18 @@
 </template>
 
 <style>
-  /* ===== FAIL-SAFE: overlay só aparece quando aria-hidden="false" ===== */
+  /* ================== OVERLAY SAFE ==================
+     Nunca ocupa a tela se aria-hidden="true".
+     Togle por display para não interferir no layout. */
+  .tf-steps2-overlay[hidden]{ display:none !important; }
   .tf-steps2-overlay{
     position:fixed; inset:0; z-index:3000;
-    display:flex; align-items:center; justify-content:center;
+    display:none; /* fechado por padrão */
+    align-items:center; justify-content:center;
     background: rgba(0,0,0,.48);
     backdrop-filter: blur(8px);
-    /* estado inicial invisível e sem eventos */
-    visibility:hidden; opacity:0; pointer-events:none;
-    transition: opacity .16s ease, visibility .16s ease;
   }
-  .tf-steps2-overlay[aria-hidden="false"]{
-    visibility:visible; opacity:1; pointer-events:auto;
-  }
+  .tf-steps2-overlay[aria-hidden="false"]{ display:flex; }
 
   /* ===== Dialog ===== */
   .tf-steps2-dialog{
@@ -231,7 +230,7 @@
 
 <script>
 (function(){
-  /* ===== Contexto (sem quebrar nada do painel) ===== */
+  /* ===== Contexto ===== */
   const Ctx = (window.__TigerFyCtx && typeof window.__TigerFyCtx === 'object') ? window.__TigerFyCtx : {};
   let OFFER   = Ctx.offer || window.offer || null;
   let STEPS   = (Ctx.steps || window.steps || []);
@@ -244,6 +243,13 @@
   const btnSave   = document.getElementById('tfSteps2Save');
   const btnAdd    = document.getElementById('tfSteps2Add');
   const listEl    = document.getElementById('tfSteps2List');
+
+  /* ======== FIX CRÍTICO =========
+     Se você colou o modal dentro de <main>, movemos para <body>
+     para impedir qualquer efeito colateral de layout. */
+  if (modal && modal.parentElement !== document.body) {
+    document.body.appendChild(modal);
+  }
 
   /* Garantia: overlay fechado no boot */
   if (modal) { modal.setAttribute('aria-hidden','true'); modal.hidden = true; }
@@ -260,7 +266,7 @@
     close: closeModal
   };
 
-  /* Gatilhos possíveis já existentes no painel (não altera layout) */
+  /* Gatilhos existentes no painel (não muda layout) */
   document.querySelectorAll('#tabEtapas, #btnEtapas, [data-open-steps]').forEach(btn=>{
     btn.addEventListener('click', (e)=>{ e.preventDefault(); window.TigerFyEtapas.open(); });
   });
@@ -270,8 +276,16 @@
     if (lock){ document.documentElement.style.overflow='hidden'; document.body.style.overflow='hidden'; }
     else { document.documentElement.style.overflow=''; document.body.style.overflow=''; }
   }
-  function openModal(){ modal.hidden=false; modal.setAttribute('aria-hidden','false'); bodyLock(true); }
-  function closeModal(){ modal.setAttribute('aria-hidden','true'); modal.hidden=true; bodyLock(false); }
+  function openModal(){
+    modal.hidden=false;
+    modal.setAttribute('aria-hidden','false'); /* display:flex via CSS */
+    bodyLock(true);
+  }
+  function closeModal(){
+    modal.setAttribute('aria-hidden','true');
+    modal.hidden=true; /* display:none via CSS */
+    bodyLock(false);
+  }
 
   if (btnClose)  btnClose.addEventListener('click', closeModal);
   if (btnCancel) btnCancel.addEventListener('click', closeModal);
@@ -338,7 +352,7 @@
     actions.className = 'tf-steps2-actions';
     const btnDel = document.createElement('button');
     btnDel.type='button'; btnDel.className='tf-btn tf-steps2-del'; btnDel.textContent='Excluir';
-    if ((opts.stepNo === 1 || opts.stepNo === '1') && opts.id) btnDel.disabled = true; /* opcional: proteger etapa 1 persistida */
+    if ((opts.stepNo === 1 || opts.stepNo === '1') && opts.id) btnDel.disabled = true; /* opcional: proteger Etapa 1 persistida */
     btnDel.addEventListener('click', ()=> askDelete(li, name.value || 'Etapa'));
 
     actions.appendChild(btnDel);
@@ -404,16 +418,14 @@
     else { btnSave.disabled = false; btnSave.textContent = btnSave.dataset._txt || 'Salvar mudanças'; }
   }
 
-  /* Endpoints preferenciais (com fallbacks para não quebrar) */
+  /* Endpoints preferenciais (com fallbacks) */
   async function apiBatchCreate(names){
-    // preferencial: batch
     const r = await fetch(`/ofertas/${encodeURIComponent(OFFER.id)}/etapas/batch`,{
       method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ names })
     });
     if (r.ok){
       const js = await r.json(); if (js && js.ok) return js.steps || [];
     }
-    // fallback: criar 1 a 1 em /ofertas/:id/etapas
     const created = [];
     for (const nm of names){
       const rr = await fetch(`/ofertas/${encodeURIComponent(OFFER.id)}/etapas`,{
@@ -425,33 +437,27 @@
     }
     return created;
   }
-
   async function apiRename(id, name){
-    // preferencial: /rename
     let r = await fetch(`/ofertas/${encodeURIComponent(OFFER.id)}/etapas/${encodeURIComponent(id)}/rename`,{
       method:'PATCH', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ name })
     });
     if (r.ok){ const js = await r.json(); if (js && js.ok) return js.step || null; }
-    // fallback: /save
     r = await fetch(`/ofertas/${encodeURIComponent(OFFER.id)}/etapas/${encodeURIComponent(id)}/save`,{
       method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ name })
     });
     const js = await r.json(); if (js && js.ok) return js.step || null;
     throw new Error('rename_failed');
   }
-
   async function apiDelete(id){
     const r = await fetch(`/ofertas/${encodeURIComponent(OFFER.id)}/etapas/${encodeURIComponent(id)}`,{ method:'DELETE' });
     if (r.ok){ const js = await r.json(); if (js && js.ok) return true; }
     throw new Error('delete_failed');
   }
-
   async function apiReorder(orderIds){
     const r = await fetch(`/ofertas/${encodeURIComponent(OFFER.id)}/etapas/reorder`,{
       method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ order: orderIds })
     });
     if (r.ok){ const js = await r.json(); if (js && js.ok) return true; }
-    // se seu backend ainda não tiver reorder, não quebrar o fluxo:
     console.warn('[steps] reorder endpoint indisponível — pulando reordenação.');
     return true;
   }
@@ -461,7 +467,6 @@
       try{
         setSaving(true);
 
-        // 1) Coleta
         const rows = Array.from(listEl.children);
         const newNames  = [];
         const renameOps = [];
@@ -486,9 +491,8 @@
           if (!isNew && !toDel && name && name !== old){ renameOps.push({ id, name }); }
         }
 
-        // 2) Criar novos
         if (newNames.length){
-          const created = await apiBatchCreate(newNames); // [{id,name,stepNo}]
+          const created = await apiBatchCreate(newNames);
           let idx=0;
           for (const li of rows){
             if (!li.dataset.id && li.dataset.toDelete !== '1'){
@@ -504,20 +508,15 @@
           }
         }
 
-        // 3) Renomear
         for (const op of renameOps){ await apiRename(op.id, op.name); }
-
-        // 4) Deletar
         for (const id of deleteIds){ await apiDelete(id); }
 
-        // 5) Reordenar (ids remanescentes)
         const orderIds = Array.from(listEl.children)
           .filter(li => li.dataset.toDelete !== '1')
           .map(li => li.dataset.id)
           .filter(Boolean);
         if (orderIds.length){ await apiReorder(orderIds); }
 
-        // 6) Feedback + voltar ao painel/etapa
         btnSave.classList.add('tf-steps2-saved');
         setTimeout(()=> btnSave.classList.remove('tf-steps2-saved'), 600);
         showToast('Etapas salvas com sucesso.');
