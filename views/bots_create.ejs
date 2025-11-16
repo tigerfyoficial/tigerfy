@@ -23,7 +23,7 @@
           />
         </div>
 
-        <!-- Tipo de Bot (sem mudar comportamento/visual interno) -->
+        <!-- Tipo de Bot (visual/comportamento intactos) -->
         <div class="field-group">
           <label>Tipo de Bot</label>
           <p class="small-helper">Escolha o estilo de automação que essa oferta vai usar.</p>
@@ -48,8 +48,7 @@
           </div>
         </div>
 
-        <!-- (Se sua versão atual ainda exibe Traqueamento, mantenha aqui.
-             Caso já esteja oculto, apenas deixe o hidden padrão:) -->
+        <!-- (Tracking oculto/sem mudanças) -->
         <input type="hidden" name="trackingType" id="trackingTypeInput" value="fb_pixel"/>
 
         <!-- Ações -->
@@ -65,23 +64,22 @@
 <style>
   /* ===== Área da página (respeita sidebar; NÃO altera o tema) ===== */
   .tiger-offer-create{
-    padding:60px 80px 100px 130px;   /* igual às outras telas para manter consistência */
+    padding:60px 80px 100px 130px;   /* igual às demais páginas do painel */
     max-width:1200px;
-    margin:0 auto;
+    margin:0 auto;                   /* centraliza a área útil (descontando a sidebar pelo padding-left) */
     color:#fff;
   }
 
-  /* ===== NOVO: wrapper que centraliza o card na área útil ===== */
+  /* ===== Centralização perfeita do card ===== */
   .offer-create-wrapper{
-    /* Centraliza vertical e horizontalmente sem “colar” no topo */
-    min-height: calc(100vh - 120px); /* ajuste fino do “respiro” do topo */
+    min-height: calc(100vh - 120px); /* respiro superior semelhante ao modal de etapas */
     display:flex;
     align-items:center;              /* centro vertical */
     justify-content:center;          /* centro horizontal */
     padding:24px 0;                  /* leve respiro extra */
   }
 
-  /* Mantém o mesmo max-width do card e centraliza o conjunto header+form */
+  /* Mantém largura saudável e centraliza header+form em conjunto */
   .offer-create-inner{
     max-width:880px;
     width:100%;
@@ -91,7 +89,7 @@
     gap:24px;
   }
 
-  /* ===== Cabeçalho (sem mudanças visuais) ===== */
+  /* ===== Cabeçalho (inalterado) ===== */
   .offer-create-header h1{
     font-size:2.1rem;
     color:#ffcc00;
@@ -180,7 +178,7 @@
   .pill.active .pill-title{ color:#111; }
   .pill.active .pill-sub{ color:#2b2100; }
 
-  /* ===== Ações (sem mudanças) ===== */
+  /* ===== Ações (inalteradas) ===== */
   .actions{ margin-top:24px; display:flex; justify-content:flex-end; gap:12px; }
   .btn-primary, .btn-secondary{
     border:none; border-radius:10px; padding:10px 22px;
@@ -200,8 +198,8 @@
   @media (max-width: 980px){
     .tiger-offer-create{ padding:50px 18px 80px 18px; }
     .offer-create-wrapper{
-      min-height:auto;              /* evita “espremer” em telas menores */
-      align-items:flex-start;       /* começa um pouco mais alto no mobile */
+      min-height:auto;              /* evita “espremer” no mobile */
+      align-items:flex-start;       /* começa um pouco mais alto */
       padding-top:12px;
     }
     .offer-create-inner{ max-width:100%; }
@@ -210,7 +208,7 @@
 </style>
 
 <script>
-  // Mantido: lógica das pills para o tipo de bot (não altera visual interno)
+  // Mantido: lógica das pills para o tipo de bot (sem mudanças no visual)
   document.addEventListener('DOMContentLoaded', () => {
     function setupPillGroup(groupName, hiddenInputId){
       const group = document.querySelector(`.pill-row[data-group="${groupName}"]`);
