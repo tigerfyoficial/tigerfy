@@ -1,5 +1,5 @@
-<!-- ============ MODAL CENTRAL: GERENCIAR ETAPAS DA OFERTA (TigerFy Premium) ============ -->
-<div id="tfSteps2Modal" class="tf-steps2-overlay" aria-hidden="true">
+<!-- ============ MODAL CENTRAL: GERENCIAR ETAPAS DA OFERTA ============ -->
+<div class="tf-steps2-overlay" id="tfSteps2Modal" hidden aria-hidden="true">
   <div class="tf-steps2-dialog" role="dialog" aria-modal="true" aria-labelledby="tfSteps2Title">
     <header class="tf-steps2-head">
       <div>
@@ -27,7 +27,7 @@
   </div>
 </div>
 
-<!-- ============ MINI CONFIRM (sobre o mesmo overlay) ============ -->
+<!-- ============ MINI CONFIRM (usa o mesmo overlay) ============ -->
 <template id="tfSteps2ConfirmTpl">
   <div class="tf-steps2-confirm">
     <div class="tf-steps2-confirm-card">
@@ -42,24 +42,26 @@
 </template>
 
 <style>
-  /* ======== Isolado – não toca no tema global ======== */
-  /* Overlay fica invisível por padrão. Só mostra quando aria-hidden="false". */
-  .tf-steps2-overlay{ position:fixed; inset:0; z-index:3000; display:none; }
-  .tf-steps2-overlay[aria-hidden="false"]{
+  /* ======== PALETA/BASE LOCAL (não interfere no tema global) ======== */
+  .tf-steps2-overlay[hidden]{ display:none !important; }
+  .tf-steps2-overlay{
+    position:fixed; inset:0; z-index:3000;
     display:flex; align-items:center; justify-content:center;
-    background: rgba(0,0,0,.48); backdrop-filter: blur(8px);
+    background: rgba(0,0,0,.48);
+    backdrop-filter: blur(8px);
   }
-
   .tf-steps2-dialog{
     width:min(880px, calc(100vw - 32px));
     max-height:min(78vh, 760px);
-    display:flex; flex-direction:column; overflow:hidden;
+    display:flex; flex-direction:column;
     background:
       radial-gradient(1200px 280px at 50% -180px, rgba(255,204,0,0.10), transparent),
       linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.05));
     border:1px solid rgba(255,255,255,0.14);
     border-radius:18px;
-    box-shadow: 0 26px 70px rgba(0,0,0,0.55), inset 0 0 0 1px rgba(255,255,255,0.06);
+    box-shadow:
+      0 26px 70px rgba(0,0,0,0.55),
+      inset 0 0 0 1px rgba(255,255,255,0.06);
     transform: translateY(8px) scale(.985);
     opacity:.98;
     animation: tfSteps2In .18s ease-out forwards;
@@ -71,10 +73,12 @@
     padding:16px 16px 8px 16px;
   }
   .tf-steps2-head h3{ margin:0; font-size:1.1rem; letter-spacing:.2px; }
-  .tf-steps2-sub{ margin:6px 0 0; color:#d8d8d8; font-size:.92rem; }
+  .tf-steps2-sub{ margin:6px 0 0 0; color:#d8d8d8; font-size:.92rem; }
   .tf-steps2-close{
-    appearance:none; cursor:pointer; width:36px; height:36px; border-radius:12px;
-    border:1px solid rgba(255,255,255,0.18); background: rgba(255,255,255,0.06); color:#eee;
+    appearance:none; cursor:pointer;
+    width:36px; height:36px; border-radius:12px;
+    border:1px solid rgba(255,255,255,0.18);
+    background: rgba(255,255,255,0.06); color:#eee;
     transition:.16s ease;
   }
   .tf-steps2-close:hover{ background: rgba(255,255,255,0.10); }
@@ -84,12 +88,12 @@
     padding:6px 16px 10px 16px; border-bottom:1px solid rgba(255,255,255,0.12);
   }
   .tf-steps2-left{ display:flex; align-items:center; gap:8px; }
-
   .tf-btn{
     appearance:none; border:1px solid rgba(255,255,255,0.14);
     background: rgba(255,255,255,0.06); color:#eee;
     padding:9px 14px; border-radius:12px; font-weight:700; cursor:pointer;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.35); transition:.16s ease;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+    transition:.16s ease;
   }
   .tf-btn:hover{ background: rgba(255,255,255,0.10); }
   .tf-btn-small{ padding:7px 12px; border-radius:999px; font-size:.9rem; }
@@ -139,7 +143,9 @@
   .tf-steps2-del:hover{ filter: brightness(1.06); }
 
   /* Radio premium */
-  .tf-steps2-radio{ display:inline-flex; align-items:center; gap:8px; justify-content:flex-end; }
+  .tf-steps2-radio{
+    display:inline-flex; align-items:center; gap:8px; justify-content:flex-end;
+  }
   .tf-steps2-radio input[type="radio"]{
     appearance:none; width:18px; height:18px; border-radius:999px;
     border:1px solid rgba(255,255,255,0.24); background:rgba(255,255,255,0.06);
@@ -156,13 +162,14 @@
   }
   .tf-steps2-radio span{ color:#eaeaea; font-weight:800; letter-spacing:.2px; }
 
-  /* Rodapé */
+  .tf-steps2-actions,
+  .tf-steps2-ghost{ /* footer */ }
   .tf-steps2-actions{
     display:flex; justify-content:flex-end; align-items:center; gap:8px;
-    padding:12px 14px 16px; border-top:1px solid rgba(255,255,255,0.12);
+    padding:12px 14px 16px 14px; border-top:1px solid rgba(255,255,255,0.12);
   }
 
-  /* Confirm mini modal */
+  /* Confirm mini modal (montado dentro do overlay) */
   .tf-steps2-confirm{
     position:fixed; inset:0; display:flex; align-items:center; justify-content:center;
     background: rgba(0,0,0,.35); backdrop-filter: blur(2px); z-index:3100;
@@ -174,8 +181,8 @@
     box-shadow: 0 20px 50px rgba(0,0,0,0.6);
     animation: tfSteps2In .18s ease-out forwards;
   }
-  .tf-steps2-confirm-card h4{ margin:0 0 8px; }
-  .tf-steps2-confirm-text{ margin:0 0 12px; color:#e8e8e8; }
+  .tf-steps2-confirm-card h4{ margin:0 0 8px 0; }
+  .tf-steps2-confirm-text{ margin:0 0 12px 0; color:#e8e8e8; }
   .tf-steps2-confirm-actions{ display:flex; justify-content:flex-end; gap:8px; }
 
   /* Toast */
@@ -204,12 +211,10 @@
 
 <script>
 (function(){
-  "use strict";
-
-  // ======== Contexto vindo do painel (não altera o layout) ========
+  /* ===== Boot de contexto ===== */
   const Ctx = (window.__TigerFyCtx && typeof window.__TigerFyCtx === 'object') ? window.__TigerFyCtx : {};
-  let OFFER   = Ctx.offer || window.offer || null;
-  let STEPS   = (Ctx.steps || window.steps || []);
+  let OFFER = Ctx.offer || window.offer || null;
+  let STEPS = (Ctx.steps || window.steps || []);
   let CURRENT = Ctx.currentStep || window.currentStep || null;
 
   const modal      = document.getElementById('tfSteps2Modal');
@@ -219,15 +224,7 @@
   const btnAdd     = document.getElementById('tfSteps2Add');
   const listEl     = document.getElementById('tfSteps2List');
 
-  // Segurança: overlay SEMPRE inicia fechado (evita qualquer interferência visual)
-  document.addEventListener('DOMContentLoaded', function(){
-    if (!modal) return;
-    modal.setAttribute('aria-hidden','true');
-    document.documentElement.style.overflow = '';
-    document.body.style.overflow = '';
-  });
-
-  // API pública p/ botão Etapas já existente
+  /* ===== Public API ===== */
   window.TigerFyEtapas = {
     open(ctxOffer, ctxSteps, ctxCurrent){
       OFFER   = ctxOffer   || OFFER;
@@ -239,7 +236,7 @@
     close: closeModal
   };
 
-  // Abre via #tabEtapas (pill já existente)
+  /* Abre via botão existente (se houver) */
   const openBtn = document.getElementById('tabEtapas');
   if (openBtn){
     openBtn.addEventListener('click', function(e){
@@ -248,18 +245,17 @@
     });
   }
 
-  // ======== Helpers ========
+  /* ===== Helpers ===== */
   function bodyLock(lock){
     if (lock){ document.documentElement.style.overflow='hidden'; document.body.style.overflow='hidden'; }
     else { document.documentElement.style.overflow=''; document.body.style.overflow=''; }
   }
-  function openModal(){ if(!modal) return; modal.setAttribute('aria-hidden','false'); bodyLock(true); }
-  function closeModal(){ if(!modal) return; modal.setAttribute('aria-hidden','true'); bodyLock(false); }
+  function openModal(){ modal.hidden=false; modal.setAttribute('aria-hidden','false'); bodyLock(true); }
+  function closeModal(){ modal.hidden=true; modal.setAttribute('aria-hidden','true'); bodyLock(false); }
 
   if (btnClose)  btnClose.addEventListener('click', closeModal);
   if (btnCancel) btnCancel.addEventListener('click', closeModal);
-  modal && modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
-  document.addEventListener('keydown', (e)=>{ if (e.key === 'Escape' && modal && modal.getAttribute('aria-hidden') === 'false') closeModal(); });
+  modal?.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
 
   function showToast(msg, isErr){
     const t = document.createElement('div');
@@ -270,19 +266,16 @@
     setTimeout(()=> { t.classList.remove('show'); setTimeout(()=> t.remove(), 160); }, 2300);
   }
 
-  // ======== Render ========
+  function escapeHtml(s){ return (s||'').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+  /* ===== Render ===== */
   function renderList(){
     listEl.innerHTML = '';
-    const ordered = (STEPS || []).slice().sort((a,b)=> (a.stepNo||a.step_no||0) - (b.stepNo||b.step_no||0));
-    ordered.forEach(s => addRow({
-      id: s.id,
-      name: s.name,
-      stepNo: s.stepNo || s.step_no,
-      isCurrent: CURRENT && CURRENT.id===s.id
-    }));
+    const ordered = (STEPS || []).slice().sort((a,b)=> (a.stepNo||0) - (b.stepNo||0));
+    ordered.forEach(s => addRow({ id:s.id, name:s.name, stepNo:s.stepNo, isCurrent: CURRENT && CURRENT.id===s.id }));
   }
 
-  // Drag & Drop
+  /* Drag & Drop */
   let dragging = null;
   function enableDnD(li){
     li.draggable = true;
@@ -299,22 +292,10 @@
     });
   }
 
-  function setRadio(li){
-    const rb = li.querySelector('input[type="radio"]');
-    if (rb){ rb.checked = true; }
-  }
-
   function addRow(opts){
     const li = document.createElement('li');
     li.className = 'tf-steps2-item';
     if (opts.id) li.dataset.id = opts.id; else li.dataset.new = '1';
-
-    // selecionar clicando na linha (sem atrapalhar drag/edição)
-    li.addEventListener('click', (e)=>{
-      const tag = (e.target.tagName||'').toLowerCase();
-      if (dragging || tag === 'input' || tag === 'button' || e.target.closest('.tf-steps2-handle')) return;
-      setRadio(li);
-    });
 
     const colIndex = document.createElement('div');
     colIndex.className = 'tf-steps2-index';
@@ -329,14 +310,13 @@
     name.type='text'; name.className='tf-steps2-name';
     name.placeholder='Nova etapa'; name.value = opts.name || '';
     name.dataset.oldName = opts.name || '';
-    name.addEventListener('keydown', (e)=>{ if (e.key === 'Enter') setRadio(li); });
 
     const actions = document.createElement('div');
     actions.className = 'tf-steps2-actions';
     const btnDel = document.createElement('button');
     btnDel.type='button'; btnDel.className='tf-btn tf-steps2-del'; btnDel.textContent='Excluir';
-    if ((opts.stepNo === 1 || opts.stepNo === '1') && opts.id) btnDel.disabled = true; // opcional: proteger Etapa 1 persistida
-    btnDel.addEventListener('click', (ev)=>{ ev.stopPropagation(); askDelete(li, name.value || 'Etapa'); });
+    if (opts.stepNo === 1 && opts.id) btnDel.disabled = true; // opcional: proteger primeira persistida
+    btnDel.addEventListener('click', ()=> askDelete(li, name.value || 'Etapa'));
 
     actions.appendChild(btnDel);
 
@@ -371,7 +351,7 @@
     });
   }
 
-  // ======== Confirm Delete ========
+  /* ===== Confirm Delete ===== */
   function askDelete(li, displayName){
     const tpl = document.getElementById('tfSteps2ConfirmTpl');
     const frag = tpl.content.cloneNode(true);
@@ -386,6 +366,7 @@
     layer.addEventListener('click', (e)=>{ if (e.target===layer) close(); });
 
     bDelete.addEventListener('click', ()=>{
+      // marca para excluir (aplicado no salvar)
       li.dataset.toDelete = '1';
       li.style.opacity = .35;
       li.style.filter = 'grayscale(30%)';
@@ -395,7 +376,7 @@
     modal.appendChild(layer);
   }
 
-  // ======== Persistência ========
+  /* ===== Salvar Mudanças ===== */
   function setSaving(on){
     if (!btnSave) return;
     if (on){ btnSave.disabled = true; if(!btnSave.dataset._txt) btnSave.dataset._txt = btnSave.textContent; btnSave.textContent='Salvando…'; }
@@ -435,59 +416,70 @@
       try{
         setSaving(true);
 
+        // 1) Coleta: novos, renomes, deletions e seleção atual
         const rows = Array.from(listEl.children);
         const newNames = [];
         const renameOps = [];
         const deleteIds = [];
         let selectedId = null;
-        let selectedIdResolved = false;
 
         for (const li of rows){
-          const id    = li.dataset.id || null;
-          const isNew = !id;
-          const toDel = li.dataset.toDelete === '1';
-          const nameEl= li.querySelector('.tf-steps2-name');
-          const name  = (nameEl?.value || '').trim();
-          const old   = (nameEl?.dataset.oldName || '').trim();
-          const rb    = li.querySelector('input[type="radio"]');
+          const id   = li.dataset.id || null;
+          const isNew= !id;
+          const toDel= li.dataset.toDelete === '1';
+          const name = (li.querySelector('.tf-steps2-name')?.value || '').trim();
+          const old  = (li.querySelector('.tf-steps2-name')?.dataset.oldName || '').trim();
+          const rb   = li.querySelector('input[type="radio"]');
 
-          if (rb && rb.checked){ selectedId = id || '__will_select_new__'; }
+          if (rb && rb.checked){
+            selectedId = id || '__will_select_new__'; // marcador se selecionar um novo
+          }
           if (isNew && !toDel && name){ newNames.push(name); }
           if (!isNew && toDel){ deleteIds.push(id); }
           if (!isNew && !toDel && name && name !== old){ renameOps.push({ id, name }); }
         }
 
+        // 2) Criar novos (retorna ids)
+        let createdMap = {};
         if (newNames.length){
-          const created = await apiBatchCreate(newNames); // [{id,name,stepNo}]
+          const created = await apiBatchCreate(newNames); // [{id,name,stepNo...}]
+          // vincula aos rows novos na ordem em que aparecem
           let idx=0;
           for (const li of rows){
             if (!li.dataset.id && li.dataset.toDelete !== '1'){
-              const createdStep = created[idx++]; if (!createdStep) continue;
-              li.dataset.id = createdStep.id;
-              const nameEl = li.querySelector('.tf-steps2-name');
-              if (nameEl){ nameEl.dataset.oldName = createdStep.name || nameEl.value || ''; }
+              li.dataset.id = created[idx]?.id;
+              li.querySelector('.tf-steps2-name').dataset.oldName = created[idx]?.name || '';
+              createdMap[li] = created[idx];
+              idx++;
               if (selectedId === '__will_select_new__' && !selectedIdResolved){
-                selectedIdResolved = true; selectedId = createdStep.id;
+                // se o usuário marcou radio de um "novo", pegamos o primeiro correspondente
+                var selectedIdResolved = true;
+                selectedId = li.dataset.id;
               }
             }
           }
         }
 
+        // 3) Renomear existentes
         for (const op of renameOps){ await apiRename(op.id, op.name); }
+
+        // 4) Deletar marcados
         for (const id of deleteIds){ await apiDelete(id); }
 
+        // 5) Reordenar (lista final sem deletados)
         const orderIds = Array.from(listEl.children)
           .filter(li => li.dataset.toDelete !== '1')
           .map(li => li.dataset.id)
           .filter(Boolean);
         if (orderIds.length){ await apiReorder(orderIds); }
 
-        // Feedback + fechar + navegar respeitando etapa atual
+        // 6) Feedback + redirect respeitando etapa atual
         btnSave.classList.add('tf-steps2-saved');
         setTimeout(()=> btnSave.classList.remove('tf-steps2-saved'), 600);
         showToast('Etapas salvas com sucesso.');
         closeModal();
 
+        // Atualiza a navegação/etapa atual (se marcada). Se nenhuma marcada, vai sem stepId.
         if (selectedId && selectedId !== '__will_select_new__'){
           window.location.href = `/ofertas/painel/${encodeURIComponent(OFFER.id)}?stepId=${encodeURIComponent(selectedId)}`;
         } else {
