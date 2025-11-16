@@ -11,7 +11,7 @@
 
     <section class="tf-steps2-info">
       <div class="tf-steps2-left">
-        <button type="button" class="tf-btn tf-btn-small" id="tfSteps2Add" aria-label="Adicionar nova etapa">＋ Nova etapa</button>
+        <button type="button" class="tf-btn tf-btn-small" id="tfSteps2Add">＋ Nova etapa</button>
       </div>
       <small class="tf-steps2-hint">As alterações só entram no painel ao clicar em <strong>Salvar mudanças</strong>.</small>
     </section>
@@ -29,7 +29,7 @@
 
 <!-- ============ MINI CONFIRM (usa o mesmo overlay) ============ -->
 <template id="tfSteps2ConfirmTpl">
-  <div class="tf-steps2-confirm" role="dialog" aria-modal="true" aria-label="Confirmar exclusão">
+  <div class="tf-steps2-confirm">
     <div class="tf-steps2-confirm-card">
       <h4>Excluir etapa?</h4>
       <p class="tf-steps2-confirm-text">Tem certeza que deseja excluir <strong class="nm">esta etapa</strong>? Essa ação não pode ser desfeita.</p>
@@ -42,7 +42,7 @@
 </template>
 
 <style>
-  /* ======== BASE LOCAL (não mexe no tema global) ======== */
+  /* ======== BASE LOCAL (isolada; não mexe no tema global) ======== */
   .tf-steps2-overlay[hidden]{ display:none !important; }
   .tf-steps2-overlay{
     position:fixed; inset:0; z-index:3000;
@@ -112,7 +112,7 @@
   /* Linha da Etapa */
   .tf-steps2-item{
     display:grid;
-    grid-template-columns:56px 30px 1fr 140px 110px; /* idx | handle | nome | excluir | radio */
+    grid-template-columns:56px 30px 1fr 140px 110px;
     align-items:center; gap:10px;
     padding:10px 12px; border-radius:14px;
     background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.04));
@@ -225,6 +225,16 @@
   const btnAdd     = document.getElementById('tfSteps2Add');
   const listEl     = document.getElementById('tfSteps2List');
 
+  /* Segurança: garantir overlay fechado ao carregar (evita “tela dourada”) */
+  document.addEventListener('DOMContentLoaded', ()=>{
+    if (modal){
+      modal.hidden = true;
+      modal.setAttribute('aria-hidden','true');
+      document.documentElement.style.overflow='';
+      document.body.style.overflow='';
+    }
+  });
+
   /* Public API: abre com dados do painel atual */
   window.TigerFyEtapas = {
     open(ctxOffer, ctxSteps, ctxCurrent){
@@ -237,7 +247,7 @@
     close: closeModal
   };
 
-  /* Gatilho padrão do seu botão/pill "Etapas" (não altera layout) */
+  /* Gatilho do seu botão/pill Etapas (não altera layout) */
   const openBtn = document.getElementById('tabEtapas');
   if (openBtn){
     openBtn.addEventListener('click', (e)=>{ e.preventDefault(); window.TigerFyEtapas.open(); });
@@ -255,7 +265,7 @@
   if (btnCancel) btnCancel.addEventListener('click', closeModal);
   modal?.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
 
-  /* Fechar com ESC (não afeta o resto do site) */
+  /* ESC fecha */
   document.addEventListener('keydown', (e)=>{
     if (e.key === 'Escape' && modal.getAttribute('aria-hidden') === 'false') closeModal();
   });
@@ -306,7 +316,7 @@
     li.className = 'tf-steps2-item';
     if (opts.id) li.dataset.id = opts.id; else li.dataset.new = '1';
 
-    /* selecionar ao clicar na linha (sem atrapalhar drag ou edição) */
+    /* selecionar ao clicar na linha (sem atrapalhar drag/edição) */
     li.addEventListener('click', (e)=>{
       const tag = (e.target.tagName||'').toLowerCase();
       if (dragging || tag === 'input' || tag === 'button' || e.target.closest('.tf-steps2-handle')) return;
@@ -332,7 +342,6 @@
     actions.className = 'tf-steps2-actions';
     const btnDel = document.createElement('button');
     btnDel.type='button'; btnDel.className='tf-btn tf-steps2-del'; btnDel.textContent='Excluir';
-    /* Se o backend proteger a etapa 1, manter desabilitado evita erro visual */
     if ((opts.stepNo === 1 || opts.stepNo === '1') && opts.id) btnDel.disabled = true;
     btnDel.addEventListener('click', (ev)=>{ ev.stopPropagation(); askDelete(li, name.value || 'Etapa'); });
 
@@ -433,7 +442,6 @@
       try{
         setSaving(true);
 
-        // Coleta: novos, renomes, deletions e seleção atual
         const rows = Array.from(listEl.children);
         const newNames = [];
         const renameOps = [];
@@ -456,9 +464,8 @@
           if (!isNew && !toDel && name && name !== old){ renameOps.push({ id, name }); }
         }
 
-        // Criar novos
         if (newNames.length){
-          const created = await apiBatchCreate(newNames); // [{id,name,stepNo...}]
+          const created = await apiBatchCreate(newNames);
           let idx=0;
           for (const li of rows){
             if (!li.dataset.id && li.dataset.toDelete !== '1'){
@@ -473,7 +480,6 @@
           }
         }
 
-        // Renomear / Excluir / Reordenar
         for (const op of renameOps){ await apiRename(op.id, op.name); }
         for (const id of deleteIds){ await apiDelete(id); }
 
@@ -483,13 +489,11 @@
           .filter(Boolean);
         if (orderIds.length){ await apiReorder(orderIds); }
 
-        // Feedback + sair
         btnSave.classList.add('tf-steps2-saved');
         setTimeout(()=> btnSave.classList.remove('tf-steps2-saved'), 600);
         showToast('Etapas salvas com sucesso.');
         closeModal();
 
-        // Navegação conforme etapa escolhida
         if (selectedId && selectedId !== '__will_select_new__'){
           window.location.href = `/ofertas/painel/${encodeURIComponent(OFFER.id)}?stepId=${encodeURIComponent(selectedId)}`;
         } else {
