@@ -75,12 +75,16 @@
 <!-- ===== Toasts TigerFy (discretos) ===== -->
 <div id="tf-toasts" class="tf-toasts"></div>
 
-<!-- ===== Modal: Gerenciar Oferta ===== -->
+<!-- ===== Modal: Gerenciar Oferta (estilo CRIAR OFERTA) ===== -->
 <div class="modal-gerenciar-oferta" id="manageOfferModal" aria-hidden="true">
   <div class="modal-backdrop" onclick="closeManageOfferModal()"></div>
-  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="manageOfferTitle">
+
+  <div class="modal-card tf-card" role="dialog" aria-modal="true" aria-labelledby="manageOfferTitle">
     <div class="modal-header">
-      <h3 id="manageOfferTitle">Gerenciar Oferta</h3>
+      <div class="modal-titles">
+        <h3 id="manageOfferTitle">Gerenciar Oferta</h3>
+        <p class="modal-sub">Veja o resumo desta oferta e gerencie ações rápidas.</p>
+      </div>
       <button class="modal-close" type="button" aria-label="Fechar" onclick="closeManageOfferModal()">
         <span>×</span>
       </button>
@@ -90,21 +94,21 @@
       <!-- Resumo -->
       <section class="modal-section">
         <h4>Resumo da Oferta</h4>
-        <div class="resume-lines">
-          <div><strong>Nome atual:</strong> <span id="resumeName">—</span></div>
-          <div><strong>ID:</strong> <span id="resumeId">—</span></div>
-          <div><strong>Quantidade de bots vinculados:</strong> <span id="resumeBots">0</span></div>
-          <div><strong>Tipo de Bot:</strong> <span id="resumeBotType">—</span></div>
+        <div class="resume-grid">
+          <div class="resume-item"><strong>Nome atual:</strong> <span id="resumeName">—</span></div>
+          <div class="resume-item"><strong>ID:</strong> <span id="resumeId">—</span></div>
+          <div class="resume-item"><strong>Quantidade de bots vinculados:</strong> <span id="resumeBots">0</span></div>
+          <div class="resume-item"><strong>Tipo de Bot:</strong> <span id="resumeBotType">—</span></div>
         </div>
       </section>
 
       <!-- Renomear -->
       <section class="modal-section">
         <h4>Renomear Oferta</h4>
-        <label for="newOfferName" class="label">Novo nome da oferta</label>
-        <input id="newOfferName" type="text" class="input" placeholder="Ex: Mundo VIP 2.0, Oferta Principal, etc..." />
+        <label for="newOfferName" class="label">Novo nome da oferta <span class="req">*</span></label>
+        <input id="newOfferName" type="text" class="tf-input" placeholder="Ex: Mundo VIP 2.0, Oferta Principal, etc..." />
         <div class="actions-row">
-          <button class="btn-primary" type="button" onclick="submitRename()">Salvar novo nome</button>
+          <button class="btn-primary big" type="button" onclick="submitRename()">Salvar novo nome</button>
           <small id="renameError" class="error-msg" style="display:none;"></small>
         </div>
       </section>
@@ -129,30 +133,14 @@
 </div>
 
 <style>
-  .tiger-offers-list{
-    padding:60px 80px 100px 130px;
-    max-width:calc(100vw - 120px);
-    margin:0 auto;
-    color:#fff;
-  }
-  .list-header{
-    display:flex; align-items:center; justify-content:space-between; margin-bottom:18px;
-  }
+  /* ====== Lista ====== */
+  .tiger-offers-list{ padding:60px 80px 100px 130px; max-width:calc(100vw - 120px); margin:0 auto; color:#fff; }
+  .list-header{ display:flex; align-items:center; justify-content:space-between; margin-bottom:18px; }
   .list-header h1{ margin:0 0 6px; font-size:2rem; color:#ffcc00; }
   .list-header p{ margin:0; color:#b4b4b4; font-size:.95rem; }
 
-  .list-grid{
-    display:grid; gap:12px;
-    grid-template-columns:repeat(auto-fill, minmax(280px, 1fr));
-  }
-  .offer-card{
-    position:relative;
-    display:block; text-decoration:none; color:#fff;
-    background:rgba(0,0,0,0.70);
-    border:1px solid rgba(255,204,0,0.12);
-    border-radius:16px; padding:14px;
-    transition:.2s;
-  }
+  .list-grid{ display:grid; gap:12px; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); }
+  .offer-card{ position:relative; display:block; text-decoration:none; color:#fff; background:rgba(0,0,0,0.70); border:1px solid rgba(255,204,0,0.12); border-radius:16px; padding:14px; transition:.2s; }
   .offer-card:hover{ border-color:#ffcc00; box-shadow:0 0 16px rgba(255,204,0,0.3); }
   .card-top{ display:flex; align-items:center; justify-content:space-between; gap:8px; }
   .card-top h3{ margin:0; font-size:1rem; }
@@ -161,34 +149,17 @@
   .status.incompleto{ background:rgba(255,196,0,0.16); color:#ffdd66; }
   .status.erro{ background:rgba(255,0,76,0.16); color:#ff6b9e; }
 
-  .meta{
-    display:flex; align-items:center; gap:10px;
-    flex-wrap:nowrap; white-space:nowrap;
-    margin-top:8px;
-    font-size:.78rem; color:#c9c9c9;
-    padding-right:42px; /* reserva espaço para a seta › */
-  }
-
-  /* Setinha fixa, sem quebrar */
-  .offer-card .go{
-    position:absolute; right:12px; top:50%;
-    transform:translateY(-50%);
-    opacity:.6; font-size:1.4rem;
-  }
+  .meta{ display:flex; align-items:center; gap:10px; flex-wrap:nowrap; white-space:nowrap; margin-top:8px; font-size:.78rem; color:#c9c9c9; padding-right:42px; }
+  .offer-card .go{ position:absolute; right:12px; top:50%; transform:translateY(-50%); opacity:.6; font-size:1.4rem; }
 
   .empty{ text-align:center; padding:30px 16px; background:rgba(0,0,0,0.70); border:1px solid rgba(255,204,0,0.12); border-radius:16px; }
   .btn-primary.small{ padding:8px 16px; font-size:.85rem; }
-  .btn-primary{
-    border:none; border-radius:10px; padding:10px 22px; font-weight:600; cursor:pointer; text-decoration:none;
-    background:linear-gradient(90deg,#ffcc00,#d4a100); color:#1a1300; box-shadow:0 0 12px rgba(255,204,0,0.4); font-size:.95rem;
-  }
+  .btn-primary{ border:none; border-radius:10px; padding:10px 22px; font-weight:600; cursor:pointer; text-decoration:none; background:linear-gradient(90deg,#ffcc00,#d4a100); color:#1a1300; box-shadow:0 0 12px rgba(255,204,0,0.4); font-size:.95rem; }
 
   /* --- Botão (…) inline e centralizado --- */
   .offer-actions-inline{
-    margin-left:12px;
-    margin-right:10px;             /* ajuste fino na borda direita */
-    width:28px; height:28px;
-    border-radius:999px;
+    margin-left:12px; margin-right:10px;
+    width:28px; height:28px; border-radius:999px;
     display:flex; align-items:center; justify-content:center;
     background:rgba(255,204,0,0.08);
     border:1px solid rgba(255,204,0,0.18);
@@ -196,72 +167,76 @@
     transition: box-shadow .16s ease, transform .08s ease, background .16s ease, border-color .16s ease;
     flex:0 0 auto;
   }
-  .offer-actions-inline:hover{
-    background:rgba(255,204,0,0.14);
-    border-color:rgba(255,204,0,0.35);
-    box-shadow:0 0 10px rgba(255,204,0,0.25);
-  }
-  .offer-actions-inline .dots{
-    display:block; line-height:0;
-    transform:translateY(-0.5px);  /* micro-compensação ótica */
-    letter-spacing:2px; font-size:14px;
-    pointer-events:none;
-  }
-
-  /* ===== Modal Gerenciar Oferta ===== */
-  .modal-gerenciar-oferta{ position:fixed; inset:0; display:none; z-index:9999; }
-  .modal-gerenciar-oferta[aria-hidden="false"]{ display:block; }
-  .modal-backdrop{
-    position:absolute; inset:0;
-    backdrop-filter: blur(6px);
-    background:rgba(0,0,0,0.45);
-  }
-  .modal-card{
-    position:absolute; inset:0; margin:auto; width:min(680px, calc(100vw - 48px));
-    height:auto; max-height:calc(100vh - 48px); overflow:auto;
-    background:rgba(10,10,10,0.92);
-    border:1px solid rgba(255,204,0,0.15);
-    border-radius:18px; box-shadow:0 0 18px rgba(255,204,0,0.22);
-  }
-  .modal-header{
-    display:flex; align-items:center; justify-content:space-between;
-    padding:16px 16px 10px 16px; border-bottom:1px solid rgba(255,204,0,0.10);
-  }
-  .modal-header h3{ margin:0; color:#ffcc00; }
-  .modal-close{
-    width:32px; height:32px; border-radius:999px; border:1px solid rgba(255,204,0,0.25);
-    background:rgba(255,204,0,0.08); color:#ffcc00; cursor:pointer;
-    display:flex; align-items:center; justify-content:center; /* CENTRALIZADO */
-  }
-  .modal-close span{ display:block; font-size:20px; line-height:1; transform:translateY(-0.5px); }
-  .modal-body{ padding:14px; display:grid; gap:16px; }
-  .modal-section h4{ margin:0 0 8px; }
-  .resume-lines{ color:#cfcfcf; display:grid; gap:6px; }
-  .label{ display:block; font-size:.85rem; color:#c9c9c9; margin-bottom:6px; }
-  .input{
-    width:100%; background:#111; color:#fff; border:1px solid rgba(255,204,0,0.16);
-    border-radius:10px; padding:10px 12px; outline:none;
-  }
-  .actions-row{ display:flex; align-items:center; gap:10px; margin-top:8px; }
-  .muted{ color:#b4b4b4; margin:0 0 8px; }
-  .danger-zone{ border-top:1px dashed rgba(255,0,76,0.25); padding-top:10px; }
-  .warning{ color:#ff6b9e; margin:0 0 8px; }
-  .btn-danger{
-    background:linear-gradient(90deg,#ff3b6b,#cc2a50); color:#fff; border:none; border-radius:10px;
-    padding:10px 18px; font-weight:600; cursor:pointer; box-shadow:0 0 12px rgba(255,59,107,.25);
-  }
-  .error-msg{ color:#ff6b9e; }
+  .offer-actions-inline:hover{ background:rgba(255,204,0,0.14); border-color:rgba(255,204,0,0.35); box-shadow:0 0 10px rgba(255,204,0,0.25); }
+  .offer-actions-inline .dots{ display:block; line-height:0; transform:translateY(-0.5px); letter-spacing:2px; font-size:14px; pointer-events:none; }
 
   /* ===== Toasts ===== */
   .tf-toasts{ position:fixed; top:18px; right:18px; display:grid; gap:8px; z-index:10000; }
-  .tf-toast{
-    background:rgba(15,15,15,.95); color:#fff; border:1px solid rgba(255,204,0,.15);
-    border-radius:12px; padding:10px 12px; box-shadow:0 0 14px rgba(255,204,0,.18);
-    transform:translateY(-6px); opacity:0; animation:toast-in .18s ease forwards;
-  }
+  .tf-toast{ background:rgba(15,15,15,.95); color:#fff; border:1px solid rgba(255,204,0,.15); border-radius:12px; padding:10px 12px; box-shadow:0 0 14px rgba(255,204,0,.18); transform:translateY(-6px); opacity:0; animation:toast-in .18s ease forwards; }
   .tf-toast.success{ border-color:rgba(0,255,120,.25); box-shadow:0 0 14px rgba(0,255,120,.18); }
   .tf-toast.error{ border-color:rgba(255,59,107,.35); box-shadow:0 0 14px rgba(255,59,107,.22); }
   @keyframes toast-in{ to{ transform:translateY(0); opacity:1; } }
+
+  /* ===== Modal Gerenciar Oferta – estilo criar oferta ===== */
+  .modal-gerenciar-oferta{ position:fixed; inset:0; display:none; z-index:9999; }
+  .modal-gerenciar-oferta[aria-hidden="false"]{ display:block; }
+  .modal-backdrop{ position:absolute; inset:0; backdrop-filter: blur(6px); background:rgba(0,0,0,0.45); }
+
+  /* Card do modal com o mesmo “visual de card” da criação de oferta */
+  .tf-card{
+    background:rgba(0,0,0,0.78);
+    border-radius:20px;
+    border:1px solid rgba(255,204,0,0.16);
+    box-shadow:0 0 40px rgba(0,0,0,0.6);
+  }
+  .modal-card{
+    position:absolute; inset:0; margin:auto;
+    width:min(720px, calc(100vw - 48px));
+    height:auto; max-height:unset;    /* remove limite que criava “barrigão” */
+    overflow:hidden;                  /* sem barra interna desnecessária */
+  }
+
+  .modal-header{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:18px 18px 12px 18px; border-bottom:1px solid rgba(255,204,0,0.10);
+  }
+  .modal-titles h3{ margin:0; color:#ffcc00; }
+  .modal-titles .modal-sub{ margin:4px 0 0; color:#b4b4b4; font-size:.92rem; }
+
+  /* Botão fechar centralizado */
+  .modal-close{
+    width:32px; height:32px; border-radius:999px; border:1px solid rgba(255,204,0,0.25);
+    background:rgba(255,204,0,0.08); color:#ffcc00; cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .modal-close span{ display:block; font-size:20px; line-height:1; transform:translateY(-0.5px); }
+
+  .modal-body{ padding:18px 18px 16px; display:grid; gap:16px; }
+  .modal-section h4{ margin:0 0 8px; }
+  .resume-grid{ display:grid; gap:6px; color:#cfcfcf; }
+
+  .label{ display:block; font-size:.95rem; font-weight:600; margin-bottom:6px; }
+  .label .req{ color:#ffcc00; }
+  .tf-input{
+    width:100%; padding:10px 12px; border-radius:10px;
+    border:1px solid rgba(255,255,255,0.22);
+    background:rgba(255,255,255,0.06); color:#fff; outline:none; font-size:.95rem;
+    transition:border-color .2s, box-shadow .2s;
+  }
+  .tf-input::placeholder{ color:rgba(255,255,255,0.65); }
+  .tf-input:focus{ border-color:#ffcc00; box-shadow:0 0 0 2px rgba(255,204,0,0.28); }
+
+  .actions-row{ display:flex; align-items:center; gap:10px; margin-top:10px; }
+  .btn-primary.big{ padding:12px 26px; background:linear-gradient(90deg,#ffcc00,#d4a100); color:#1a1300; box-shadow:0 0 16px rgba(255,204,0,0.45); border:none; border-radius:10px; font-weight:600; }
+  .btn-danger{ background:linear-gradient(90deg,#ff3b6b,#cc2a50); color:#fff; border:none; border-radius:10px; padding:10px 18px; font-weight:600; cursor:pointer; box-shadow:0 0 12px rgba(255,59,107,.25); }
+  .muted{ color:#b4b4b4; margin:0 0 8px; }
+  .danger-zone{ border-top:1px dashed rgba(255,0,76,0.25); padding-top:10px; }
+  .warning{ color:#ff6b9e; margin:0 0 8px; }
+  .error-msg{ color:#ff6b9e; }
+
+  @media (max-width: 980px){
+    .modal-card{ width:calc(100vw - 24px); }
+  }
 </style>
 
 <script>
@@ -285,19 +260,18 @@
     const botType = mapBotType(btn.dataset.bottype);
     CURRENT_OFFER = { id, name };
 
-    // preenche resumo
+    // resumo
     qs('resumeName').textContent = name;
     qs('resumeId').textContent = id;
     qs('resumeBots').textContent = bots;
     qs('resumeBotType').textContent = botType;
 
-    // input renomear
+    // renomear
     qs('newOfferName').value = name;
     qs('renameError').style.display='none';
     qs('duplicateError').style.display='none';
     qs('deleteError').style.display='none';
 
-    // abre modal
     qs('manageOfferModal').setAttribute('aria-hidden', 'false');
   }
   function closeManageOfferModal(){
@@ -312,8 +286,7 @@
   }
 
   async function submitRename(){
-    const err = qs('renameError');
-    err.style.display='none';
+    const err = qs('renameError'); err.style.display='none';
     if(!CURRENT_OFFER) return;
 
     const novoNome = (qs('newOfferName').value || '').trim();
@@ -328,9 +301,8 @@
       const j = await res.json();
       if(!j || j.ok !== true) throw new Error(j?.error || 'Falha ao renomear');
 
-      // atualiza nome no card da lista
-      const nameEls = document.querySelectorAll(`.offer-name[data-offer-id="${CURRENT_OFFER.id}"]`);
-      nameEls.forEach(el => el.textContent = novoNome);
+      document.querySelectorAll(`.offer-name[data-offer-id="${CURRENT_OFFER.id}"]`)
+        .forEach(el => el.textContent = novoNome);
 
       toast('Oferta renomeada com sucesso.');
       closeManageOfferModal();
@@ -341,18 +313,14 @@
   }
 
   async function submitDuplicate(){
-    const err = qs('duplicateError');
-    err.style.display='none';
+    const err = qs('duplicateError'); err.style.display='none';
     if(!CURRENT_OFFER) return;
 
     try{
-      const res = await fetch(`/ofertas/${encodeURIComponent(CURRENT_OFFER.id)}/duplicar`, {
-        method: 'POST'
-      });
+      const res = await fetch(`/ofertas/${encodeURIComponent(CURRENT_OFFER.id)}/duplicar`, { method: 'POST' });
       const j = await res.json();
       if(!j || j.ok !== true || !j.offer){ throw new Error(j?.error || 'Falha ao duplicar'); }
 
-      // inserir novo card na grade (render mínimo)
       const o = j.offer;
       const botsCount = o.botsCount ?? 0;
       const botLabel = mapBotType(o.bot_type || o.botType);
@@ -397,14 +365,12 @@
   }
 
   async function submitDelete(){
-    const err = qs('deleteError');
-    err.style.display='none';
+    const err = qs('deleteError'); err.style.display='none';
     if(!CURRENT_OFFER) return;
 
     if(!confirm('Tem certeza que deseja excluir esta oferta? Esta ação é permanente.')) return;
 
     try{
-      // tenta DELETE; se não existir, tenta POST /excluir
       let res = await fetch(`/ofertas/${encodeURIComponent(CURRENT_OFFER.id)}`, { method:'DELETE' });
       if(res.status === 404){
         res = await fetch(`/ofertas/${encodeURIComponent(CURRENT_OFFER.id)}/excluir`, { method:'POST' });
@@ -412,7 +378,6 @@
       const j = await res.json();
       if(!j || j.ok !== true){ throw new Error(j?.error || 'Falha ao excluir'); }
 
-      // remove card da lista
       const card = document.getElementById(`offer-card-${CURRENT_OFFER.id}`);
       if(card) card.remove();
 
