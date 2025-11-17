@@ -350,9 +350,10 @@
   var steps = <%- JSON.stringify(steps || []) %>;
   var currentStep = <%- JSON.stringify(currentStep || null) %>;
 
+  /* ------------------------------------
+     Helpers
+  -------------------------------------*/
   function escapeHtml(s){ return (s || "").replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-
-  /* ===== NEW: resolver etapa pela URL quando o back não preencher ===== */
   function getStepIdFromURL(){
     try { return new URL(window.location.href).searchParams.get('stepId'); }
     catch(_) { return null; }
@@ -366,14 +367,15 @@
     if (nm) return nm;
     var no = s.stepNo || s.step_no;
     if (!no){
-      // fallback: deduz o índice pela posição em steps
       var idx = (steps || []).findIndex(function(x){ return String(x.id) === String(s.id); });
       if (idx >= 0) no = idx + 1;
     }
     return 'Etapa ' + (no || '');
   }
 
-  // Se o back não passou currentStep, tenta resolver pelo stepId da URL
+  /* ------------------------------------
+     Resolve currentStep pelo stepId (fallback)
+  -------------------------------------*/
   (function ensureCurrentStep(){
     if (currentStep && currentStep.id) return;
     var q = getStepIdFromURL();
@@ -382,11 +384,25 @@
     if (found) currentStep = found;
   })();
 
-  /* ===== Título e breadcrumb baseados exclusivamente em currentStep ===== */
+  /* ------------------------------------
+     NOVO: diferenciar "Oferta Principal" x "Etapa"
+     Regra: se a aba PRINCIPAL estiver ativa, trata como visão da oferta,
+     mesmo que exista stepId. Só mostra etapa quando a aba ativa NÃO é "principal".
+  -------------------------------------*/
+  var selectedMainTab = (document.querySelector('.tf-tabs-main .tab.active')?.dataset.tab) || 'principal';
+  function getEffectiveStep(){
+    if (!currentStep || !currentStep.id) return null;
+    return (selectedMainTab === 'principal') ? null : currentStep;
+  }
+
+  /* ------------------------------------
+     Título e Breadcrumb
+  -------------------------------------*/
   function updateHeaderTitle(){
     var h1 = document.getElementById('offerTitle'); if (!h1) return;
-    if (currentStep && currentStep.id){
-      h1.textContent = stepDisplayName(currentStep) || (offer?.name || 'Nome da Oferta');
+    var eff = getEffectiveStep();
+    if (eff){
+      h1.textContent = stepDisplayName(eff) || (offer?.name || 'Nome da Oferta');
     } else {
       h1.textContent = offer?.name || 'Nome da Oferta';
     }
@@ -396,14 +412,16 @@
     var bc = document.getElementById('tfBreadcrumb'); if (!bc) return;
     var offerName = (offer && offer.name) ? offer.name : 'Nome da Oferta';
     var offerHref = offer ? ("/ofertas/painel/" + offer.id) : "/ofertas";
+    var eff = getEffectiveStep();
+
     var items = [];
     items.push('<a href="/ofertas">Minhas Ofertas</a>');
     items.push('<span>›</span>');
     items.push('<a href="'+ offerHref +'">'+ escapeHtml(offerName) +'</a>');
-    if (currentStep && currentStep.id){
+    if (eff){
       items.push('<span>›</span>');
-      var stepUrl = offerHref + "?stepId=" + encodeURIComponent(currentStep.id);
-      items.push('<a href="'+ stepUrl +'">'+ escapeHtml(stepDisplayName(currentStep)) +'</a>');
+      var stepUrl = offerHref + "?stepId=" + encodeURIComponent(eff.id);
+      items.push('<a href="'+ stepUrl +'">'+ escapeHtml(stepDisplayName(eff)) +'</a>');
     }
     bc.innerHTML = items.join('');
   }
@@ -411,7 +429,9 @@
   updateHeaderTitle();
   buildBreadcrumb();
 
-  /* ===== Tabs (mantido) ===== */
+  /* ------------------------------------
+     Tabs principais (mantido) + atualização de textos
+  -------------------------------------*/
   var mainTabs = document.querySelectorAll('.tf-tabs-main .tab');
   var subTabsWrap = document.getElementById('subtabs-principal');
   mainTabs.forEach(function(btn){
@@ -421,14 +441,18 @@
       mainTabs.forEach(function(b){ b.classList.remove('active'); });
       btn.classList.add('active');
       if (subTabsWrap) subTabsWrap.style.display = (t === 'principal') ? 'flex' : 'none';
-      // sempre re-renderiza textos
+
+      // NOVO: guarda qual aba está ativa e refaz título/breadcrumb
+      selectedMainTab = t || 'principal';
       updateHeaderTitle();
       buildBreadcrumb();
     });
   });
   if (subTabsWrap) subTabsWrap.style.display = 'flex';
 
-  /* ===== Menu leve no botão "Etapas" (mantido) ===== */
+  /* ------------------------------------
+     Menu leve no botão "Etapas" (mantido)
+  -------------------------------------*/
   (function(){
     var tab = document.getElementById('tabEtapas');
     if (!tab) return;
@@ -450,6 +474,7 @@
       b2.addEventListener('click', function(){
         closeMenu();
         currentStep = null;
+        selectedMainTab = 'principal';
         updateHeaderTitle();
         buildBreadcrumb();
         if (offer && offer.id){
@@ -461,15 +486,9 @@
     });
   })();
 
-  /* ===== Toasts e restante do código do modal/etc. permanecem iguais ===== */
-
-  // Botão "Salvar Alterações" (sem mudanças)
-  var saveBtn = document.getElementById('btnSaveAll');
-  function setBtnLoading(btn, on){
-    if (!btn) return;
-    if (on){ btn.disabled=true; if(!btn.dataset._txt) btn.dataset._txt=btn.textContent; btn.textContent='Salvando…'; btn.style.filter='brightness(1.03)'; btn.style.boxShadow='0 8px 26px rgba(255,204,0,0.35)'; }
-    else { btn.disabled=false; btn.textContent = btn.dataset._txt || 'Salvar Alterações'; btn.style.filter=''; btn.style.boxShadow=''; }
-  }
+  /* ------------------------------------
+     Toast utilitário
+  -------------------------------------*/
   function showToast(type, text){
     var host = document.createElement('div');
     host.style.position='fixed'; host.style.top='20px'; host.style.right='20px';
@@ -490,28 +509,48 @@
     requestAnimationFrame(function(){ card.style.transform='translateY(0)'; card.style.opacity='1'; });
     setTimeout(function(){ card.style.transform='translateY(-10px)'; card.style.opacity='0'; setTimeout(function(){ host.remove(); }, 160); }, 2300);
   }
+
+  /* ------------------------------------
+     Botão "Salvar Alterações" (mantido)
+  -------------------------------------*/
+  var saveBtn = document.getElementById('btnSaveAll');
+  function setBtnLoading(btn, on){
+    if (!btn) return;
+    if (on){ btn.disabled=true; if(!btn.dataset._txt) btn.dataset._txt=btn.textContent; btn.textContent='Salvando…'; btn.style.filter='brightness(1.03)'; btn.style.boxShadow='0 8px 26px rgba(255,204,0,0.35)'; }
+    else { btn.disabled=false; btn.textContent = btn.dataset._txt || 'Salvar Alterações'; btn.style.filter=''; btn.style.boxShadow=''; }
+  }
+  function flashSaved(btn){
+    if (!btn) return;
+    btn.classList.remove('tf-pulse-once'); void btn.offsetWidth; btn.classList.add('tf-pulse-once');
+    btn.textContent='Salvo!'; setTimeout(function(){ btn.textContent = btn.dataset._txt || 'Salvar Alterações'; }, 1100);
+  }
   if (saveBtn){
     saveBtn.addEventListener('click', async function(){
       if (!offer) { showToast('error','Oferta inválida.'); return; }
-      if (!currentStep) {
-        // visão base
+      var eff = getEffectiveStep();
+      if (!eff) {
+        flashSaved(saveBtn);
         showToast('success','Configurações salvas (oferta base).');
         return;
       }
       var draftSettings = (window.tfDraftSettings && typeof window.tfDraftSettings === 'object') ? window.tfDraftSettings : {};
       try{
         setBtnLoading(saveBtn,true);
-        const r = await fetch(`/ofertas/${encodeURIComponent(offer.id)}/etapas/${encodeURIComponent(currentStep.id)}/save`, {
+        const r = await fetch(`/ofertas/${encodeURIComponent(offer.id)}/etapas/${encodeURIComponent(eff.id)}/save`, {
           method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ settings: draftSettings })
         });
         const js = await r.json(); if (!js || !js.ok) throw new Error('save_failed');
-        showToast('success','Configurações salvas com sucesso.');
+        flashSaved(saveBtn); showToast('success','Configurações salvas com sucesso.');
       }catch(e){ console.error(e); showToast('error','Não foi possível salvar.'); }
       finally{ setBtnLoading(saveBtn,false); }
     });
   }
 
-  // ======== MODAL DE ETAPAS (lógica) ========
+  /* ------------------------------------
+     MODAL DE ETAPAS (seu código existente abaixo)
+     — não alterei regras visuais nem endpoints —
+  -------------------------------------*/
+
   var modal    = document.getElementById('stepsUnifiedModal');
   var btnClose = document.getElementById('btnCloseStepsUnified');
   var btnCancel= document.getElementById('btnCancelStepsUnified');
@@ -525,14 +564,11 @@
 
   function openStepsModal(){ hydrateListFromServer(); modal.removeAttribute('hidden'); }
   function closeStepsModal(){ modal.setAttribute('hidden',''); }
-
   if (btnClose) btnClose.addEventListener('click', closeStepsModal);
   if (btnCancel)btnCancel.addEventListener('click', closeStepsModal);
   if (modal){ modal.addEventListener('click', function(e){ if (e.target===modal) closeStepsModal(); }); }
 
-  function clearEmptyHint(){
-    var el = document.getElementById('tfStepsEmpty'); if (el) el.remove();
-  }
+  function clearEmptyHint(){ var el = document.getElementById('tfStepsEmpty'); if (el) el.remove(); }
   function renderEmptyHint(){
     if (listEl.querySelector('.tf-step-item')) return;
     if (document.getElementById('tfStepsEmpty')) return;
@@ -610,6 +646,8 @@
         var sid = li.dataset.id || null;
         if (!sid){ showToast('error','Salve mudanças para acessar esta etapa.'); return; }
         document.getElementById('stepsUnifiedModal')?.setAttribute('hidden','');
+        // ao acessar etapa, mantém aba atual; título/breadcrumb serão de etapa porque selectedMainTab != 'principal'
+        selectedMainTab = 'tracking'; // qualquer aba diferente de 'principal' já ativa visão de etapa
         window.location.href = `/ofertas/painel/${offer.id}?stepId=${encodeURIComponent(sid)}`;
       }
     });
@@ -648,9 +686,7 @@
         }
         try{
           const stepId = li.dataset.id;
-          const resp = await fetch(`/ofertas/${encodeURIComponent(offer.id)}/etapas/${encodeURIComponent(stepId)}`, {
-            method:'DELETE'
-          });
+          const resp = await fetch(`/ofertas/${encodeURIComponent(offer.id)}/etapas/${encodeURIComponent(stepId)}`, { method:'DELETE' });
           const js = await resp.json().catch(()=>null);
           if (!resp.ok || !js?.ok) throw new Error(js?.error || 'delete_failed');
 
@@ -661,6 +697,7 @@
           steps = steps.filter(s => s.id !== stepId);
           if (currentStep && currentStep.id === stepId){
             currentStep = null;
+            selectedMainTab = 'principal';
             updateHeaderTitle();
             buildBreadcrumb();
           }
@@ -686,7 +723,6 @@
     if (!opts.id){ setTimeout(function(){ input.focus(); }, 0); }
   }
 
-  // Drag
   var dragContext = { draggingLi: null };
   function initDragFor(handle, li){
     handle.addEventListener('dragstart', function(e){
@@ -731,7 +767,6 @@
     });
   }
 
-  // Salvar Mudanças (batch)
   var saveModalBtn = document.getElementById('btnSaveStepsUnified');
   if (saveModalBtn){
     saveModalBtn.addEventListener('click', async function(){
@@ -743,38 +778,25 @@
       var selectedId = null;
       var selectedIsTmp = false;
 
-      var orderIds = [];
-
       Array.from(listEl.children).forEach(function(li){
         if (!li.classList.contains('tf-step-item')) return;
 
         var id   = li.dataset.id || null;
-        var key  = li.dataset.key || null;
         var isNew= !id;
         var del  = li.dataset.deleted === '1';
         var name = (li.querySelector('.tf-step-name')?.value || '').trim();
         var old  = (li.querySelector('.tf-step-name')?.dataset.oldName || '').trim();
         var radio= li.querySelector('input[type="radio"]');
 
-        if (!del){ orderIds.push(id || key || ''); }
-
         if (radio && radio.checked){
           if (id){ selectedId = id; }
           else { selectedIsTmp = true; }
         }
 
-        if (isNew && !del){
-          if (name) creates.push({ name: name });
-          return;
-        }
+        if (isNew && !del){ if (name) creates.push({ name: name }); return; }
         if (isNew && del){ return; }
-        if (!isNew && del){
-          deletes.push({ id });
-          return;
-        }
-        if (!isNew && name && name !== old){
-          updates.push({ id, name });
-        }
+        if (!isNew && del){ deletes.push({ id }); return; }
+        if (!isNew && name && name !== old){ updates.push({ id, name }); }
       });
 
       var payload = { create: creates, update: updates, delete: deletes };
@@ -792,15 +814,7 @@
 
         if (Array.isArray(js.steps)){
           steps = js.steps.map(function(s){
-            return {
-              id: s.id,
-              offerId: s.offer_id,
-              name: s.name,
-              stepNo: s.step_no,
-              settings: s.settings || {},
-              createdAt: s.created_at,
-              updatedAt: s.updated_at
-            };
+            return { id:s.id, offerId:s.offer_id, name:s.name, stepNo:s.step_no, settings:s.settings || {}, createdAt:s.created_at, updatedAt:s.updated_at };
           });
         }
 
@@ -820,8 +834,6 @@
         }
 
         hydrateListFromServer();
-        updateHeaderTitle();
-        buildBreadcrumb();
         showToast('success','Etapas salvas com sucesso.');
       }catch(e){
         console.error(e);
@@ -834,3 +846,4 @@
   }
 })();
 </script>
+
