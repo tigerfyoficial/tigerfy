@@ -87,11 +87,22 @@
 <div class="tf-toasts" id="tfToasts" aria-live="polite"></div>
 
 <style>
-  .tiger-offers-list{
-    padding:60px 80px 100px 130px;
-    max-width:calc(100vw - 120px);
-    margin:0 auto;
-    color:#fff;
+.tiger-offers-list{
+  padding:60px 80px 100px 130px;   /* mantém tudo igual */
+  max-width:calc(100vw - 120px);
+  margin:0 auto;
+  color:#fff;
+
+  /* 🔧 ajuste sutil para centralizar melhor no fundo pontilhado */
+  transform: translateX(-16px) translateY(10px); /* puxa levemente à esquerda e um pouco para baixo */
+  transform-origin: top center;
+}
+
+/* Opcional e seguro: no mobile retiramos o ajuste para não distorcer nada */
+@media (max-width: 980px){
+  .tiger-offers-list{ transform:none; }
+}
+
   }
   .list-header{
     display:flex; align-items:center; justify-content:space-between; margin-bottom:18px;
