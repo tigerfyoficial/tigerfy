@@ -117,8 +117,6 @@
   .card-top{ display:flex; align-items:center; justify-content:space-between; gap:8px; }
   .card-top h3{ margin:0; font-size:1rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 
-  /* (STATUS REMOVIDO) */
-
   .meta{
     display:flex; gap:10px; flex-wrap:wrap; margin-top:8px;
     font-size:.78rem; color:#c9c9c9; align-items:center;
@@ -134,14 +132,16 @@
     background:linear-gradient(90deg,#ffcc00,#d4a100); color:#1a1300; box-shadow:0 0 12px rgba(255,204,0,0.4); font-size:.95rem;
   }
 
-/* variáveis de micro-ajuste (mude 1–2px se quiser refinar depois) */
+/* =========================
+   APENAS micro-ajustes do botão “…” (contraste + 2px acima)
+   ========================= */
 :root{
-  --dots-top: 12px;          /* sobe/desce o botão */
-  --dots-right: 12px;        /* aproxima/afasta da borda direita */
-  --dots-size: 30px;         /* diâmetro do botão */
-  --dots-font: 15px;         /* tamanho dos “•••” */
-  --dots-letter: 0.6px;      /* espaçamento entre pontos */
-  --dots-nudge-y: -0.5px;    /* ajuste fino vertical dos “•••” dentro do círculo */
+  --dots-top: 10px;          /* antes: 12px */
+  --dots-right: 12px;
+  --dots-size: 30px;
+  --dots-font: 15px;
+  --dots-letter: 0.6px;
+  --dots-nudge-y: -0.5px;
 }
 
 /* botão … */
@@ -152,16 +152,18 @@
   width:var(--dots-size);
   height:var(--dots-size);
   border-radius:999px;
-  border:1px solid rgba(255,204,0,0.18);
-  background:rgba(255,255,255,0.06);
+
+  /* contraste levemente maior */
+  border:1px solid rgba(255,204,0,0.26);       /* antes ~0.18 */
+  background:rgba(255,255,255,0.085);          /* antes ~0.06 */
 
   display:flex;
   align-items:center;
   justify-content:center;
 
   cursor:pointer;
-  /* hover elegante, sem “pular”: só cor/borda/sombra leve */
-  transition: background-color .15s ease, border-color .15s ease, box-shadow .15s ease;
+  /* sem movimento no hover */
+  transition: background-color .15s ease, border-color .15s ease, box-shadow .15s ease, opacity .15s ease;
   z-index:2;
 }
 
@@ -170,15 +172,15 @@
   font-size:var(--dots-font);
   letter-spacing:var(--dots-letter);
   line-height:1;
-  transform:translateY(var(--dots-nudge-y)); /* centralização milimétrica */
+  transform:translateY(var(--dots-nudge-y));
   user-select:none;
 }
 
-/* hover minimal (sem transform, sem deslocar do grid) */
+/* hover minimal (sem transform) */
 .offer-actions-inline:hover{
-  background:rgba(255,204,0,.12);
-  border-color:rgba(255,204,0,.28);
-  box-shadow:0 0 0 2px rgba(255,204,0,.10) inset;
+  background:rgba(255,204,0,.14);
+  border-color:rgba(255,204,0,.34);
+  box-shadow:0 0 0 2px rgba(255,204,0,.12) inset;
 }
 
   /* ===== MENU FLUTUANTE ===== */
@@ -361,7 +363,6 @@
         });
         if (!res.ok) throw new Error('bad_status');
         const payload = await res.json();
-        // Espera: { ok: true, offer: { id, owner, name, bot_type, tracking_type, status, telegram_username, bot_token, created_at } }
         const o = payload.offer || payload.data || null;
         if (!o) throw new Error('bad_payload');
 
@@ -377,11 +378,8 @@
         const h3 = document.createElement('h3');
         h3.className = 'offer-name';
         h3.textContent = o.name || (currentOfferName + ' (cópia)');
-
         top.appendChild(h3);
-        // status removido (não inserir)
 
-        // botão …
         const dotsBtn = document.createElement('button');
         dotsBtn.type = 'button';
         dotsBtn.className = 'offer-actions-inline';
@@ -396,7 +394,6 @@
         dotsSpan.textContent = '•••';
         dotsBtn.appendChild(dotsSpan);
 
-        // meta
         const meta = document.createElement('div');
         meta.className = 'meta';
         meta.innerHTML = `
@@ -407,18 +404,15 @@
           <span>Tipo: ${botTypeLabel(o.bot_type)}</span>
         `;
 
-        // seta
         const go = document.createElement('span');
         go.className = 'go';
         go.textContent = '›';
 
-        // composição
         card.appendChild(top);
         card.appendChild(dotsBtn);
         card.appendChild(meta);
         card.appendChild(go);
 
-        // insere logo depois do card atual (ou no início)
         if (currentOfferCard && currentOfferCard.parentElement) {
           currentOfferCard.parentElement.insertBefore(card, currentOfferCard.nextSibling);
         } else {
@@ -440,7 +434,6 @@
       try {
         const res = await fetch(`/ofertas/${currentOfferId}`, { method:'DELETE' });
         if (!res.ok) throw new Error('bad_status');
-        // remove card
         currentOfferCard?.parentElement?.removeChild(currentOfferCard);
         showToast('Oferta excluída.');
         closeMenu();
@@ -482,7 +475,6 @@
         });
         if (!res.ok) throw new Error('bad_status');
 
-        // Atualiza nome no card sem recarregar
         currentOfferCard?.querySelector('.offer-name')?.replaceChildren(document.createTextNode(novoNome));
         const btnDots = currentOfferCard?.querySelector('.offer-actions-inline');
         if (btnDots) btnDots.setAttribute('data-offer-name', novoNome);
@@ -500,7 +492,7 @@
   // Fechar menu ao clicar fora / scroll / resize / ESC
   document.addEventListener('click', (e) => {
     if (menu.hidden) return;
-    if (e.target.closest('.offer-actions-inline')) return; // clique no próprio botão já é tratado
+    if (e.target.closest('.offer-actions-inline')) return;
     if (!e.target.closest('#offerActionsMenu')) closeMenu();
   }, true);
 
