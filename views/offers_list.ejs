@@ -9,7 +9,7 @@
     <a href="/ofertas/criar" class="btn-primary">Criar nova oferta</a>
   </div>
 
-  <div class="list-grid">
+  <div class="list-grid" id="offersGrid">
     <% if (!offers || offers.length === 0) { %>
       <div class="empty">
         <h3>Você ainda não tem ofertas</h3>
@@ -18,19 +18,19 @@
       </div>
     <% } else { %>
       <% offers.forEach(function(o){ %>
-        <!-- Card da oferta -->
+        <!-- Card da oferta (NÃO alterar layout) -->
         <a class="offer-card" href="/ofertas/painel/<%= o._id %>" data-offer-id="<%= o._id %>">
           <div class="card-top">
             <h3 class="offer-name"><%= o.name %></h3>
             <!-- (STATUS REMOVIDO) -->
           </div>
 
-          <!-- Botão … (menu) — não navega, abre modal -->
+          <!-- Botão … (menu) — não navega, abre menu flutuante -->
           <button
             type="button"
             class="offer-actions-inline"
-            title="Gerenciar oferta"
-            aria-label="Gerenciar oferta"
+            title="Ações"
+            aria-label="Ações da oferta"
             data-offer-id="<%= o._id %>"
             data-offer-name="<%- o.name %>"
             data-offer-type="<%- o.botType %>"
@@ -60,48 +60,31 @@
   </div>
 </div>
 
-<!-- Modal de Gerenciar Oferta (mesmo visual; permanece opcional) -->
-<div class="offer-modal-overlay" data-modal="manage-offer" hidden>
-  <div class="offer-modal">
-    <div class="offer-modal-header">
-      <h3>Gerenciar Oferta</h3>
-      <button type="button" class="offer-modal-close" aria-label="Fechar">
-        <span>✕</span>
-      </button>
+<!-- ======= MENU FLUTUANTE DAS AÇÕES (substitui o modal antigo) ======= -->
+<div class="offer-actions-menu" id="offerActionsMenu" hidden>
+  <div class="menu-surface" role="menu" aria-label="Ações da oferta">
+    <!-- Estado: lista -->
+    <div class="menu-list" data-state="list">
+      <button class="menu-item" data-action="rename">Renomear oferta</button>
+      <button class="menu-item" data-action="duplicate">Duplicar oferta</button>
+      <button class="menu-item danger" data-action="delete">Excluir oferta</button>
     </div>
 
-    <div class="offer-modal-body">
-      <!-- Resumo -->
-      <section class="block">
-        <h4>Resumo da Oferta</h4>
-        <div class="kv">
-          <div><strong>Nome atual:</strong> <span id="mo-name">—</span></div>
-          <div><strong>ID:</strong> <span id="mo-id">—</span></div>
-          <div><strong>Quantidade de bots vinculados:</strong> <span id="mo-bots">0</span></div>
-          <div><strong>Tipo de Bot:</strong> <span id="mo-type">—</span></div>
-        </div>
-      </section>
-
-      <!-- Renomear -->
-      <section class="block">
-        <h4>Renomear Oferta</h4>
-        <div class="rename-row">
-          <input id="mo-rename-input" type="text" placeholder="Ex: Mundo VIP 2.0, Oferta Principal..." />
-          <button id="mo-rename-save" type="button" class="btn-primary">Salvar novo nome</button>
-        </div>
-        <small class="error-text" id="mo-rename-error" hidden>Não foi possível renomear. Tente novamente.</small>
-      </section>
-
-      <!-- Excluir -->
-      <section class="block danger">
-        <h4>Atenção</h4>
-        <p class="warn">Cuidado: esta ação é permanente.</p>
-        <button id="mo-delete" type="button" class="btn-danger">Excluir oferta</button>
-        <small class="error-text" id="mo-delete-error" hidden>Falha ao excluir. Tente novamente.</small>
-      </section>
+    <!-- Estado: renomear inline -->
+    <div class="menu-rename" data-state="rename" hidden>
+      <label class="rename-label">Novo nome</label>
+      <input type="text" class="rename-input" id="renameInput" placeholder="Ex: Mundo VIP 2.0" />
+      <div class="rename-actions">
+        <button class="btn-secondary x-small" data-action="cancel-rename">Cancelar</button>
+        <button class="btn-primary x-small" data-action="confirm-rename">Salvar</button>
+      </div>
+      <small class="error-text" id="renameError" hidden>Não foi possível renomear. Tente novamente.</small>
     </div>
   </div>
 </div>
+
+<!-- ======= TOASTS SUAVES (feedback) ======= -->
+<div class="tf-toasts" id="tfToasts" aria-live="polite"></div>
 
 <style>
   .tiger-offers-list{
@@ -151,18 +134,17 @@
     background:linear-gradient(90deg,#ffcc00,#d4a100); color:#1a1300; box-shadow:0 0 12px rgba(255,204,0,0.4); font-size:.95rem;
   }
 
-  /* ===== Botão … (menu) — FIX: hover sem movimento ===== */
+  /* ===== Botão … (menu) — hover sem movimento ===== */
   .offer-actions-inline{
     position:absolute;
     right:10px;
-    top:14px;                 /* fixo, não centraliza pela altura p/ evitar “pulo” */
+    top:14px;
     width:34px; height:34px;
     border-radius:999px;
     border:1px solid rgba(255,204,0,0.18);
     background:rgba(255,255,255,0.06);
     display:flex; align-items:center; justify-content:center;
     cursor:pointer;
-    /* ✅ NÃO animar transform; evitar deslocamento */
     transition: background-color .15s ease, border-color .15s ease, box-shadow .15s ease;
     z-index:2;
   }
@@ -175,133 +157,299 @@
     box-shadow: 0 0 0 2px rgba(255,204,0,0.12) inset;
   }
 
-  /* ===== Modal (mantém identidade TigerFy) ===== */
-  .offer-modal-overlay[hidden]{ display:none !important; }
-  .offer-modal-overlay{
-    position:fixed; inset:0; z-index:9999;
-    backdrop-filter: blur(8px);
-    background:rgba(0,0,0,0.45);
-    display:flex; align-items:center; justify-content:center;
+  /* ===== MENU FLUTUANTE ===== */
+  .offer-actions-menu[hidden]{ display:none !important; }
+  .offer-actions-menu{
+    position:fixed; /* posiciona ao lado do botão ... */
+    z-index:9999;
+    inset:auto auto; /* definido via JS (left/top) */
   }
-  .offer-modal{
-    width:min(560px, calc(100vw - 48px));
-    background: rgba(0,0,0,0.78);
+  .offer-actions-menu .menu-surface{
+    min-width: 220px;
+    background: rgba(0,0,0,0.82);
     border:1px solid rgba(255,204,0,0.16);
-    border-radius:16px;
-    box-shadow: 0 0 40px rgba(0,0,0,0.6);
-    color:#fff;
+    border-radius:14px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+    backdrop-filter: blur(10px);
     overflow:hidden;
+    transform-origin: top right;
+    animation: tfMenuIn .12s ease;
   }
-  .offer-modal-header{
-    display:flex; align-items:center; justify-content:space-between; gap:12px;
-    padding:14px 14px;
-    border-bottom:1px solid rgba(255,204,0,0.12);
+  @keyframes tfMenuIn {
+    from { opacity:0; transform:scale(0.98); }
+    to   { opacity:1; transform:scale(1); }
   }
-  .offer-modal-header h3{
-    margin:0; font-size:1.05rem; color:#ffcc00;
-  }
-  .offer-modal-close{
-    width:32px; height:32px; border-radius:999px;
-    border:1px solid rgba(255,255,255,.18);
-    background:rgba(255,255,255,.06);
-    display:flex; align-items:center; justify-content:center; /* ✅ centraliza o X */
-    cursor:pointer; color:#fff;
-    transition: background-color .15s ease, border-color .15s ease;
-  }
-  .offer-modal-close:hover{ background:rgba(255,255,255,.12); border-color:rgba(255,255,255,.28); }
 
-  .offer-modal-body{ padding:14px; display:flex; flex-direction:column; gap:14px; }
-  .block{ background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.10); border-radius:12px; padding:12px; }
-  .block h4{ margin:0 0 8px; font-size:.95rem; color:#e9e9e9; }
-  .kv{ display:grid; gap:6px; font-size:.9rem; color:#dcdcdc; }
-  .rename-row{ display:flex; gap:10px; }
-  .rename-row input{
-    flex:1; padding:9px 10px; border-radius:10px; border:1px solid rgba(255,255,255,0.22);
+  .menu-list{ display:flex; flex-direction:column; padding:6px; }
+  .menu-item{
+    width:100%;
+    text-align:left;
+    background:transparent;
+    color:#eaeaea;
+    border:none;
+    border-radius:10px;
+    padding:10px 12px;
+    font-size:.92rem;
+    cursor:pointer;
+    transition: background-color .12s ease, color .12s ease;
+  }
+  .menu-item:hover{ background:rgba(255,255,255,0.08); }
+  .menu-item.danger{ color:#ff8aa4; }
+  .menu-item.danger:hover{ background:rgba(255,64,96,0.12); color:#ffc9d3; }
+
+  .menu-rename{ padding:10px; display:flex; flex-direction:column; gap:8px; }
+  .rename-label{ font-size:.82rem; color:#cfcfcf; }
+  .rename-input{
+    width:100%;
+    padding:9px 10px; border-radius:10px; border:1px solid rgba(255,255,255,0.22);
     background:rgba(255,255,255,0.06); color:#fff; outline:none; font-size:.95rem;
     transition:border-color .2s, box-shadow .2s;
   }
-  .rename-row input:focus{ border-color:#ffcc00; box-shadow:0 0 0 2px rgba(255,204,0,0.28); }
-
-  .btn-danger{
-    border:none; border-radius:10px; padding:10px 16px; font-weight:600; cursor:pointer;
-    background:linear-gradient(90deg,#ff4060,#e02044); color:#fff;
+  .rename-input:focus{ border-color:#ffcc00; box-shadow:0 0 0 2px rgba(255,204,0,0.28); }
+  .rename-actions{ display:flex; justify-content:flex-end; gap:8px; }
+  .btn-secondary.x-small, .btn-primary.x-small{
+    border:none; border-radius:10px; padding:8px 12px; font-size:.85rem; font-weight:600; cursor:pointer;
   }
-  .block.danger .warn{ color:#ff8aa4; margin:0 0 10px; font-size:.9rem; }
-  .error-text{ color:#ff8aa4; display:block; margin-top:6px; }
+  .btn-secondary.x-small{ background:rgba(255,255,255,0.12); color:#fff; }
+  .btn-secondary.x-small:hover{ background:rgba(255,255,255,0.18); }
+  .btn-primary.x-small{
+    background:linear-gradient(90deg,#ffcc00,#d4a100);
+    color:#1a1300; box-shadow:0 0 10px rgba(255,204,0,0.35);
+  }
+  .error-text{ color:#ff8aa4; display:block; }
+
+  /* ===== TOASTS ===== */
+  .tf-toasts{ position:fixed; top:18px; right:18px; z-index:9999; display:flex; flex-direction:column; gap:8px; }
+  .tf-toast{
+    background:rgba(0,0,0,0.82);
+    border:1px solid rgba(255,204,0,0.18);
+    color:#fff; border-radius:12px; padding:10px 12px; font-size:.92rem;
+    box-shadow:0 8px 30px rgba(0,0,0,0.45);
+    animation: tfToastIn .14s ease;
+  }
+  @keyframes tfToastIn { from { opacity:0; transform: translateY(-6px);} to {opacity:1; transform:none;} }
 </style>
 
 <script>
-  (function(){
-    const overlay = document.querySelector('.offer-modal-overlay[data-modal="manage-offer"]');
-    const modalClose = overlay?.querySelector('.offer-modal-close');
-    const renameInput = overlay?.querySelector('#mo-rename-input');
-    const renameBtn   = overlay?.querySelector('#mo-rename-save');
-    const deleteBtn   = overlay?.querySelector('#mo-delete');
+(() => {
+  const grid = document.getElementById('offersGrid');
+  const menu = document.getElementById('offerActionsMenu');
+  const surface = menu?.querySelector('.menu-surface');
+  const listPane = menu?.querySelector('.menu-list');
+  const renamePane = menu?.querySelector('.menu-rename');
+  const renameInput = document.getElementById('renameInput');
+  const renameError = document.getElementById('renameError');
+  const toasts = document.getElementById('tfToasts');
 
-    // Campos resumo
-    const fName = overlay?.querySelector('#mo-name');
-    const fId   = overlay?.querySelector('#mo-id');
-    const fBots = overlay?.querySelector('#mo-bots');
-    const fType = overlay?.querySelector('#mo-type');
+  let anchorBtn = null;          // botão ... que abriu o menu
+  let currentOfferId = null;
+  let currentOfferName = '';
+  let currentOfferCard = null;
 
-    // Erros
-    const errRename = overlay?.querySelector('#mo-rename-error');
-    const errDelete = overlay?.querySelector('#mo-delete-error');
+  function showToast(msg) {
+    if (!toasts) return;
+    const el = document.createElement('div');
+    el.className = 'tf-toast';
+    el.textContent = msg;
+    toasts.appendChild(el);
+    setTimeout(() => el.remove(), 2200);
+  }
 
-    let currentOfferId = null;
+  function botTypeLabel(t) {
+    if (t === 'bot_padrao') return 'Padrão';
+    if (t === 'bot_fluxo_wiin') return 'Fluxo';
+    if (t === 'bot_fluxo_many') return 'Fluxo (Manychat)';
+    return 'Outro';
+  }
 
-    // Abre modal com dados do card
-    document.addEventListener('click', (e) => {
-      const btn = e.target.closest('.offer-actions-inline');
-      if (!btn) return;
+  function openMenuFor(btn) {
+    anchorBtn = btn;
+    currentOfferId = btn.getAttribute('data-offer-id');
+    currentOfferName = btn.getAttribute('data-offer-name') || '';
+    currentOfferCard = btn.closest('.offer-card');
 
-      // Impede navegação do <a>
-      e.preventDefault();
-      e.stopPropagation();
+    // posiciona o menu ao lado do botão
+    const rect = btn.getBoundingClientRect();
+    const menuRectW = 240;
+    const gap = 8;
+    const left = Math.min(window.innerWidth - menuRectW - 12, rect.right - menuRectW + 34);
+    const top = rect.top + window.scrollY + rect.height + gap;
 
-      const offerId   = btn.getAttribute('data-offer-id');
-      const offerName = btn.getAttribute('data-offer-name') || '';
-      const offerType = btn.getAttribute('data-offer-type') || 'bot_padrao';
-      const offerBots = btn.getAttribute('data-offer-bots') || '0';
+    menu.style.left = `${left}px`;
+    menu.style.top = `${top}px`;
 
-      currentOfferId = offerId;
-      if (fName) fName.textContent = offerName;
-      if (fId)   fId.textContent   = offerId;
-      if (fBots) fBots.textContent = offerBots;
-      if (fType) {
-        fType.textContent = (offerType === 'bot_padrao')
-          ? 'Padrão'
-          : (offerType === 'bot_fluxo_wiin')
-          ? 'Fluxo'
-          : (offerType === 'bot_fluxo_many')
-          ? 'Fluxo (Manychat)'
-          : 'Outro';
-      }
+    // estado lista
+    listPane.hidden = false;
+    renamePane.hidden = true;
+    renameError.hidden = true;
 
-      if (renameInput) renameInput.value = offerName;
+    menu.hidden = false;
+  }
 
-      if (errRename) errRename.hidden = true;
-      if (errDelete) errDelete.hidden = true;
+  function closeMenu() {
+    menu.hidden = true;
+    anchorBtn = null;
+    currentOfferId = null;
+    currentOfferName = '';
+    currentOfferCard = null;
+  }
 
-      overlay.hidden = false;
-    });
+  // abrir menu (delegação)
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest('.offer-actions-inline');
+    if (!btn) return;
 
-    // Fechar modal
-    modalClose?.addEventListener('click', () => overlay.hidden = true);
-    overlay?.addEventListener('click', (e) => {
-      if (e.target === overlay) overlay.hidden = true;
-    });
+    // impede navegação do <a>
+    e.preventDefault();
+    e.stopPropagation();
 
-    // Renomear (rota de exemplo: POST /ofertas/:id/renomear  { novoNome })
-    renameBtn?.addEventListener('click', async () => {
+    if (!menu.hidden && anchorBtn === btn) {
+      closeMenu();
+    } else {
+      openMenuFor(btn);
+    }
+  });
+
+  // ações do menu na LISTA
+  surface?.addEventListener('click', async (e) => {
+    const item = e.target.closest('.menu-item');
+    if (!item || item.disabled) return;
+
+    const action = item.getAttribute('data-action');
+
+    if (action === 'rename') {
+      // abre painel inline
+      listPane.hidden = true;
+      renamePane.hidden = false;
+      renameInput.value = currentOfferName || '';
+      renameInput.focus();
+      renameError.hidden = true;
+      return;
+    }
+
+    if (action === 'duplicate') {
       if (!currentOfferId) return;
-      const novoNome = (renameInput?.value || '').trim();
+      try {
+        const res = await fetch(`/ofertas/${currentOfferId}/duplicar`, {
+          method: 'POST',
+          headers: { 'Content-Type':'application/json' },
+          body: JSON.stringify({})
+        });
+        if (!res.ok) throw new Error('bad_status');
+        const payload = await res.json();
+        // Espera: { ok: true, offer: { id, owner, name, bot_type, tracking_type, status, telegram_username, bot_token, created_at } }
+        const o = payload.offer || payload.data || null;
+        if (!o) throw new Error('bad_payload');
+
+        // monta card novo DOM (mesmo layout)
+        const card = document.createElement('a');
+        card.className = 'offer-card';
+        card.setAttribute('href', `/ofertas/painel/${o.id}`);
+        card.setAttribute('data-offer-id', o.id);
+
+        const top = document.createElement('div');
+        top.className = 'card-top';
+
+        const h3 = document.createElement('h3');
+        h3.className = 'offer-name';
+        h3.textContent = o.name || (currentOfferName + ' (cópia)');
+
+        top.appendChild(h3);
+        // status removido (não inserir)
+
+        // botão …
+        const dotsBtn = document.createElement('button');
+        dotsBtn.type = 'button';
+        dotsBtn.className = 'offer-actions-inline';
+        dotsBtn.setAttribute('title', 'Ações');
+        dotsBtn.setAttribute('aria-label', 'Ações da oferta');
+        dotsBtn.setAttribute('data-offer-id', o.id);
+        dotsBtn.setAttribute('data-offer-name', o.name || '');
+        dotsBtn.setAttribute('data-offer-type', o.bot_type || 'bot_padrao');
+        dotsBtn.setAttribute('data-offer-bots', '0');
+        const dotsSpan = document.createElement('span');
+        dotsSpan.className = 'dots';
+        dotsSpan.textContent = '•••';
+        dotsBtn.appendChild(dotsSpan);
+
+        // meta
+        const meta = document.createElement('div');
+        meta.className = 'meta';
+        meta.innerHTML = `
+          <span>ID: ${String(o.id).slice(0,8)}</span>
+          <span class="sep">|</span>
+          <span>Bots: 0</span>
+          <span class="sep">|</span>
+          <span>Tipo: ${botTypeLabel(o.bot_type)}</span>
+        `;
+
+        // seta
+        const go = document.createElement('span');
+        go.className = 'go';
+        go.textContent = '›';
+
+        // composição
+        card.appendChild(top);
+        card.appendChild(dotsBtn);
+        card.appendChild(meta);
+        card.appendChild(go);
+
+        // insere logo depois do card atual (ou no início)
+        if (currentOfferCard && currentOfferCard.parentElement) {
+          currentOfferCard.parentElement.insertBefore(card, currentOfferCard.nextSibling);
+        } else {
+          grid?.prepend(card);
+        }
+
+        showToast('Oferta duplicada com sucesso.');
+        closeMenu();
+      } catch (err) {
+        showToast('Falha ao duplicar.');
+      }
+      return;
+    }
+
+    if (action === 'delete') {
+      if (!currentOfferId) return;
+      const ok = confirm('Tem certeza que deseja excluir esta oferta? Esta ação é permanente.');
+      if (!ok) return;
+      try {
+        const res = await fetch(`/ofertas/${currentOfferId}`, { method:'DELETE' });
+        if (!res.ok) throw new Error('bad_status');
+        // remove card
+        currentOfferCard?.parentElement?.removeChild(currentOfferCard);
+        showToast('Oferta excluída.');
+        closeMenu();
+      } catch (err) {
+        showToast('Falha ao excluir. Tente novamente.');
+      }
+      return;
+    }
+  });
+
+  // ações no painel de RENOMEAR
+  surface?.addEventListener('click', async (e) => {
+    const btn = e.target.closest('[data-action]');
+    if (!btn) return;
+
+    const action = btn.getAttribute('data-action');
+
+    if (action === 'cancel-rename') {
+      renameError.hidden = true;
+      renamePane.hidden = true;
+      listPane.hidden = false;
+      return;
+    }
+
+    if (action === 'confirm-rename') {
+      if (!currentOfferId) return;
+      const novoNome = (renameInput.value || '').trim();
       if (!novoNome) {
-        if (errRename) { errRename.textContent = 'Digite um nome válido.'; errRename.hidden = false; }
+        renameError.textContent = 'Digite um nome válido.';
+        renameError.hidden = false;
         return;
       }
-      if (errRename) errRename.hidden = true;
-
+      renameError.hidden = true;
       try {
         const res = await fetch(`/ofertas/${currentOfferId}/renomear`, {
           method: 'POST',
@@ -311,41 +459,29 @@
         if (!res.ok) throw new Error('bad_status');
 
         // Atualiza nome no card sem recarregar
-        const card = document.querySelector(`.offer-card[data-offer-id="${currentOfferId}"]`);
-        card?.querySelector('.offer-name')?.replaceChildren(document.createTextNode(novoNome));
+        currentOfferCard?.querySelector('.offer-name')?.replaceChildren(document.createTextNode(novoNome));
+        const btnDots = currentOfferCard?.querySelector('.offer-actions-inline');
+        if (btnDots) btnDots.setAttribute('data-offer-name', novoNome);
 
-        // Atualiza dados do botão …
-        const btn = card?.querySelector('.offer-actions-inline');
-        if (btn) btn.setAttribute('data-offer-name', novoNome);
-
-        overlay.hidden = true;
+        showToast('Nome atualizado.');
+        closeMenu();
       } catch (err) {
-        if (errRename) { errRename.textContent = 'Não foi possível renomear. Tente novamente.'; errRename.hidden = false; }
+        renameError.textContent = 'Não foi possível renomear. Tente novamente.';
+        renameError.hidden = false;
       }
-    });
+      return;
+    }
+  });
 
-    // Excluir (rota de exemplo: DELETE /ofertas/:id)
-    deleteBtn?.addEventListener('click', async () => {
-      if (!currentOfferId) return;
-      if (!confirm('Tem certeza que deseja excluir esta oferta? Esta ação é permanente.')) return;
+  // Fechar menu ao clicar fora / scroll / resize / ESC
+  document.addEventListener('click', (e) => {
+    if (menu.hidden) return;
+    if (e.target.closest('.offer-actions-inline')) return; // clique no próprio botão já é tratado
+    if (!e.target.closest('#offerActionsMenu')) closeMenu();
+  }, true);
 
-      if (errDelete) errDelete.hidden = true;
-
-      try {
-        const res = await fetch(`/ofertas/${currentOfferId}`, { method:'DELETE' });
-        if (!res.ok) throw new Error('bad_status');
-
-        // Remove card da lista
-        const card = document.querySelector(`.offer-card[data-offer-id="${currentOfferId}"]`);
-        card?.parentElement?.removeChild(card);
-
-        overlay.hidden = true;
-      } catch (err) {
-        if (errDelete) { errDelete.textContent = 'Falha ao excluir. Tente novamente.'; errDelete.hidden = false; }
-      }
-    });
-
-    // Evita que o clique no modal feche por acidente
-    overlay?.querySelector('.offer-modal')?.addEventListener('click', (e) => e.stopPropagation());
-  })();
+  window.addEventListener('scroll', () => { if (!menu.hidden) closeMenu(); }, { passive:true });
+  window.addEventListener('resize', () => { if (!menu.hidden) closeMenu(); }, { passive:true });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !menu.hidden) closeMenu(); });
+})();
 </script>
