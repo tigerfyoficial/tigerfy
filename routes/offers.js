@@ -98,7 +98,7 @@ router.post("/ofertas/criar", authGuard, async (req, res) => {
       return res.redirect("/ofertas");
     }
 
-    // ✅ NÃO cria etapa automaticamente. Apenas abre o painel.
+    // ✅ Não cria etapa automática
     return res.redirect(`/ofertas/painel/${data.id}`);
   } catch (err) {
     console.error("Erro criar oferta:", err);
@@ -125,19 +125,14 @@ router.get("/ofertas/painel/:id", authGuard, async (req, res) => {
     const stepId = req.query.stepId || null;
     const etapaNum = req.query.etapa ? parseInt(req.query.etapa, 10) : null;
 
-    // Oferta do usuário
     const offerRes = await Steps.getOfferByIdForOwner(offerId, owner);
     if (offerRes.error || !offerRes.data) return res.redirect("/ofertas");
     const offer = mapOffer(offerRes.data);
 
-    // ❌ NÃO garantir Etapa 1 automaticamente
-    // const _ = await Steps.ensureFirstStep(offer.id);
-
-    // Carrega etapas (se não houver, tudo bem)
+    // ❌ Não garantir Etapa 1 automaticamente
     const stepsRes = await Steps.listSteps(offer.id);
     const steps = (stepsRes.data || []).map(mapStep);
 
-    // Seleção da etapa atual (se existir)
     let currentStep = null;
     if (stepId) {
       const got = await Steps.getStepById({ offerId: offer.id, stepId });
@@ -151,7 +146,7 @@ router.get("/ofertas/painel/:id", authGuard, async (req, res) => {
       title: `${offer.name} — Painel da Oferta - TigerFy`,
       offer,
       steps,
-      currentStep, // pode ser null
+      currentStep,
       active: "ofertas",
     });
   } catch (err) {
@@ -161,7 +156,7 @@ router.get("/ofertas/painel/:id", authGuard, async (req, res) => {
 });
 
 /* =========================================================
-   ETAPAS — criar
+   ETAPAS — criar 1
 ========================================================= */
 router.post("/ofertas/:id/etapas", authGuard, async (req, res) => {
   try {
@@ -194,8 +189,7 @@ router.post("/ofertas/:id/etapas", authGuard, async (req, res) => {
 });
 
 /* =========================================================
-   ETAPAS — salvar (nome/settings)
-   (evita UPDATE vazio; parse seguro de settings)
+   ETAPAS — salvar 1 (nome/settings)
 ========================================================= */
 router.post("/ofertas/:id/etapas/:stepId/save", authGuard, async (req, res) => {
   try {
@@ -252,6 +246,129 @@ router.post("/ofertas/:id/etapas/:stepId/save", authGuard, async (req, res) => {
 });
 
 /* =========================================================
+   ETAPAS — BULK SAVE (criar/renomear/excluir/reordenar)
+   Endpoints aceitos: /bulk-save, /save-bulk, /save
+   Payload esperado:
+   {
+     steps: [
+       { id?:string, name:string, order?:number, _delete?:boolean }
+     ]
+   }
+========================================================= */
+async function bulkSaveHandler(req, res) {
+  try {
+    const owner = req.session.userId;
+    const { id: offerId } = req.params;
+
+    let { steps } = req.body || {};
+    if (typeof steps === "string") {
+      try { steps = JSON.parse(steps); } catch { steps = []; }
+    }
+    if (!Array.isArray(steps)) steps = [];
+
+    // valida posse da oferta
+    const offerRes = await Steps.getOfferByIdForOwner(offerId, owner);
+    if (offerRes.error || !offerRes.data) {
+      return res.status(403).json({ ok: false, error: "forbidden" });
+    }
+
+    // 1) Deletar marcados
+    const toDelete = steps.filter(s => s && s._delete && s.id);
+    for (const s of toDelete) {
+      await supabase.from("offer_steps").delete().eq("id", s.id).eq("offer_id", offerId);
+    }
+
+    // 2) Criar novos (order temporário alto; renumeramos depois)
+    const toCreate = steps.filter(s => s && !s.id && !s._delete);
+    const createdMap = new Map(); // key: tmp index -> new id
+    for (let i = 0; i < toCreate.length; i++) {
+      const s = toCreate[i];
+      const name = (s.name || "").trim() || "Nova etapa";
+      const ins = await supabase
+        .from("offer_steps")
+        .insert([{
+          offer_id: offerId,
+          name,
+          step_no: 999999,           // temporário para evitar colisão
+          settings: {},
+          duplicated: false,
+          duplicated_from: null
+        }])
+        .select("id")
+        .single();
+      if (ins.data?.id) createdMap.set(i, ins.data.id);
+    }
+
+    // 3) Renomear existentes
+    const toUpdate = steps.filter(s => s && s.id && !s._delete);
+    for (const s of toUpdate) {
+      const patch = {};
+      if (typeof s.name === "string" && s.name.trim()) patch.name = s.name.trim();
+      if (Object.keys(patch).length) {
+        await supabase.from("offer_steps").update(patch).eq("id", s.id).eq("offer_id", offerId);
+      }
+    }
+
+    // 4) Obter todos e aplicar ORDEM final (1..n)
+    const all = await supabase
+      .from("offer_steps")
+      .select("id, created_at")
+      .eq("offer_id", offerId);
+
+    let rows = all.data || [];
+
+    // construir ordem desejada pelos 'order' vindos do front
+    // mapeia ids reais inclusive os recém-criados
+    const desired = [];
+    for (let i = 0, pos = 0; i < steps.length; i++) {
+      const s = steps[i];
+      if (s && s._delete) continue;
+      let id = s.id;
+      if (!id && toCreate.length) {
+        // achar índice do toCreate correspondente
+        const idx = toCreate.indexOf(s);
+        if (idx > -1 && createdMap.has(idx)) id = createdMap.get(idx);
+      }
+      if (id) desired.push({ id, order: Number.isFinite(s?.order) ? s.order : pos });
+      pos++;
+    }
+
+    // se não veio 'order', mantém created_at
+    if (desired.length) {
+      desired.sort((a, b) => a.order - b.order);
+      for (let i = 0; i < desired.length; i++) {
+        const id = desired[i].id;
+        await supabase.from("offer_steps").update({ step_no: i + 1 }).eq("id", id).eq("offer_id", offerId);
+      }
+    } else {
+      // fallback: renumera por created_at
+      rows.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+      for (let i = 0; i < rows.length; i++) {
+        await supabase.from("offer_steps").update({ step_no: i + 1 }).eq("id", rows[i].id).eq("offer_id", offerId);
+      }
+    }
+
+    // resposta final com a lista normalizada
+    const finalSel = await supabase
+      .from("offer_steps")
+      .select("*")
+      .eq("offer_id", offerId)
+      .order("step_no", { ascending: true });
+
+    const payload = (finalSel.data || []).map(mapStep);
+    return res.json({ ok: true, steps: payload });
+  } catch (err) {
+    console.error("Erro bulk-save etapas:", err);
+    return res.status(500).json({ ok: false, error: "bulk_save_failed" });
+  }
+}
+
+// aliases para o front
+router.post("/ofertas/:id/etapas/bulk-save", authGuard, bulkSaveHandler);
+router.post("/ofertas/:id/etapas/save-bulk", authGuard, bulkSaveHandler);
+router.post("/ofertas/:id/etapas/save",      authGuard, bulkSaveHandler);
+
+/* =========================================================
    TOKENS (inalterado)
 ========================================================= */
 router.post("/ofertas/:id/token", authGuard, async (req, res) => {
@@ -288,10 +405,8 @@ router.post("/ofertas/:id/token", authGuard, async (req, res) => {
 });
 
 /* =========================================================
-   AÇÕES DA LISTA — RENOMEAR / DUPLICAR / EXCLUIR
+   AÇÕES LISTA — RENOMEAR / DUPLICAR / EXCLUIR
 ========================================================= */
-
-// Renomear
 router.post("/ofertas/:id/renomear", authGuard, async (req, res) => {
   try {
     const owner = req.session.userId;
@@ -322,7 +437,6 @@ router.post("/ofertas/:id/renomear", authGuard, async (req, res) => {
   }
 });
 
-// Duplicar
 router.post("/ofertas/:id/duplicar", authGuard, async (req, res) => {
   try {
     const owner = req.session.userId;
@@ -355,7 +469,6 @@ router.post("/ofertas/:id/duplicar", authGuard, async (req, res) => {
 
     if (insErr || !created) return res.status(500).json({ ok: false, error: "insert_failed" });
 
-    // ❗Não copiamos etapas aqui (mantém simples)
     return res.json({ ok: true, offer: created });
   } catch (err) {
     console.error("Erro duplicar oferta:", err);
@@ -363,13 +476,11 @@ router.post("/ofertas/:id/duplicar", authGuard, async (req, res) => {
   }
 });
 
-// Excluir
 router.delete("/ofertas/:id", authGuard, async (req, res) => {
   try {
     const owner = req.session.userId;
     const { id } = req.params;
 
-    // Confirma posse
     const { data: exists, error: getErr } = await supabase
       .from("offers")
       .select("id")
@@ -378,7 +489,6 @@ router.delete("/ofertas/:id", authGuard, async (req, res) => {
       .single();
     if (getErr || !exists) return res.status(404).json({ ok: false, error: "not_found" });
 
-    // FK em offer_steps está ON DELETE CASCADE
     const { error: delErr } = await supabase
       .from("offers")
       .delete()
