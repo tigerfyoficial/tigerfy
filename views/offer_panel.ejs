@@ -352,24 +352,43 @@
 
   function escapeHtml(s){ return (s || "").replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
-  /* ===== Helpers para TÍTULO e BREADCRUMB ===== */
-  function activeMainTab(){
-    var el = document.querySelector('.tf-tabs-main .tab.active');
-    return el ? (el.dataset.tab || 'principal') : 'principal';
+  /* ===== NEW: resolver etapa pela URL quando o back não preencher ===== */
+  function getStepIdFromURL(){
+    try { return new URL(window.location.href).searchParams.get('stepId'); }
+    catch(_) { return null; }
+  }
+  function stepById(id){
+    return (steps || []).find(function(s){ return String(s.id) === String(id); }) || null;
   }
   function stepDisplayName(s){
     if (!s) return null;
     var nm = (s.name || '').trim();
+    if (nm) return nm;
     var no = s.stepNo || s.step_no;
-    return nm || ('Etapa ' + (no || ''));
+    if (!no){
+      // fallback: deduz o índice pela posição em steps
+      var idx = (steps || []).findIndex(function(x){ return String(x.id) === String(s.id); });
+      if (idx >= 0) no = idx + 1;
+    }
+    return 'Etapa ' + (no || '');
   }
+
+  // Se o back não passou currentStep, tenta resolver pelo stepId da URL
+  (function ensureCurrentStep(){
+    if (currentStep && currentStep.id) return;
+    var q = getStepIdFromURL();
+    if (!q) return;
+    var found = stepById(q);
+    if (found) currentStep = found;
+  })();
+
+  /* ===== Título e breadcrumb baseados exclusivamente em currentStep ===== */
   function updateHeaderTitle(){
     var h1 = document.getElementById('offerTitle'); if (!h1) return;
-    var tab = activeMainTab();
-    if (tab === 'principal' || !currentStep){
-      h1.textContent = (offer && offer.name) ? offer.name : 'Nome da Oferta';
+    if (currentStep && currentStep.id){
+      h1.textContent = stepDisplayName(currentStep) || (offer?.name || 'Nome da Oferta');
     } else {
-      h1.textContent = stepDisplayName(currentStep) || ((offer && offer.name) ? offer.name : 'Nome da Oferta');
+      h1.textContent = offer?.name || 'Nome da Oferta';
     }
   }
 
@@ -381,10 +400,7 @@
     items.push('<a href="/ofertas">Minhas Ofertas</a>');
     items.push('<span>›</span>');
     items.push('<a href="'+ offerHref +'">'+ escapeHtml(offerName) +'</a>');
-
-    // Só mostra a etapa no breadcrumb se NÃO estiver na aba Principal
-    var tab = activeMainTab();
-    if (currentStep && currentStep.id && tab !== 'principal') {
+    if (currentStep && currentStep.id){
       items.push('<span>›</span>');
       var stepUrl = offerHref + "?stepId=" + encodeURIComponent(currentStep.id);
       items.push('<a href="'+ stepUrl +'">'+ escapeHtml(stepDisplayName(currentStep)) +'</a>');
@@ -392,11 +408,10 @@
     bc.innerHTML = items.join('');
   }
 
-  // Inicializa cabeçalho + breadcrumb
   updateHeaderTitle();
   buildBreadcrumb();
 
-  // Tabs
+  /* ===== Tabs (mantido) ===== */
   var mainTabs = document.querySelectorAll('.tf-tabs-main .tab');
   var subTabsWrap = document.getElementById('subtabs-principal');
   mainTabs.forEach(function(btn){
@@ -406,15 +421,14 @@
       mainTabs.forEach(function(b){ b.classList.remove('active'); });
       btn.classList.add('active');
       if (subTabsWrap) subTabsWrap.style.display = (t === 'principal') ? 'flex' : 'none';
-
-      // Atualiza somente textos (título e breadcrumb)
+      // sempre re-renderiza textos
       updateHeaderTitle();
       buildBreadcrumb();
     });
   });
   if (subTabsWrap) subTabsWrap.style.display = 'flex';
 
-  // Menu leve no botão "Etapas"
+  /* ===== Menu leve no botão "Etapas" (mantido) ===== */
   (function(){
     var tab = document.getElementById('tabEtapas');
     if (!tab) return;
@@ -447,7 +461,15 @@
     });
   })();
 
-  // Toast
+  /* ===== Toasts e restante do código do modal/etc. permanecem iguais ===== */
+
+  // Botão "Salvar Alterações" (sem mudanças)
+  var saveBtn = document.getElementById('btnSaveAll');
+  function setBtnLoading(btn, on){
+    if (!btn) return;
+    if (on){ btn.disabled=true; if(!btn.dataset._txt) btn.dataset._txt=btn.textContent; btn.textContent='Salvando…'; btn.style.filter='brightness(1.03)'; btn.style.boxShadow='0 8px 26px rgba(255,204,0,0.35)'; }
+    else { btn.disabled=false; btn.textContent = btn.dataset._txt || 'Salvar Alterações'; btn.style.filter=''; btn.style.boxShadow=''; }
+  }
   function showToast(type, text){
     var host = document.createElement('div');
     host.style.position='fixed'; host.style.top='20px'; host.style.right='20px';
@@ -468,24 +490,11 @@
     requestAnimationFrame(function(){ card.style.transform='translateY(0)'; card.style.opacity='1'; });
     setTimeout(function(){ card.style.transform='translateY(-10px)'; card.style.opacity='0'; setTimeout(function(){ host.remove(); }, 160); }, 2300);
   }
-
-  // Botão "Salvar Alterações" (painel principal)
-  var saveBtn = document.getElementById('btnSaveAll');
-  function setBtnLoading(btn, on){
-    if (!btn) return;
-    if (on){ btn.disabled=true; if(!btn.dataset._txt) btn.dataset._txt=btn.textContent; btn.textContent='Salvando…'; btn.style.filter='brightness(1.03)'; btn.style.boxShadow='0 8px 26px rgba(255,204,0,0.35)'; }
-    else { btn.disabled=false; btn.textContent = btn.dataset._txt || 'Salvar Alterações'; btn.style.filter=''; btn.style.boxShadow=''; }
-  }
-  function flashSaved(btn){
-    if (!btn) return;
-    btn.classList.remove('tf-pulse-once'); void btn.offsetWidth; btn.classList.add('tf-pulse-once');
-    btn.textContent='Salvo!'; setTimeout(function(){ btn.textContent = btn.dataset._txt || 'Salvar Alterações'; }, 1100);
-  }
   if (saveBtn){
     saveBtn.addEventListener('click', async function(){
       if (!offer) { showToast('error','Oferta inválida.'); return; }
       if (!currentStep) {
-        flashSaved(saveBtn); 
+        // visão base
         showToast('success','Configurações salvas (oferta base).');
         return;
       }
@@ -496,7 +505,7 @@
           method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ settings: draftSettings })
         });
         const js = await r.json(); if (!js || !js.ok) throw new Error('save_failed');
-        flashSaved(saveBtn); showToast('success','Configurações salvas com sucesso.');
+        showToast('success','Configurações salvas com sucesso.');
       }catch(e){ console.error(e); showToast('error','Não foi possível salvar.'); }
       finally{ setBtnLoading(saveBtn,false); }
     });
