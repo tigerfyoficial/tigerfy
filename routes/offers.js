@@ -35,7 +35,9 @@ function mapStep(row) {
   };
 }
 
-/* ---------- /ofertas (lista) ---------- */
+/* =========================================================
+   LISTAGEM
+========================================================= */
 router.get("/ofertas", authGuard, async (req, res) => {
   try {
     const owner = req.session.userId;
@@ -63,7 +65,9 @@ router.get("/ofertas", authGuard, async (req, res) => {
   }
 });
 
-/* ---------- Criar oferta (GET/POST) ---------- */
+/* =========================================================
+   CRIAR OFERTA (GET/POST)
+========================================================= */
 router.get("/ofertas/criar", authGuard, (_req, res) => {
   return res.render("bots_create", { title: "Criar Oferta - TigerFy", active: "ofertas" });
 });
@@ -79,6 +83,8 @@ router.post("/ofertas/criar", authGuard, async (req, res) => {
       bot_type: botType || "bot_padrao",
       tracking_type: trackingType || "fb_pixel",
       status: "incompleto",
+      telegram_username: null,
+      bot_token: null,
     };
 
     const { data, error } = await supabase
@@ -92,6 +98,7 @@ router.post("/ofertas/criar", authGuard, async (req, res) => {
       return res.redirect("/ofertas");
     }
 
+    // ✅ NÃO cria etapa automaticamente. Apenas abre o painel.
     return res.redirect(`/ofertas/painel/${data.id}`);
   } catch (err) {
     console.error("Erro criar oferta:", err);
@@ -99,15 +106,18 @@ router.post("/ofertas/criar", authGuard, async (req, res) => {
   }
 });
 
-/* ---------- Compat: /ofertas/gerenciar → painel ---------- */
+/* =========================================================
+   COMPAT: /ofertas/gerenciar → painel
+========================================================= */
 router.get("/ofertas/gerenciar", authGuard, (req, res) => {
   const id = req.query.id;
   if (!id) return res.redirect("/ofertas");
   return res.redirect(`/ofertas/painel/${id}`);
 });
 
-/* ---------- Painel da oferta ---------- */
-// Painel da oferta — NÃO cria etapa automaticamente
+/* =========================================================
+   PAINEL DA OFERTA (sem ensureFirstStep)
+========================================================= */
 router.get("/ofertas/painel/:id", authGuard, async (req, res) => {
   try {
     const owner = req.session.userId;
@@ -115,65 +125,33 @@ router.get("/ofertas/painel/:id", authGuard, async (req, res) => {
     const stepId = req.query.stepId || null;
     const etapaNum = req.query.etapa ? parseInt(req.query.etapa, 10) : null;
 
-    // Confere se a oferta é do usuário
+    // Oferta do usuário
     const offerRes = await Steps.getOfferByIdForOwner(offerId, owner);
     if (offerRes.error || !offerRes.data) return res.redirect("/ofertas");
-    const offer = {
-      _id: offerRes.data.id,
-      id: offerRes.data.id,
-      owner: offerRes.data.owner,
-      name: offerRes.data.name,
-      botType: offerRes.data.bot_type,
-      trackingType: offerRes.data.tracking_type,
-      status: offerRes.data.status,
-      telegramUsername: offerRes.data.telegram_username || null,
-      botToken: offerRes.data.bot_token || null,
-      createdAt: offerRes.data.created_at,
-    };
+    const offer = mapOffer(offerRes.data);
 
-    // Carrega etapas (pode vir zerado)
+    // ❌ NÃO garantir Etapa 1 automaticamente
+    // const _ = await Steps.ensureFirstStep(offer.id);
+
+    // Carrega etapas (se não houver, tudo bem)
     const stepsRes = await Steps.listSteps(offer.id);
-    const steps = (stepsRes.data || []).map(s => ({
-      id: s.id,
-      offerId: s.offer_id,
-      name: s.name,
-      stepNo: s.step_no,
-      duplicated: s.duplicated,
-      duplicatedFrom: s.duplicated_from || null,
-      settings: s.settings || {},
-      createdAt: s.created_at,
-      updatedAt: s.updated_at,
-    }));
+    const steps = (stepsRes.data || []).map(mapStep);
 
-    // Define etapa atual (se existir)
+    // Seleção da etapa atual (se existir)
     let currentStep = null;
     if (stepId) {
       const got = await Steps.getStepById({ offerId: offer.id, stepId });
-      if (!got.error && got.data) {
-        currentStep = {
-          id: got.data.id,
-          offerId: got.data.offer_id,
-          name: got.data.name,
-          stepNo: got.data.step_no,
-          duplicated: got.data.duplicated,
-          duplicatedFrom: got.data.duplicated_from || null,
-          settings: got.data.settings || {},
-          createdAt: got.data.created_at,
-          updatedAt: got.data.updated_at,
-        };
-      }
+      if (!got.error && got.data) currentStep = mapStep(got.data);
     } else if (etapaNum && !isNaN(etapaNum)) {
       currentStep = steps.find(s => s.stepNo === etapaNum) || null;
     }
-    if (!currentStep && steps.length) currentStep = steps[0]; // se houver
+    if (!currentStep) currentStep = steps.length ? steps[0] : null;
 
-    // Render: aceita 0 etapas de boa
     return res.render("offer_panel", {
       title: `${offer.name} — Painel da Oferta - TigerFy`,
       offer,
       steps,
-      currentStep,            // pode ser null
-      hasSteps: steps.length > 0, // útil se quiser no EJS (opcional)
+      currentStep, // pode ser null
       active: "ofertas",
     });
   } catch (err) {
@@ -182,7 +160,9 @@ router.get("/ofertas/painel/:id", authGuard, async (req, res) => {
   }
 });
 
-/* ---------- ETAPAS: CRIAR (sempre INSERT) ---------- */
+/* =========================================================
+   ETAPAS — criar
+========================================================= */
 router.post("/ofertas/:id/etapas", authGuard, async (req, res) => {
   try {
     const owner = req.session.userId;
@@ -205,6 +185,7 @@ router.post("/ofertas/:id/etapas", authGuard, async (req, res) => {
       console.error("[steps] insert error:", created.error);
       return res.status(500).json({ ok: false, error: "insert_failed" });
     }
+
     return res.json({ ok: true, step: created.data });
   } catch (err) {
     console.error("Erro criar etapa:", err);
@@ -212,20 +193,26 @@ router.post("/ofertas/:id/etapas", authGuard, async (req, res) => {
   }
 });
 
-/* ---------- ETAPAS: SALVAR ALTERAÇÕES (settings/nome) ---------- */
+/* =========================================================
+   ETAPAS — salvar (nome/settings)
+   (evita UPDATE vazio; parse seguro de settings)
+========================================================= */
 router.post("/ofertas/:id/etapas/:stepId/save", authGuard, async (req, res) => {
   try {
     const owner = req.session.userId;
     const { id: offerId, stepId } = req.params;
-    const { name, settings } = req.body || {};
+    const { name } = req.body || {};
+    let { settings } = req.body || {};
 
-    // Confere owner da oferta
+    if (typeof settings === "string") {
+      try { settings = JSON.parse(settings); } catch (_) { settings = undefined; }
+    }
+
     const offerRes = await Steps.getOfferByIdForOwner(offerId, owner);
     if (offerRes.error || !offerRes.data) {
       return res.status(403).json({ ok: false, error: "forbidden" });
     }
 
-    // Confere step pertence à oferta
     const stepRes = await Steps.getStepById({ offerId, stepId });
     if (stepRes.error || !stepRes.data) {
       return res.status(404).json({ ok: false, error: "step_not_found" });
@@ -235,7 +222,7 @@ router.post("/ofertas/:id/etapas/:stepId/save", authGuard, async (req, res) => {
       offerId,
       stepId,
       name: typeof name === "string" ? name : undefined,
-      settings: settings && typeof settings === "object" ? settings : undefined,
+      settings
     });
 
     if (updRes.error || !updRes.data) {
@@ -243,14 +230,30 @@ router.post("/ofertas/:id/etapas/:stepId/save", authGuard, async (req, res) => {
       return res.status(500).json({ ok: false, error: "update_failed" });
     }
 
-    return res.json({ ok: true, step: mapStep(updRes.data) });
+    const s = updRes.data;
+    return res.json({
+      ok: true,
+      step: {
+        id: s.id,
+        offerId: s.offer_id,
+        name: s.name,
+        stepNo: s.step_no,
+        duplicated: s.duplicated,
+        duplicatedFrom: s.duplicated_from || null,
+        settings: s.settings || {},
+        createdAt: s.created_at,
+        updatedAt: s.updated_at,
+      }
+    });
   } catch (err) {
     console.error("Erro salvar etapa:", err);
     return res.status(500).json({ ok: false, error: "server_error" });
   }
 });
 
-/* ---------- Salvar token da oferta ---------- */
+/* =========================================================
+   TOKENS (inalterado)
+========================================================= */
 router.post("/ofertas/:id/token", authGuard, async (req, res) => {
   try {
     const owner = req.session.userId;
@@ -284,87 +287,61 @@ router.post("/ofertas/:id/token", authGuard, async (req, res) => {
   }
 });
 
-/* ======================================================================
-   NOVAS ROTAS: RENOMEAR / EXCLUIR / DUPLICAR OFERTA (para offers_list.ejs)
-   ====================================================================== */
+/* =========================================================
+   AÇÕES DA LISTA — RENOMEAR / DUPLICAR / EXCLUIR
+========================================================= */
 
-/* Renomear oferta */
+// Renomear
 router.post("/ofertas/:id/renomear", authGuard, async (req, res) => {
   try {
     const owner = req.session.userId;
     const { id } = req.params;
     const { novoNome } = req.body || {};
     const name = (novoNome || "").trim();
-
     if (!name) return res.status(400).json({ ok: false, error: "invalid_name" });
 
-    const { data, error } = await supabase
+    const { data: exists, error: getErr } = await supabase
+      .from("offers")
+      .select("id")
+      .eq("id", id)
+      .eq("owner", owner)
+      .single();
+    if (getErr || !exists) return res.status(404).json({ ok: false, error: "not_found" });
+
+    const { error: updErr } = await supabase
       .from("offers")
       .update({ name })
       .eq("id", id)
-      .eq("owner", owner)
-      .select("id, name")
-      .single();
+      .eq("owner", owner);
 
-    if (error || !data) return res.status(500).json({ ok: false, error: "update_failed" });
-
-    return res.json({ ok: true, offer: data });
+    if (updErr) return res.status(500).json({ ok: false, error: "update_failed" });
+    return res.json({ ok: true });
   } catch (err) {
     console.error("Erro renomear oferta:", err);
     return res.status(500).json({ ok: false, error: "server_error" });
   }
 });
 
-/* Excluir oferta */
-router.delete("/ofertas/:id", authGuard, async (req, res) => {
-  try {
-    const owner = req.session.userId;
-    const { id } = req.params;
-
-    // RLS garante owner; cascata apaga steps (FK ON DELETE CASCADE)
-    const { data, error } = await supabase
-      .from("offers")
-      .delete()
-      .eq("id", id)
-      .eq("owner", owner)
-      .select("id")
-      .single();
-
-    if (error || !data) return res.status(404).json({ ok: false, error: "not_found" });
-
-    return res.json({ ok: true, id: data.id });
-  } catch (err) {
-    console.error("Erro excluir oferta:", err);
-    return res.status(500).json({ ok: false, error: "server_error" });
-  }
-});
-
-/* Duplicar oferta */
+// Duplicar
 router.post("/ofertas/:id/duplicar", authGuard, async (req, res) => {
   try {
     const owner = req.session.userId;
     const { id } = req.params;
 
-    // pega a original (confirma owner)
-    const { data: original, error: getErr } = await supabase
+    const { data: src, error: getErr } = await supabase
       .from("offers")
-      .select("id, owner, name, bot_type, tracking_type")
+      .select("id, owner, name, bot_type, tracking_type, status")
       .eq("id", id)
       .eq("owner", owner)
       .single();
 
-    if (getErr || !original) return res.status(404).json({ ok: false, error: "not_found" });
+    if (getErr || !src) return res.status(404).json({ ok: false, error: "not_found" });
 
-    // gera nome "cópia"
-    const base = original.name || "Oferta";
-    const copyName = `${base} (cópia)`;
-
-    // cria nova (status resetado e tokens limpos por segurança)
     const payload = {
       owner,
-      name: copyName,
-      bot_type: original.bot_type || "bot_padrao",
-      tracking_type: original.tracking_type || "fb_pixel",
+      name: `${src.name} (cópia)`,
+      bot_type: src.bot_type,
+      tracking_type: src.tracking_type,
       status: "incompleto",
       telegram_username: null,
       bot_token: null,
@@ -373,15 +350,45 @@ router.post("/ofertas/:id/duplicar", authGuard, async (req, res) => {
     const { data: created, error: insErr } = await supabase
       .from("offers")
       .insert([payload])
-      .select("id, name, bot_type, tracking_type")
+      .select("id, name, bot_type")
       .single();
 
     if (insErr || !created) return res.status(500).json({ ok: false, error: "insert_failed" });
 
-    // (Opcional: duplicar steps no futuro; por ora painel cria Etapa 1 ao abrir)
+    // ❗Não copiamos etapas aqui (mantém simples)
     return res.json({ ok: true, offer: created });
   } catch (err) {
     console.error("Erro duplicar oferta:", err);
+    return res.status(500).json({ ok: false, error: "server_error" });
+  }
+});
+
+// Excluir
+router.delete("/ofertas/:id", authGuard, async (req, res) => {
+  try {
+    const owner = req.session.userId;
+    const { id } = req.params;
+
+    // Confirma posse
+    const { data: exists, error: getErr } = await supabase
+      .from("offers")
+      .select("id")
+      .eq("id", id)
+      .eq("owner", owner)
+      .single();
+    if (getErr || !exists) return res.status(404).json({ ok: false, error: "not_found" });
+
+    // FK em offer_steps está ON DELETE CASCADE
+    const { error: delErr } = await supabase
+      .from("offers")
+      .delete()
+      .eq("id", id)
+      .eq("owner", owner);
+
+    if (delErr) return res.status(500).json({ ok: false, error: "delete_failed" });
+    return res.json({ ok: true });
+  } catch (err) {
+    console.error("Erro excluir oferta:", err);
     return res.status(500).json({ ok: false, error: "server_error" });
   }
 });
