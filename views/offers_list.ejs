@@ -18,11 +18,13 @@
       </div>
     <% } else { %>
       <% offers.forEach(function(o){ %>
+        <!-- id compatível Supabase/Mongo -->
+        <% const __id = o.id || o._id; %>
+
         <!-- Card da oferta (NÃO alterar layout) -->
-        <a class="offer-card" href="/ofertas/painel/<%= o._id %>" data-offer-id="<%= o._id %>">
+        <a class="offer-card" href="/ofertas/painel/<%= __id %>" data-offer-id="<%= __id %>">
           <div class="card-top">
             <h3 class="offer-name"><%= o.name %></h3>
-            <!-- (STATUS REMOVIDO) -->
           </div>
 
           <!-- Botão … (menu) — não navega, abre menu flutuante -->
@@ -31,7 +33,7 @@
             class="offer-actions-inline"
             title="Ações"
             aria-label="Ações da oferta"
-            data-offer-id="<%= o._id %>"
+            data-offer-id="<%= __id %>"
             data-offer-name="<%- o.name %>"
             data-offer-type="<%- o.botType %>"
             data-offer-bots="<%- (typeof o.botsCount !== 'undefined' ? o.botsCount : 0) %>"
@@ -41,7 +43,7 @@
 
           <!-- Mini resumo -->
           <div class="meta">
-            <span>ID: <%= String(o._id).slice(0, 8) %></span>
+            <span>ID: <%= String(__id).slice(0, 8) %></span>
             <span class="sep">|</span>
             <span>Bots: <%= (typeof o.botsCount !== 'undefined' ? o.botsCount : 0) %></span>
             <span class="sep">|</span>
@@ -60,7 +62,7 @@
   </div>
 </div>
 
-<!-- ======= MENU FLUTUANTE DAS AÇÕES (substitui o modal antigo) ======= -->
+<!-- ======= MENU FLUTUANTE DAS AÇÕES ======= -->
 <div class="offer-actions-menu" id="offerActionsMenu" hidden>
   <div class="menu-surface" role="menu" aria-label="Ações da oferta">
     <!-- Estado: lista -->
@@ -83,10 +85,10 @@
   </div>
 </div>
 
-<!-- ======= TOASTS SUAVES (feedback) ======= -->
+<!-- ======= TOASTS ======= -->
 <div class="tf-toasts" id="tfToasts" aria-live="polite"></div>
 
-<!-- ======= CONFIRM TIGERFY (reutiliza tema) ======= -->
+<!-- ======= CONFIRM TIGERFY ======= -->
 <div class="tf-confirm-overlay" id="tfConfirmOverlay" hidden>
   <div class="tf-confirm-dialog">
     <div class="tf-confirm-head">
@@ -103,209 +105,70 @@
 </div>
 
 <style>
-/* ===== Wrapper principal (centralização fina) ===== */
-.tiger-offers-list{
-  padding:68px 116px 100px 116px;   /* top | right | bottom | left */
-  max-width:calc(100vw - 120px);
-  margin:0 auto;
-  color:#fff;
-  transform:none;                   /* sem translate global */
-}
-
-/* Realinha o botão "Criar nova oferta" exatamente no canto visual */
-.tiger-offers-list .list-header .btn-primary{
-  margin-right:-36px;               /* ajuste fino lateral (antes estava “entrando” demais) */
-}
-@media (max-width:980px){
-  .tiger-offers-list .list-header .btn-primary{ margin-right:0; }
-}
-
-/* ===== Cabeçalho / grid (inalterados) ===== */
-.list-header{
-  display:flex; align-items:center; justify-content:space-between; margin-bottom:18px;
-}
+/* ===== Wrapper/estilos existentes… (inalterados) ===== */
+.tiger-offers-list{ padding:68px 116px 100px 116px; max-width:calc(100vw - 120px); margin:0 auto; color:#fff; transform:none; }
+.tiger-offers-list .list-header .btn-primary{ margin-right:-36px; }
+@media (max-width:980px){ .tiger-offers-list .list-header .btn-primary{ margin-right:0; } }
+.list-header{ display:flex; align-items:center; justify-content:space-between; margin-bottom:18px; }
 .list-header h1{ margin:0 0 6px; font-size:2rem; color:#ffcc00; }
 .list-header p{ margin:0; color:#b4b4b4; font-size:.95rem; }
-
-.list-grid{
-  display:grid; gap:12px;
-  grid-template-columns:repeat(auto-fill, minmax(280px, 1fr));
-}
-
-/* ===== Card (inalterado) ===== */
-.offer-card{
-  position:relative;
-  display:block; text-decoration:none; color:#fff;
-  background:rgba(0,0,0,0.70);
-  border:1px solid rgba(255,204,0,0.12);
-  border-radius:16px; padding:14px 42px 18px 14px; /* espaço p/ botão ... */
-  transition:.2s;
-  overflow:hidden;
-}
+.list-grid{ display:grid; gap:12px; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); }
+.offer-card{ position:relative; display:block; text-decoration:none; color:#fff; background:rgba(0,0,0,0.70); border:1px solid rgba(255,204,0,0.12); border-radius:16px; padding:14px 42px 18px 14px; transition:.2s; overflow:hidden; }
 .offer-card:hover{ border-color:#ffcc00; box-shadow:0 0 16px rgba(255,204,0,0.3); }
-
 .card-top{ display:flex; align-items:center; justify-content:space-between; gap:8px; }
 .card-top h3{ margin:0; font-size:1rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-
-.meta{
-  display:flex; gap:10px; flex-wrap:wrap; margin-top:8px;
-  font-size:.78rem; color:#c9c9c9; align-items:center;
-}
+.meta{ display:flex; gap:10px; flex-wrap:wrap; margin-top:8px; font-size:.78rem; color:#c9c9c9; align-items:center; }
 .meta .sep{ opacity:.6; }
-
 .go{ position:absolute; right:12px; bottom:10px; opacity:.6; font-size:1.4rem; }
-
 .empty{ text-align:center; padding:30px 16px; background:rgba(0,0,0,0.70); border:1px solid rgba(255,204,0,0.12); border-radius:16px; }
 .btn-primary.small{ padding:8px 16px; font-size:.85rem; }
-.btn-primary{
-  border:none; border-radius:10px; padding:10px 22px; font-weight:600; cursor:pointer; text-decoration:none;
-  background:linear-gradient(90deg,#ffcc00,#d4a100); color:#1a1300; box-shadow:0 0 12px rgba(255,204,0,0.4); font-size:.95rem;
-}
+.btn-primary{ border:none; border-radius:10px; padding:10px 22px; font-weight:600; cursor:pointer; text-decoration:none; background:linear-gradient(90deg,#ffcc00,#d4a100); color:#1a1300; box-shadow:0 0 12px rgba(255,204,0,0.4); font-size:.95rem; }
 
-/* ===== Micro-ajustes do botão “…” (contraste + 2px acima) ===== */
-:root{
-  --dots-top: 10px;          /* antes: 12px — sobe levemente */
-  --dots-right: 12px;
-  --dots-size: 30px;
-  --dots-font: 15px;
-  --dots-letter: 0.6px;
-  --dots-nudge-y: -0.5px;
-}
+/* Botão ... */
+:root{ --dots-top:10px; --dots-right:12px; --dots-size:30px; --dots-font:15px; --dots-letter:0.6px; --dots-nudge-y:-0.5px; }
+.offer-actions-inline{ position:absolute; top:var(--dots-top); right:var(--dots-right); width:var(--dots-size); height:var(--dots-size); border-radius:999px; border:1px solid rgba(255,204,0,0.26); background:rgba(255,255,255,0.085); display:flex; align-items:center; justify-content:center; cursor:pointer; transition: background-color .15s ease, border-color .15s ease, box-shadow .15s ease, opacity .15s ease; z-index:2; }
+.offer-actions-inline .dots{ font-size:var(--dots-font); letter-spacing:var(--dots-letter); line-height:1; transform:translateY(var(--dots-nudge-y)); user-select:none; }
+.offer-actions-inline:hover{ background:rgba(255,204,0,.14); border-color:rgba(255,204,0,.34); box-shadow:0 0 0 2px rgba(255,204,0,.12) inset; }
 
-.offer-actions-inline{
-  position:absolute;
-  top:var(--dots-top);
-  right:var(--dots-right);
-  width:var(--dots-size);
-  height:var(--dots-size);
-  border-radius:999px;
-
-  /* contraste levemente maior */
-  border:1px solid rgba(255,204,0,0.26);
-  background:rgba(255,255,255,0.085);
-
-  display:flex;
-  align-items:center;
-  justify-content:center;
-
-  cursor:pointer;
-  /* sem movimento no hover */
-  transition: background-color .15s ease, border-color .15s ease, box-shadow .15s ease, opacity .15s ease;
-  z-index:2;
-}
-.offer-actions-inline .dots{
-  font-size:var(--dots-font);
-  letter-spacing:var(--dots-letter);
-  line-height:1;
-  transform:translateY(var(--dots-nudge-y));
-  user-select:none;
-}
-.offer-actions-inline:hover{
-  background:rgba(255,204,0,.14);
-  border-color:rgba(255,204,0,.34);
-  box-shadow:0 0 0 2px rgba(255,204,0,.12) inset;
-}
-
-/* ===== Menu flutuante ===== */
+/* Menu */
 .offer-actions-menu[hidden]{ display:none !important; }
-.offer-actions-menu{
-  position:fixed;
-  z-index:9999;
-  inset:auto auto; /* setado via JS */
-}
-.offer-actions-menu .menu-surface{
-  min-width: 220px;
-  background: rgba(0,0,0,0.82);
-  border:1px solid rgba(255,204,0,0.16);
-  border-radius:14px;
-  box-shadow: 0 10px 40px rgba(0,0,0,0.6);
-  backdrop-filter: blur(10px);
-  overflow:hidden;
-  transform-origin: top right;
-  animation: tfMenuIn .12s ease;
-}
-@keyframes tfMenuIn {
-  from { opacity:0; transform:scale(0.98); }
-  to   { opacity:1; transform:scale(1); }
-}
+.offer-actions-menu{ position:fixed; z-index:9999; inset:auto auto; }
+.offer-actions-menu .menu-surface{ min-width:220px; background: rgba(0,0,0,0.82); border:1px solid rgba(255,204,0,0.16); border-radius:14px; box-shadow: 0 10px 40px rgba(0,0,0,0.6); backdrop-filter: blur(10px); overflow:hidden; transform-origin: top right; animation: tfMenuIn .12s ease; }
+@keyframes tfMenuIn { from { opacity:0; transform:scale(0.98); } to { opacity:1; transform:scale(1); } }
 .menu-list{ display:flex; flex-direction:column; padding:6px; }
-.menu-item{
-  width:100%;
-  text-align:left;
-  background:transparent;
-  color:#eaeaea;
-  border:none;
-  border-radius:10px;
-  padding:10px 12px;
-  font-size:.92rem;
-  cursor:pointer;
-  transition: background-color .12s ease, color .12s ease;
-}
+.menu-item{ width:100%; text-align:left; background:transparent; color:#eaeaea; border:none; border-radius:10px; padding:10px 12px; font-size:.92rem; cursor:pointer; transition: background-color .12s ease, color .12s ease; }
 .menu-item:hover{ background:rgba(255,255,255,0.08); }
 .menu-item.danger{ color:#ff8aa4; }
 .menu-item.danger:hover{ background:rgba(255,64,96,0.12); color:#ffc9d3; }
 
 .menu-rename{ padding:10px; display:flex; flex-direction:column; gap:8px; }
 .rename-label{ font-size:.82rem; color:#cfcfcf; }
-.rename-input{
-  width:100%;
-  padding:9px 10px; border-radius:10px; border:1px solid rgba(255,255,255,0.22);
-  background:rgba(255,255,255,0.06); color:#fff; outline:none; font-size:.95rem;
-  transition:border-color .2s, box-shadow .2s;
-}
+.rename-input{ width:100%; padding:9px 10px; border-radius:10px; border:1px solid rgba(255,255,255,0.22); background:rgba(255,255,255,0.06); color:#fff; outline:none; font-size:.95rem; transition:border-color .2s, box-shadow .2s; }
 .rename-input:focus{ border-color:#ffcc00; box-shadow:0 0 0 2px rgba(255,204,0,0.28); }
 .rename-actions{ display:flex; justify-content:flex-end; gap:8px; }
-.btn-secondary.x-small, .btn-primary.x-small{
-  border:none; border-radius:10px; padding:8px 12px; font-size:.85rem; font-weight:600; cursor:pointer;
-}
+.btn-secondary.x-small, .btn-primary.x-small{ border:none; border-radius:10px; padding:8px 12px; font-size:.85rem; font-weight:600; cursor:pointer; }
 .btn-secondary.x-small{ background:rgba(255,255,255,0.12); color:#fff; }
 .btn-secondary.x-small:hover{ background:rgba(255,255,255,0.18); }
-.btn-primary.x-small{
-  background:linear-gradient(90deg,#ffcc00,#d4a100);
-  color:#1a1300; box-shadow:0 0 10px rgba(255,204,0,0.35);
-}
+.btn-primary.x-small{ background:linear-gradient(90deg,#ffcc00,#d4a100); color:#1a1300; box-shadow:0 0 10px rgba(255,204,0,0.35); }
 .error-text{ color:#ff8aa4; display:block; }
 
-/* ===== Toasts ===== */
+/* Toasts */
 .tf-toasts{ position:fixed; top:18px; right:18px; z-index:9999; display:flex; flex-direction:column; gap:8px; }
-.tf-toast{
-  background:rgba(0,0,0,0.82);
-  border:1px solid rgba(255,204,0,0.18);
-  color:#fff; border-radius:12px; padding:10px 12px; font-size:.92rem;
-  box-shadow:0 8px 30px rgba(0,0,0,0.45);
-  animation: tfToastIn .14s ease;
-}
+.tf-toast{ background:rgba(0,0,0,0.82); border:1px solid rgba(255,204,0,0.18); color:#fff; border-radius:12px; padding:10px 12px; font-size:.92rem; box-shadow:0 8px 30px rgba(0,0,0,0.45); animation: tfToastIn .14s ease; }
 @keyframes tfToastIn { from { opacity:0; transform: translateY(-6px);} to {opacity:1; transform:none;} }
 
-/* ===== Confirm TigerFy (visual do painel) ===== */
+/* Confirm TigerFy */
 .tf-confirm-overlay[hidden]{ display:none !important; }
-.tf-confirm-overlay{
-  position:fixed; inset:0; z-index:10000;
-  display:flex; align-items:center; justify-content:center;
-  background:rgba(0,0,0,0.55); backdrop-filter: blur(10px);
-}
-.tf-confirm-dialog{
-  width:min(520px, calc(100vw - 40px));
-  border-radius:20px;
-  border:1px solid rgba(255,204,0,0.16);
-  background:rgba(0,0,0,0.78);
-  box-shadow:0 0 40px rgba(0,0,0,0.6);
-  overflow:hidden;
-  transform: translateY(8px) scale(0.985);
-  animation: tfConfirmIn .18s ease-out forwards;
-}
+.tf-confirm-overlay{ position:fixed; inset:0; z-index:10000; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,0.55); backdrop-filter: blur(10px); }
+.tf-confirm-dialog{ width:min(520px, calc(100vw - 40px)); border-radius:20px; border:1px solid rgba(255,204,0,0.16); background:rgba(0,0,0,0.78); box-shadow:0 0 40px rgba(0,0,0,0.6); overflow:hidden; transform: translateY(8px) scale(0.985); animation: tfConfirmIn .18s ease-out forwards; }
 @keyframes tfConfirmIn { to { transform: translateY(0) scale(1); } }
 .tf-confirm-head{ padding:18px 20px; border-bottom:1px solid rgba(255,255,255,0.08); }
 .tf-confirm-head h3{ margin:0; font-size:1.2rem; color:#ffcc00; font-weight:800; text-align:center; }
 .tf-confirm-body{ padding:14px 20px; color:#ddd; text-align:center; }
 .tf-confirm-actions{ display:flex; justify-content:flex-end; gap:12px; padding:16px 20px 18px 20px; border-top:1px solid rgba(255,255,255,0.08); }
 
-/* Botão secundário padrão (não existia sem o .x-small) */
-.btn-secondary{
-  border:none; border-radius:10px; padding:10px 22px; font-weight:600; cursor:pointer;
-  background:rgba(255,255,255,0.12); color:#fff; border:1px solid rgba(255,255,255,0.10);
-  transition:.18s ease;
-}
+/* Botão secundário padrão */
+.btn-secondary{ border:none; border-radius:10px; padding:10px 22px; font-weight:600; cursor:pointer; background:rgba(255,255,255,0.12); color:#fff; border:1px solid rgba(255,255,0,0.10); transition:.18s ease; }
 .btn-secondary:hover{ background:rgba(255,255,255,0.18); }
 </style>
 
@@ -320,7 +183,7 @@
   const renameError = document.getElementById('renameError');
   const toasts = document.getElementById('tfToasts');
 
-  // Confirm TigerFy (promessa)
+  // ===== Confirm TigerFy (Promise)
   const cx = {
     host: document.getElementById('tfConfirmOverlay'),
     title: document.getElementById('tfConfirmTitle'),
@@ -353,7 +216,7 @@
     });
   }
 
-  let anchorBtn = null;          // botão ... que abriu o menu
+  let anchorBtn = null;
   let currentOfferId = null;
   let currentOfferName = '';
   let currentOfferCard = null;
@@ -375,10 +238,10 @@
   }
 
   function resetRenameErrors(){
-    if (renameError){
-      renameError.textContent = 'Não foi possível renomear. Tente novamente.';
-      renameError.hidden = true; // garante esconder SEMPRE
-    }
+    if (!renameError) return;
+    renameError.textContent = 'Não foi possível renomear. Tente novamente.';
+    renameError.hidden = true;
+    renameError.style.display = 'none'; // força esconder
   }
 
   function openMenuFor(btn) {
@@ -387,7 +250,7 @@
     currentOfferName = btn.getAttribute('data-offer-name') || '';
     currentOfferCard = btn.closest('.offer-card');
 
-    // posiciona o menu ao lado do botão
+    // posiciona o menu
     const rect = btn.getBoundingClientRect();
     const menuRectW = 240;
     const gap = 8;
@@ -400,13 +263,17 @@
     // estado lista
     listPane.hidden = false;
     renamePane.hidden = true;
-    resetRenameErrors(); // <<< evita erro aparecer sozinho
+    resetRenameErrors(); // limpa erro ao abrir
 
     menu.hidden = false;
   }
 
   function closeMenu() {
     menu.hidden = true;
+    listPane.hidden = false;
+    renamePane.hidden = true;
+    resetRenameErrors(); // também ao fechar
+
     anchorBtn = null;
     currentOfferId = null;
     currentOfferName = '';
@@ -417,19 +284,14 @@
   document.addEventListener('click', (e) => {
     const btn = e.target.closest('.offer-actions-inline');
     if (!btn) return;
-
-    // impede navegação do <a>
     e.preventDefault();
     e.stopPropagation();
 
-    if (!menu.hidden && anchorBtn === btn) {
-      closeMenu();
-    } else {
-      openMenuFor(btn);
-    }
+    if (!menu.hidden && anchorBtn === btn) { closeMenu(); }
+    else { openMenuFor(btn); }
   });
 
-  // ações do menu na LISTA
+  // ===== Ações da LISTA (renomear/duplicar/excluir)
   surface?.addEventListener('click', async (e) => {
     const item = e.target.closest('.menu-item');
     if (!item || item.disabled) return;
@@ -437,12 +299,11 @@
     const action = item.getAttribute('data-action');
 
     if (action === 'rename') {
-      // abre painel inline
       listPane.hidden = true;
       renamePane.hidden = false;
       renameInput.value = currentOfferName || '';
       renameInput.focus();
-      resetRenameErrors(); // <<< limpa erro ao entrar em "Renomear"
+      resetRenameErrors();
       return;
     }
 
@@ -459,7 +320,7 @@
         const o = payload.offer || payload.data || null;
         if (!o) throw new Error('bad_payload');
 
-        // monta card novo DOM (mesmo layout)
+        // novo card
         const card = document.createElement('a');
         card.className = 'offer-card';
         card.setAttribute('href', `/ofertas/painel/${o.id}`);
@@ -544,7 +405,7 @@
     }
   });
 
-  // ações no painel de RENOMEAR
+  // ===== Ações no painel de RENOMEAR
   surface?.addEventListener('click', async (e) => {
     const btn = e.target.closest('[data-action]');
     if (!btn) return;
@@ -564,6 +425,7 @@
       if (!novoNome) {
         renameError.textContent = 'Digite um nome válido.';
         renameError.hidden = false;
+        renameError.style.display = 'block';
         return;
       }
       resetRenameErrors();
@@ -584,6 +446,7 @@
       } catch (err) {
         renameError.textContent = 'Não foi possível renomear. Tente novamente.';
         renameError.hidden = false;
+        renameError.style.display = 'block';
       }
       return;
     }
