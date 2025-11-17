@@ -22,6 +22,7 @@
         <a class="offer-card" href="/ofertas/painel/<%= o._id %>" data-offer-id="<%= o._id %>">
           <div class="card-top">
             <h3 class="offer-name"><%= o.name %></h3>
+            <!-- (STATUS REMOVIDO) -->
           </div>
 
           <!-- Botão … (menu) — não navega, abre menu flutuante -->
@@ -84,6 +85,22 @@
 
 <!-- ======= TOASTS SUAVES (feedback) ======= -->
 <div class="tf-toasts" id="tfToasts" aria-live="polite"></div>
+
+<!-- ======= CONFIRM TIGERFY (reutiliza tema) ======= -->
+<div class="tf-confirm-overlay" id="tfConfirmOverlay" hidden>
+  <div class="tf-confirm-dialog">
+    <div class="tf-confirm-head">
+      <h3 id="tfConfirmTitle">Confirmar</h3>
+    </div>
+    <div class="tf-confirm-body">
+      <p id="tfConfirmMsg">Tem certeza?</p>
+    </div>
+    <div class="tf-confirm-actions">
+      <button type="button" class="btn-secondary" id="tfConfirmCancel">Cancelar</button>
+      <button type="button" class="btn-primary" id="tfConfirmOk">Confirmar</button>
+    </div>
+  </div>
+</div>
 
 <style>
 /* ===== Wrapper principal (centralização fina) ===== */
@@ -247,10 +264,7 @@
   background:linear-gradient(90deg,#ffcc00,#d4a100);
   color:#1a1300; box-shadow:0 0 10px rgba(255,204,0,0.35);
 }
-
-/* >>> FIX do bug do erro aparecendo sozinho <<< */
-.error-text{ color:#ff8aa4; }                    /* sem display:block aqui */
-.error-text[hidden]{ display:none !important; }  /* respeita o atributo hidden */
+.error-text{ color:#ff8aa4; display:block; }
 
 /* ===== Toasts ===== */
 .tf-toasts{ position:fixed; top:18px; right:18px; z-index:9999; display:flex; flex-direction:column; gap:8px; }
@@ -262,6 +276,37 @@
   animation: tfToastIn .14s ease;
 }
 @keyframes tfToastIn { from { opacity:0; transform: translateY(-6px);} to {opacity:1; transform:none;} }
+
+/* ===== Confirm TigerFy (visual do painel) ===== */
+.tf-confirm-overlay[hidden]{ display:none !important; }
+.tf-confirm-overlay{
+  position:fixed; inset:0; z-index:10000;
+  display:flex; align-items:center; justify-content:center;
+  background:rgba(0,0,0,0.55); backdrop-filter: blur(10px);
+}
+.tf-confirm-dialog{
+  width:min(520px, calc(100vw - 40px));
+  border-radius:20px;
+  border:1px solid rgba(255,204,0,0.16);
+  background:rgba(0,0,0,0.78);
+  box-shadow:0 0 40px rgba(0,0,0,0.6);
+  overflow:hidden;
+  transform: translateY(8px) scale(0.985);
+  animation: tfConfirmIn .18s ease-out forwards;
+}
+@keyframes tfConfirmIn { to { transform: translateY(0) scale(1); } }
+.tf-confirm-head{ padding:18px 20px; border-bottom:1px solid rgba(255,255,255,0.08); }
+.tf-confirm-head h3{ margin:0; font-size:1.2rem; color:#ffcc00; font-weight:800; text-align:center; }
+.tf-confirm-body{ padding:14px 20px; color:#ddd; text-align:center; }
+.tf-confirm-actions{ display:flex; justify-content:flex-end; gap:12px; padding:16px 20px 18px 20px; border-top:1px solid rgba(255,255,255,0.08); }
+
+/* Botão secundário padrão (não existia sem o .x-small) */
+.btn-secondary{
+  border:none; border-radius:10px; padding:10px 22px; font-weight:600; cursor:pointer;
+  background:rgba(255,255,255,0.12); color:#fff; border:1px solid rgba(255,255,255,0.10);
+  transition:.18s ease;
+}
+.btn-secondary:hover{ background:rgba(255,255,255,0.18); }
 </style>
 
 <script>
@@ -274,6 +319,39 @@
   const renameInput = document.getElementById('renameInput');
   const renameError = document.getElementById('renameError');
   const toasts = document.getElementById('tfToasts');
+
+  // Confirm TigerFy (promessa)
+  const cx = {
+    host: document.getElementById('tfConfirmOverlay'),
+    title: document.getElementById('tfConfirmTitle'),
+    msg: document.getElementById('tfConfirmMsg'),
+    btnOk: document.getElementById('tfConfirmOk'),
+    btnCancel: document.getElementById('tfConfirmCancel')
+  };
+  function tfConfirm({ title, message, confirmText='Confirmar', cancelText='Cancelar' }){
+    return new Promise((resolve)=>{
+      cx.title.textContent = title || 'Confirmar';
+      cx.msg.textContent = message || 'Tem certeza?';
+      cx.btnOk.textContent = confirmText;
+      cx.btnCancel.textContent = cancelText;
+
+      function cleanup(ok){
+        cx.host.setAttribute('hidden','');
+        cx.btnOk.removeEventListener('click', onOk);
+        cx.btnCancel.removeEventListener('click', onCancel);
+        cx.host.removeEventListener('click', onBg);
+        resolve(ok);
+      }
+      function onOk(){ cleanup(true); }
+      function onCancel(){ cleanup(false); }
+      function onBg(e){ if (e.target === cx.host) cleanup(false); }
+
+      cx.btnOk.addEventListener('click', onOk);
+      cx.btnCancel.addEventListener('click', onCancel);
+      cx.host.addEventListener('click', onBg);
+      cx.host.removeAttribute('hidden');
+    });
+  }
 
   let anchorBtn = null;          // botão ... que abriu o menu
   let currentOfferId = null;
@@ -296,6 +374,13 @@
     return 'Outro';
   }
 
+  function resetRenameErrors(){
+    if (renameError){
+      renameError.textContent = 'Não foi possível renomear. Tente novamente.';
+      renameError.hidden = true; // garante esconder SEMPRE
+    }
+  }
+
   function openMenuFor(btn) {
     anchorBtn = btn;
     currentOfferId = btn.getAttribute('data-offer-id');
@@ -315,12 +400,7 @@
     // estado lista
     listPane.hidden = false;
     renamePane.hidden = true;
-
-    // reset do estado de erro ao abrir
-    if (renameError){
-      renameError.hidden = true;
-      renameError.textContent = 'Não foi possível renomear. Tente novamente.';
-    }
+    resetRenameErrors(); // <<< evita erro aparecer sozinho
 
     menu.hidden = false;
   }
@@ -360,11 +440,9 @@
       // abre painel inline
       listPane.hidden = true;
       renamePane.hidden = false;
-      if (renameInput) {
-        renameInput.value = currentOfferName || '';
-        renameInput.focus();
-      }
-      if (renameError){ renameError.hidden = true; }
+      renameInput.value = currentOfferName || '';
+      renameInput.focus();
+      resetRenameErrors(); // <<< limpa erro ao entrar em "Renomear"
       return;
     }
 
@@ -444,8 +522,15 @@
 
     if (action === 'delete') {
       if (!currentOfferId) return;
-      const ok = confirm('Tem certeza que deseja excluir esta oferta? Esta ação é permanente.');
+
+      const ok = await tfConfirm({
+        title: 'Excluir oferta?',
+        message: 'Tem certeza que deseja excluir esta oferta? Esta ação é permanente.',
+        confirmText: 'Excluir oferta',
+        cancelText: 'Cancelar'
+      });
       if (!ok) return;
+
       try {
         const res = await fetch(`/ofertas/${currentOfferId}`, { method:'DELETE' });
         if (!res.ok) throw new Error('bad_status');
@@ -467,7 +552,7 @@
     const action = btn.getAttribute('data-action');
 
     if (action === 'cancel-rename') {
-      if (renameError) renameError.hidden = true;
+      resetRenameErrors();
       renamePane.hidden = true;
       listPane.hidden = false;
       return;
@@ -475,15 +560,13 @@
 
     if (action === 'confirm-rename') {
       if (!currentOfferId) return;
-      const novoNome = (renameInput?.value || '').trim();
+      const novoNome = (renameInput.value || '').trim();
       if (!novoNome) {
-        if (renameError){
-          renameError.textContent = 'Digite um nome válido.';
-          renameError.hidden = false;
-        }
+        renameError.textContent = 'Digite um nome válido.';
+        renameError.hidden = false;
         return;
       }
-      if (renameError) renameError.hidden = true;
+      resetRenameErrors();
       try {
         const res = await fetch(`/ofertas/${currentOfferId}/renomear`, {
           method: 'POST',
@@ -499,10 +582,8 @@
         showToast('Nome atualizado.');
         closeMenu();
       } catch (err) {
-        if (renameError){
-          renameError.textContent = 'Não foi possível renomear. Tente novamente.';
-          renameError.hidden = false;
-        }
+        renameError.textContent = 'Não foi possível renomear. Tente novamente.';
+        renameError.hidden = false;
       }
       return;
     }
