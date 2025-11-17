@@ -1,5 +1,6 @@
 const express = require("express");
-const session = require("express-session");
+// trocado: usamos cookie-session em vez de express-session
+const cookieSession = require("cookie-session");
 const path = require("path");
 const compression = require("compression");
 const helmet = require("helmet");
@@ -24,20 +25,46 @@ app.use(
 );
 app.use(morgan("tiny"));
 
-/* -------- Sessão -------- */
+/* -------- Sessão (stateless, compatível com serverless) -------- */
 app.use(
-  session({
-    secret: process.env.SESSION_SECRET || "tigerfy_secret",
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-      httpOnly: true,
-      sameSite: "lax",
-      secure: process.env.NODE_ENV === "production",
-      maxAge: 1000 * 60 * 60 * 8, // 8h
-    },
+  cookieSession({
+    name: "tig.sid",
+    keys: [
+      process.env.SESSION_SECRET || "tigerfy_secret",
+      process.env.SESSION_SECRET_FALLBACK || "tigerfy_fallback",
+    ],
+    httpOnly: true,
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+    // mantém o mesmo prazo de 8h do código anterior
+    maxAge: 1000 * 60 * 60 * 8,
+    // opcional: defina COOKIE_DOMAIN se precisar compartilhar entre subdomínios
+    domain: process.env.COOKIE_DOMAIN || undefined,
   })
 );
+
+// renova o cookie a cada request (efeito "rolling")
+app.use((req, _res, next) => {
+  if (req.session) req.session._rt = Date.now();
+  // polyfills para compat com possíveis usos de express-session nas rotas
+  if (req.session && typeof req.session.destroy !== "function") {
+    req.session.destroy = (cb) => {
+      req.session = null;
+      if (typeof cb === "function") cb();
+    };
+  }
+  if (req.session && typeof req.session.regenerate !== "function") {
+    req.session.regenerate = (cb) => {
+      // cookie-session não tem id; só recriamos o objeto
+      req.session = Object.assign({}, req.session);
+      if (typeof cb === "function") cb();
+    };
+  }
+  if (req.session && typeof req.session.save !== "function") {
+    req.session.save = (cb) => (typeof cb === "function" ? cb() : undefined);
+  }
+  next();
+});
 
 /* -------- Locais globais -------- */
 app.use((req, res, next) => {
