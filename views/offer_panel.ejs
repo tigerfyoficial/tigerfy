@@ -353,23 +353,48 @@
   var currentStep = <%- JSON.stringify(currentStep || null) %>;
 
   function escapeHtml(s){ return (s || "").replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function stepLabel(s){ return (s && (s.name || ('Etapa ' + (s.stepNo || '')))) || ''; }
 
-  function buildBreadcrumb(){
-    var bc = document.getElementById('tfBreadcrumb'); if (!bc) return;
+  // --------- VIEW STATE (base da oferta vs etapa) ----------
+  var params = new URLSearchParams(location.search);
+  var hasStepParam = params.has('stepId') && currentStep && currentStep.id;
+  var isBaseView = !hasStepParam; // se tem stepId na URL, estamos em "etapa"; ao clicar "Principal", mudamos para base.
+
+  function updateTitleAndBreadcrumb(){
+    var bc = document.getElementById('tfBreadcrumb');
+    var h1 = document.getElementById('offerTitle');
+    if (!bc || !h1) return;
+
     var offerName = (offer && offer.name) ? offer.name : 'Nome da Oferta';
     var offerHref = offer ? ("/ofertas/painel/" + offer.id) : "/ofertas";
+
     var items = [];
     items.push('<a href="/ofertas">Minhas Ofertas</a>');
     items.push('<span>›</span>');
     items.push('<a href="'+ offerHref +'">'+ escapeHtml(offerName) +'</a>');
-    if (currentStep && currentStep.id) {
+
+    if (!isBaseView && currentStep && currentStep.id){
       items.push('<span>›</span>');
-      var stepLabel = currentStep.name || ('Etapa ' + (currentStep.stepNo || ''));
-      items.push('<span>'+ escapeHtml(stepLabel) +'</span>');
+      items.push('<span>'+ escapeHtml(stepLabel(currentStep)) +'</span>');
+      h1.textContent = stepLabel(currentStep);
+    } else {
+      h1.textContent = offerName;
     }
+
     bc.innerHTML = items.join('');
   }
-  buildBreadcrumb();
+
+  function setBaseView(on){
+    isBaseView = !!on;
+    var p = new URLSearchParams(location.search);
+    if (isBaseView && p.has('stepId')){
+      p.delete('stepId'); // remove o stepId da URL quando voltar para a visão base
+      history.replaceState(null, '', location.pathname + (p.toString() ? ('?' + p.toString()) : ''));
+    }
+    updateTitleAndBreadcrumb();
+  }
+
+  updateTitleAndBreadcrumb();
 
   // Tabs
   var mainTabs = document.querySelectorAll('.tf-tabs-main .tab');
@@ -378,8 +403,11 @@
     btn.addEventListener('click', function(e){
       var t = btn.dataset.tab;
       if (t === 'etapas') { e.preventDefault(); openStepsModal(); return; }
+
       mainTabs.forEach(function(b){ b.classList.remove('active'); });
       btn.classList.add('active');
+
+      if (t === 'principal'){ setBaseView(true); }
       if (subTabsWrap) subTabsWrap.style.display = (t === 'principal') ? 'flex' : 'none';
     });
   });
@@ -406,8 +434,7 @@
       b2.textContent = 'Sem etapa (visão base da oferta)';
       b2.addEventListener('click', function(){
         closeMenu();
-        currentStep = null;
-        buildBreadcrumb();
+        setBaseView(true);
         if (offer && offer.id){
           window.location.href = '/ofertas/painel/' + offer.id;
         }
@@ -454,7 +481,7 @@
   if (saveBtn){
     saveBtn.addEventListener('click', async function(){
       if (!offer) { showToast('error','Oferta inválida.'); return; }
-      if (!currentStep) {
+      if (isBaseView || !currentStep) {
         flashSaved(saveBtn);
         showToast('success','Configurações salvas (oferta base).');
         return;
@@ -548,6 +575,7 @@
     radio.checked = !!opts.isCurrent;
     radioWrap.appendChild(radio);
 
+    // Selecionar/Acessar
     selectBtn.addEventListener('click', function(){
       if (selectBtn.textContent === 'Selecionar Etapa'){
         Array.from(listEl.children).forEach(function(row){
@@ -571,6 +599,13 @@
         var sid = li.dataset.id || null;
         if (!sid){ showToast('error','Salve mudanças para acessar esta etapa.'); return; }
         document.getElementById('stepsUnifiedModal')?.setAttribute('hidden','');
+        // ao acessar etapa, garantimos modo "etapa"
+        var p = new URLSearchParams();
+        p.set('stepId', sid);
+        history.replaceState(null, '', location.pathname + '?' + p.toString());
+        isBaseView = false;
+        currentStep = { id: sid, name: input.value || null };
+        updateTitleAndBreadcrumb();
         window.location.href = `/ofertas/painel/${offer.id}?stepId=${encodeURIComponent(sid)}`;
       }
     });
@@ -623,10 +658,7 @@
           steps = steps.filter(s => s.id !== stepId);
           if (currentStep && currentStep.id === stepId){
             currentStep = null;
-            buildBreadcrumb();
-            // atualiza H1 para voltar ao nome da oferta
-            var h1 = document.getElementById('offerTitle');
-            if (h1) h1.textContent = offer?.name || 'Nome da Oferta';
+            setBaseView(true);
           }
 
           showToast('success','Etapa excluída com sucesso.');
@@ -777,26 +809,17 @@
               body: JSON.stringify({ currentStepId: newest.id })
             });
             currentStep = newest;
-            var h1 = document.getElementById('offerTitle');
-            if (h1) h1.textContent = newest.name || ('Etapa ' + (newest.stepNo || ''));
-            buildBreadcrumb();
+            isBaseView = false;
           }
         } else if (selectedId){
           var cur = steps.find(function(s){ return s.id === selectedId; });
-          if (cur){
-            currentStep = cur;
-            var h1 = document.getElementById('offerTitle');
-            if (h1) h1.textContent = cur.name || ('Etapa ' + (cur.stepNo || ''));
-            buildBreadcrumb();
-          }
+          if (cur){ currentStep = cur; isBaseView = false; }
         } else {
-          // nenhuma etapa marcada como atual: visão da oferta
           currentStep = null;
-          var h1b = document.getElementById('offerTitle');
-          if (h1b) h1b.textContent = offer?.name || 'Nome da Oferta';
-          buildBreadcrumb();
+          isBaseView = true;
         }
 
+        updateTitleAndBreadcrumb();
         hydrateListFromServer();
         showToast('success','Etapas salvas com sucesso.');
       }catch(e){
