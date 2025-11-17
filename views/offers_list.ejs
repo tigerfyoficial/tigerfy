@@ -10,13 +10,7 @@
   </div>
 
   <div class="list-grid" id="offersGrid">
-    <% if (!offers || offers.length === 0) { %>
-      <div class="empty">
-        <h3>Você ainda não tem ofertas</h3>
-        <p>Crie sua primeira oferta para começar.</p>
-        <a href="/ofertas/criar" class="btn-primary small">Criar oferta</a>
-      </div>
-    <% } else { %>
+    <% if (offers && offers.length) { %>
       <% offers.forEach(function(o){ const __id = o.id || o._id; %>
         <!-- Card da oferta (layout intacto) -->
         <a class="offer-card" href="/ofertas/painel/<%= __id %>" data-offer-id="<%= __id %>">
@@ -117,8 +111,6 @@
 .meta{ display:flex; gap:10px; flex-wrap:wrap; margin-top:8px; font-size:.78rem; color:#c9c9c9; align-items:center; }
 .meta .sep{ opacity:.6; }
 .go{ position:absolute; right:12px; bottom:10px; opacity:.6; font-size:1.4rem; }
-.empty{ text-align:center; padding:30px 16px; background:rgba(0,0,0,0.70); border:1px solid rgba(255,204,0,0.12); border-radius:16px; }
-.btn-primary.small{ padding:8px 16px; font-size:.85rem; }
 .btn-primary{ border:none; border-radius:10px; padding:10px 22px; font-weight:600; cursor:pointer; text-decoration:none; background:linear-gradient(90deg,#ffcc00,#d4a100); color:#1a1300; box-shadow:0 0 12px rgba(255,204,0,0.4); font-size:.95rem; }
 
 /* Botão ... */
@@ -454,7 +446,7 @@
   // Fechar menu ao clicar fora / scroll / resize / ESC — mas NÃO quando o confirm TigerFy estiver aberto
   document.addEventListener('click', (e) => {
     if (menu.hidden) return;
-    if (confirmOpen()) return; // impede fechar enquanto o confirm está aberto
+    if (confirmOpen()) return;
     if (e.target.closest('.offer-actions-inline')) return;
     if (!e.target.closest('#offerActionsMenu')) closeMenu();
   }, true);
