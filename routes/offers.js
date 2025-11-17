@@ -244,32 +244,66 @@ router.delete("/ofertas/:id/etapas/:stepId", authGuard, async (req, res) => {
   }
 });
 
-/* === NOVA ROTA: BATCH (compat com teu front) ===
-Aceita:
-- objeto único { action: 'create'|'update'|'delete', ... }
-- OU { ops: [ { action, ... }, ... ] }
-- OU um array direto de operações
-*/
+// === Substitua a ROTA /ofertas/:id/etapas/batch por esta versão ===
 router.post("/ofertas/:id/etapas/batch", authGuard, async (req, res) => {
   try {
     const owner = req.session.userId;
     const { id: offerId } = req.params;
 
+    // Confere dono da oferta
     const offerRes = await Steps.getOfferByIdForOwner(offerId, owner);
     if (offerRes.error || !offerRes.data) {
       return res.status(403).json({ ok: false, error: "forbidden" });
     }
 
+    // Aceitamos VÁRIOS formatos de payload para evitar 400:
+    //  A) { ops:[ {action: 'create'|'update'|'delete', ...} ], currentStepId? }
+    //  B) [ {action, ...}, ... ]
+    //  C) { create:[{name,...}], update:[{id,name,settings?}], delete:[{id}], currentStepId? }
     let ops = [];
-    if (Array.isArray(req.body)) ops = req.body;
-    else if (Array.isArray(req.body?.ops)) ops = req.body.ops;
-    else if (req.body && (req.body.action || req.body.type)) ops = [req.body];
+    let currentStepId = null;
 
-    if (!ops.length) return res.status(400).json({ ok: false, error: "no_ops" });
+    if (Array.isArray(req.body)) {
+      ops = req.body;
+    } else if (Array.isArray(req.body?.ops)) {
+      ops = req.body.ops;
+      currentStepId = req.body.currentStepId || req.body.selectedStepId || null;
+    } else if (
+      req.body &&
+      (Array.isArray(req.body.create) ||
+       Array.isArray(req.body.update) ||
+       Array.isArray(req.body.delete))
+    ) {
+      currentStepId = req.body.currentStepId || req.body.selectedStepId || null;
+
+      // Expandimos para formato "ops"
+      if (Array.isArray(req.body.create)) {
+        for (const c of req.body.create) {
+          ops.push({ action: "create", ...c });
+        }
+      }
+      if (Array.isArray(req.body.update)) {
+        for (const u of req.body.update) {
+          ops.push({ action: "update", ...u });
+        }
+      }
+      if (Array.isArray(req.body.delete)) {
+        for (const d of req.body.delete) {
+          ops.push({ action: "delete", ...d });
+        }
+      }
+    } else if (req.body && (req.body.action || req.body.type)) {
+      ops = [req.body];
+      currentStepId = req.body.currentStepId || req.body.selectedStepId || null;
+    }
+
+    if (!ops.length && !currentStepId) {
+      return res.status(400).json({ ok: false, error: "no_ops" });
+    }
 
     const results = [];
     for (const raw of ops) {
-      const action = (raw.action || raw.type || "").toLowerCase();
+      const action = String(raw.action || raw.type || "").toLowerCase();
 
       if (action === "create") {
         const name = (raw.name || "").trim();
@@ -280,17 +314,15 @@ router.post("/ofertas/:id/etapas/batch", authGuard, async (req, res) => {
         if (created.error) {
           results.push({ ok: false, error: created.error.message || "create_failed" });
         } else {
-          results.push({ ok: true, step: mapStep(created.data) });
+          results.push({ ok: true, step: created.data });
         }
         continue;
       }
 
       if (action === "update") {
         const stepId = raw.stepId || raw.id;
-        if (!stepId) {
-          results.push({ ok: false, error: "missing_stepId" });
-          continue;
-        }
+        if (!stepId) { results.push({ ok:false, error:"missing_stepId" }); continue; }
+
         const upd = await Steps.updateStep({
           offerId,
           stepId,
@@ -300,17 +332,15 @@ router.post("/ofertas/:id/etapas/batch", authGuard, async (req, res) => {
         if (upd.error) {
           results.push({ ok: false, error: upd.error.message || "update_failed" });
         } else {
-          results.push({ ok: true, step: mapStep(upd.data) });
+          results.push({ ok: true, step: upd.data });
         }
         continue;
       }
 
       if (action === "delete") {
         const stepId = raw.stepId || raw.id;
-        if (!stepId) {
-          results.push({ ok: false, error: "missing_stepId" });
-          continue;
-        }
+        if (!stepId) { results.push({ ok:false, error:"missing_stepId" }); continue; }
+
         const { error } = await supabase
           .from("offer_steps")
           .delete()
@@ -324,18 +354,42 @@ router.post("/ofertas/:id/etapas/batch", authGuard, async (req, res) => {
         continue;
       }
 
-      // desconhecido
-      results.push({ ok: false, error: "unknown_action" });
+      results.push({ ok:false, error:"unknown_action" });
     }
 
-    // Se veio só 1 op, simplifica a resposta pra manter compat
-    if (ops.length === 1) {
-      const r = results[0];
-      if (!r.ok) return res.status(400).json({ ok: false, error: r.error || "failed" });
-      return res.json({ ok: true, ...(r.step ? { step: r.step } : {}) });
+    // Marcar etapa atual (sem precisar alterar schema):
+    // Guardamos em settings.is_current = true no step escolhido e false nos demais.
+    if (currentStepId) {
+      const all = await Steps.listSteps(offerId);
+      if (!all.error) {
+        const steps = all.data || [];
+        for (const s of steps) {
+          const makeCurrent = s.id === currentStepId;
+          const newSettings = { ...(s.settings || {}) };
+          if (makeCurrent) newSettings.is_current = true; else delete newSettings.is_current;
+
+          await Steps.updateStep({
+            offerId,
+            stepId: s.id,
+            settings: newSettings
+          });
+        }
+      }
     }
 
-    return res.json({ ok: true, results });
+    // Devolvemos a lista FINAL para o front se reconciliar (evita ter de mapear temp ids)
+    const finalList = await Steps.listSteps(offerId);
+    const stepsOut = (finalList.data || []).map(s => ({
+      id: s.id,
+      offer_id: s.offer_id,
+      name: s.name,
+      step_no: s.step_no,
+      settings: s.settings || {},
+      created_at: s.created_at,
+      updated_at: s.updated_at
+    }));
+
+    return res.json({ ok: true, results, steps: stepsOut });
   } catch (err) {
     console.error("Erro batch etapas:", err);
     return res.status(500).json({ ok: false, error: "server_error" });
