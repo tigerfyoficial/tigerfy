@@ -330,10 +330,10 @@ router.delete("/ofertas/:id/etapas/:stepId", authGuard, async (req, res) => {
 });
 
 /* =========================================================
-   ETAPAS — SALVAR MUDANÇAS (modal)  → bulk-save + vários aliases
+   ETAPAS — SALVAR (cria quando não tem id; atualiza quando tem)
+   → funciona com body simples {name} OU em lote (items/steps/list)
    ========================================================= */
 function normalizeBulkBody(body) {
-  // aceita vários nomes/formatos vindos do front
   const items =
     body?.items ||
     body?.steps ||
@@ -343,7 +343,6 @@ function normalizeBulkBody(body) {
     body?.data?.steps ||
     [];
 
-  // normaliza flags
   return (Array.isArray(items) ? items : []).map((i) => ({
     id: i.id ?? i.stepId ?? null,
     name: typeof i.name === "string" ? i.name : (i.title || ""),
@@ -353,23 +352,46 @@ function normalizeBulkBody(body) {
   }));
 }
 
-async function handleStepsBulkSave(req, res) {
+async function handleStepsSave(req, res) {
   try {
     const owner = req.session.userId;
     const { id: offerId } = req.params;
-    const items = normalizeBulkBody(req.body);
 
-    // Confere owner da oferta
+    // 1) checa owner
     const offerRes = await Steps.getOfferByIdForOwner(offerId, owner);
     if (offerRes.error || !offerRes.data) {
       return res.status(403).json({ ok: false, error: "forbidden" });
     }
 
-    /* ---------- Excluir existentes marcados ---------- */
+    // 2) modo simples: body { name: "Etapa X" } → cria APENAS quando clicar em SALVAR
+    if (req.body && typeof req.body === "object" && req.body.name && !req.body.id && !req.body.items && !req.body.steps && !req.body.list) {
+      const created = await Steps.createStep({
+        offerId,
+        name: String(req.body.name || "").trim(),
+        duplicate: false,
+        fromStepId: null,
+      });
+      if (created.error || !created.data) {
+        console.error("[steps] create (simple) error:", created.error);
+        return res.status(500).json({ ok: false, error: "insert_failed" });
+      }
+
+      // retorna lista atualizada + step criado
+      const list = await Steps.listSteps(offerId);
+      return res.json({
+        ok: true,
+        created: mapStep(created.data),
+        steps: (list.data || []).map(mapStep),
+      });
+    }
+
+    // 3) modo lista (batch)
+    const items = normalizeBulkBody(req.body);
+
+    // deletar
     const toDeleteIds = items
       .filter((i) => i._delete && i.id && !String(i.id).startsWith("tmp_"))
       .map((i) => i.id);
-
     if (toDeleteIds.length) {
       const del = await supabase
         .from("offer_steps")
@@ -382,7 +404,7 @@ async function handleStepsBulkSave(req, res) {
       }
     }
 
-    /* ---------- Renomear existentes ---------- */
+    // atualizar nomes existentes
     const toUpdate = items.filter(
       (i) => i.id && !String(i.id).startsWith("tmp_") && !i._delete
     );
@@ -402,11 +424,10 @@ async function handleStepsBulkSave(req, res) {
       }
     }
 
-    /* ---------- Criar novas (tmp_*) ---------- */
+    // criar novas (tmp_*)
     const toCreate = items.filter(
       (i) => !i._delete && (!i.id || String(i.id).startsWith("tmp_"))
     );
-
     if (toCreate.length) {
       const last = await supabase
         .from("offer_steps")
@@ -433,29 +454,23 @@ async function handleStepsBulkSave(req, res) {
       }
     }
 
-    // Retorna lista atualizada
     const list = await Steps.listSteps(offerId);
-    if (list.error) {
-      console.error("[steps] list after save error:", list.error);
-      return res.status(500).json({ ok: false, error: "list_failed" });
-    }
-
     return res.json({
       ok: true,
       steps: (list.data || []).map(mapStep),
       message: "saved",
     });
   } catch (err) {
-    console.error("Erro bulk-save:", err, "BODY:", req.body);
+    console.error("Erro steps save:", err, "BODY:", req.body);
     return res.status(500).json({ ok: false, error: "server_error" });
   }
 }
 
-/* Aliases para qualquer chamada do front */
-router.post("/ofertas/:id/etapas/bulk-save", authGuard, handleStepsBulkSave);
-router.post("/ofertas/:id/etapas/batch", authGuard, handleStepsBulkSave);
-router.post("/ofertas/:id/etapas/save-changes", authGuard, handleStepsBulkSave);
-router.post("/ofertas/:id/etapas/save", authGuard, handleStepsBulkSave);
+/* Aliases aceitando o mesmo body */
+router.post("/ofertas/:id/etapas/save-changes", authGuard, handleStepsSave);
+router.post("/ofertas/:id/etapas/batch", authGuard, handleStepsSave);
+router.post("/ofertas/:id/etapas/bulk-save", authGuard, handleStepsSave);
+router.post("/ofertas/:id/etapas/save", authGuard, handleStepsSave);
 
 /* =========================================================
    ETAPA — salvar nome/config específica
