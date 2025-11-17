@@ -22,10 +22,10 @@
           <div class="card-top">
             <h3 class="offer-name"><%= o.name %></h3>
 
-            <!-- Botão … minimalista (ícone pequeno, sem animação de movimento) -->
+            <!-- Botão … (mesmas classes do código anterior) -->
             <button
               type="button"
-              class="offer-actions-inline"
+              class="offer-actions"
               title="Ações"
               aria-label="Ações da oferta"
               data-offer-id="<%= o._id %>"
@@ -33,6 +33,7 @@
               data-offer-type="<%- o.botType %>"
               data-offer-bots="<%- (typeof o.botsCount !== 'undefined' ? o.botsCount : 0) %>"
             >
+              <!-- Ícone minimalista (3 pontos verticais) -->
               <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                 <circle cx="12" cy="5" r="2"></circle>
                 <circle cx="12" cy="12" r="2"></circle>
@@ -46,8 +47,11 @@
             <span> | </span>
             <span>Bots: <%= (typeof o.botsCount !== 'undefined' ? o.botsCount : 0) %></span>
             <span> | </span>
-            <span>Tipo: 
-              <% if (o.botType === 'bot_padrao') { %>Padrão<% } else if (o.botType === 'bot_fluxo_wiin') { %>Fluxo (Wiinbot)<% } else if (o.botType === 'bot_fluxo_manychat') { %>Fluxo (Manychat)<% } else { %>Padrão<% } %>
+            <span>Tipo:
+              <% if (o.botType === 'bot_padrao') { %>Padrão<% }
+                 else if (o.botType === 'bot_fluxo_wiin') { %>Fluxo (Wiinbot)<% }
+                 else if (o.botType === 'bot_fluxo_manychat') { %>Fluxo (Manychat)<% }
+                 else { %>Padrão<% } %>
             </span>
           </div>
 
@@ -58,7 +62,7 @@
   </div>
 </div>
 
-<!-- Mini menu de ações (já existente no projeto) -->
+<!-- Mini menu de ações (já existente) -->
 <div id="offer-actions-menu" class="offer-actions-menu" hidden>
   <button type="button" data-action="rename">Renomear oferta</button>
   <button type="button" data-action="duplicate">Duplicar oferta</button>
@@ -99,48 +103,49 @@
     font-size:.78rem; color:#c9c9c9;
   }
   .go{ position:absolute; right:12px; bottom:10px; opacity:.6; font-size:1.4rem; }
+
   .empty{ text-align:center; padding:30px 16px; background:rgba(0,0,0,0.70); border:1px solid rgba(255,204,0,0.12); border-radius:16px; }
+
   .btn-primary.small{ padding:8px 16px; font-size:.85rem; }
   .btn-primary{
     border:none; border-radius:10px; padding:10px 22px; font-weight:600; cursor:pointer; text-decoration:none;
     background:linear-gradient(90deg,#ffcc00,#d4a100); color:#1a1300; box-shadow:0 0 12px rgba(255,204,0,0.4); font-size:.95rem;
   }
 
-  /* ===== Botão … minimalista (sem movimento) ===== */
-  .offer-actions-inline{
+  /* ===== Botão de ações (…): apenas refinado, SEM movimento ===== */
+  .offer-actions{
     margin-left:8px;
-    flex:0 0 28px;
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
     width:28px; height:28px;
+    display:inline-flex; align-items:center; justify-content:center;
     border:0; border-radius:999px;
     background:transparent;
-    color:rgba(255,255,255,.78);
-    opacity:.9;
+    color:rgba(255,255,255,.8);
     cursor:pointer;
-    transition: opacity .12s ease, background-color .12s ease, box-shadow .12s ease;
+    /* Removemos qualquer efeito de translate/scale */
+    transition: background-color .12s ease, opacity .12s ease, box-shadow .12s ease;
   }
-  .offer-actions-inline:hover{
+  .offer-actions:hover{
     opacity:1;
     background:rgba(255,255,255,.07);
     box-shadow:0 0 0 1px rgba(255,204,0,.18) inset;
+    /* blindagem: sem deslocamento */
+    transform:none !important;
+    top:auto; bottom:auto; left:auto; right:auto;
   }
-  .offer-actions-inline:focus-visible{
+  .offer-actions:focus-visible{
     outline:none;
     box-shadow:0 0 0 2px rgba(255,204,0,.28);
   }
-  .offer-actions-inline svg{
+  .offer-actions svg{
     display:block; width:14px; height:14px; pointer-events:none;
   }
-  /* blindagem contra qualquer regra global que mova o botão */
-  .offer-card .offer-actions-inline,
-  .offer-card .offer-actions-inline:hover{
+  /* Blindagem adicional contra regras antigas do hover que moviam o botão */
+  .offer-card .offer-actions,
+  .offer-card .offer-actions:hover{
     transform:none !important;
-    top:auto; bottom:auto;
   }
 
-  /* ===== Mini menu flutuante das ações ===== */
+  /* ===== Mini menu flutuante (mantido do código anterior) ===== */
   .offer-actions-menu{
     position:fixed; z-index:9999;
     min-width:200px;
@@ -151,6 +156,7 @@
     box-shadow:0 10px 30px rgba(0,0,0,.45), 0 0 18px rgba(255,204,0,.10) inset;
     padding:6px;
   }
+  .offer-actions-menu[hidden]{ display:none !important; }
   .offer-actions-menu button{
     width:100%; text-align:left;
     background:transparent; color:#e9e9e9;
@@ -174,7 +180,6 @@
   const menu = document.getElementById('offer-actions-menu');
   let current = { id:null, name:null, el:null };
 
-  // abre menu ancorado ao botão
   function openMenu(btn){
     const rect = btn.getBoundingClientRect();
     current = {
@@ -183,7 +188,7 @@
       el: btn.closest('.offer-card')
     };
     menu.hidden = false;
-    // posiciona ao lado do botão
+    // posiciona o menu alinhado ao botão
     const top = rect.bottom + 6;
     const left = Math.min(window.innerWidth - menu.offsetWidth - 12, rect.right - menu.offsetWidth + 28);
     menu.style.top = top + 'px';
@@ -191,16 +196,16 @@
   }
   function closeMenu(){ menu.hidden = true; }
 
-  // evitar que o clique no botão dispare o link do card
+  // Abre o menu pelo botão … (e não navega)
   grid?.addEventListener('click', (e)=>{
-    const btn = e.target.closest('.offer-actions-inline');
+    const btn = e.target.closest('.offer-actions');
     if(!btn) return;
     e.preventDefault();
     e.stopPropagation();
     openMenu(btn);
   });
 
-  // clique nos itens do menu
+  // Itens do menu (renomear/duplicar/excluir)
   menu?.addEventListener('click', async (e)=>{
     const item = e.target.closest('button[data-action]');
     if(!item) return;
@@ -217,7 +222,6 @@
           body: JSON.stringify({ novoNome: novo.trim() })
         });
         if(!res.ok) throw new Error('Falha ao renomear');
-        // atualiza no card sem recarregar
         const h3 = current.el.querySelector('.offer-name');
         if(h3) h3.textContent = novo.trim();
       }
@@ -225,7 +229,6 @@
       if(action === 'duplicate'){
         const res = await fetch(`/ofertas/${current.id}/duplicar`, { method:'POST' });
         if(!res.ok) throw new Error('Falha ao duplicar');
-        // por simplicidade, recarrega para aparecer o novo card preservando layout
         location.reload();
       }
 
@@ -233,7 +236,6 @@
         if(!confirm('Tem certeza que deseja excluir esta oferta? Esta ação é permanente.')) return;
         const res = await fetch(`/ofertas/${current.id}`, { method:'DELETE' });
         if(!res.ok) throw new Error('Falha ao excluir');
-        // remove card da lista
         current.el?.remove();
       }
     } catch(err){
@@ -244,10 +246,10 @@
     }
   });
 
-  // fecha menu em qualquer clique fora ou ESC
+  // Fecha menu fora/ESC
   document.addEventListener('click', (e)=>{
     if(menu.hidden) return;
-    if(!e.target.closest('#offer-actions-menu') && !e.target.closest('.offer-actions-inline')) closeMenu();
+    if(!e.target.closest('#offer-actions-menu') && !e.target.closest('.offer-actions')) closeMenu();
   });
   document.addEventListener('keydown', (e)=>{
     if(e.key === 'Escape') closeMenu();
