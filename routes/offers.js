@@ -6,7 +6,7 @@ const authGuard = require("../middleware/authGuard");
 const { supabase } = require("../lib/supabase");
 const Steps = require("../lib/steps");
 
-/* ---------------------- mappers ---------------------- */
+/* ---------- Mappers ---------- */
 function mapOffer(row) {
   return {
     _id: row.id,
@@ -35,18 +35,13 @@ function mapStep(row) {
   };
 }
 
-/* =========================================================
-   LISTA
-   ========================================================= */
+/* ========== LISTA ========== */
 router.get("/ofertas", authGuard, async (req, res) => {
   try {
     const owner = req.session.userId;
-
     const { data, error } = await supabase
       .from("offers")
-      .select(
-        "id, owner, name, bot_type, tracking_type, status, telegram_username, bot_token, created_at"
-      )
+      .select("id, owner, name, bot_type, tracking_type, status, telegram_username, bot_token, created_at")
       .eq("owner", owner)
       .order("created_at", { ascending: false });
 
@@ -68,14 +63,9 @@ router.get("/ofertas", authGuard, async (req, res) => {
   }
 });
 
-/* =========================================================
-   CRIAR OFERTA (somente a oferta; NÃO cria etapa automática)
-   ========================================================= */
+/* ========== CRIAR OFERTA ========== */
 router.get("/ofertas/criar", authGuard, (_req, res) => {
-  return res.render("bots_create", {
-    title: "Criar Oferta - TigerFy",
-    active: "ofertas",
-  });
+  return res.render("bots_create", { title: "Criar Oferta - TigerFy", active: "ofertas" });
 });
 
 router.post("/ofertas/criar", authGuard, async (req, res) => {
@@ -102,7 +92,7 @@ router.post("/ofertas/criar", authGuard, async (req, res) => {
       return res.redirect("/ofertas");
     }
 
-    // painel SEM etapa automática
+    // ⚠️ NÃO cria etapa automaticamente. Só redireciona para o painel vazio.
     return res.redirect(`/ofertas/painel/${data.id}`);
   } catch (err) {
     console.error("Erro criar oferta:", err);
@@ -110,18 +100,14 @@ router.post("/ofertas/criar", authGuard, async (req, res) => {
   }
 });
 
-/* =========================================================
-   COMPAT: /ofertas/gerenciar → painel
-   ========================================================= */
+/* Compat: /ofertas/gerenciar → painel */
 router.get("/ofertas/gerenciar", authGuard, (req, res) => {
   const id = req.query.id;
   if (!id) return res.redirect("/ofertas");
   return res.redirect(`/ofertas/painel/${id}`);
 });
 
-/* =========================================================
-   PAINEL DA OFERTA (NÃO garante etapa 1 automaticamente)
-   ========================================================= */
+/* ========== PAINEL DA OFERTA ========== */
 router.get("/ofertas/painel/:id", authGuard, async (req, res) => {
   try {
     const owner = req.session.userId;
@@ -129,12 +115,12 @@ router.get("/ofertas/painel/:id", authGuard, async (req, res) => {
     const stepId = req.query.stepId || null;
     const etapaNum = req.query.etapa ? parseInt(req.query.etapa, 10) : null;
 
-    // Oferta do usuário
+    // Oferta pertence ao usuário?
     const offerRes = await Steps.getOfferByIdForOwner(offerId, owner);
     if (offerRes.error || !offerRes.data) return res.redirect("/ofertas");
     const offer = mapOffer(offerRes.data);
 
-    // Etapas (se não houver, painel abre vazio)
+    // NÃO garante Etapa 1; painel pode abrir vazio
     const stepsRes = await Steps.listSteps(offer.id);
     const steps = (stepsRes.data || []).map(mapStep);
 
@@ -144,15 +130,15 @@ router.get("/ofertas/painel/:id", authGuard, async (req, res) => {
       const got = await Steps.getStepById({ offerId: offer.id, stepId });
       if (!got.error && got.data) currentStep = mapStep(got.data);
     } else if (etapaNum && !isNaN(etapaNum)) {
-      currentStep = steps.find((s) => s.stepNo === etapaNum) || null;
+      currentStep = steps.find(s => s.stepNo === etapaNum) || null;
     }
-    if (!currentStep) currentStep = steps.length ? steps[0] : null;
+    if (!currentStep && steps.length) currentStep = steps[0];
 
     return res.render("offer_panel", {
       title: `${offer.name} — Painel da Oferta - TigerFy`,
       offer,
       steps,
-      currentStep,
+      currentStep, // pode ser null, e a view deve lidar normal
       active: "ofertas",
     });
   } catch (err) {
@@ -161,126 +147,13 @@ router.get("/ofertas/painel/:id", authGuard, async (req, res) => {
   }
 });
 
-/* =========================================================
-   OFERTA: RENOMEAR / DUPLICAR / EXCLUIR
-   ========================================================= */
-router.post("/ofertas/:id/renomear", authGuard, async (req, res) => {
-  try {
-    const owner = req.session.userId;
-    const { id } = req.params;
-    const { novoNome } = req.body || {};
-
-    const name = (novoNome || "").trim();
-    if (!name) return res.status(400).json({ ok: false, error: "bad_name" });
-
-    const okOffer = await supabase
-      .from("offers")
-      .select("id")
-      .eq("id", id)
-      .eq("owner", owner)
-      .single();
-
-    if (okOffer.error || !okOffer.data) {
-      return res.status(403).json({ ok: false, error: "forbidden" });
-    }
-
-    const upd = await supabase
-      .from("offers")
-      .update({ name })
-      .eq("id", id)
-      .eq("owner", owner)
-      .select("id")
-      .single();
-
-    if (upd.error) return res.status(500).json({ ok: false, error: "update_failed" });
-    return res.json({ ok: true });
-  } catch (e) {
-    console.error("Erro renomear oferta:", e);
-    return res.status(500).json({ ok: false, error: "server_error" });
-  }
-});
-
-router.delete("/ofertas/:id", authGuard, async (req, res) => {
-  try {
-    const owner = req.session.userId;
-    const { id } = req.params;
-
-    const del = await supabase
-      .from("offers")
-      .delete()
-      .eq("id", id)
-      .eq("owner", owner);
-
-    if (del.error) return res.status(500).json({ ok: false, error: "delete_failed" });
-    return res.json({ ok: true });
-  } catch (e) {
-    console.error("Erro excluir oferta:", e);
-    return res.status(500).json({ ok: false, error: "server_error" });
-  }
-});
-
-router.post("/ofertas/:id/duplicar", authGuard, async (req, res) => {
-  try {
-    const owner = req.session.userId;
-    const { id } = req.params;
-
-    const { data: src, error: e0 } = await supabase
-      .from("offers")
-      .select("id, name, bot_type, tracking_type, status, telegram_username, bot_token")
-      .eq("id", id)
-      .eq("owner", owner)
-      .single();
-
-    if (e0 || !src) return res.status(403).json({ ok: false, error: "forbidden" });
-
-    const payload = {
-      owner,
-      name: `${src.name || "Oferta"} (cópia)`,
-      bot_type: src.bot_type || "bot_padrao",
-      tracking_type: src.tracking_type || "fb_pixel",
-      status: "incompleto",
-      telegram_username: null,
-      bot_token: null,
-    };
-
-    const ins = await supabase.from("offers").insert([payload]).select("*").single();
-    if (ins.error) return res.status(500).json({ ok: false, error: "insert_failed" });
-
-    return res.json({ ok: true, offer: ins.data });
-  } catch (e) {
-    console.error("Erro duplicar oferta:", e);
-    return res.status(500).json({ ok: false, error: "server_error" });
-  }
-});
-
-/* =========================================================
-   ETAPAS — LISTAR / CRIAR ÚNICA / EXCLUIR ÚNICA
-   ========================================================= */
-router.get("/ofertas/:id/etapas", authGuard, async (req, res) => {
-  try {
-    const owner = req.session.userId;
-    const { id: offerId } = req.params;
-
-    const offerRes = await Steps.getOfferByIdForOwner(offerId, owner);
-    if (offerRes.error || !offerRes.data) {
-      return res.status(403).json({ ok: false, error: "forbidden" });
-    }
-
-    const list = await Steps.listSteps(offerId);
-    if (list.error) return res.status(500).json({ ok: false, error: "list_failed" });
-
-    return res.json({ ok: true, steps: (list.data || []).map(mapStep) });
-  } catch (err) {
-    console.error("Erro listar etapas:", err);
-    return res.status(500).json({ ok: false, error: "server_error" });
-  }
-});
-
+/* ========== ETAPAS ========== */
+/* Criar etapa (imediato; usado por UIs antigas) */
 router.post("/ofertas/:id/etapas", authGuard, async (req, res) => {
   try {
     const owner = req.session.userId;
     const { id: offerId } = req.params;
-    const { name } = req.body || {};
+    const { name, duplicate, fromStepId } = req.body || {};
 
     const offerRes = await Steps.getOfferByIdForOwner(offerId, owner);
     if (offerRes.error || !offerRes.data) {
@@ -290,10 +163,9 @@ router.post("/ofertas/:id/etapas", authGuard, async (req, res) => {
     const created = await Steps.createStep({
       offerId,
       name: (name || "").trim(),
-      duplicate: false,
-      fromStepId: null,
+      duplicate: !!duplicate,
+      fromStepId: duplicate ? (fromStepId || null) : null,
     });
-
     if (created.error || !created.data) {
       console.error("[steps] insert error:", created.error);
       return res.status(500).json({ ok: false, error: "insert_failed" });
@@ -305,177 +177,8 @@ router.post("/ofertas/:id/etapas", authGuard, async (req, res) => {
   }
 });
 
-router.delete("/ofertas/:id/etapas/:stepId", authGuard, async (req, res) => {
-  try {
-    const owner = req.session.userId;
-    const { id: offerId, stepId } = req.params;
-
-    const offerRes = await Steps.getOfferByIdForOwner(offerId, owner);
-    if (offerRes.error || !offerRes.data) {
-      return res.status(403).json({ ok: false, error: "forbidden" });
-    }
-
-    const del = await supabase
-      .from("offer_steps")
-      .delete()
-      .eq("id", stepId)
-      .eq("offer_id", offerId);
-
-    if (del.error) return res.status(500).json({ ok: false, error: "delete_failed" });
-    return res.json({ ok: true });
-  } catch (err) {
-    console.error("Erro excluir etapa:", err);
-    return res.status(500).json({ ok: false, error: "server_error" });
-  }
-});
-
-/* =========================================================
-   ETAPAS — SALVAR (cria quando não tem id; atualiza quando tem)
-   → funciona com body simples {name} OU em lote (items/steps/list)
-   ========================================================= */
-function normalizeBulkBody(body) {
-  const items =
-    body?.items ||
-    body?.steps ||
-    body?.list ||
-    body?.payload ||
-    body?.data?.items ||
-    body?.data?.steps ||
-    [];
-
-  return (Array.isArray(items) ? items : []).map((i) => ({
-    id: i.id ?? i.stepId ?? null,
-    name: typeof i.name === "string" ? i.name : (i.title || ""),
-    settings:
-      i.settings && typeof i.settings === "object" ? i.settings : (i.config || {}),
-    _delete: !!(i._delete || i.delete || i.removed),
-  }));
-}
-
-async function handleStepsSave(req, res) {
-  try {
-    const owner = req.session.userId;
-    const { id: offerId } = req.params;
-
-    // 1) checa owner
-    const offerRes = await Steps.getOfferByIdForOwner(offerId, owner);
-    if (offerRes.error || !offerRes.data) {
-      return res.status(403).json({ ok: false, error: "forbidden" });
-    }
-
-    // 2) modo simples: body { name: "Etapa X" } → cria APENAS quando clicar em SALVAR
-    if (req.body && typeof req.body === "object" && req.body.name && !req.body.id && !req.body.items && !req.body.steps && !req.body.list) {
-      const created = await Steps.createStep({
-        offerId,
-        name: String(req.body.name || "").trim(),
-        duplicate: false,
-        fromStepId: null,
-      });
-      if (created.error || !created.data) {
-        console.error("[steps] create (simple) error:", created.error);
-        return res.status(500).json({ ok: false, error: "insert_failed" });
-      }
-
-      // retorna lista atualizada + step criado
-      const list = await Steps.listSteps(offerId);
-      return res.json({
-        ok: true,
-        created: mapStep(created.data),
-        steps: (list.data || []).map(mapStep),
-      });
-    }
-
-    // 3) modo lista (batch)
-    const items = normalizeBulkBody(req.body);
-
-    // deletar
-    const toDeleteIds = items
-      .filter((i) => i._delete && i.id && !String(i.id).startsWith("tmp_"))
-      .map((i) => i.id);
-    if (toDeleteIds.length) {
-      const del = await supabase
-        .from("offer_steps")
-        .delete()
-        .in("id", toDeleteIds)
-        .eq("offer_id", offerId);
-      if (del.error) {
-        console.error("[steps] delete error:", del.error);
-        return res.status(500).json({ ok: false, error: "delete_failed" });
-      }
-    }
-
-    // atualizar nomes existentes
-    const toUpdate = items.filter(
-      (i) => i.id && !String(i.id).startsWith("tmp_") && !i._delete
-    );
-    for (const it of toUpdate) {
-      const name = (it.name || "").trim();
-      if (!name) continue;
-      const upd = await supabase
-        .from("offer_steps")
-        .update({ name })
-        .eq("id", it.id)
-        .eq("offer_id", offerId)
-        .select("id")
-        .single();
-      if (upd.error) {
-        console.error("[steps] update name error:", upd.error);
-        return res.status(500).json({ ok: false, error: "update_failed" });
-      }
-    }
-
-    // criar novas (tmp_*)
-    const toCreate = items.filter(
-      (i) => !i._delete && (!i.id || String(i.id).startsWith("tmp_"))
-    );
-    if (toCreate.length) {
-      const last = await supabase
-        .from("offer_steps")
-        .select("step_no")
-        .eq("offer_id", offerId)
-        .order("step_no", { ascending: false })
-        .limit(1);
-
-      const start = (last.data && last.data[0] && Number(last.data[0].step_no)) || 0;
-
-      const inserts = toCreate.map((it, idx) => ({
-        offer_id: offerId,
-        name: (it.name && String(it.name).trim()) || `Etapa ${start + idx + 1}`,
-        step_no: start + idx + 1,
-        settings: it.settings && typeof it.settings === "object" ? it.settings : {},
-        duplicated: false,
-        duplicated_from: null,
-      }));
-
-      const ins = await supabase.from("offer_steps").insert(inserts).select("id");
-      if (ins.error) {
-        console.error("[steps] bulk insert error:", ins.error);
-        return res.status(500).json({ ok: false, error: "insert_failed" });
-      }
-    }
-
-    const list = await Steps.listSteps(offerId);
-    return res.json({
-      ok: true,
-      steps: (list.data || []).map(mapStep),
-      message: "saved",
-    });
-  } catch (err) {
-    console.error("Erro steps save:", err, "BODY:", req.body);
-    return res.status(500).json({ ok: false, error: "server_error" });
-  }
-}
-
-/* Aliases aceitando o mesmo body */
-router.post("/ofertas/:id/etapas/save-changes", authGuard, handleStepsSave);
-router.post("/ofertas/:id/etapas/batch", authGuard, handleStepsSave);
-router.post("/ofertas/:id/etapas/bulk-save", authGuard, handleStepsSave);
-router.post("/ofertas/:id/etapas/save", authGuard, handleStepsSave);
-
-/* =========================================================
-   ETAPA — salvar nome/config específica
-   ========================================================= */
-router.post("/ofertas/:id/etapas/:stepId/save", authGuard, async (req, res) => {
+/* Salvar alterações de etapa (PATCH) */
+async function _patchStep(req, res) {
   try {
     const owner = req.session.userId;
     const { id: offerId, stepId } = req.params;
@@ -508,11 +211,138 @@ router.post("/ofertas/:id/etapas/:stepId/save", authGuard, async (req, res) => {
     console.error("Erro salvar etapa:", err);
     return res.status(500).json({ ok: false, error: "server_error" });
   }
+}
+router.patch("/ofertas/:id/etapas/:stepId", authGuard, _patchStep);
+/* compat antiga: /save */
+router.post("/ofertas/:id/etapas/:stepId/save", authGuard, _patchStep);
+
+/* Excluir etapa */
+router.delete("/ofertas/:id/etapas/:stepId", authGuard, async (req, res) => {
+  try {
+    const owner = req.session.userId;
+    const { id: offerId, stepId } = req.params;
+
+    const offerRes = await Steps.getOfferByIdForOwner(offerId, owner);
+    if (offerRes.error || !offerRes.data) {
+      return res.status(403).json({ ok: false, error: "forbidden" });
+    }
+
+    const { error } = await supabase
+      .from("offer_steps")
+      .delete()
+      .eq("id", stepId)
+      .eq("offer_id", offerId);
+
+    if (error) {
+      console.error("[steps] delete error:", error.message);
+      return res.status(500).json({ ok: false, error: "delete_failed" });
+    }
+    return res.json({ ok: true });
+  } catch (err) {
+    console.error("Erro excluir etapa:", err);
+    return res.status(500).json({ ok: false, error: "server_error" });
+  }
 });
 
-/* =========================================================
-   OFERTA — SALVAR TOKEN
-   ========================================================= */
+/* === NOVA ROTA: BATCH (compat com teu front) ===
+Aceita:
+- objeto único { action: 'create'|'update'|'delete', ... }
+- OU { ops: [ { action, ... }, ... ] }
+- OU um array direto de operações
+*/
+router.post("/ofertas/:id/etapas/batch", authGuard, async (req, res) => {
+  try {
+    const owner = req.session.userId;
+    const { id: offerId } = req.params;
+
+    const offerRes = await Steps.getOfferByIdForOwner(offerId, owner);
+    if (offerRes.error || !offerRes.data) {
+      return res.status(403).json({ ok: false, error: "forbidden" });
+    }
+
+    let ops = [];
+    if (Array.isArray(req.body)) ops = req.body;
+    else if (Array.isArray(req.body?.ops)) ops = req.body.ops;
+    else if (req.body && (req.body.action || req.body.type)) ops = [req.body];
+
+    if (!ops.length) return res.status(400).json({ ok: false, error: "no_ops" });
+
+    const results = [];
+    for (const raw of ops) {
+      const action = (raw.action || raw.type || "").toLowerCase();
+
+      if (action === "create") {
+        const name = (raw.name || "").trim();
+        const duplicate = !!raw.duplicate;
+        const fromStepId = duplicate ? (raw.fromStepId || null) : null;
+
+        const created = await Steps.createStep({ offerId, name, duplicate, fromStepId });
+        if (created.error) {
+          results.push({ ok: false, error: created.error.message || "create_failed" });
+        } else {
+          results.push({ ok: true, step: mapStep(created.data) });
+        }
+        continue;
+      }
+
+      if (action === "update") {
+        const stepId = raw.stepId || raw.id;
+        if (!stepId) {
+          results.push({ ok: false, error: "missing_stepId" });
+          continue;
+        }
+        const upd = await Steps.updateStep({
+          offerId,
+          stepId,
+          name: typeof raw.name === "string" ? raw.name : undefined,
+          settings: raw.settings && typeof raw.settings === "object" ? raw.settings : undefined,
+        });
+        if (upd.error) {
+          results.push({ ok: false, error: upd.error.message || "update_failed" });
+        } else {
+          results.push({ ok: true, step: mapStep(upd.data) });
+        }
+        continue;
+      }
+
+      if (action === "delete") {
+        const stepId = raw.stepId || raw.id;
+        if (!stepId) {
+          results.push({ ok: false, error: "missing_stepId" });
+          continue;
+        }
+        const { error } = await supabase
+          .from("offer_steps")
+          .delete()
+          .eq("id", stepId)
+          .eq("offer_id", offerId);
+        if (error) {
+          results.push({ ok: false, error: error.message || "delete_failed" });
+        } else {
+          results.push({ ok: true });
+        }
+        continue;
+      }
+
+      // desconhecido
+      results.push({ ok: false, error: "unknown_action" });
+    }
+
+    // Se veio só 1 op, simplifica a resposta pra manter compat
+    if (ops.length === 1) {
+      const r = results[0];
+      if (!r.ok) return res.status(400).json({ ok: false, error: r.error || "failed" });
+      return res.json({ ok: true, ...(r.step ? { step: r.step } : {}) });
+    }
+
+    return res.json({ ok: true, results });
+  } catch (err) {
+    console.error("Erro batch etapas:", err);
+    return res.status(500).json({ ok: false, error: "server_error" });
+  }
+});
+
+/* ========== TOKEN DA OFERTA (inalterado) ========== */
 router.post("/ofertas/:id/token", authGuard, async (req, res) => {
   try {
     const owner = req.session.userId;
@@ -543,6 +373,85 @@ router.post("/ofertas/:id/token", authGuard, async (req, res) => {
   } catch (err) {
     console.error("Erro salvar token:", err);
     return res.redirect("/ofertas");
+  }
+});
+
+/* ========== AÇÕES DA LISTA (renomear/duplicar/excluir) ========== */
+router.post("/ofertas/:id/renomear", authGuard, async (req, res) => {
+  try {
+    const owner = req.session.userId;
+    const { id } = req.params;
+    const { novoNome } = req.body || {};
+    const name = (novoNome || "").trim();
+    if (!name) return res.status(400).json({ ok: false, error: "invalid_name" });
+
+    const { error } = await supabase
+      .from("offers")
+      .update({ name })
+      .eq("id", id)
+      .eq("owner", owner);
+
+    if (error) return res.status(500).json({ ok: false, error: "rename_failed" });
+    return res.json({ ok: true });
+  } catch (err) {
+    console.error("Erro renomear oferta:", err);
+    return res.status(500).json({ ok: false, error: "server_error" });
+  }
+});
+
+router.post("/ofertas/:id/duplicar", authGuard, async (req, res) => {
+  try {
+    const owner = req.session.userId;
+    const { id } = req.params;
+
+    const { data: base, error: getErr } = await supabase
+      .from("offers")
+      .select("*")
+      .eq("id", id)
+      .eq("owner", owner)
+      .single();
+    if (getErr || !base) return res.status(404).json({ ok: false, error: "not_found" });
+
+    const payload = {
+      owner,
+      name: (base.name || "Oferta") + " (cópia)",
+      bot_type: base.bot_type,
+      tracking_type: base.tracking_type,
+      status: "incompleto",
+      telegram_username: null,
+      bot_token: null,
+    };
+
+    const { data: created, error: insErr } = await supabase
+      .from("offers")
+      .insert([payload])
+      .select("*")
+      .single();
+
+    if (insErr || !created) return res.status(500).json({ ok: false, error: "duplicate_failed" });
+    return res.json({ ok: true, offer: created });
+  } catch (err) {
+    console.error("Erro duplicar oferta:", err);
+    return res.status(500).json({ ok: false, error: "server_error" });
+  }
+});
+
+router.delete("/ofertas/:id", authGuard, async (req, res) => {
+  try {
+    const owner = req.session.userId;
+    const { id } = req.params;
+
+    const { error } = await supabase
+      .from("offers")
+      .delete()
+      .eq("id", id)
+      .eq("owner", owner);
+
+    if (error) return res.status(500).json({ ok: false, error: "delete_failed" });
+    return res.json({ ok: true });
+  } catch (err) {
+    console.error("Erro excluir oferta:", err);
+    return res.status(500).json({ ok: false, error: "server_error" });
   }
 });
 
