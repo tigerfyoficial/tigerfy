@@ -17,17 +17,14 @@
         <a href="/ofertas/criar" class="btn-primary small">Criar oferta</a>
       </div>
     <% } else { %>
-      <% offers.forEach(function(o){ %>
-        <!-- id compatível Supabase/Mongo -->
-        <% const __id = o.id || o._id; %>
-
-        <!-- Card da oferta (NÃO alterar layout) -->
+      <% offers.forEach(function(o){ const __id = o.id || o._id; %>
+        <!-- Card da oferta (layout intacto) -->
         <a class="offer-card" href="/ofertas/painel/<%= __id %>" data-offer-id="<%= __id %>">
           <div class="card-top">
             <h3 class="offer-name"><%= o.name %></h3>
           </div>
 
-          <!-- Botão … (menu) — não navega, abre menu flutuante -->
+          <!-- Botão … (menu flutuante) -->
           <button
             type="button"
             class="offer-actions-inline"
@@ -105,7 +102,7 @@
 </div>
 
 <style>
-/* ===== Wrapper/estilos existentes… (inalterados) ===== */
+/* ===== Wrapper/estilos existentes (intactos) ===== */
 .tiger-offers-list{ padding:68px 116px 100px 116px; max-width:calc(100vw - 120px); margin:0 auto; color:#fff; transform:none; }
 .tiger-offers-list .list-header .btn-primary{ margin-right:-36px; }
 @media (max-width:980px){ .tiger-offers-list .list-header .btn-primary{ margin-right:0; } }
@@ -215,6 +212,7 @@
       cx.host.removeAttribute('hidden');
     });
   }
+  function confirmOpen(){ return cx.host && !cx.host.hasAttribute('hidden'); }
 
   let anchorBtn = null;
   let currentOfferId = null;
@@ -241,7 +239,7 @@
     if (!renameError) return;
     renameError.textContent = 'Não foi possível renomear. Tente novamente.';
     renameError.hidden = true;
-    renameError.style.display = 'none'; // força esconder
+    renameError.style.display = 'none';
   }
 
   function openMenuFor(btn) {
@@ -250,7 +248,6 @@
     currentOfferName = btn.getAttribute('data-offer-name') || '';
     currentOfferCard = btn.closest('.offer-card');
 
-    // posiciona o menu
     const rect = btn.getBoundingClientRect();
     const menuRectW = 240;
     const gap = 8;
@@ -260,10 +257,9 @@
     menu.style.left = `${left}px`;
     menu.style.top = `${top}px`;
 
-    // estado lista
     listPane.hidden = false;
     renamePane.hidden = true;
-    resetRenameErrors(); // limpa erro ao abrir
+    resetRenameErrors();
 
     menu.hidden = false;
   }
@@ -272,7 +268,7 @@
     menu.hidden = true;
     listPane.hidden = false;
     renamePane.hidden = true;
-    resetRenameErrors(); // também ao fechar
+    resetRenameErrors();
 
     anchorBtn = null;
     currentOfferId = null;
@@ -286,7 +282,6 @@
     if (!btn) return;
     e.preventDefault();
     e.stopPropagation();
-
     if (!menu.hidden && anchorBtn === btn) { closeMenu(); }
     else { openMenuFor(btn); }
   });
@@ -384,6 +379,10 @@
     if (action === 'delete') {
       if (!currentOfferId) return;
 
+      // guarda o estado ANTES da confirmação (evita /ofertas/null)
+      const idToDelete = currentOfferId;
+      const cardToDelete = currentOfferCard;
+
       const ok = await tfConfirm({
         title: 'Excluir oferta?',
         message: 'Tem certeza que deseja excluir esta oferta? Esta ação é permanente.',
@@ -393,9 +392,9 @@
       if (!ok) return;
 
       try {
-        const res = await fetch(`/ofertas/${currentOfferId}`, { method:'DELETE' });
+        const res = await fetch(`/ofertas/${encodeURIComponent(idToDelete)}`, { method:'DELETE' });
         if (!res.ok) throw new Error('bad_status');
-        currentOfferCard?.parentElement?.removeChild(currentOfferCard);
+        cardToDelete?.parentElement?.removeChild(cardToDelete);
         showToast('Oferta excluída.');
         closeMenu();
       } catch (err) {
@@ -430,7 +429,7 @@
       }
       resetRenameErrors();
       try {
-        const res = await fetch(`/ofertas/${currentOfferId}/renomear`, {
+        const res = await fetch(`/ofertas/${encodeURIComponent(currentOfferId)}/renomear`, {
           method: 'POST',
           headers: { 'Content-Type':'application/json' },
           body: JSON.stringify({ novoNome })
@@ -452,15 +451,16 @@
     }
   });
 
-  // Fechar menu ao clicar fora / scroll / resize / ESC
+  // Fechar menu ao clicar fora / scroll / resize / ESC — mas NÃO quando o confirm TigerFy estiver aberto
   document.addEventListener('click', (e) => {
     if (menu.hidden) return;
+    if (confirmOpen()) return; // impede fechar enquanto o confirm está aberto
     if (e.target.closest('.offer-actions-inline')) return;
     if (!e.target.closest('#offerActionsMenu')) closeMenu();
   }, true);
 
-  window.addEventListener('scroll', () => { if (!menu.hidden) closeMenu(); }, { passive:true });
-  window.addEventListener('resize', () => { if (!menu.hidden) closeMenu(); }, { passive:true });
-  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !menu.hidden) closeMenu(); });
+  window.addEventListener('scroll', () => { if (!menu.hidden && !confirmOpen()) closeMenu(); }, { passive:true });
+  window.addEventListener('resize', () => { if (!menu.hidden && !confirmOpen()) closeMenu(); }, { passive:true });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !menu.hidden && !confirmOpen()) closeMenu(); });
 })();
 </script>
