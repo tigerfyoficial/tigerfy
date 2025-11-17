@@ -107,6 +107,7 @@ router.get("/ofertas/gerenciar", authGuard, (req, res) => {
 });
 
 /* ---------- Painel da oferta ---------- */
+// Painel da oferta — NÃO cria etapa automaticamente
 router.get("/ofertas/painel/:id", authGuard, async (req, res) => {
   try {
     const owner = req.session.userId;
@@ -114,35 +115,65 @@ router.get("/ofertas/painel/:id", authGuard, async (req, res) => {
     const stepId = req.query.stepId || null;
     const etapaNum = req.query.etapa ? parseInt(req.query.etapa, 10) : null;
 
-    // Oferta do usuário
+    // Confere se a oferta é do usuário
     const offerRes = await Steps.getOfferByIdForOwner(offerId, owner);
     if (offerRes.error || !offerRes.data) return res.redirect("/ofertas");
-    const offer = mapOffer(offerRes.data);
+    const offer = {
+      _id: offerRes.data.id,
+      id: offerRes.data.id,
+      owner: offerRes.data.owner,
+      name: offerRes.data.name,
+      botType: offerRes.data.bot_type,
+      trackingType: offerRes.data.tracking_type,
+      status: offerRes.data.status,
+      telegramUsername: offerRes.data.telegram_username || null,
+      botToken: offerRes.data.bot_token || null,
+      createdAt: offerRes.data.created_at,
+    };
 
-    // Garante Etapa 1
-    if (typeof Steps.ensureFirstStep === "function") {
-      await Steps.ensureFirstStep(offer.id);
-    }
-
-    // Todas as etapas
+    // Carrega etapas (pode vir zerado)
     const stepsRes = await Steps.listSteps(offer.id);
-    const steps = (stepsRes.data || []).map(mapStep);
+    const steps = (stepsRes.data || []).map(s => ({
+      id: s.id,
+      offerId: s.offer_id,
+      name: s.name,
+      stepNo: s.step_no,
+      duplicated: s.duplicated,
+      duplicatedFrom: s.duplicated_from || null,
+      settings: s.settings || {},
+      createdAt: s.created_at,
+      updatedAt: s.updated_at,
+    }));
 
-    // Etapa atual (stepId prioritário)
+    // Define etapa atual (se existir)
     let currentStep = null;
     if (stepId) {
       const got = await Steps.getStepById({ offerId: offer.id, stepId });
-      if (!got.error && got.data) currentStep = mapStep(got.data);
+      if (!got.error && got.data) {
+        currentStep = {
+          id: got.data.id,
+          offerId: got.data.offer_id,
+          name: got.data.name,
+          stepNo: got.data.step_no,
+          duplicated: got.data.duplicated,
+          duplicatedFrom: got.data.duplicated_from || null,
+          settings: got.data.settings || {},
+          createdAt: got.data.created_at,
+          updatedAt: got.data.updated_at,
+        };
+      }
     } else if (etapaNum && !isNaN(etapaNum)) {
       currentStep = steps.find(s => s.stepNo === etapaNum) || null;
     }
-    if (!currentStep) currentStep = steps.length ? steps[0] : null;
+    if (!currentStep && steps.length) currentStep = steps[0]; // se houver
 
+    // Render: aceita 0 etapas de boa
     return res.render("offer_panel", {
       title: `${offer.name} — Painel da Oferta - TigerFy`,
       offer,
       steps,
-      currentStep,
+      currentStep,            // pode ser null
+      hasSteps: steps.length > 0, // útil se quiser no EJS (opcional)
       active: "ofertas",
     });
   } catch (err) {
