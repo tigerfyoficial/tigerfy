@@ -134,28 +134,52 @@
     background:linear-gradient(90deg,#ffcc00,#d4a100); color:#1a1300; box-shadow:0 0 12px rgba(255,204,0,0.4); font-size:.95rem;
   }
 
-  /* ===== Botão … (menu) — hover sem movimento ===== */
-  .offer-actions-inline{
-    position:absolute;
-    right:10px;
-    top:14px;
-    width:34px; height:34px;
-    border-radius:999px;
-    border:1px solid rgba(255,204,0,0.18);
-    background:rgba(255,255,255,0.06);
-    display:flex; align-items:center; justify-content:center;
-    cursor:pointer;
-    transition: background-color .15s ease, border-color .15s ease, box-shadow .15s ease;
-    z-index:2;
-  }
-  .offer-actions-inline .dots{
-    font-size:16px; line-height:1; transform: translateY(-0.5px); user-select:none;
-  }
-  .offer-actions-inline:hover{
-    background: rgba(255,204,0,.12);
-    border-color: rgba(255,204,0,.28);
-    box-shadow: 0 0 0 2px rgba(255,204,0,0.12) inset;
-  }
+/* variáveis de micro-ajuste (mude 1–2px se quiser refinar depois) */
+:root{
+  --dots-top: 12px;          /* sobe/desce o botão */
+  --dots-right: 12px;        /* aproxima/afasta da borda direita */
+  --dots-size: 30px;         /* diâmetro do botão */
+  --dots-font: 15px;         /* tamanho dos “•••” */
+  --dots-letter: 0.6px;      /* espaçamento entre pontos */
+  --dots-nudge-y: -0.5px;    /* ajuste fino vertical dos “•••” dentro do círculo */
+}
+
+/* botão … */
+.offer-actions-inline{
+  position:absolute;
+  top:var(--dots-top);
+  right:var(--dots-right);
+  width:var(--dots-size);
+  height:var(--dots-size);
+  border-radius:999px;
+  border:1px solid rgba(255,204,0,0.18);
+  background:rgba(255,255,255,0.06);
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  cursor:pointer;
+  /* hover elegante, sem “pular”: só cor/borda/sombra leve */
+  transition: background-color .15s ease, border-color .15s ease, box-shadow .15s ease;
+  z-index:2;
+}
+
+/* os três pontos */
+.offer-actions-inline .dots{
+  font-size:var(--dots-font);
+  letter-spacing:var(--dots-letter);
+  line-height:1;
+  transform:translateY(var(--dots-nudge-y)); /* centralização milimétrica */
+  user-select:none;
+}
+
+/* hover minimal (sem transform, sem deslocar do grid) */
+.offer-actions-inline:hover{
+  background:rgba(255,204,0,.12);
+  border-color:rgba(255,204,0,.28);
+  box-shadow:0 0 0 2px rgba(255,204,0,.10) inset;
+}
 
   /* ===== MENU FLUTUANTE ===== */
   .offer-actions-menu[hidden]{ display:none !important; }
