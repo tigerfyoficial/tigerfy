@@ -1,23 +1,26 @@
-<nav class="v-topnav" role="navigation" aria-label="Primary">
-  <!-- Brand: só o triângulo (você troca depois pela sua mini-logo) -->
-  <a href="/dashboard" class="v-brand" aria-label="Início">
-    <svg viewBox="0 0 1155 1000" width="22" height="22" aria-hidden="true">
-      <path d="M577.5 0L1155 1000H0z" fill="currentColor"></path>
-    </svg>
-  </a>
 
-  <ul class="v-tabs">
-    <li><a class="<%= (active==='dashboard')?'is-active':'' %>" href="/dashboard">Dashboard</a></li>
-    <li><a class="<%= (active==='ofertas')?'is-active':'' %>" href="/ofertas">Ofertas</a></li>
-    <li><a class="<%= (active==='api_pix' || active==='adquirentes')?'is-active':'' %>" href="/adquirentes">API PIX</a></li>
-    <li><a class="<%= (active==='conquistas')?'is-active':'' %>" href="/conquistas">Conquistas</a></li>
-    <li><a class="<%= (active==='suporte')?'is-active':'' %>" href="/suporte">Suporte</a></li>
-  </ul>
-
-  <div class="v-flex"></div>
-
-  <div class="v-right">
-    <% if (userEmail) { %><span class="v-user"><%= userEmail %></span><% } %>
-    <button class="v-avatar" type="button" aria-label="Conta"><span></span></button>
+<nav class="v-topnav">
+  <div class="wrap">
+    <div class="v-brand">
+      <!-- Triangle placeholder (user will replace) -->
+      <a href="/dashboard" class="brand" aria-label="Home">
+        <svg viewBox="0 0 1155 1000" width="16" height="16" fill="#fff" aria-hidden="true"><path d="M577.3 0L1154.6 1000H0z"/></svg>
+      </a>
+      <div class="v-nav">
+        <a href="/dashboard" class="<%= active === 'dashboard' ? 'active' : '' %>">Dashboard</a>
+        <a href="/ofertas" class="<%= active === 'ofertas' ? 'active' : '' %>">Ofertas</a>
+        <a href="/adquirentes" class="<%= active === 'api_pix' ? 'active' : '' %>">API PIX</a>
+        <a href="/conquistas" class="<%= active === 'conquistas' ? 'active' : '' %>">Conquistas</a>
+        <a href="/suporte" class="<%= active === 'suporte' ? 'active' : '' %>">Suporte</a>
+      </div>
+    </div>
+    <div class="v-right">
+      <% if (userEmail) { %>
+        <span class="email"><%= userEmail %></span>
+        <a class="btn-ghost btn" href="/logout">Sair</a>
+      <% } else { %>
+        <a class="btn-primary btn" href="/login">Entrar</a>
+      <% } %>
+    </div>
   </div>
 </nav>

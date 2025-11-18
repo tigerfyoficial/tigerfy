@@ -11,8 +11,10 @@
   <link rel="stylesheet" href="/css/ui.topnav.css">
 
   <!-- Favicon “silencioso” já está tratado no server -->
+  <link rel="stylesheet" href="/css/vercel-theme.css">
 </head>
 <body>
+  <%- include('partials/topnav') %>
   <div class="tf-app">
 
     <!-- ===== TOP NAV / HEADER ===== -->
@@ -45,7 +47,7 @@
     </header>
 
     <!-- ===== CONTEÚDO ===== -->
-    <main id="app-main" class="tf-main" role="main">
+    <main class="tf-root" id="app-main" class="tf-main" role="main">
       <%- body %>
     </main>
 
