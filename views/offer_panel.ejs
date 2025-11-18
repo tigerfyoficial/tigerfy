@@ -1074,23 +1074,22 @@
 </script>
 
 <script>
-  (function () {
-    const frontView = document.querySelector('.tf-front-v6');
-    const subTabs = document.querySelectorAll('#subtabs-principal .subtab');
+/* ====== Interações mínimas (sem backend) ====== */
+(function(){
+  const cta = document.getElementById('tf-cta-card');
+  if (!cta) return;
 
-    function sync() {
-      const active = document.querySelector('#subtabs-principal .subtab.active');
-      const isFront = active && active.dataset.subtab === 'front';
-      if (frontView) frontView.style.display = isFront ? '' : 'none';
-    }
+  const onBtn  = cta.querySelector('[data-cta-toggle="on"]');
+  const offBtn = cta.querySelector('[data-cta-toggle="off"]');
 
-    subTabs.forEach(btn => btn.addEventListener('click', () => {
-      subTabs.forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      sync();
-    }));
+  function setCTA(on){
+    cta.setAttribute('data-cta-on', on ? 'true' : 'false');
+    onBtn.classList.toggle('is-active',  !!on);
+    offBtn.classList.toggle('is-active', !on);
+  }
 
-    sync(); // estado inicial
-  })();
+  onBtn?.addEventListener('click', () => setCTA(true));
+  offBtn?.addEventListener('click', () => setCTA(false));
+})();
 </script>
-
+<% } %>
