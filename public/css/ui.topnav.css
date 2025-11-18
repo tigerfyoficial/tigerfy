@@ -1,0 +1,76 @@
+/* ============== Top Nav estilo Vercel/Supabase ============== */
+
+:root{
+  --b:#0b0b0b;           /* bg */
+  --p:#111;              /* panel */
+  --ink:#f6f6f6;         /* texto */
+  --muted:#9a9a9a;       /* texto secundário */
+  --line:rgba(255,255,255,.12);
+  --line-strong:rgba(255,255,255,.18);
+  --brand:#fff;          /* “primário” = branco */
+  --brand-ink:#111;
+  --r:12px;
+}
+
+/* Esconde sidebars antigas sem mexer no backend */
+[class*="sidebar"], .tiger-sidebar { display:none !important; }
+
+/* Shell */
+.tf-topbar{
+  position: sticky; top:0; z-index: 50;
+  display:flex; align-items:center; gap:18px;
+  height:62px; padding:0 18px;
+  background: var(--b);
+  border-bottom:1px solid var(--line);
+}
+.tf-brand{ display:flex; align-items:center; gap:10px; color:var(--ink); font-weight:700; }
+.tf-brand svg{ color:#fff }
+.tf-brand-text{ letter-spacing:.2px }
+
+.tf-nav{ display:flex; align-items:center; gap:6px; margin-left:8px; }
+.tf-nav a{
+  display:inline-flex; align-items:center; gap:8px;
+  height:36px; padding:0 12px;
+  border-radius:999px;
+  color:#dcdcdc; border:1px solid var(--line); background:transparent;
+  transition: background .15s ease, border-color .15s ease, color .15s ease;
+}
+.tf-nav a:hover{ background:#141414; border-color:var(--line-strong); }
+.tf-nav a.active{ background:var(--brand); color:var(--brand-ink); border-color:#eaeaea; }
+
+.tf-right{ margin-left:auto; display:flex; align-items:center; gap:10px; }
+.tf-user{ color:var(--muted); font-size:.9rem; }
+
+/* Botões utilitários */
+.btn-primary{ background:var(--brand); color:var(--brand-ink); border:1px solid #eaeaea; border-radius:10px; padding:10px 14px; font-weight:600; }
+.btn-primary:hover{ background:#f5f5f5; }
+.btn-xs{ padding:8px 10px; font-size:.9rem; }
+
+/* Burger p/ mobile */
+.tf-burger{
+  display:none; width:36px; height:32px; border:1px solid var(--line);
+  background:transparent; border-radius:10px; align-items:center; justify-content:center;
+}
+.tf-burger span{ display:block; width:16px; height:1.6px; background:#e8e8e8; margin:2.2px 0; }
+
+/* Conteúdo */
+.tf-main{ padding:28px clamp(18px, 4vw, 40px); max-width:1280px; margin:0 auto; }
+
+/* Responsivo */
+@media (max-width: 980px){
+  .tf-nav{ position:fixed; left:0; right:0; top:62px; transform:translateY(-120%); transition:transform .16s ease;
+          background:var(--b); border-bottom:1px solid var(--line); padding:10px 12px; gap:8px; flex-wrap:wrap; }
+  .tf-burger{ display:inline-flex; }
+  body.nav-open .tf-nav{ transform:none; }
+  .hide-mobile{ display:none !important; }
+}
+
+/* Harmoniza com os cartões existentes */
+.tf-main .panel, .tf-main .card, .tf-main .surface{
+  background:var(--p); border:1px solid var(--line); border-radius:var(--r);
+}
+
+/* Equaliza pills/subtabs existentes quando ativos */
+.tf-tabs .tab.active, .tf-subtabs .subtab.active{
+  background:var(--brand); color:var(--brand-ink); border-color:#eaeaea;
+}
