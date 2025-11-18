@@ -82,67 +82,123 @@
       </div>
     </div>
 
-<!-- ===== FRONT / PRINCIPAL — v3 compacto/premium ===== -->
-<section class="tf-front-wrap" data-content="front">
-  <!-- Bloco: VSL & Mídias -->
-  <div class="tf-front-card tfc-tight">
-    <header class="tf-front-card-head">
-      <div>
-        <h3>VSL & Mídias do Front</h3>
-        <p>VSL principal e mídias de apoio. Adicione, reordene e defina comportamento.</p>
-      </div>
-      <button type="button" class="tf-front-ghost x-small" id="btnAddMedia">+ Adicionar mídia</button>
+<!-- ===== PRINCIPAL / FRONT — v4 compact/premium ===== -->
+<section class="tf-front-v4" data-content="front">
+
+  <!-- CARD 1 — VSL principal & copy -->
+  <div class="tfx-card">
+    <header class="tfx-head">
+      <h3>VSL principal & copy do front</h3>
     </header>
 
-    <!-- Lista de mídias (ordenável) -->
-    <div class="tf-front-media-list" id="frontMediaList">
-      <!-- linhas injetadas via JS -->
-    </div>
+    <div class="tfx-body">
+      <div class="row">
+        <label for="front_vsl_copy" class="lbl">Copy da VSL</label>
+        <textarea id="front_vsl_copy" name="front_vsl_copy" class="inp textarea s-compact" rows="3" placeholder="Descreva aqui a copy da sua VSL..."></textarea>
+        <small class="hint one-line">Copy principal exibida junto à VSL.</small>
+      </div>
 
-    <!-- Copy da VSL -->
-    <div class="tf-front-row tight">
-      <label for="front_vsl_copy" class="tf-front-label">Copy da VSL</label>
-      <textarea id="front_vsl_copy" name="front_vsl_copy" class="tf-front-textarea compact" rows="3" placeholder="Descreva aqui a copy da sua VSL..."></textarea>
-      <small class="tf-front-hint one-line">Copy principal exibida junto à VSL.</small>
+      <div class="row align-center gap8">
+        <label class="toggle">
+          <input type="checkbox" id="vslDeleteToggle">
+          <span>Apagar mensagem da VSL</span>
+        </label>
+
+        <div id="vslRules" class="rulesbar" hidden>
+          <label class="chip">
+            <input type="checkbox" data-rule="noDelete">
+            <span>Não apagar</span>
+          </label>
+          <label class="chip">
+            <input type="checkbox" data-rule="afterNextBtn">
+            <span>Após clique no próximo botão</span>
+          </label>
+          <label class="chip">
+            <input type="checkbox" data-rule="afterSeconds">
+            <span>Após X segundos</span>
+          </label>
+          <input type="text" class="inp xs" placeholder="ex.: 5s" data-rule="secondsVal">
+          <label class="chip">
+            <input type="checkbox" data-rule="delAfterStart">
+            <span>Após próximo /start</span>
+          </label>
+
+          <button type="button" class="ghost xs ml-auto" id="vslRulesClear">Limpar regras</button>
+        </div>
+      </div>
     </div>
   </div>
 
-  <!-- Bloco: Botão de CTA -->
-  <div class="tf-front-card tfc-tight">
-    <header class="tf-front-card-head">
-      <h3>Botão de CTA</h3>
+  <!-- CARD 2 — Mídias de apoio -->
+  <div class="tfx-card">
+    <header class="tfx-head">
+      <h3>Mídias de apoio do front</h3>
+      <button type="button" class="ghost xs" id="btnAddMedia">+ Adicionar mídia</button>
     </header>
 
-    <div class="tf-front-grid2 tight">
-      <div class="tf-front-col">
-        <label class="tf-front-label">Texto do botão</label>
-        <input class="tf-front-input" name="front_cta_text" placeholder="Ex.: Obter vaga, Acessar conteúdo VIP..." />
-      </div>
-      <div class="tf-front-col">
-        <label class="tf-front-label">URL da VSL</label>
-        <input class="tf-front-input" name="front_cta_url" placeholder="https://..." />
-      </div>
-    </div>
-
-    <div class="tf-front-row tight">
-      <label class="tf-toggle">
-        <input type="checkbox" id="ctaDeleteToggle">
-        <span>Apagar mensagem</span>
-      </label>
-      <button type="button" class="tf-front-ghost x-small" id="ctaRulesBtn" data-role="rules" data-kind="cta" hidden>Regras</button>
-      <small class="tf-front-hint one-line ml-auto">Define o botão principal do front.</small>
+    <div class="tfx-body">
+      <div class="mlist" id="frontMediaList"><!-- linhas via JS --></div>
     </div>
   </div>
 
-  <!-- Bloco: Planos exibidos no Front -->
-  <div class="tf-front-card tfc-tight">
-    <header class="tf-front-card-head">
-      <h3>Planos exibidos no Front</h3>
-      <button type="button" class="tf-front-ghost x-small" id="btnAddPlan">+ Adicionar plano</button>
+  <!-- CARD 3 — Botão de CTA principal -->
+  <div class="tfx-card">
+    <header class="tfx-head">
+      <h3>Botão de CTA principal</h3>
     </header>
 
-    <div class="tf-front-plans" id="frontPlansList">
-      <!-- linhas injetadas via JS -->
+    <div class="tfx-body">
+      <div class="grid2 gap8">
+        <div class="col">
+          <label class="lbl">Texto do botão</label>
+          <input class="inp" name="front_cta_text" placeholder="Ex.: Obter vaga, Acessar conteúdo VIP..." />
+        </div>
+        <div class="col">
+          <label class="lbl">URL da VSL</label>
+          <input class="inp" name="front_cta_url" placeholder="https://..." />
+        </div>
+      </div>
+
+      <div class="row align-center gap8">
+        <label class="toggle">
+          <input type="checkbox" id="ctaDeleteToggle">
+          <span>Apagar mensagem do CTA</span>
+        </label>
+
+        <div id="ctaRules" class="rulesbar" hidden>
+          <label class="chip">
+            <input type="checkbox" data-rule="noDelete">
+            <span>Não apagar</span>
+          </label>
+          <label class="chip">
+            <input type="checkbox" data-rule="afterNextBtn">
+            <span>Após clique no próximo botão</span>
+          </label>
+          <label class="chip">
+            <input type="checkbox" data-rule="afterSeconds">
+            <span>Após X segundos</span>
+          </label>
+          <input type="text" class="inp xs" placeholder="ex.: 5s" data-rule="secondsVal">
+          <label class="chip">
+            <input type="checkbox" data-rule="delAfterStart">
+            <span>Após próximo /start</span>
+          </label>
+
+          <button type="button" class="ghost xs ml-auto" id="ctaRulesClear">Limpar regras</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CARD 4 — Planos exibidos no front -->
+  <div class="tfx-card">
+    <header class="tfx-head">
+      <h3>Planos exibidos no front</h3>
+      <button type="button" class="ghost xs" id="btnAddPlan">+ Adicionar plano</button>
+    </header>
+
+    <div class="tfx-body">
+      <div class="plist" id="frontPlansList"><!-- linhas via JS --></div>
     </div>
   </div>
 </section>
@@ -411,124 +467,88 @@
 </style>
 
 <style>
-/* ====== FRONT / PRINCIPAL (v3 compacto/premium) ====== */
-.tf-front-wrap{
-  border:1px solid rgba(255,255,255,0.12);
-  border-radius:14px;
-  background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
-  box-shadow:0 8px 24px rgba(0,0,0,0.45);
-  padding:12px; margin-top:12px;
-}
+/* ===== PRINCIPAL / FRONT — v4 compact/premium ===== */
+.tf-front-v4{ padding:12px; border:1px solid rgba(255,255,255,0.12); border-radius:14px; background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02)); box-shadow:0 8px 24px rgba(0,0,0,0.45); }
 
-.tf-front-card{
-  background:rgba(255,255,255,0.05);
-  border:1px solid rgba(255,255,255,0.10);
-  border-radius:14px;
-  padding:12px; margin-bottom:10px;
-}
-.tfc-tight{ padding:12px; }
-.tf-front-card-head{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:8px; }
-.tf-front-card-head h3{ margin:0; font-size:1.02rem; color:#ffcc00; letter-spacing:.2px; }
-.tf-front-card-head p{ margin:0; color:#cfcfcf; font-size:.9rem; opacity:.95; }
+.tfx-card{ background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.10); border-radius:14px; padding:10px 12px; margin-bottom:10px; }
+.tfx-head{ display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:8px; }
+.tfx-head h3{ margin:0; font-size:1.02rem; color:#ffcc00; letter-spacing:.2px; }
+.tfx-body{ display:flex; flex-direction:column; gap:8px; }
 
-.tf-front-row{ display:flex; align-items:flex-start; gap:8px; margin-bottom:8px; flex-wrap:wrap; }
-.tf-front-row.tight{ margin-bottom:8px; gap:8px; }
-.tf-front-grid2{ display:grid; grid-template-columns:1fr 1fr; gap:8px; }
-.tf-front-grid2.tight{ gap:8px; }
-.tf-front-col{ display:flex; flex-direction:column; gap:6px; }
+.row{ display:flex; flex-direction:column; gap:6px; }
+.row.align-center{ flex-direction:row; align-items:center; flex-wrap:wrap; }
+.gap8{ gap:8px; }
+.grid2{ display:grid; grid-template-columns:1fr 1fr; }
+.col{ display:flex; flex-direction:column; gap:6px; }
 
-.tf-front-label{ min-width:150px; color:#dcdcdc; font-weight:700; margin-top:4px; font-size:.92rem; }
-.tf-front-input{
-  width:100%; padding:8px 10px; border-radius:10px;
-  border:1px solid rgba(255,255,255,0.22); background:rgba(255,255,255,0.06);
-  color:#fff; outline:none; font-size:.92rem; transition:border-color .2s, box-shadow .2s;
-}
-.tf-front-input:focus{ border-color:#ffcc00; box-shadow:0 0 0 2px rgba(255,204,0,0.26); }
-.tf-front-textarea{ width:100%; min-height:56px; resize:vertical; font-size:.92rem; padding:8px 10px; }
-.tf-front-textarea.compact{ min-height:56px; }
-.tf-front-hint{ color:#b8b8b8; font-size:.86rem; }
-.tf-front-hint.one-line{ white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.lbl{ color:#e9e9e9; font-weight:700; font-size:.92rem; }
+.hint{ color:#b8b8b8; font-size:.86rem; }
+.hint.one-line{ white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+
+.inp{ width:100%; padding:8px 10px; border-radius:10px; border:1px solid rgba(255,255,255,0.22); background:rgba(255,255,255,0.06); color:#fff; outline:none; font-size:.92rem; transition:border-color .2s, box-shadow .2s; }
+.inp:focus{ border-color:#ffcc00; box-shadow:0 0 0 2px rgba(255,204,0,0.26); }
+.textarea.s-compact{ min-height:58px; resize:vertical; }
+.inp.xs{ width:84px; padding:6px 8px; font-size:.86rem; }
+
+.toggle{ display:inline-flex; align-items:center; gap:8px; font-weight:700; color:#e9e9e9; }
+.toggle input{ width:16px; height:16px; accent-color:#ffcc00; }
+
+.ghost{ border:1px solid rgba(255,255,255,0.14); background:rgba(255,255,255,0.07); color:#eee; padding:6px 10px; border-radius:10px; font-weight:700; height:30px; font-size:.88rem; }
+.ghost:hover{ background:rgba(255,255,255,0.12); }
+.ghost.xs{ height:28px; padding:6px 10px; font-size:.86rem; }
 .ml-auto{ margin-left:auto; }
 
-.tf-front-ghost{
-  border:1px solid rgba(255,255,255,0.14);
-  background:rgba(255,255,255,0.07); color:#eee;
-  padding:6px 10px; border-radius:10px; font-weight:700; height:30px; font-size:.88rem;
-}
-.tf-front-ghost:hover{ background:rgba(255,255,255,0.12); }
-.tf-front-ghost.x-small{ height:28px; padding:6px 10px; font-size:.86rem; }
+/* Regras inline (VSL e CTA) */
+.rulesbar{ display:flex; align-items:center; gap:6px; flex-wrap:wrap; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.10); border-radius:10px; padding:6px; }
+.chip{ display:inline-flex; align-items:center; gap:6px; padding:6px 10px; border-radius:999px; border:1px solid rgba(255,255,255,0.14); background:rgba(255,255,255,0.07); color:#eee; font-weight:700; font-size:.86rem; }
+.chip input{ width:16px; height:16px; accent-color:#ffcc00; }
 
-/* ===== Mídias ===== */
-.tf-front-media-list{ display:flex; flex-direction:column; gap:6px; }
+/* Mídias */
+.mlist{ display:flex; flex-direction:column; gap:6px; }
 .media-line{
   display:grid; gap:6px; align-items:center;
-  grid-template-columns: 30px 150px 1fr minmax(240px, 340px) auto auto 30px;
+  grid-template-columns:28px 150px 1fr minmax(240px, 360px) auto 28px;
   padding:8px; border-radius:12px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08);
 }
-.media-line .drag-handle{
-  width:28px; height:28px; border-radius:10px; display:flex; align-items:center; justify-content:center;
-  border:1px solid rgba(255,255,255,0.14); background:rgba(255,255,255,0.06); cursor:grab;
-}
-.media-line .drag-handle:active{ cursor:grabbing; }
-.media-line .drag-handle svg{ width:14px; height:14px; opacity:.85; }
-
-.media-line .label-input{ min-width:140px; }
-.media-line .media-title{ color:#eaeaea; font-weight:800; font-size:.9rem; }
-.media-line .tf-front-input{ font-size:.9rem; }
-
-.tf-front-pills{ display:flex; gap:6px; flex-wrap:wrap; }
-.tf-front-pills .pill{
+.drag{ width:28px; height:28px; border-radius:10px; display:flex; align-items:center; justify-content:center; border:1px solid rgba(255,255,255,0.14); background:rgba(255,255,255,0.06); cursor:grab; }
+.drag:active{ cursor:grabbing; }
+.drag svg{ width:14px; height:14px; opacity:.85; }
+.media-title{ color:#eaeaea; font-weight:800; font-size:.9rem; }
+.pills{ display:flex; gap:6px; flex-wrap:wrap; }
+.pill{
   padding:6px 10px; height:28px; border-radius:999px; cursor:pointer;
-  border:1px solid rgba(255,255,255,0.14); background:rgba(255,255,255,0.07); color:#eee; font-weight:700; font-size:.86rem;
-  transition:.16s ease;
+  border:1px solid rgba(255,255,255,0.14); background:rgba(255,255,255,0.07); color:#eee; font-weight:700; font-size:.86rem; transition:.16s ease;
 }
-.tf-front-pills .pill.is-active{
-  background:rgba(255,204,0,0.16); color:#fff; border-color:rgba(255,204,0,0.45); box-shadow:0 0 0 2px rgba(255,204,0,0.18) inset;
-}
+.pill.is-active{ background:rgba(255,204,0,0.16); color:#fff; border-color:rgba(255,204,0,0.45); box-shadow:0 0 0 2px rgba(255,204,0,0.18) inset; }
+.iconbtn{ width:28px; height:28px; border-radius:10px; display:flex; align-items:center; justify-content:center; border:1px solid rgba(255,255,255,0.14); background:rgba(255,255,255,0.07); color:#eee; cursor:pointer; }
+.iconbtn:hover{ background:rgba(255,255,255,0.12); }
 
-.tf-toggle{ display:inline-flex; align-items:center; gap:8px; font-weight:700; color:#e9e9e9; }
-.tf-toggle input{ width:16px; height:16px; accent-color:#ffcc00; }
-
-.icon-button{
-  width:28px; height:28px; border-radius:10px; display:flex; align-items:center; justify-content:center;
-  border:1px solid rgba(255,255,255,0.14); background:rgba(255,255,255,0.07); color:#eee; cursor:pointer; transition:.16s ease;
-}
-.icon-button:hover{ background:rgba(255,255,255,0.12); }
-
-/* ===== Planos ===== */
-.tf-front-plans{ display:flex; flex-direction:column; gap:6px; }
-.plan-line{
-  display:grid; gap:6px; align-items:center;
-  grid-template-columns: 30px 30px 1fr 110px 1fr 30px;
-  padding:8px; border-radius:12px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08);
-}
-.plan-line .drag-handle{ width:28px; height:28px; border-radius:10px; display:flex; align-items:center; justify-content:center;
-  border:1px solid rgba(255,255,255,0.14); background:rgba(255,255,255,0.06); cursor:grab; }
-.plan-line .drag-handle:active{ cursor:grabbing; }
-.plan-line__idx{
-  width:28px; height:28px; display:flex; align-items:center; justify-content:center; border-radius:10px; font-weight:800; font-size:.92rem;
-  border:1px solid rgba(255,255,255,0.14); background:rgba(255,255,255,0.06); color:#fff;
-}
-.w-110{ width:110px; }
-
-/* Popover de Regras */
-.tf-rules-pop{
+/* Popover de Regras (mídia) */
+.rules-pop{
   position:fixed; z-index:3500; min-width:260px;
   background:rgba(0,0,0,0.86); border:1px solid rgba(255,204,0,0.22);
   border-radius:12px; box-shadow:0 10px 40px rgba(0,0,0,0.6); padding:10px; backdrop-filter: blur(10px);
 }
-.tf-rules-pop h4{ margin:2px 0 8px; font-size:.98rem; color:#ffcc00; }
-.tf-rule{ display:flex; align-items:center; gap:8px; padding:6px; border-radius:10px; }
-.tf-rule:hover{ background:rgba(255,255,255,0.06); }
-.tf-rule input[type="checkbox"]{ width:16px; height:16px; }
-.tf-rule .inline{ display:flex; align-items:center; gap:6px; margin-left:auto; }
-.tf-rule .inline input{ width:72px; }
+.rules-pop h4{ margin:2px 0 8px; font-size:.98rem; color:#ffcc00; }
+.rline{ display:flex; align-items:center; gap:8px; padding:6px; border-radius:10px; }
+.rline:hover{ background:rgba(255,255,255,0.06); }
+.rline input{ width:16px; height:16px; accent-color:#ffcc00; }
+.rline .inline{ display:flex; align-items:center; gap:6px; margin-left:auto; }
+.rline .inline input{ width:72px; }
+
+/* Planos */
+.plist{ display:flex; flex-direction:column; gap:6px; }
+.plan-line{
+  display:grid; gap:6px; align-items:center;
+  grid-template-columns:28px 28px 1fr 120px 28px;
+  padding:8px; border-radius:12px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08);
+}
+.idx{ width:28px; height:28px; display:flex; align-items:center; justify-content:center; border-radius:10px; font-weight:800; font-size:.92rem; border:1px solid rgba(255,255,255,0.14); background:rgba(255,255,255,0.06); color:#fff; }
 
 @media (max-width:980px){
-  .tf-front-grid2{ grid-template-columns:1fr; }
-  .tf-front-label{ min-width:unset; }
-  .media-line{ grid-template-columns: 28px 120px 1fr 1fr auto auto 28px; }
-  .plan-line{ grid-template-columns: 28px 28px 1fr 110px 1fr 28px; }
+  .grid2{ grid-template-columns:1fr; }
+  .media-line{ grid-template-columns:28px 120px 1fr 1fr auto 28px; }
+  .plan-line{ grid-template-columns:28px 28px 1fr 120px 28px; }
 }
 </style>
 
@@ -1021,12 +1041,15 @@
 </script>
 
 <script>
-/* ===== FRONT / PRINCIPAL — v3 (UI somente) ===== */
+/* ===== PRINCIPAL / FRONT — v4 (UI) ===== */
 (function(){
-  // Util
-  function makeHandle(){
+  // Utils
+  const $ = (s, r=document) => r.querySelector(s);
+  const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+
+  function makeDrag(){
     const h = document.createElement('div');
-    h.className = 'drag-handle';
+    h.className = 'drag';
     h.setAttribute('draggable','true');
     h.innerHTML = '<svg viewBox="0 0 20 20" fill="currentColor"><circle cx="6" cy="5" r="1.3"/><circle cx="10" cy="5" r="1.3"/><circle cx="14" cy="5" r="1.3"/><circle cx="6" cy="10" r="1.3"/><circle cx="10" cy="10" r="1.3"/><circle cx="14" cy="10" r="1.3"/></svg>';
     return h;
@@ -1034,219 +1057,217 @@
   function makeTrash(){
     const b = document.createElement('button');
     b.type = 'button';
-    b.className = 'icon-button';
+    b.className = 'iconbtn';
     b.title = 'Remover';
     b.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>';
     return b;
   }
-  function activePill(group, value){
-    group.querySelectorAll('.pill').forEach(p=>p.classList.toggle('is-active', p.dataset.val === String(value)));
+  function initDrag(container, row, handle, onEnd){
+    const ctx = { dragging:null };
+    handle.addEventListener('dragstart', (e)=>{ ctx.dragging=row; row.classList.add('dragging'); e.dataTransfer.effectAllowed='move'; try{ e.dataTransfer.setData('text/plain','drag'); }catch(_){} });
+    handle.addEventListener('dragend', ()=>{ if(ctx.dragging){ ctx.dragging.classList.remove('dragging'); ctx.dragging=null; onEnd && onEnd(); } });
+    container.addEventListener('dragover', (e)=>{
+      if (!ctx.dragging) return; e.preventDefault();
+      const after = getAfter(container, e.clientY);
+      if (after==null) container.appendChild(ctx.dragging);
+      else container.insertBefore(ctx.dragging, after);
+    });
+    function getAfter(cont, y){
+      const els = [...cont.children].filter(el=>!el.classList.contains('dragging'));
+      return els.reduce((c, ch)=>{
+        const box = ch.getBoundingClientRect();
+        const off = y - box.top - box.height/2;
+        return (off<0 && off>c.offset)?{offset:off, element:ch}:c;
+      }, {offset:Number.NEGATIVE_INFINITY}).element;
+    }
   }
 
-  // ---------- MÍDIAS ----------
-  const mediaHost = document.getElementById('frontMediaList');
-  const btnAddMedia = document.getElementById('btnAddMedia');
+  /* ---------- VSL/CTA rules (inline) ---------- */
+  function setupInlineRules(sectionIdPrefix){
+    const toggle = $('#' + sectionIdPrefix + 'DeleteToggle');
+    const bar    = $('#' + sectionIdPrefix.replace('Delete','') + 'Rules');
+    const clear  = $('#' + sectionIdPrefix.replace('DeleteToggle','RulesClear'));
 
-  function buildMediaLine(idx){
-    const line  = document.createElement('div'); line.className = 'media-line'; line.dataset.idx = idx;
+    toggle?.addEventListener('change', ()=>{
+      bar.hidden = !toggle.checked;
+      if (!toggle.checked) { // desligou -> limpa
+        $$('input[type="checkbox"]', bar).forEach(i=>i.checked=false);
+        const sec = $('[data-rule="secondsVal"]', bar); if (sec) sec.value='';
+      }
+    });
 
-    // handle drag
-    const handle = makeHandle();
+    // Exclusividade “Não apagar”
+    bar?.addEventListener('change', (e)=>{
+      const t = e.target;
+      if (!t.matches('input[type="checkbox"]')) return;
+      if (t.dataset.rule === 'noDelete' && t.checked){
+        $$('input[type="checkbox"]', bar).forEach(ch=>{ if(ch!==t) ch.checked=false; });
+      } else {
+        const noDel = $('[data-rule="noDelete"]', bar);
+        if (noDel && t.checked) noDel.checked = false;
+      }
+    });
 
-    // label da mídia
+    clear?.addEventListener('click', ()=>{
+      $$('input[type="checkbox"]', bar).forEach(ch=>ch.checked=false);
+      const sec = $('[data-rule="secondsVal"]', bar); if (sec) sec.value='';
+    });
+  }
+  setupInlineRules('vslDeleteToggle'); // VSL
+  setupInlineRules('ctaDeleteToggle'); // CTA
+
+  /* ---------- MÍDIAS ---------- */
+  const mediaHost   = $('#frontMediaList');
+  const btnAddMedia = $('#btnAddMedia');
+
+  function buildMedia(idx){
+    const line = document.createElement('div');
+    line.className='media-line'; line.dataset.idx=idx;
+
+    const handle = makeDrag();
+
     const label = document.createElement('input');
-    label.className = 'tf-front-input label-input';
-    label.name = 'front_media_label_' + idx;
-    label.placeholder = 'Mídia ' + idx;
+    label.className='inp'; label.style.maxWidth='150px';
+    label.name='front_media_label_'+idx; label.placeholder='Mídia '+idx;
 
-    // URL da VSL
     const url = document.createElement('input');
-    url.className = 'tf-front-input';
-    url.name = 'front_media_url_' + idx;
-    url.placeholder = 'URL da VSL (https://...)';
+    url.className='inp'; url.name='front_media_url_'+idx; url.placeholder='URL da VSL (https://...)';
 
-    // posição before/after
-    const pills = document.createElement('div');
-    pills.className = 'tf-front-pills';
-    pills.dataset.role = 'media-pos';
-    pills.dataset.idx = idx;
-    const b1 = document.createElement('button'); b1.type='button'; b1.className='pill is-active'; b1.dataset.val='before'; b1.textContent='Antes da copy principal';
-    const b2 = document.createElement('button'); b2.type='button'; b2.className='pill';          b2.dataset.val='after';  b2.textContent='Depois da copy principal';
-    pills.appendChild(b1); pills.appendChild(b2);
+    const pills = document.createElement('div'); pills.className='pills'; pills.dataset.role='media-pos'; pills.dataset.idx=idx;
+    const p1 = document.createElement('button'); p1.type='button'; p1.className='pill is-active'; p1.dataset.val='before'; p1.textContent='Antes da copy principal';
+    const p2 = document.createElement('button'); p2.type='button'; p2.className='pill';        p2.dataset.val='after';  p2.textContent='Depois da copy principal';
+    pills.appendChild(p1); pills.appendChild(p2);
 
-    // toggle apagar + regras
-    const toggleWrap = document.createElement('label'); toggleWrap.className = 'tf-toggle';
-    const toggle = document.createElement('input'); toggle.type='checkbox'; toggle.dataset.role='delete-toggle';
-    const tgTxt = document.createElement('span'); tgTxt.textContent = 'Apagar mensagem';
-    toggleWrap.appendChild(toggle); toggleWrap.appendChild(tgTxt);
+    // hidden para posição (útil quando ligar backend)
+    const posHidden = document.createElement('input');
+    posHidden.type='hidden'; posHidden.name='front_media_pos_'+idx; posHidden.value='before';
 
-    const rules = document.createElement('button');
-    rules.type='button'; rules.className='tf-front-ghost x-small'; rules.textContent='Regras';
-    rules.dataset.role='rules'; rules.dataset.kind='media'; rules.dataset.idx=idx; rules.hidden = true;
+    // apagar + regras (popover)
+    const toggleWrap = document.createElement('label'); toggleWrap.className='toggle';
+    const toggle = document.createElement('input'); toggle.type='checkbox'; toggle.dataset.role='media-del';
+    const tspan  = document.createElement('span'); tspan.textContent='Apagar mensagem';
+    toggleWrap.appendChild(toggle); toggleWrap.appendChild(tspan);
 
-    // deletar
+    const rulesBtn = document.createElement('button');
+    rulesBtn.type='button'; rulesBtn.className='ghost xs'; rulesBtn.textContent='Regras';
+    rulesBtn.dataset.role='rules'; rulesBtn.dataset.kind='media'; rulesBtn.dataset.idx=idx;
+    rulesBtn.hidden = true;
+
     const del = makeTrash();
 
-    // eventos locais
-    toggle.addEventListener('change', ()=>{ rules.hidden = !toggle.checked; });
+    // eventos
+    pills.addEventListener('click', (e)=>{
+      const b = e.target.closest('.pill'); if(!b) return;
+      $$('.pill', pills).forEach(x=>x.classList.remove('is-active'));
+      b.classList.add('is-active');
+      posHidden.value = b.dataset.val || 'before';
+    });
+    toggle.addEventListener('change', ()=>{ rulesBtn.hidden = !toggle.checked; });
     del.addEventListener('click', ()=>{ line.remove(); renumberMedia(); });
 
-    // montar
     line.appendChild(handle);
     line.appendChild(label);
     line.appendChild(url);
     line.appendChild(pills);
     line.appendChild(toggleWrap);
-    line.appendChild(rules);
     line.appendChild(del);
+
+    // guardamos o hidden no line
+    line.appendChild(posHidden);
 
     initDrag(mediaHost, line, handle, renumberMedia);
     return line;
   }
-
   function renumberMedia(){
-    let i = 0;
-    mediaHost.querySelectorAll('.media-line').forEach(l=>{
+    let i=0;
+    $$('.media-line', mediaHost).forEach(l=>{
       l.dataset.idx = ++i;
-      l.querySelector('.label-input')?.setAttribute('name', 'front_media_label_'+i);
-      l.querySelector('input[name^="front_media_url_"]')?.setAttribute('name', 'front_media_url_'+i);
-      const pills = l.querySelector('[data-role="media-pos"]');
-      if (pills) pills.dataset.idx = i;
-      const r = l.querySelector('[data-role="rules"]'); if (r) r.dataset.idx = i;
+      l.querySelector('input[name^="front_media_label_"]')?.setAttribute('name','front_media_label_'+i);
+      l.querySelector('input[name^="front_media_url_"]')?.setAttribute('name','front_media_url_'+i);
+      l.querySelector('input[name^="front_media_pos_"]')?.setAttribute('name','front_media_pos_'+i);
+      const rules = l.querySelector('[data-role="rules"]'); if (rules) rules.dataset.idx=i;
+      const pills = l.querySelector('[data-role="media-pos"]'); if (pills) pills.dataset.idx=i;
     });
   }
-
   function addMedia(){
-    const idx = (mediaHost.querySelectorAll('.media-line').length || 0) + 1;
-    mediaHost.appendChild(buildMediaLine(idx));
+    const idx = ($$('.media-line', mediaHost).length||0)+1;
+    mediaHost.appendChild(buildMedia(idx));
   }
+  btnAddMedia?.addEventListener('click', addMedia);
+  addMedia(); // inicial 1
 
-  // posição: toggle pills
-  document.addEventListener('click', function(e){
-    const group = e.target.closest('[data-role="media-pos"]'); if(!group) return;
-    const btn = e.target.closest('.pill'); if(!btn) return;
-    group.querySelectorAll('.pill').forEach(p=>p.classList.remove('is-active'));
-    btn.classList.add('is-active');
+  // Popover regras de mídia
+  let pop;
+  function closePop(){ if(pop){ pop.remove(); pop=null; } }
+  document.addEventListener('click',(e)=>{
+    if (pop && !pop.contains(e.target) && !e.target.closest('[data-role="rules"]')) closePop();
+  });
+  document.addEventListener('click',(e)=>{
+    const btn = e.target.closest('[data-role="rules"]'); if(!btn) return;
+    closePop();
+    const r = btn.getBoundingClientRect();
+    pop = document.createElement('div');
+    pop.className='rules-pop';
+    pop.innerHTML = `
+      <h4>Regras de apagar — Mídia ${btn.dataset.idx||''}</h4>
+      <label class="rline"><input type="checkbox" data-rule="noDelete"><span>Não apagar</span></label>
+      <label class="rline"><input type="checkbox" data-rule="afterNextBtn"><span>Após clique no próximo botão</span></label>
+      <label class="rline"><input type="checkbox" data-rule="afterSeconds"><span>Após X segundos</span>
+        <span class="inline"><input type="text" class="inp xs" data-rule="secondsVal" placeholder="ex.: 5s"></span>
+      </label>
+      <label class="rline"><input type="checkbox" data-rule="delAfterStart"><span>Apagar após próximo /start</span></label>
+    `;
+    document.body.appendChild(pop);
+    pop.style.left = Math.min(window.innerWidth - pop.offsetWidth - 12, r.left + window.scrollX) + 'px';
+    pop.style.top  = r.bottom + window.scrollY + 8 + 'px';
+
+    // exclusividade do Não apagar
+    pop.addEventListener('change',(ev)=>{
+      const t = ev.target;
+      if (!t.matches('input[type="checkbox"]')) return;
+      if (t.dataset.rule==='noDelete' && t.checked){
+        $$('input[type="checkbox"]', pop).forEach(c=>{ if(c!==t) c.checked=false; });
+      } else {
+        const noDel = $('[data-rule="noDelete"]', pop);
+        if (noDel && t.checked) noDel.checked=false;
+      }
+    });
   });
 
-  btnAddMedia?.addEventListener('click', addMedia);
+  /* ---------- PLANOS ---------- */
+  const plansHost   = $('#frontPlansList');
+  const btnAddPlan  = $('#btnAddPlan');
 
-  // inicial: 1 mídia
-  addMedia();
+  function buildPlan(idx){
+    const line = document.createElement('div'); line.className='plan-line'; line.dataset.idx=idx;
 
-  // ---------- CTA ----------
-  const ctaToggle = document.getElementById('ctaDeleteToggle');
-  const ctaRules  = document.getElementById('ctaRulesBtn');
-  ctaToggle?.addEventListener('change', ()=>{ ctaRules.hidden = !ctaToggle.checked; });
+    const handle = makeDrag();
+    const idxB   = document.createElement('div'); idxB.className='idx'; idxB.textContent=idx;
 
-  // ---------- PLANOS ----------
-  const plansHost = document.getElementById('frontPlansList');
-  const btnAddPlan = document.getElementById('btnAddPlan');
+    const name   = document.createElement('input'); name.className='inp'; name.name='front_plan_name_'+idx; name.placeholder='Nome do plano (Ex.: Mensal VIP)';
+    const price  = document.createElement('input'); price.className='inp'; price.style.maxWidth='120px'; price.name='front_plan_price_'+idx; price.placeholder='R$ 29,90';
 
-  function buildPlanLine(idx){
-    const line = document.createElement('div'); line.className='plan-line'; line.dataset.idx = idx;
+    const del = makeTrash(); del.addEventListener('click', ()=>{ line.remove(); renumberPlans(); });
 
-    const handle = makeHandle();
-    const idxBox = document.createElement('div'); idxBox.className='plan-line__idx'; idxBox.textContent = idx;
-
-    const name  = document.createElement('input'); name.className='tf-front-input';     name.name='front_plan_name_'+idx;  name.placeholder='Nome do plano (Ex.: Mensal VIP)';
-    const price = document.createElement('input'); price.className='tf-front-input w-110'; price.name='front_plan_price_'+idx; price.placeholder='R$ 29,90';
-    const desc  = document.createElement('input'); desc.className='tf-front-input';     desc.name='front_plan_desc_'+idx;  desc.placeholder='Descrição opcional';
-
-    const del = makeTrash();
-    del.addEventListener('click', ()=>{ line.remove(); renumberPlans(); });
-
-    line.appendChild(handle); line.appendChild(idxBox);
-    line.appendChild(name); line.appendChild(price); line.appendChild(desc);
-    line.appendChild(del);
-
+    line.appendChild(handle); line.appendChild(idxB); line.appendChild(name); line.appendChild(price); line.appendChild(del);
     initDrag(plansHost, line, handle, renumberPlans);
     return line;
   }
-
   function renumberPlans(){
-    let i = 0;
-    plansHost.querySelectorAll('.plan-line').forEach(l=>{
-      l.dataset.idx = ++i;
-      l.querySelector('.plan-line__idx').textContent = i;
-      l.querySelector('input[name^="front_plan_name_"]')?.setAttribute('name', 'front_plan_name_'+i);
-      l.querySelector('input[name^="front_plan_price_"]')?.setAttribute('name', 'front_plan_price_'+i);
-      l.querySelector('input[name^="front_plan_desc_"]')?.setAttribute('name', 'front_plan_desc_'+i);
+    let i=0;
+    $$('.plan-line', plansHost).forEach(l=>{
+      l.dataset.idx=++i;
+      l.querySelector('.idx').textContent=i;
+      l.querySelector('input[name^="front_plan_name_"]')?.setAttribute('name','front_plan_name_'+i);
+      l.querySelector('input[name^="front_plan_price_"]')?.setAttribute('name','front_plan_price_'+i);
     });
   }
-
   function addPlan(){
-    const idx = (plansHost.querySelectorAll('.plan-line').length || 0) + 1;
-    plansHost.appendChild(buildPlanLine(idx));
+    const idx = ($$('.plan-line', plansHost).length||0)+1;
+    plansHost.appendChild(buildPlan(idx));
   }
   btnAddPlan?.addEventListener('click', addPlan);
-
-  // inicial: 1 plano
-  addPlan();
-
-  // ---------- Popover de Regras (mídia/cta) ----------
-  let rulesPop;
-  function closeRules(){ if(rulesPop){ rulesPop.remove(); rulesPop=null; } }
-  document.addEventListener('click', (e)=>{
-    if (rulesPop && !rulesPop.contains(e.target) && !e.target.closest('[data-role="rules"]')) closeRules();
-  });
-
-  function openRules(anchor, kind, idx){
-    closeRules();
-    const rect = anchor.getBoundingClientRect();
-    rulesPop = document.createElement('div');
-    rulesPop.className = 'tf-rules-pop';
-    const title = kind === 'media' ? ('Regras de apagar — Mídia ' + (idx||'')) : 'Regras de apagar — CTA';
-    rulesPop.innerHTML = `
-      <h4>${title}</h4>
-      <label class="tf-rule"><input type="checkbox" data-rule="afterNextBtn"><span>Após clique no próximo botão</span></label>
-      <label class="tf-rule"><input type="checkbox" data-rule="afterSeconds"><span>Após X segundos</span>
-        <span class="inline"><input type="text" data-rule="secondsVal" placeholder="Ex.: 5s"></span>
-      </label>
-      <label class="tf-rule"><input type="checkbox" data-rule="noDelete"><span>Não apagar</span></label>
-      <label class="tf-rule"><input type="checkbox" data-rule="delAfterStart"><span>Apagar após próximo /start</span></label>
-    `;
-    document.body.appendChild(rulesPop);
-    rulesPop.style.left = Math.min(window.innerWidth - rulesPop.offsetWidth - 12, rect.left + window.scrollX) + 'px';
-    rulesPop.style.top  = rect.bottom + window.scrollY + 8 + 'px';
-
-    // Exclusividade do "Não apagar"
-    rulesPop.addEventListener('change', (ev)=>{
-      const t = ev.target;
-      if (t.matches('input[type="checkbox"][data-rule="noDelete"]')){
-        if (t.checked) rulesPop.querySelectorAll('input[type="checkbox"]').forEach(ch=>{ if(ch!==t) ch.checked=false; });
-      } else if (t.matches('input[type="checkbox"]')){
-        const noDel = rulesPop.querySelector('input[data-rule="noDelete"]');
-        if (noDel && t.checked) noDel.checked = false;
-      }
-    });
-  }
-
-  document.addEventListener('click', (e)=>{
-    const btn = e.target.closest('[data-role="rules"]'); if(!btn) return;
-    openRules(btn, btn.dataset.kind, btn.dataset.idx);
-  });
-
-  // ---------- Drag util ----------
-  function initDrag(container, row, handle, onEnd){
-    const ctx = { dragging: null };
-    handle.addEventListener('dragstart', (e)=>{ ctx.dragging = row; row.classList.add('dragging'); e.dataTransfer.effectAllowed = 'move'; try{ e.dataTransfer.setData('text/plain','drag'); }catch(_){ } });
-    handle.addEventListener('dragend', ()=>{ if(ctx.dragging){ ctx.dragging.classList.remove('dragging'); ctx.dragging=null; onEnd && onEnd(); } });
-    container.addEventListener('dragover', (e)=>{
-      if (!ctx.dragging) return;
-      e.preventDefault();
-      const after = getAfter(container, e.clientY);
-      if (after == null) container.appendChild(ctx.dragging);
-      else container.insertBefore(ctx.dragging, after);
-    });
-    function getAfter(cont, y){
-      const els = [...cont.querySelectorAll(':scope > .dragging, :scope > *')].filter(el=>!el.classList.contains('dragging'));
-      return els.reduce((c, ch)=>{
-        const box = ch.getBoundingClientRect();
-        const off = y - box.top - box.height/2;
-        return (off < 0 && off > c.offset) ? { offset: off, element: ch } : c;
-      }, { offset: Number.NEGATIVE_INFINITY }).element;
-    }
-  }
+  addPlan(); // inicial 1
 })();
 </script>
+
