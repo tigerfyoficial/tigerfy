@@ -87,10 +87,15 @@
    Renderiza somente quando a aba atual for "front"/"principal/front"
 ================================*/ %>
 <% const __isFront =
-    (typeof activePill !== 'undefined' && activePill === 'front') ||
-    (typeof currentTab  !== 'undefined' && currentTab  === 'front') ||
-    (typeof section     !== 'undefined' && section     === 'front') ||
-    (typeof tab         !== 'undefined' && tab         === 'front'); %>
+  (typeof activePill !== 'undefined' && activePill === 'front') ||
+  (typeof currentTab  !== 'undefined' && currentTab  === 'front') ||
+  (typeof section     !== 'undefined' && section     === 'front') ||
+  (typeof tab         !== 'undefined' && tab         === 'front') ||
+  // fallback: se nada foi informado, assuma "Front"
+  (typeof activePill === 'undefined' &&
+   typeof currentTab === 'undefined' &&
+   typeof section    === 'undefined' &&
+   typeof tab        === 'undefined'); %>
 
 <% if (__isFront) { %>
 <div class="tf-front-v6">
