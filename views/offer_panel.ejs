@@ -443,106 +443,104 @@
   }
 </style>
 
-<!-- ===== CSS (escopo tfg6) ===== -->
+<!-- ===================== CSS v7 (escopo tfx7) ===================== -->
 <style>
-  .tfg6-front{ margin-top:12px; }
-  .tfg6-grid{ display:grid; grid-template-columns: 1.15fr .85fr; gap:12px; }
-  .tfg6-col-left, .tfg6-col-right{ display:flex; flex-direction:column; gap:12px; }
+  .tfx7-front{ --gold:#ffcc00; --fg:#fff; --muted:#cfcfcf; --card:rgba(18,18,18,.72); --line:rgba(255,255,255,.12); --glass:rgba(255,255,255,.06); }
+  .tfx7-grid{ display:grid; grid-template-columns: 1.15fr .85fr; gap:14px; }
+  .tfx7-col-left,.tfx7-col-right{ display:flex; flex-direction:column; gap:14px; }
 
-  .tfg6-card{
-    background:rgba(255,255,255,.05);
-    border:1px solid rgba(255,255,255,.10);
-    border-radius:14px;
-    padding:12px;
-    box-shadow:0 8px 24px rgba(0,0,0,.45);
-    backdrop-filter: blur(6px);
+  .tfx7-card{
+    position:relative; border-radius:16px; padding:12px;
+    background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+    border:1px solid var(--line);
+    box-shadow:0 10px 28px rgba(0,0,0,.45), inset 0 0 0 1px rgba(255,255,255,.02);
+    backdrop-filter: blur(8px);
   }
-  .tfg6-sub{
-    border:1px solid rgba(255,255,255,.10);
-    border-radius:12px;
-    background:rgba(255,255,255,.04);
-    padding:10px;
+  .tfx7-sub{
+    border:1px solid var(--line); border-radius:14px; background:var(--glass);
+    padding:10px; margin-bottom:10px;
   }
 
-  .tfg6-head{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:8px; }
-  .tfg6-sub-head{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:8px; }
-
-  .tfg6-titles h3{ margin:0; font-size:1.04rem; color:#ffcc00; letter-spacing:.2px; }
-  .tfg6-titles p{ margin:2px 0 0; color:#cfcfcf; font-size:.92rem; }
-  .tfg6-sub h4{ margin:0; font-size:.98rem; color:#ffcc00; }
-
-  .tfg6-row{ display:flex; gap:10px; margin-bottom:10px; flex-wrap:wrap; align-items:center; }
-  .tfg6-row.tight{ gap:8px; margin-bottom:8px; }
-  .tfg6-grid2{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
-  .tfg6-grid2.tight{ gap:8px; }
-  .tfg6-col{ display:flex; flex-direction:column; gap:6px; }
-  .tfg6-col.span2{ grid-column:1 / -1; }
-
-  .tfg6-label{ color:#e9e9e9; font-weight:700; font-size:.9rem; }
-  .tfg6-input{
-    width:100%; padding:8px 10px; border-radius:10px;
-    border:1px solid rgba(255,255,255,.22); background:rgba(255,255,255,.06);
-    color:#fff; outline:none; font-size:.92rem; transition:border-color .2s, box-shadow .2s;
+  .tfx7-bar{ display:flex; align-items:center; justify-content:space-between; gap:10px; padding:6px 8px; border-radius:12px;
+    background:linear-gradient(90deg, rgba(255,204,0,.08), rgba(255,204,0,.02));
+    box-shadow:inset 0 0 0 1px rgba(255,204,0,.10);
+    margin-bottom:10px;
   }
-  .tfg6-input:focus{ border-color:#ffcc00; box-shadow:0 0 0 2px rgba(255,204,0,.26); }
-  .tfg6-input.textarea{ min-height:86px; resize:vertical; }
-  .tfg6-input.textarea.compact{ min-height:56px; }
+  .tfx7-titles h3{ margin:0; font-size:1.05rem; color:var(--gold); letter-spacing:.2px; }
+  .tfx7-titles span{ color:var(--muted); font-size:.9rem; }
 
-  .tfg6-pills{ display:flex; gap:6px; flex-wrap:wrap; }
+  .tfx7-subbar{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:6px; }
+  .tfx7-subbar h4{ margin:0; color:var(--gold); font-size:.98rem; }
+
+  .tfx7-row{ display:flex; gap:10px; margin-bottom:10px; align-items:center; flex-wrap:wrap; }
+  .tfx7-row.tight{ gap:8px; margin-bottom:8px; }
+  .tfx7-grid2{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .tfx7-grid2.tight{ gap:8px; }
+  .tfx7-col{ display:flex; flex-direction:column; gap:6px; }
+  .tfx7-col.span2{ grid-column:1 / -1; }
+
+  .tfx7-label{ color:#eaeaea; font-weight:700; font-size:.9rem; }
+  .tfx7-input{
+    width:100%; padding:9px 12px; border-radius:12px;
+    border:1px solid rgba(255,255,255,.20); background:rgba(255,255,255,.06);
+    color:#fff; font-size:.92rem; outline:none; transition:border-color .18s, box-shadow .18s;
+  }
+  .tfx7-input:focus{ border-color:var(--gold); box-shadow:0 0 0 2px rgba(255,204,0,.22); }
+  .tfx7-input.ta{ min-height:90px; resize:vertical; }
+  .tfx7-input.ta.compact{ min-height:56px; }
+
+  .tfx7-pills{ display:flex; gap:6px; flex-wrap:wrap; }
   .pill{
-    height:28px; padding:0 10px; border-radius:999px;
-    border:1px solid rgba(255,255,255,.16); background:rgba(255,255,255,.05);
-    color:#eee; font-weight:700; font-size:.86rem; cursor:pointer;
+    height:28px; padding:0 12px; border-radius:999px; border:1px solid rgba(255,255,255,.18);
+    background:rgba(255,255,255,.05); color:#eee; font-weight:700; font-size:.86rem; cursor:pointer;
   }
   .pill:hover{ background:rgba(255,255,255,.10); }
-  .pill.is-active{ background:rgba(255,204,0,.12); border-color:rgba(255,204,0,.45); box-shadow:0 0 0 1px rgba(255,204,0,.25); color:#ffcc00; }
+  .pill.is-active{ background:rgba(255,204,0,.12); color:var(--gold); border-color:rgba(255,204,0,.45); box-shadow:0 0 0 1px rgba(255,204,0,.25); }
 
-  .tfg6-btn.ghost{
-    border:1px solid rgba(255,255,255,.14); background:rgba(255,255,255,.07);
-    color:#eee; padding:6px 10px; border-radius:10px; font-weight:700; height:30px; font-size:.86rem; cursor:pointer;
+  .tfx7-btn.ghost{
+    height:30px; padding:6px 12px; border-radius:10px; font-weight:800; font-size:.86rem; color:#eee;
+    border:1px solid rgba(255,255,255,.16); background:rgba(255,255,255,.07); cursor:pointer;
   }
-  .tfg6-btn.ghost:hover{ background:rgba(255,255,255,.12); }
-  .tfg6-btn.xs{ height:28px; padding:6px 10px; font-size:.86rem; }
+  .tfx7-btn.ghost:hover{ background:rgba(255,255,255,.12); }
 
-  .tfg6-list{ display:flex; flex-direction:column; gap:8px; }
-  /* Linhas (mídias e planos) */
-  .tfg6-line{
-    display:grid; gap:8px; align-items:center;
-    border:1px solid rgba(255,255,255,.10); border-radius:12px; background:rgba(255,255,255,.04); padding:8px;
+  .tfx7-list{ display:flex; flex-direction:column; gap:8px; }
+
+  /* Linhas */
+  .tfx7-line{
+    display:grid; align-items:center; gap:8px; padding:8px;
+    border:1px solid var(--line); border-radius:12px; background:var(--glass);
   }
-  /* Mídia: drag | delete | link | pos | regras */
-  .tfg6-line.media{ grid-template-columns:26px 28px 1fr auto auto; }
-  /* Plano: drag | delete | nome | valor | regras */
-  .tfg6-line.plan{ grid-template-columns:26px 28px 1fr 140px auto; }
+  .tfx7-line.media{ grid-template-columns:26px 28px 1fr minmax(260px, 320px) auto; }
+  .tfx7-line.plan { grid-template-columns:26px 28px 1fr 150px auto; }
 
-  .tfg6-handle{
+  .tfx7-handle{
     width:26px; height:26px; border-radius:8px; display:flex; align-items:center; justify-content:center;
-    border:1px dashed rgba(255,255,255,.16); color:#bbb; cursor:grab; user-select:none;
+    border:1px dashed rgba(255,255,255,.18); color:#bbb; cursor:grab; user-select:none;
   }
-  .tfg6-icon-btn{
-    width:28px; height:28px; border-radius:8px; border:1px solid rgba(255,255,255,.16);
-    background:rgba(255,255,255,.06); color:#eee; display:flex; align-items:center; justify-content:center; cursor:pointer;
+  .tfx7-icon{
+    width:28px; height:28px; border-radius:8px; display:flex; align-items:center; justify-content:center;
+    border:1px solid rgba(255,255,255,.18); background:rgba(255,255,255,.07); color:#eee; cursor:pointer;
   }
-  .tfg6-icon-btn:hover{ background:rgba(255,60,60,.15); border-color:rgba(255,60,60,.35); color:#ff7f7f; }
+  .tfx7-icon:hover{ background:rgba(255,60,60,.16); border-color:rgba(255,60,60,.35); color:#ff8f8f; }
 
-  .tfg6-actions{ display:flex; align-items:center; gap:8px; }
-  .tfg6-pos{ min-width:280px; }
+  .tfx7-actions{ display:flex; align-items:center; gap:8px; justify-self:end; }
+  .tfx7-pos{ min-width:260px; }
 
-  /* Popover de regras */
-  .tfg6-pop{
-    position:fixed; z-index:3500; min-width:280px;
-    background:rgba(0,0,0,.86); border:1px solid rgba(255,204,0,.22); border-radius:12px;
-    box-shadow:0 10px 40px rgba(0,0,0,.6); padding:10px; backdrop-filter: blur(10px);
+  /* Popover de Regras */
+  .tfx7-pop{
+    position:fixed; z-index:3500; min-width:300px;
+    background:rgba(0,0,0,.86); border:1px solid rgba(255,204,0,.25); border-radius:12px;
+    box-shadow:0 12px 44px rgba(0,0,0,.65); padding:10px; backdrop-filter: blur(10px);
   }
-  .tfg6-pop h4{ margin:2px 0 8px; font-size:.98rem; color:#ffcc00; }
-  .tfg6-rule{ display:flex; align-items:center; gap:8px; padding:6px; border-radius:10px; }
-  .tfg6-rule:hover{ background:rgba(255,255,255,.06); }
-  .tfg6-rule input[type="checkbox"]{ width:16px; height:16px; accent-color:#ffcc00; }
-  .tfg6-rule .inline{ display:flex; align-items:center; gap:6px; margin-left:auto; }
-  .tfg6-rule .inline input{ width:78px; }
+  .tfx7-pop h4{ margin:2px 0 8px; color:var(--gold); font-size:.98rem; }
+  .tfx7-rule{ display:flex; align-items:center; gap:8px; padding:6px; border-radius:10px; }
+  .tfx7-rule:hover{ background:rgba(255,255,255,.06); }
+  .tfx7-rule input[type="checkbox"]{ width:16px; height:16px; accent-color:var(--gold); }
+  .tfx7-rule .inline{ display:flex; align-items:center; gap:6px; margin-left:auto; }
+  .tfx7-rule .inline input{ width:86px; }
 
   @media (max-width:1100px){
-    .tfg6-grid{ grid-template-columns:1fr; }
+    .tfx7-grid{ grid-template-columns:1fr; }
   }
 </style>
 
@@ -1034,44 +1032,43 @@
 })();
 </script>
 
-<!-- ===== JS (escopo tfg6) ===== -->
+<!-- ===================== JS v7 (escopo tfx7) ===================== -->
 <script>
 (function(){
   const qs=(s,e=document)=>e.querySelector(s), qsa=(s,e=document)=>Array.from(e.querySelectorAll(s));
   const el=(t,c)=>{const E=document.createElement(t); if(c) E.className=c; return E;};
-  const svgTrash=`<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M9 3h6m-9 4h12M8 7l1 13a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2l1-13M10 11v7M14 11v7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>`;
-  const svgDots = `&#8942;`;
+  const svgTrash=`<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M9 3h6M5 7h14M8 7l1 13a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2l1-13M10 11v7M14 11v7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>`;
+  const svgDots = '&#8942;';
 
-  /* ---------- Popover de Regras ---------- */
+  /* -------- Popover de Regras -------- */
   let pop=null;
   function closePop(){ if(pop){pop.remove(); pop=null;} }
-  function openRules(anchor, titulo, state){
+  function openRules(anchor, title, state){
     closePop();
-    const p=el('div','tfg6-pop'); pop=p;
+    const p=el('div','tfx7-pop'); pop=p;
     const r=anchor.getBoundingClientRect();
     p.style.left = (r.left + window.scrollX) + 'px';
     p.style.top  = (r.bottom + 6 + window.scrollY) + 'px';
     p.innerHTML = `
-      <h4>${titulo}</h4>
-      <label class="tfg6-rule"><input type="checkbox" data-k="no"> <span>Não apagar</span></label>
-      <label class="tfg6-rule"><input type="checkbox" data-k="next"> <span>Apagar após clique no próximo botão</span></label>
-      <div class="tfg6-rule">
+      <h4>${title}</h4>
+      <label class="tfx7-rule"><input type="checkbox" data-k="no"> <span>Não apagar</span></label>
+      <label class="tfx7-rule"><input type="checkbox" data-k="next"> <span>Apagar após clique no próximo botão</span></label>
+      <div class="tfx7-rule">
         <input type="checkbox" data-k="after">
         <span>Apagar após X segundos</span>
-        <div class="inline"><input type="number" min="1" step="1" placeholder="5" class="tfg6-input xs" data-k="sec"></div>
+        <div class="inline"><input type="number" min="1" step="1" placeholder="5" class="tfx7-input" data-k="sec"></div>
       </div>
-      <label class="tfg6-rule"><input type="checkbox" data-k="start"> <span>Apagar após próximo /start</span></label>
-      <div class="tfg6-row tight" style="justify-content:flex-end">
-        <button class="tfg6-btn ghost xs" data-act="clear">Limpar</button>
-        <button class="tfg6-btn ghost xs" data-act="cancel">Cancelar</button>
-        <button class="tfg6-btn ghost xs" data-act="apply" style="border-color:rgba(255,204,0,.45); box-shadow:0 0 0 1px rgba(255,204,0,.25); color:#ffcc00;">Aplicar</button>
+      <label class="tfx7-rule"><input type="checkbox" data-k="start"> <span>Apagar após próximo /start</span></label>
+      <div class="tfx7-row tight" style="justify-content:flex-end">
+        <button class="tfx7-btn ghost xs" data-act="clear">Limpar</button>
+        <button class="tfx7-btn ghost xs" data-act="cancel">Cancelar</button>
+        <button class="tfx7-btn ghost xs" data-act="apply" style="border-color:rgba(255,204,0,.45); box-shadow:0 0 0 1px rgba(255,204,0,.25); color:#ffcc00;">Aplicar</button>
       </div>
     `;
     document.body.appendChild(p);
 
-    // restaurar estado
     if(state){
-      qsa('input[type="checkbox"]', p).forEach(cb=>cb.checked=!!state[cb.dataset.k]);
+      qsa('input[type="checkbox"]',p).forEach(cb=>cb.checked=!!state[cb.dataset.k]);
       const sec=qs('input[data-k="sec"]',p); if(state.sec) sec.value=state.sec;
     }
 
@@ -1107,57 +1104,56 @@
     }, {capture:true});
   }
 
-  /* ---------- CARD 1 · Mídias ---------- */
-  const mediaList = qs('#tfg6MediaList');
-  qs('#tfg6AddMedia').addEventListener('click', addMedia);
+  /* -------- CARD 1 · Mídias -------- */
+  const mediaList = qs('#tfx7MediaList');
+  qs('#tfx7AddMedia').addEventListener('click', addMedia);
   function addMedia(){ mediaList.appendChild(mediaLine()); }
 
   function mediaLine(){
     const idx = mediaList.children.length + 1;
-    const line = el('div','tfg6-line media');
+    const line = el('div','tfx7-line media');
 
-    const drag = el('div','tfg6-handle'); drag.innerHTML = svgDots; drag.title='Arrastar para reordenar';
-    const del  = el('button','tfg6-icon-btn'); del.innerHTML = svgTrash; del.title='Excluir mídia';
+    const drag = el('div','tfx7-handle'); drag.innerHTML = svgDots; drag.title='Arrastar para reordenar';
+    const del  = el('button','tfx7-icon'); del.innerHTML = svgTrash; del.title='Excluir mídia';
 
-    const url = el('input','tfg6-input'); url.placeholder='Link da mídia no Telegram…'; url.name = `front_media_url_${idx}`;
+    const url = el('input','tfx7-input'); url.placeholder='Link da mídia no Telegram…'; url.name=`front_media_url_${idx}`;
 
-    const pos = el('div','tfg6-pills tfg6-pos');
-    const bBefore = el('button','pill is-active'); bBefore.textContent='Antes da copy principal'; bBefore.dataset.val='before';
-    const bAfter  = el('button','pill');           bAfter.textContent='Depois da copy principal'; bAfter.dataset.val='after';
-    const hidden  = el('input'); hidden.type='hidden'; hidden.name=`front_media_pos_${idx}`; hidden.value='before';
-    pos.appendChild(bBefore); pos.appendChild(bAfter); pos.appendChild(hidden);
+    const pos = el('div','tfx7-pills tfx7-pos');
+    const bB = el('button','pill is-active'); bB.textContent='Antes da copy principal'; bB.dataset.val='before';
+    const bA = el('button','pill');           bA.textContent='Depois da copy principal'; bA.dataset.val='after';
+    const hid= el('input'); hid.type='hidden'; hid.name=`front_media_pos_${idx}`; hid.value='before';
+    pos.appendChild(bB); pos.appendChild(bA); pos.appendChild(hid);
     pos.addEventListener('click', ev=>{
       if(!ev.target.classList.contains('pill')) return;
       qsa('.pill', pos).forEach(x=>x.classList.remove('is-active'));
-      ev.target.classList.add('is-active'); hidden.value = ev.target.dataset.val;
+      ev.target.classList.add('is-active'); hid.value=ev.target.dataset.val;
     });
 
-    const rules = el('button','tfg6-btn ghost xs'); rules.textContent='Regras';
-    rules.addEventListener('click', ()=> openRules(rules, 'Regras de envio dessa mídia', rules.dataset.rules ? JSON.parse(rules.dataset.rules) : null));
+    const rules = el('button','tfx7-btn ghost xs'); rules.textContent='Regras';
+    rules.addEventListener('click', ()=> openRules(rules, 'Regras — mídia do Front', rules.dataset.rules ? JSON.parse(rules.dataset.rules) : null));
     del.addEventListener('click', ()=> line.remove());
 
-    const act = el('div','tfg6-actions');
-    act.appendChild(rules);
+    const actions = el('div','tfx7-actions'); actions.appendChild(rules);
 
     line.appendChild(drag);
     line.appendChild(del);
     line.appendChild(url);
     line.appendChild(pos);
-    line.appendChild(act);
+    line.appendChild(actions);
     return line;
   }
   addMedia(); // começa com 1
 
-  /* ---------- CARD 2 · Copy VSL ---------- */
-  qs('#tfg6CopyRulesBtn').addEventListener('click', function(){
+  /* -------- CARD 2 · Copy da VSL -------- */
+  qs('#tfx7CopyRulesBtn').addEventListener('click', function(){
     openRules(this, 'Regras — Copy da VSL', this.dataset.rules ? JSON.parse(this.dataset.rules) : null);
   });
 
-  /* ---------- CARD 3 · CTA ---------- */
-  const ctaToggle = qs('#tfg6CtaToggle');
-  const ctaFields = qs('#tfg6CtaFields');
-  const ctaRulesRow = qs('#tfg6CtaRulesRow');
-  function applyCtaState(on){
+  /* -------- CARD 3 · CTA -------- */
+  const ctaToggle = qs('#tfx7CtaToggle');
+  const ctaFields = qs('#tfx7CtaFields');
+  const ctaRulesRow = qs('#tfx7CtaRulesRow');
+  function setCta(on){
     ctaFields.style.opacity = on ? '1' : '.55';
     qsa('input', ctaFields).forEach(i=> i.disabled = !on);
     ctaRulesRow.style.display = on ? 'flex' : 'none';
@@ -1166,45 +1162,46 @@
     if(!e.target.classList.contains('pill')) return;
     qsa('.pill', ctaToggle).forEach(x=>x.classList.remove('is-active'));
     e.target.classList.add('is-active');
-    applyCtaState(e.target.dataset.val === 'on');
+    setCta(e.target.dataset.val === 'on');
   });
-  applyCtaState(true);
-  qs('#tfg6CtaRulesBtn').addEventListener('click', function(){
+  setCta(true);
+
+  qs('#tfx7CtaRulesBtn').addEventListener('click', function(){
     openRules(this, 'Regras — exclusão do CTA', this.dataset.rules ? JSON.parse(this.dataset.rules) : null);
   });
 
-  /* ---------- CARD 4 · Planos ---------- */
-  const plansList = qs('#tfg6PlansList');
-  qs('#tfg6AddPlan').addEventListener('click', addPlan);
-
+  /* -------- CARD 4 · Planos -------- */
+  const plansList = qs('#tfx7PlansList');
+  qs('#tfx7AddPlan').addEventListener('click', addPlan);
   function addPlan(){ plansList.appendChild(planLine()); }
+
   function planLine(){
     const idx = plansList.children.length + 1;
-    const line = el('div','tfg6-line plan');
+    const line = el('div','tfx7-line plan');
 
-    const drag = el('div','tfg6-handle'); drag.innerHTML = svgDots; drag.title='Arrastar para reordenar';
-    const del  = el('button','tfg6-icon-btn'); del.innerHTML = svgTrash; del.title='Excluir plano';
+    const drag = el('div','tfx7-handle'); drag.innerHTML = svgDots; drag.title='Arrastar para reordenar';
+    const del  = el('button','tfx7-icon'); del.innerHTML = svgTrash; del.title='Excluir plano';
 
-    const name = el('input','tfg6-input'); name.placeholder='Nome do plano (Ex.: Mensal VIP)'; name.name=`front_plan_name_${idx}`;
-    const price= el('input','tfg6-input'); price.placeholder='R$ 29,90'; price.name=`front_plan_price_${idx}`;
+    const name = el('input','tfx7-input'); name.placeholder='Nome do plano (Ex.: Mensal VIP)'; name.name=`front_plan_name_${idx}`;
+    const price= el('input','tfx7-input'); price.placeholder='R$ 29,90'; price.name=`front_plan_price_${idx}`;
 
-    const rules = el('button','tfg6-btn ghost xs'); rules.textContent='Regras';
+    const rules = el('button','tfx7-btn ghost xs'); rules.textContent='Regras';
     rules.addEventListener('click', ()=> openRules(rules, 'Regras — mensagem do plano', rules.dataset.rules ? JSON.parse(rules.dataset.rules) : null));
     del.addEventListener('click', ()=> line.remove());
 
-    const act = el('div','tfg6-actions'); act.appendChild(rules);
+    const actions = el('div','tfx7-actions'); actions.appendChild(rules);
 
     line.appendChild(drag);
     line.appendChild(del);
     line.appendChild(name);
     line.appendChild(price);
-    line.appendChild(act);
+    line.appendChild(actions);
     return line;
   }
   addPlan(); // começa com 1
 
-  // Copy antes dos botões
-  const plansCopyToggle = qs('#tfg6PlansCopySend');
+  // Copy antes dos botões dos planos
+  const plansCopyToggle = qs('#tfx7PlansCopySend');
   const plansCopyArea   = qs('#front_plans_copy');
   plansCopyToggle.addEventListener('click', e=>{
     if(!e.target.classList.contains('pill')) return;
@@ -1214,7 +1211,9 @@
     plansCopyArea.disabled = !on;
     plansCopyArea.style.opacity = on ? '1' : '.55';
   });
-  qs('#tfg6PlansCopyRulesBtn').addEventListener('click', function(){
+
+  // Regras copy antes dos planos
+  qs('#tfx7PlansCopyRulesBtn').addEventListener('click', function(){
     openRules(this, 'Regras — copy antes dos planos', this.dataset.rules ? JSON.parse(this.dataset.rules) : null);
   });
 })();
