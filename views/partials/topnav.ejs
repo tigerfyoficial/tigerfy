@@ -1,0 +1,29 @@
+<nav class="ui-topnav" role="navigation" aria-label="Primary">
+  <!-- Brand: só o triângulo -->
+  <a href="/dashboard" class="ui-brand" aria-label="Início">
+    <svg viewBox="0 0 1155 1000" width="22" height="22" aria-hidden="true" focusable="false">
+      <path d="M577.5 0L1155 1000H0z" fill="currentColor"></path>
+    </svg>
+  </a>
+
+  <!-- Tabs -->
+  <ul class="ui-tabs">
+    <li><a class="<%= (active==='dashboard')?'is-active':'' %>" href="/dashboard">Dashboard</a></li>
+    <li><a class="<%= (active==='ofertas')?'is-active':'' %>" href="/ofertas">Ofertas</a></li>
+    <li><a class="<%= (active==='api_pix' || active==='adquirentes')?'is-active':'' %>" href="/adquirentes">API PIX</a></li>
+    <li><a class="<%= (active==='conquistas')?'is-active':'' %>" href="/conquistas">Conquistas</a></li>
+    <li><a class="<%= (active==='suporte')?'is-active':'' %>" href="/suporte">Suporte</a></li>
+  </ul>
+
+  <div class="ui-spacer"></div>
+
+  <!-- Lado direito (igual Vercel: discreto) -->
+  <div class="ui-right">
+    <% if (userEmail) { %>
+      <span class="ui-user"><%= userEmail %></span>
+    <% } %>
+    <button class="ui-avatar" title="Conta" type="button" aria-label="Conta">
+      <span></span>
+    </button>
+  </div>
+</nav>
