@@ -1,0 +1,479 @@
+<%- include('partials/topnav') %>
+
+<div class="tiger-offers-list">
+  <div class="list-header">
+    <div>
+      <h1>Minhas Ofertas</h1>
+      <p>Lista simples e objetiva das suas ofertas. Clique para abrir o painel premium da oferta.</p>
+    </div>
+    <a href="/ofertas/criar" class="btn-primary">Criar nova oferta</a>
+  </div>
+
+  <div class="list-grid" id="offersGrid">
+    <% if (offers && offers.length) { %>
+      <% offers.forEach(function(o){ const __id = o.id || o._id; %>
+        <!-- Card da oferta (layout intacto) -->
+        <a class="offer-card" href="/ofertas/painel/<%= __id %>" data-offer-id="<%= __id %>">
+          <div class="card-top">
+            <h3 class="offer-name"><%= o.name %></h3>
+          </div>
+
+          <!-- Botão … (menu flutuante) -->
+          <button
+            type="button"
+            class="offer-actions-inline"
+            title="Ações"
+            aria-label="Ações da oferta"
+            data-offer-id="<%= __id %>"
+            data-offer-name="<%- o.name %>"
+            data-offer-type="<%- o.botType %>"
+            data-offer-bots="<%- (typeof o.botsCount !== 'undefined' ? o.botsCount : 0) %>"
+          >
+            <span class="dots">•••</span>
+          </button>
+
+          <!-- Mini resumo -->
+          <div class="meta">
+            <span>ID: <%= String(__id).slice(0, 8) %></span>
+            <span class="sep">|</span>
+            <span>Bots: <%= (typeof o.botsCount !== 'undefined' ? o.botsCount : 0) %></span>
+            <span class="sep">|</span>
+            <span>Tipo:
+              <% if (o.botType === 'bot_padrao') { %>Padrão<% }
+                 else if (o.botType === 'bot_fluxo_wiin') { %>Fluxo<% }
+                 else if (o.botType === 'bot_fluxo_many') { %>Fluxo (Manychat)<% }
+                 else { %>Outro<% } %>
+            </span>
+          </div>
+
+          <span class="go">›</span>
+        </a>
+      <% }) %>
+    <% } %>
+  </div>
+</div>
+
+<!-- ======= MENU FLUTUANTE DAS AÇÕES ======= -->
+<div class="offer-actions-menu" id="offerActionsMenu" hidden>
+  <div class="menu-surface" role="menu" aria-label="Ações da oferta">
+    <!-- Estado: lista -->
+    <div class="menu-list" data-state="list">
+      <button class="menu-item" data-action="rename">Renomear oferta</button>
+      <button class="menu-item" data-action="duplicate">Duplicar oferta</button>
+      <button class="menu-item danger" data-action="delete">Excluir oferta</button>
+    </div>
+
+    <!-- Estado: renomear inline -->
+    <div class="menu-rename" data-state="rename" hidden>
+      <label class="rename-label">Novo nome</label>
+      <input type="text" class="rename-input" id="renameInput" placeholder="Ex: Mundo VIP 2.0" />
+      <div class="rename-actions">
+        <button class="btn-secondary x-small" data-action="cancel-rename">Cancelar</button>
+        <button class="btn-primary x-small" data-action="confirm-rename">Salvar</button>
+      </div>
+      <small class="error-text" id="renameError" hidden>Não foi possível renomear. Tente novamente.</small>
+    </div>
+  </div>
+</div>
+
+<!-- ======= TOASTS ======= -->
+<div class="tf-toasts" id="tfToasts" aria-live="polite"></div>
+
+<!-- ======= CONFIRM TIGERFY ======= -->
+<div class="tf-confirm-overlay" id="tfConfirmOverlay" hidden>
+  <div class="tf-confirm-dialog">
+    <div class="tf-confirm-head">
+      <h3 id="tfConfirmTitle">Confirmar</h3>
+    </div>
+    <div class="tf-confirm-body">
+      <p id="tfConfirmMsg">Tem certeza?</p>
+    </div>
+    <div class="tf-confirm-actions">
+      <button type="button" class="btn-secondary" id="tfConfirmCancel">Cancelar</button>
+      <button type="button" class="btn-primary" id="tfConfirmOk">Confirmar</button>
+    </div>
+  </div>
+</div>
+
+<style>
+/* ===== Wrapper/estilos existentes (intactos) ===== */
+.tiger-offers-list{
+  padding:68px 116px 100px 116px;
+  max-width:calc(100vw - 120px);
+  margin:0 auto;
+  color:#fff;
+  transform:none;
+}
+
+/* Header em grid para alinhamento perfeito: [texto] [botão] */
+.list-header{
+  display:grid;
+  grid-template-columns: 1fr auto;
+  align-items:end;              /* mantém o topo do botão alinhado ao h1 */
+  column-gap:24px;
+  margin-bottom:18px;
+}
+
+/* remove o hack que empurrava o botão para fora do container */
+.tiger-offers-list .list-header .btn-primary{ margin-right:0; }
+
+.list-header h1{ margin:0 0 6px; font-size:2rem; color:#ffcc00; }
+.list-header p{ margin:0; color:#b4b4b4; font-size:.95rem; }
+
+@media (max-width:980px){
+  .list-header{ grid-template-columns: 1fr; row-gap:12px; }
+}
+
+.list-grid{ display:grid; gap:12px; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); }
+.offer-card{ position:relative; display:block; text-decoration:none; color:#fff; background:rgba(0,0,0,0.70); border:1px solid rgba(255,204,0,0.12); border-radius:16px; padding:14px 42px 18px 14px; transition:.2s; overflow:hidden; }
+.offer-card:hover{ border-color:#ffcc00; box-shadow:0 0 16px rgba(255,204,0,0.3); }
+.card-top{ display:flex; align-items:center; justify-content:space-between; gap:8px; }
+.card-top h3{ margin:0; font-size:1rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.meta{ display:flex; gap:10px; flex-wrap:wrap; margin-top:8px; font-size:.78rem; color:#c9c9c9; align-items:center; }
+.meta .sep{ opacity:.6; }
+.go{ position:absolute; right:12px; bottom:10px; opacity:.6; font-size:1.4rem; }
+.btn-primary{ border:none; border-radius:10px; padding:10px 22px; font-weight:600; cursor:pointer; text-decoration:none; background:linear-gradient(90deg,#ffcc00,#d4a100); color:#1a1300; box-shadow:0 0 12px rgba(255,204,0,0.4); font-size:.95rem; }
+
+/* Botão ... */
+:root{ --dots-top:10px; --dots-right:12px; --dots-size:30px; --dots-font:15px; --dots-letter:0.6px; --dots-nudge-y:-0.5px; }
+.offer-actions-inline{ position:absolute; top:var(--dots-top); right:var(--dots-right); width:var(--dots-size); height:var(--dots-size); border-radius:999px; border:1px solid rgba(255,204,0,0.26); background:rgba(255,255,255,0.085); display:flex; align-items:center; justify-content:center; cursor:pointer; transition: background-color .15s ease, border-color .15s ease, box-shadow .15s ease, opacity .15s ease; z-index:2; }
+.offer-actions-inline .dots{ font-size:var(--dots-font); letter-spacing:var(--dots-letter); line-height:1; transform:translateY(var(--dots-nudge-y)); user-select:none; }
+.offer-actions-inline:hover{ background:rgba(255,204,0,.14); border-color:rgba(255,204,0,.34); box-shadow:0 0 0 2px rgba(255,204,0,.12) inset; }
+
+/* Menu */
+.offer-actions-menu[hidden]{ display:none !important; }
+.offer-actions-menu{ position:fixed; z-index:9999; inset:auto auto; }
+.offer-actions-menu .menu-surface{ min-width:220px; background: rgba(0,0,0,0.82); border:1px solid rgba(255,204,0,0.16); border-radius:14px; box-shadow: 0 10px 40px rgba(0,0,0,0.6); backdrop-filter: blur(10px); overflow:hidden; transform-origin: top right; animation: tfMenuIn .12s ease; }
+@keyframes tfMenuIn { from { opacity:0; transform:scale(0.98); } to { opacity:1; transform:scale(1); } }
+.menu-list{ display:flex; flex-direction:column; padding:6px; }
+.menu-item{ width:100%; text-align:left; background:transparent; color:#eaeaea; border:none; border-radius:10px; padding:10px 12px; font-size:.92rem; cursor:pointer; transition: background-color .12s ease, color .12s ease; }
+.menu-item:hover{ background:rgba(255,255,255,0.08); }
+.menu-item.danger{ color:#ff8aa4; }
+.menu-item.danger:hover{ background:rgba(255,64,96,0.12); color:#ffc9d3; }
+
+.menu-rename{ padding:10px; display:flex; flex-direction:column; gap:8px; }
+.rename-label{ font-size:.82rem; color:#cfcfcf; }
+.rename-input{ width:100%; padding:9px 10px; border-radius:10px; border:1px solid rgba(255,255,255,0.22); background:rgba(255,255,255,0.06); color:#fff; outline:none; font-size:.95rem; transition:border-color .2s, box-shadow .2s; }
+.rename-input:focus{ border-color:#ffcc00; box-shadow:0 0 0 2px rgba(255,204,0,0.28); }
+.rename-actions{ display:flex; justify-content:flex-end; gap:8px; }
+.btn-secondary.x-small, .btn-primary.x-small{ border:none; border-radius:10px; padding:8px 12px; font-size:.85rem; font-weight:600; cursor:pointer; }
+.btn-secondary.x-small{ background:rgba(255,255,255,0.12); color:#fff; }
+.btn-secondary.x-small:hover{ background:rgba(255,255,255,0.18); }
+.btn-primary.x-small{ background:linear-gradient(90deg,#ffcc00,#d4a100); color:#1a1300; box-shadow:0 0 10px rgba(255,204,0,0.35); }
+.error-text{ color:#ff8aa4; display:block; }
+
+/* Toasts */
+.tf-toasts{ position:fixed; top:18px; right:18px; z-index:9999; display:flex; flex-direction:column; gap:8px; }
+.tf-toast{ background:rgba(0,0,0,0.82); border:1px solid rgba(255,204,0,0.18); color:#fff; border-radius:12px; padding:10px 12px; font-size:.92rem; box-shadow:0 8px 30px rgba(0,0,0,0.45); animation: tfToastIn .14s ease; }
+@keyframes tfToastIn { from { opacity:0; transform: translateY(-6px);} to {opacity:1; transform:none;} }
+
+/* Confirm TigerFy */
+.tf-confirm-overlay[hidden]{ display:none !important; }
+.tf-confirm-overlay{ position:fixed; inset:0; z-index:10000; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,0.55); backdrop-filter: blur(10px); }
+.tf-confirm-dialog{ width:min(520px, calc(100vw - 40px)); border-radius:20px; border:1px solid rgba(255,204,0,0.16); background:rgba(0,0,0,0.78); box-shadow:0 0 40px rgba(0,0,0,0.6); overflow:hidden; transform: translateY(8px) scale(0.985); animation: tfConfirmIn .18s ease-out forwards; }
+@keyframes tfConfirmIn { to { transform: translateY(0) scale(1); } }
+.tf-confirm-head{ padding:18px 20px; border-bottom:1px solid rgba(255,255,255,0.08); }
+.tf-confirm-head h3{ margin:0; font-size:1.2rem; color:#ffcc00; font-weight:800; text-align:center; }
+.tf-confirm-body{ padding:14px 20px; color:#ddd; text-align:center; }
+.tf-confirm-actions{ display:flex; justify-content:flex-end; gap:12px; padding:16px 20px 18px 20px; border-top:1px solid rgba(255,255,255,0.08); }
+
+/* Botão secundário padrão */
+.btn-secondary{ border:none; border-radius:10px; padding:10px 22px; font-weight:600; cursor:pointer; background:rgba(255,255,255,0.12); color:#fff; border:1px solid rgba(255,255,0,0.10); transition:.18s ease; }
+.btn-secondary:hover{ background:rgba(255,255,255,0.18); }
+</style>
+
+<script>
+(() => {
+  const grid = document.getElementById('offersGrid');
+  const menu = document.getElementById('offerActionsMenu');
+  const surface = menu?.querySelector('.menu-surface');
+  const listPane = menu?.querySelector('.menu-list');
+  const renamePane = menu?.querySelector('.menu-rename');
+  const renameInput = document.getElementById('renameInput');
+  const renameError = document.getElementById('renameError');
+  const toasts = document.getElementById('tfToasts');
+
+  // ===== Confirm TigerFy (Promise)
+  const cx = {
+    host: document.getElementById('tfConfirmOverlay'),
+    title: document.getElementById('tfConfirmTitle'),
+    msg: document.getElementById('tfConfirmMsg'),
+    btnOk: document.getElementById('tfConfirmOk'),
+    btnCancel: document.getElementById('tfConfirmCancel')
+  };
+  function tfConfirm({ title, message, confirmText='Confirmar', cancelText='Cancelar' }){
+    return new Promise((resolve)=>{
+      cx.title.textContent = title || 'Confirmar';
+      cx.msg.textContent = message || 'Tem certeza?';
+      cx.btnOk.textContent = confirmText;
+      cx.btnCancel.textContent = cancelText;
+
+      function cleanup(ok){
+        cx.host.setAttribute('hidden','');
+        cx.btnOk.removeEventListener('click', onOk);
+        cx.btnCancel.removeEventListener('click', onCancel);
+        cx.host.removeEventListener('click', onBg);
+        resolve(ok);
+      }
+      function onOk(){ cleanup(true); }
+      function onCancel(){ cleanup(false); }
+      function onBg(e){ if (e.target === cx.host) cleanup(false); }
+
+      cx.btnOk.addEventListener('click', onOk);
+      cx.btnCancel.addEventListener('click', onCancel);
+      cx.host.addEventListener('click', onBg);
+      cx.host.removeAttribute('hidden');
+    });
+  }
+  function confirmOpen(){ return cx.host && !cx.host.hasAttribute('hidden'); }
+
+  let anchorBtn = null;
+  let currentOfferId = null;
+  let currentOfferName = '';
+  let currentOfferCard = null;
+
+  function showToast(msg) {
+    if (!toasts) return;
+    const el = document.createElement('div');
+    el.className = 'tf-toast';
+    el.textContent = msg;
+    toasts.appendChild(el);
+    setTimeout(() => el.remove(), 2200);
+  }
+
+  function botTypeLabel(t) {
+    if (t === 'bot_padrao') return 'Padrão';
+    if (t === 'bot_fluxo_wiin') return 'Fluxo';
+    if (t === 'bot_fluxo_many') return 'Fluxo (Manychat)';
+    return 'Outro';
+  }
+
+  function resetRenameErrors(){
+    if (!renameError) return;
+    renameError.textContent = 'Não foi possível renomear. Tente novamente.';
+    renameError.hidden = true;
+    renameError.style.display = 'none';
+  }
+
+  function openMenuFor(btn) {
+    anchorBtn = btn;
+    currentOfferId = btn.getAttribute('data-offer-id');
+    currentOfferName = btn.getAttribute('data-offer-name') || '';
+    currentOfferCard = btn.closest('.offer-card');
+
+    const rect = btn.getBoundingClientRect();
+    const menuRectW = 240;
+    const gap = 8;
+    const left = Math.min(window.innerWidth - menuRectW - 12, rect.right - menuRectW + 34);
+    const top = rect.top + window.scrollY + rect.height + gap;
+
+    menu.style.left = `${left}px`;
+    menu.style.top = `${top}px`;
+
+    listPane.hidden = false;
+    renamePane.hidden = true;
+    resetRenameErrors();
+
+    menu.hidden = false;
+  }
+
+  function closeMenu() {
+    menu.hidden = true;
+    listPane.hidden = false;
+    renamePane.hidden = true;
+    resetRenameErrors();
+
+    anchorBtn = null;
+    currentOfferId = null;
+    currentOfferName = '';
+    currentOfferCard = null;
+  }
+
+  // abrir menu (delegação)
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest('.offer-actions-inline');
+    if (!btn) return;
+    e.preventDefault();
+    e.stopPropagation();
+    if (!menu.hidden && anchorBtn === btn) { closeMenu(); }
+    else { openMenuFor(btn); }
+  });
+
+  // ===== Ações da LISTA (renomear/duplicar/excluir)
+  surface?.addEventListener('click', async (e) => {
+    const item = e.target.closest('.menu-item');
+    if (!item || item.disabled) return;
+
+    const action = item.getAttribute('data-action');
+
+    if (action === 'rename') {
+      listPane.hidden = true;
+      renamePane.hidden = false;
+      renameInput.value = currentOfferName || '';
+      renameInput.focus();
+      resetRenameErrors();
+      return;
+    }
+
+    if (action === 'duplicate') {
+      if (!currentOfferId) return;
+      try {
+        const res = await fetch(`/ofertas/${currentOfferId}/duplicar`, {
+          method: 'POST',
+          headers: { 'Content-Type':'application/json' },
+          body: JSON.stringify({})
+        });
+        if (!res.ok) throw new Error('bad_status');
+        const payload = await res.json();
+        const o = payload.offer || payload.data || null;
+        if (!o) throw new Error('bad_payload');
+
+        // novo card
+        const card = document.createElement('a');
+        card.className = 'offer-card';
+        card.setAttribute('href', `/ofertas/painel/${o.id}`);
+        card.setAttribute('data-offer-id', o.id);
+
+        const top = document.createElement('div');
+        top.className = 'card-top';
+
+        const h3 = document.createElement('h3');
+        h3.className = 'offer-name';
+        h3.textContent = o.name || (currentOfferName + ' (cópia)');
+        top.appendChild(h3);
+
+        const dotsBtn = document.createElement('button');
+        dotsBtn.type = 'button';
+        dotsBtn.className = 'offer-actions-inline';
+        dotsBtn.setAttribute('title', 'Ações');
+        dotsBtn.setAttribute('aria-label', 'Ações da oferta');
+        dotsBtn.setAttribute('data-offer-id', o.id);
+        dotsBtn.setAttribute('data-offer-name', o.name || '');
+        dotsBtn.setAttribute('data-offer-type', o.bot_type || 'bot_padrao');
+        dotsBtn.setAttribute('data-offer-bots', '0');
+        const dotsSpan = document.createElement('span');
+        dotsSpan.className = 'dots';
+        dotsSpan.textContent = '•••';
+        dotsBtn.appendChild(dotsSpan);
+
+        const meta = document.createElement('div');
+        meta.className = 'meta';
+        meta.innerHTML = `
+          <span>ID: ${String(o.id).slice(0,8)}</span>
+          <span class="sep">|</span>
+          <span>Bots: 0</span>
+          <span class="sep">|</span>
+          <span>Tipo: ${botTypeLabel(o.bot_type)}</span>
+        `;
+
+        const go = document.createElement('span');
+        go.className = 'go';
+        go.textContent = '›';
+
+        card.appendChild(top);
+        card.appendChild(dotsBtn);
+        card.appendChild(meta);
+        card.appendChild(go);
+
+        if (currentOfferCard && currentOfferCard.parentElement) {
+          currentOfferCard.parentElement.insertBefore(card, currentOfferCard.nextSibling);
+        } else {
+          grid?.prepend(card);
+        }
+
+        showToast('Oferta duplicada com sucesso.');
+        closeMenu();
+      } catch (err) {
+        showToast('Falha ao duplicar.');
+      }
+      return;
+    }
+
+    if (action === 'delete') {
+      if (!currentOfferId) return;
+
+      // guarda o estado ANTES da confirmação (evita /ofertas/null)
+      const idToDelete = currentOfferId;
+      const cardToDelete = currentOfferCard;
+
+      const ok = await tfConfirm({
+        title: 'Excluir oferta?',
+        message: 'Tem certeza que deseja excluir esta oferta? Esta ação é permanente.',
+        confirmText: 'Excluir oferta',
+        cancelText: 'Cancelar'
+      });
+      if (!ok) return;
+
+      try {
+        const res = await fetch(`/ofertas/${encodeURIComponent(idToDelete)}`, { method:'DELETE' });
+        if (!res.ok) throw new Error('bad_status');
+        cardToDelete?.parentElement?.removeChild(cardToDelete);
+        showToast('Oferta excluída.');
+        closeMenu();
+      } catch (err) {
+        showToast('Falha ao excluir. Tente novamente.');
+      }
+      return;
+    }
+  });
+
+  // ===== Ações no painel de RENOMEAR
+  surface?.addEventListener('click', async (e) => {
+    const btn = e.target.closest('[data-action]');
+    if (!btn) return;
+
+    const action = btn.getAttribute('data-action');
+
+    if (action === 'cancel-rename') {
+      resetRenameErrors();
+      renamePane.hidden = true;
+      listPane.hidden = false;
+      return;
+    }
+
+    if (action === 'confirm-rename') {
+      if (!currentOfferId) return;
+      const novoNome = (renameInput.value || '').trim();
+      if (!novoNome) {
+        renameError.textContent = 'Digite um nome válido.';
+        renameError.hidden = false;
+        renameError.style.display = 'block';
+        return;
+      }
+      resetRenameErrors();
+      try {
+        const res = await fetch(`/ofertas/${encodeURIComponent(currentOfferId)}/renomear`, {
+          method: 'POST',
+          headers: { 'Content-Type':'application/json' },
+          body: JSON.stringify({ novoNome })
+        });
+        if (!res.ok) throw new Error('bad_status');
+
+        currentOfferCard?.querySelector('.offer-name')?.replaceChildren(document.createTextNode(novoNome));
+        const btnDots = currentOfferCard?.querySelector('.offer-actions-inline');
+        if (btnDots) btnDots.setAttribute('data-offer-name', novoNome);
+
+        showToast('Nome atualizado.');
+        closeMenu();
+      } catch (err) {
+        renameError.textContent = 'Não foi possível renomear. Tente novamente.';
+        renameError.hidden = false;
+        renameError.style.display = 'block';
+      }
+      return;
+    }
+  });
+
+  // Fechar menu ao clicar fora / scroll / resize / ESC — mas NÃO quando o confirm TigerFy estiver aberto
+  document.addEventListener('click', (e) => {
+    if (menu.hidden) return;
+    if (confirmOpen()) return;
+    if (e.target.closest('.offer-actions-inline')) return;
+    if (!e.target.closest('#offerActionsMenu')) closeMenu();
+  }, true);
+
+  window.addEventListener('scroll', () => { if (!menu.hidden && !confirmOpen()) closeMenu(); }, { passive:true });
+  window.addEventListener('resize', () => { if (!menu.hidden && !confirmOpen()) closeMenu(); }, { passive:true });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !menu.hidden && !confirmOpen()) closeMenu(); });
+})();
+</script>
