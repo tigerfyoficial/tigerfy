@@ -82,140 +82,132 @@
       </div>
     </div>
 
-<!-- ===================== TIGERFY · PRINCIPAL / FRONT · v8 ===================== -->
-<section class="tfx8-front" data-content="front">
-  <div class="tfx8-grid">
+<!-- ========================= TIGERFY · PRINCIPAL / FRONT · v9 ========================= -->
+<section class="tfp9-front" data-slot="principal-front">
+  <div class="tfp9-grid">
 
-    <!-- ===================== COLUNA ESQUERDA ===================== -->
-    <div class="tfx8-col-left">
+    <!-- =============== COLUNA ESQUERDA =============== -->
+    <div class="tfp9-col-left">
 
-      <!-- CARD 1 · VSL PRINCIPAL & MÍDIAS -->
-      <article class="tfx8-card">
-        <header class="tfx8-card-head">
+      <!-- CARD · COPY + MÍDIA PRINCIPAL -->
+      <article class="tfp9-card">
+        <header class="tfp9-head">
+          <div class="tfp9-head-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M21 6.5v7a3 3 0 0 1-3 3H9l-4 3.2V16H6a3 3 0 0 1-3-3v-7a3 3 0 0 1 3-3h12a3 3 0 0 1 3 3Z"/></svg>
+          </div>
           <div>
-            <h3>VSL principal & mídias do front</h3>
-            <p>Defina o link da VSL principal, adicione mídias de apoio e sua ordem.</p>
-          </div>
-          <button class="tfx8-btn ghost xs" id="tfx8AddMedia" type="button">+ Adicionar mídia</button>
-        </header>
-
-        <!-- COPY DA VSL -->
-        <section class="tfx8-block">
-          <div class="tfx8-block-head">
-            <h4>Copy da VSL</h4>
-            <button class="tfx8-btn ghost xs" id="tfx8CopyRulesBtn" type="button">Regras</button>
-          </div>
-          <textarea id="front_vsl_copy" name="front_vsl_copy" class="tfx8-input ta compact" rows="3" placeholder="Descreva aqui a copy da sua VSL..."></textarea>
-          <small class="tfx8-help">Copy principal exibida junto à VSL no front.</small>
-        </section>
-
-        <!-- MÍDIAS DE APOIO -->
-        <section class="tfx8-block">
-          <div class="tfx8-block-head">
-            <h4>Mídias de apoio do front</h4>
-          </div>
-          <div class="tfx8-list" id="tfx8MediaList"><!-- linhas geradas no JS --></div>
-        </section>
-      </article>
-
-      <!-- CARD 3 · BOTÃO DE CTA (OPCIONAL) -->
-      <article class="tfx8-card">
-        <header class="tfx8-card-head">
-          <div>
-            <h3>Botão de CTA principal</h3>
-            <p>Define o call-to-action que aparece abaixo da VSL (opcional).</p>
-          </div>
-          <div class="tfx8-pills" id="tfx8CtaToggle" role="tablist" aria-label="Ativar CTA">
-            <button class="pill is-active" data-val="on" type="button">Sim</button>
-            <button class="pill" data-val="off" type="button">Não</button>
+            <h3>Copy da VSL & mídia principal</h3>
+            <p>Mensagem exibida junto à VSL e o link da mídia principal no Telegram.</p>
           </div>
         </header>
 
-        <div id="tfx8CtaFields" class="tfx8-grid2 tight">
-          <div class="tfx8-col">
-            <label class="tfx8-label">Texto do botão</label>
-            <input class="tfx8-input" id="front_cta_text" name="front_cta_text" placeholder="Ex.: Quero minha vaga, Acessar conteúdo VIP..." />
-          </div>
-          <div class="tfx8-col">
-            <label class="tfx8-label">URL da VSL</label>
-            <input class="tfx8-input" id="front_cta_url" name="front_cta_url" placeholder="https://..." />
-          </div>
+        <!-- Copy da VSL -->
+        <div class="tfp9-field">
+          <label class="tfp9-label">Copy da VSL</label>
+          <textarea class="tfp9-input tfp9-textarea" id="front_vsl_copy" name="front_vsl_copy" rows="4" placeholder="Descreva aqui a copy da sua VSL..."></textarea>
+          <small class="tfp9-help">Copy exibida junto à VSL principal no front.</small>
         </div>
 
-        <div class="tfx8-row between tight" id="tfx8CtaRulesRow">
-          <small class="tfx8-help">Esse botão controla a ação principal do front da oferta.</small>
-          <button class="tfx8-btn ghost xs" id="tfx8CtaRulesBtn" type="button">Regras</button>
+        <!-- Mídia principal -->
+        <div class="tfp9-field">
+          <label class="tfp9-label">Link da mídia principal (Telegram)</label>
+
+          <div class="tfp9-media-row">
+            <button type="button" class="tfp9-handle" title="Arrastar (visual)">
+              <svg width="14" height="14" viewBox="0 0 24 24"><path fill="currentColor" d="M7 6h2v2H7V6m4 0h2v2h-2V6m4 0h2v2h-2V6M7 11h2v2H7v-2m4 0h2v2h-2v-2m4 0h2v2h-2v-2M7 16h2v2H7v-2m4 0h2v2h-2v-2m4 0h2v2h-2v-2"/></svg>
+            </button>
+
+            <input class="tfp9-input tfp9-grow" id="front_media_url" name="front_media_url" placeholder="https://t.me/..." />
+
+            <button type="button" class="tfp9-icon danger" id="tfp9MediaClear" title="Limpar link">
+              <svg width="14" height="14" viewBox="0 0 24 24"><path fill="currentColor" d="M9 3h6l1 3h4v2H4V6h4l1-3m1 7v8h2v-8h-2m4 0v8h2v-8h-2Z"/></svg>
+            </button>
+          </div>
+        </div>
+      </article>
+
+      <!-- CARD · CTA (OPCIONAL) -->
+      <article class="tfp9-card">
+        <header class="tfp9-head">
+          <div class="tfp9-head-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M2 12c0-5.5 4.5-10 10-10s10 4.5 10 10-4.5 10-10 10S2 17.5 2 12Zm7-1h3V7l5 5-5 5v-4H9v-3Z"/></svg>
+          </div>
+          <div>
+            <h3>Botão de CTA principal (opcional)</h3>
+            <p>Define o botão exibido logo após a VSL.</p>
+          </div>
+          <div class="tfp9-pills" id="tfp9CtaToggle" role="tablist" aria-label="Ativar CTA">
+            <button type="button" class="tfp9-pill is-active" data-val="on">Sim</button>
+            <button type="button" class="tfp9-pill" data-val="off">Não</button>
+          </div>
+        </header>
+
+        <div id="tfp9CtaFields" class="tfp9-grid2">
+          <div class="tfp9-field">
+            <label class="tfp9-label">Texto do botão</label>
+            <input class="tfp9-input" id="front_cta_text" name="front_cta_text" placeholder="Ex.: Quero minha vaga, Acessar conteúdo VIP..." />
+          </div>
+          <div class="tfp9-field">
+            <label class="tfp9-label">URL da VSL</label>
+            <input class="tfp9-input" id="front_cta_url" name="front_cta_url" placeholder="https://..." />
+          </div>
         </div>
       </article>
     </div>
 
-    <!-- ===================== COLUNA DIREITA ===================== -->
-    <div class="tfx8-col-right">
-      <!-- CARD 4 · PLANOS DO FRONT -->
-      <article class="tfx8-card">
-        <header class="tfx8-card-head">
+    <!-- =============== COLUNA DIREITA =============== -->
+    <div class="tfp9-col-right">
+
+      <!-- CARD · PLANOS -->
+      <article class="tfp9-card">
+        <header class="tfp9-head">
+          <div class="tfp9-head-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M3 5h8v6H3V5m10 0h8v6h-8V5M3 13h8v6H3v-6m10 0h8v6h-8v-6Z"/></svg>
+          </div>
           <div>
             <h3>Planos exibidos no front</h3>
-            <p>Organize os planos que serão exibidos com botões para o lead escolher.</p>
+            <p>Organize os planos que o lead verá para escolher.</p>
           </div>
-          <button class="tfx8-btn ghost xs" id="tfx8AddPlan" type="button">+ Adicionar plano</button>
+          <div class="tfp9-actions">
+            <button class="tfp9-btn ghost xs" type="button" id="tfp9CreatePlan">+ Criar plano</button>
+          </div>
         </header>
 
-        <!-- COPY ANTES DOS BOTÕES -->
-        <section class="tfx8-sub">
-          <div class="tfx8-subbar">
-            <h4>Copy antes dos botões (opcional)</h4>
-            <div class="tfx8-inline">
-              <div class="tfx8-pills" id="tfx8PlansCopySend">
-                <button class="pill is-active" data-val="on" type="button">Enviar</button>
-                <button class="pill" data-val="off" type="button">Não enviar</button>
-              </div>
-              <button class="tfx8-btn ghost xs" id="tfx8PlansCopyRulesBtn" type="button">Regras</button>
+        <div class="tfp9-plans" id="tfp9PlansList">
+          <!-- Linhas de exemplo; pode começar vazio se quiser -->
+          <div class="tfp9-plan">
+            <button type="button" class="tfp9-handle" title="Arrastar (visual)">
+              <svg width="14" height="14" viewBox="0 0 24 24"><path fill="currentColor" d="M7 6h2v2H7V6m4 0h2v2h-2V6m4 0h2v2h-2V6M7 11h2v2H7v-2m4 0h2v2h-2v-2m4 0h2v2h-2v-2M7 16h2v2H7v-2m4 0h2v2h-2v-2m4 0h2v2h-2v-2"/></svg>
+            </button>
+            <div class="tfp9-plan-main">
+              <div class="tfp9-plan-name">Mensal</div>
+              <div class="tfp9-plan-meta">Valor: R$ 29,90 <span class="dot">•</span> Duração: 30 dias</div>
+            </div>
+            <div class="tfp9-plan-actions">
+              <button class="tfp9-btn ghost s" type="button" data-action="edit">Editar</button>
+              <button class="tfp9-btn danger s" type="button" data-action="remove">Excluir</button>
             </div>
           </div>
-          <textarea id="front_plans_copy" name="front_plans_copy" class="tfx8-input ta xs" rows="2" placeholder="Texto curto antes dos botões dos planos..."></textarea>
-        </section>
 
-        <!-- LISTA DE PLANOS -->
-        <div class="tfx8-list" id="tfx8PlansList"><!-- linhas geradas no JS --></div>
+          <div class="tfp9-plan">
+            <button type="button" class="tfp9-handle" title="Arrastar (visual)">
+              <svg width="14" height="14" viewBox="0 0 24 24"><path fill="currentColor" d="M7 6h2v2H7V6m4 0h2v2h-2V6m4 0h2v2h-2V6M7 11h2v2H7v-2m4 0h2v2h-2v-2m4 0h2v2h-2v-2M7 16h2v2H7v-2m4 0h2v2h-2v-2m4 0h2v2h-2v-2"/></svg>
+            </button>
+            <div class="tfp9-plan-main">
+              <div class="tfp9-plan-name">Mensal +PROIBIDOS</div>
+              <div class="tfp9-plan-meta">Valor: R$ 39,90 <span class="dot">•</span> Duração: 30 dias</div>
+            </div>
+            <div class="tfp9-plan-actions">
+              <button class="tfp9-btn ghost s" type="button" data-action="edit">Editar</button>
+              <button class="tfp9-btn danger s" type="button" data-action="remove">Excluir</button>
+            </div>
+          </div>
+        </div>
       </article>
     </div>
+
   </div>
 </section>
-
-<!-- MODAL -->
-<div class="tf-steps-overlay" id="stepsUnifiedModal" hidden>
-  <div class="tf-steps-dialog tf-steps-dialog--create-theme" role="dialog" aria-modal="true">
-    <div class="tf-steps-head tf-steps-head--center">
-      <h3>Gerenciar Etapas da Oferta</h3>
-      <p class="tf-steps-sub">Crie, selecione e organize as etapas desta oferta. As alterações só são aplicadas ao clicar em <strong>Salvar mudanças</strong>.</p>
-      <button type="button" class="tf-steps-close" id="btnCloseStepsUnified" aria-label="Fechar">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <line x1="18" y1="6" x2="6" y2="18"></line>
-          <line x1="6" y1="6" x2="18" y2="18"></line>
-        </svg>
-      </button>
-    </div>
-
-    <div class="tf-steps-body tf-steps-body--compact">
-      <div class="tf-steps-toolbar tf-steps-toolbar--tight">
-        <button type="button" class="btn-secondary btn-small" id="btnAddStepUnified" title="Adicionar nova etapa">
-          <span class="tf-icon-plus">＋</span>
-          Criar Etapa
-        </button>
-        <small class="tf-hint tf-toolbar-hint">Clique em <strong>Salvar Mudanças</strong> para aplicar.</small>
-      </div>
-
-      <ul class="tf-steps-list" id="tfStepsUnifiedList" aria-label="Lista de Etapas"></ul>
-    </div>
-
-    <div class="tf-steps-actions tf-steps-actions--create-theme">
-      <button type="button" class="btn-secondary" id="btnCancelStepsUnified">Cancelar</button>
-      <button type="button" class="btn-primary" id="btnSaveStepsUnified">Salvar Mudanças</button>
-    </div>
-  </div>
-</div>
 
 <style>
   :root{
@@ -443,112 +435,92 @@
   }
 </style>
 
+<!-- ========================= CSS escopado (.tfp9-*) ========================= -->
 <style>
-  .tfx8-front{ --gold:#ffcc00; --fg:#fff; --muted:#cfcfcf; --glass:rgba(255,255,255,.06); --line:rgba(255,255,255,.12); }
-  .tfx8-grid{ display:grid; grid-template-columns: 1.6fr 1.1fr; gap:14px; }
-  .tfx8-col-left,.tfx8-col-right{ display:flex; flex-direction:column; gap:14px; }
+  .tfp9-front{ --gold:#ffcc00; --glass:rgba(255,255,255,.06); --line:rgba(255,255,255,.12); --muted:#bcbcbc; --fg:#fff; }
+  .tfp9-grid{ display:grid; grid-template-columns: 1.6fr 1.1fr; gap:14px; }
+  .tfp9-col-left,.tfp9-col-right{ display:flex; flex-direction:column; gap:14px; }
 
-  .tfx8-card{
-    background:linear-gradient(180deg, rgba(10,10,10,.86), rgba(12,12,12,.78));
+  .tfp9-card{
+    background:linear-gradient(180deg, rgba(10,10,10,.86), rgba(12,12,12,.80));
     border:1px solid rgba(255,204,0,.14);
     border-radius:16px; padding:12px;
-    box-shadow:0 10px 28px rgba(0,0,0,.45), 0 0 18px rgba(255,204,0,.06) inset;
+    box-shadow:0 10px 24px rgba(0,0,0,.45), 0 0 16px rgba(255,204,0,.06) inset;
     backdrop-filter: blur(8px);
   }
-  .tfx8-card-head{ display:flex; align-items:flex-start; justify-content:space-between; gap:12px; margin-bottom:10px;
+  .tfp9-head{
+    display:flex; align-items:flex-start; justify-content:space-between; gap:12px;
     padding:8px 10px; border-radius:12px;
     background:linear-gradient(90deg, rgba(255,204,0,.08), rgba(255,204,0,.02));
-    box-shadow:inset 0 0 0 1px rgba(255,204,0,.10);
+    box-shadow:inset 0 0 0 1px rgba(255,204,0,.10); margin-bottom:10px;
   }
-  .tfx8-card-head h3{ margin:0; color:var(--gold); font-size:1.06rem; letter-spacing:.2px; }
-  .tfx8-card-head p{ margin:2px 0 0; color:var(--muted); font-size:.9rem; }
+  .tfp9-head h3{ margin:0; color:var(--gold); font-size:1.06rem; letter-spacing:.2px; }
+  .tfp9-head p{ margin:2px 0 0; color:var(--muted); font-size:.9rem; }
+  .tfp9-head-icon{ width:28px; height:28px; border-radius:10px; display:flex; align-items:center; justify-content:center;
+                   background:rgba(255,255,255,.06); color:#e8e8e8; border:1px solid rgba(255,255,255,.12); }
 
-  .tfx8-block{ border:1px solid var(--line); background:var(--glass); border-radius:14px; padding:10px; }
-  .tfx8-block+.tfx8-block{ margin-top:10px; }
-  .tfx8-block-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
-  .tfx8-block-head h4{ margin:0; color:#eede9a; font-size:.98rem; }
+  .tfp9-field{ display:flex; flex-direction:column; gap:6px; }
+  .tfp9-field + .tfp9-field{ margin-top:10px; }
 
-  .tfx8-sub{ border:1px solid var(--line); background:var(--glass); border-radius:14px; padding:10px; margin-bottom:10px; }
-  .tfx8-subbar{ display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
-  .tfx8-subbar h4{ margin:0; color:#eede9a; font-size:.96rem; }
+  .tfp9-label{ color:#ececec; font-weight:700; font-size:.9rem; }
+  .tfp9-help{ color:var(--muted); font-size:.86rem; }
 
-  .tfx8-grid2{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
-  .tfx8-grid2.tight{ gap:8px; }
-  .tfx8-col{ display:flex; flex-direction:column; gap:6px; }
-
-  .tfx8-row{ display:flex; gap:10px; align-items:center; margin-top:8px; }
-  .tfx8-row.between{ justify-content:space-between; }
-  .tfx8-row.tight{ gap:8px; margin-top:6px; }
-  .tfx8-inline{ display:flex; align-items:center; gap:8px; }
-
-  .tfx8-label{ color:#ececec; font-weight:700; font-size:.9rem; }
-  .tfx8-help{ color:#bdbdbd; font-size:.86rem; }
-
-  .tfx8-input{
-    width:100%; padding:9px 12px; border-radius:12px;
-    border:1px solid rgba(255,255,255,.20); background:rgba(255,255,255,.06);
-    color:#fff; font-size:.92rem; outline:none; transition:border-color .18s, box-shadow .18s;
+  .tfp9-input{
+    width:100%; padding:10px 12px; border-radius:12px; color:#fff; font-size:.94rem;
+    border:1px solid rgba(255,255,255,.20); background:rgba(255,255,255,.06); outline:none;
+    transition: border-color .18s, box-shadow .18s;
   }
-  .tfx8-input:focus{ border-color:var(--gold); box-shadow:0 0 0 2px rgba(255,204,0,.22); }
-  .tfx8-input.ta{ min-height:88px; resize:vertical; }
-  .tfx8-input.ta.compact{ min-height:56px; }
-  .tfx8-input.ta.xs{ min-height:48px; }
+  .tfp9-input:focus{ border-color:var(--gold); box-shadow:0 0 0 2px rgba(255,204,0,.22); }
+  .tfp9-textarea{ min-height:100px; resize:vertical; }
 
-  .tfx8-pills{ display:flex; gap:6px; flex-wrap:wrap; }
-  .pill{
-    height:28px; padding:0 12px; border-radius:999px; border:1px solid rgba(255,255,255,.18);
-    background:rgba(255,255,255,.05); color:#eee; font-weight:800; font-size:.86rem; cursor:pointer;
+  .tfp9-media-row{ display:grid; grid-template-columns: 32px 1fr 34px; gap:8px; align-items:center; }
+  .tfp9-grow{ width:100%; }
+  .tfp9-handle{
+    width:32px; height:32px; border-radius:10px; border:1px dashed rgba(255,255,255,.18);
+    background:rgba(255,255,255,.06); color:#d5d5d5; display:flex; align-items:center; justify-content:center; cursor:grab;
   }
-  .pill:hover{ background:rgba(255,255,255,.10); }
-  .pill.is-active{ background:rgba(255,204,0,.12); color:var(--gold); border-color:rgba(255,204,0,.45); box-shadow:0 0 0 1px rgba(255,204,0,.25); }
+  .tfp9-icon{
+    width:32px; height:32px; border-radius:10px; border:1px solid rgba(255,255,255,.18);
+    background:rgba(255,255,255,.06); color:#eee; display:flex; align-items:center; justify-content:center; cursor:pointer;
+  }
+  .tfp9-icon.danger:hover{ background:rgba(255,80,80,.16); border-color:rgba(255,80,80,.36); color:#ff9a9a; }
 
-  .tfx8-btn.ghost{
-    height:30px; padding:6px 12px; border-radius:10px; font-weight:800; font-size:.86rem; color:#eee;
-    border:1px solid rgba(255,255,255,.16); background:rgba(255,255,255,.07); cursor:pointer;
-  }
-  .tfx8-btn.ghost:hover{ background:rgba(255,255,255,.12); }
+  .tfp9-grid2{ display:grid; grid-template-columns: 1fr 1fr; gap:10px; }
 
-  .tfx8-list{ display:flex; flex-direction:column; gap:8px; }
+  .tfp9-pills{ display:flex; gap:6px; }
+  .tfp9-pill{
+    height:28px; padding:0 12px; border-radius:999px; border:1px solid rgba(255,255,255,.16);
+    background:rgba(255,255,255,.07); color:#eee; font-weight:800; font-size:.86rem; cursor:pointer;
+  }
+  .tfp9-pill:hover{ background:rgba(255,255,255,.12); }
+  .tfp9-pill.is-active{ background:rgba(255,204,0,.12); color:var(--gold); border-color:rgba(255,204,0,.45); box-shadow:0 0 0 1px rgba(255,204,0,.22); }
 
-  /* Linhas (mídia / plano) */
-  .tfx8-line{
-    display:grid; gap:8px; align-items:center; padding:8px;
-    border:1px solid var(--line); background:var(--glass); border-radius:12px;
+  .tfp9-actions{ display:flex; gap:8px; align-items:center; }
+  .tfp9-btn{
+    border:1px solid rgba(255,255,255,.16); background:rgba(255,255,255,.07); color:#eee;
+    padding:8px 12px; border-radius:10px; cursor:pointer; font-weight:800; font-size:.88rem;
   }
-  .tfx8-line.media{ grid-template-columns:26px 28px 1fr minmax(240px, 310px) minmax(86px,auto) 32px; }
-  .tfx8-line.plan { grid-template-columns:26px 1fr 140px minmax(86px,auto) 32px; }
+  .tfp9-btn.ghost.xs{ height:30px; padding:6px 10px; font-size:.84rem; }
+  .tfp9-btn.s{ height:28px; padding:4px 10px; font-size:.82rem; }
+  .tfp9-btn.danger{ background:rgba(255,80,80,.14); border-color:rgba(255,80,80,.32); color:#ffb1b1; }
+  .tfp9-btn.danger:hover{ background:rgba(255,80,80,.20); }
 
-  .tfx8-handle{
-    width:26px; height:26px; border-radius:8px; border:1px dashed rgba(255,255,255,.18);
-    display:flex; align-items:center; justify-content:center; color:#bdbdbd; cursor:grab; user-select:none;
+  .tfp9-plans{ display:flex; flex-direction:column; gap:10px; }
+  .tfp9-plan{
+    display:grid; grid-template-columns: 32px 1fr auto; gap:10px; align-items:center;
+    padding:10px; border-radius:12px; border:1px solid var(--line); background:var(--glass);
+    transition: box-shadow .18s, border-color .18s;
   }
-  .tfx8-index{
-    width:28px; height:28px; border-radius:8px; display:flex; align-items:center; justify-content:center;
-    border:1px solid rgba(255,255,255,.18); background:rgba(255,255,255,.07); color:#eee; font-weight:800; font-size:.86rem;
-  }
-  .tfx8-actions{ display:flex; gap:8px; justify-self:end; }
-  .tfx8-icon{
-    width:30px; height:30px; border-radius:8px; display:flex; align-items:center; justify-content:center;
-    border:1px solid rgba(255,255,255,.18); background:rgba(255,255,255,.07); color:#eee; cursor:pointer;
-  }
-  .tfx8-icon:hover{ background:rgba(255,60,60,.16); border-color:rgba(255,60,60,.35); color:#ff8f8f; }
-  .tfx8-pos{ min-width:250px; }
+  .tfp9-plan:hover{ border-color:rgba(255,204,0,.28); box-shadow:0 0 0 1px rgba(255,204,0,.14) inset; }
+  .tfp9-plan-name{ color:#fff; font-weight:700; font-size:.98rem; }
+  .tfp9-plan-meta{ color:#d8d8d8; font-size:.88rem; }
+  .tfp9-plan-meta .dot{ opacity:.5; margin:0 6px; }
 
-  /* Popover/Regras */
-  .tfx8-pop{
-    position:fixed; z-index:3500; min-width:320px;
-    background:rgba(10,10,10,.92); border:1px solid rgba(255,204,0,.28); border-radius:12px;
-    box-shadow:0 18px 56px rgba(0,0,0,.65); padding:12px; backdrop-filter: blur(12px);
-  }
-  .tfx8-pop h4{ margin:0 0 8px; color:var(--gold); font-size:.98rem; }
-  .tfx8-rule{ display:flex; align-items:center; gap:8px; padding:6px; border-radius:10px; }
-  .tfx8-rule:hover{ background:rgba(255,255,255,.06); }
-  .tfx8-rule input[type="checkbox"]{ width:16px; height:16px; accent-color:var(--gold); }
-  .tfx8-rule .inline{ display:flex; align-items:center; gap:6px; margin-left:auto; }
-  .tfx8-rule .inline input{ width:90px; }
+  .tfp9-plan-actions{ display:flex; gap:8px; }
 
   @media (max-width:1100px){
-    .tfx8-grid{ grid-template-columns:1fr; }
+    .tfp9-grid{ grid-template-columns:1fr; }
+    .tfp9-grid2{ grid-template-columns:1fr; }
   }
 </style>
 
