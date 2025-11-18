@@ -85,7 +85,103 @@
     </div>
 
     <!-- CONTEÚDO RENDERIZADO -->
-    <section class="tf-content" id="tfContentArea"></section>
+    <!-- FRONT (Principal) — substituir o bloco antigo por este -->
+<section id="tfFront" class="tf-front-grid">
+  <!-- COLUNA ESQUERDA -->
+  <div class="tf-col-left">
+
+    <!-- CARD 1 — VSL -->
+    <article class="tf-card">
+      <header class="tf-card-head">
+        <!-- ícone VSL (tela com play) -->
+        <span class="tf-ico tf-ico-vsl" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="5" width="18" height="14" rx="2"></rect>
+            <polygon points="10,9 16,12 10,15"></polygon>
+          </svg>
+        </span>
+        <h3>VSL</h3>
+      </header>
+
+      <label class="tf-field-label">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M22 12c0 5.523-4.477 10-10 10S2 17.523 2 12 6.477 2 12 2"></path>
+          <path d="M22 12h-4"></path>
+          <path d="M12 2v4"></path>
+        </svg>
+        Link da VSL Principal (t.me…)
+      </label>
+      <input id="front_vsl_link" type="url" class="tf-input"
+             placeholder="https://t.me/seu_bot?start=..."
+             autocomplete="off">
+    </article>
+
+    <!-- CARD 2 — Copy da VSL -->
+    <article class="tf-card">
+      <header class="tf-card-head">
+        <!-- ícone documento/texto -->
+        <span class="tf-ico" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <path d="M14 2v6h6"></path>
+            <path d="M16 13H8"></path>
+            <path d="M16 17H8"></path>
+            <path d="M10 9H8"></path>
+          </svg>
+        </span>
+        <h3>Copy da VSL Principal</h3>
+      </header>
+
+      <textarea id="front_vsl_copy" class="tf-textarea" rows="5"
+                placeholder="Escreva a copy da VSL (mínimo visual, até 5 linhas confortáveis)…"></textarea>
+    </article>
+
+    <!-- CARD 3 — CTA opcional -->
+    <article class="tf-card">
+      <header class="tf-card-head">
+        <!-- ícone CTA (cursor/bolt) -->
+        <span class="tf-ico" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z"></path>
+          </svg>
+        </span>
+        <h3>Botão de CTA para Planos (opcional)</h3>
+      </header>
+
+      <div class="tf-switch-line">
+        <label class="tf-switch">
+          <input type="checkbox" id="front_cta_enabled">
+          <span class="slider"></span>
+        </label>
+        <span>Ativado</span>
+      </div>
+
+      <label class="tf-field-label">Nome do Botão</label>
+      <input id="front_cta_label" type="text" class="tf-input" placeholder="Ex.: Obter Vaga" disabled>
+    </article>
+  </div>
+
+  <!-- COLUNA DIREITA (CARD 4 — Planos) -->
+  <aside class="tf-col-right">
+    <article class="tf-card">
+      <header class="tf-card-head">
+        <span class="tf-ico" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="4" width="18" height="4" rx="1"></rect>
+            <rect x="3" y="10" width="18" height="4" rx="1"></rect>
+            <rect x="3" y="16" width="18" height="4" rx="1"></rect>
+          </svg>
+        </span>
+        <h3>Planos</h3>
+        <button type="button" id="btnAddPlan" class="btn-primary btn-xs">Novo Plano</button>
+      </header>
+
+      <p class="tf-hint">Nenhum plano ainda. Clique em “Novo Plano”.<br>Máximo de 10 planos. Adição inline, sem mini tela.</p>
+      <div id="plansList" class="tf-plans-list"></div>
+    </article>
+  </aside>
+</section>
+
   </div>
 </div>
 
@@ -267,7 +363,120 @@
   .btn-small{ padding:8px 12px; border:none; border-radius:10px; background:linear-gradient(90deg,#ffcc00,#d4a100); color:#171300; font-weight:700; cursor:pointer; }
   .btn-secondary{ border:none; border-radius:10px; padding:10px 22px; font-weight:600; cursor:pointer; background:rgba(255,255,255,0.12); color:#fff; border:1px solid rgba(255,255,0,0.10); transition:.18s ease; }
   .btn-primary{ border:none; border-radius:10px; padding:10px 22px; font-weight:600; cursor:pointer; background:linear-gradient(90deg,#ffcc00,#d4a100); color:#171300; box-shadow:0 0 10px rgba(255,204,0,0.35); }
+/* ===== Principal > Front (apenas) ===== */
+.tf-front-grid{
+  display:grid;
+  grid-template-columns: 1fr 420px;
+  gap:18px;
+  margin-top:12px;
+}
+.tf-col-left{ display:flex; flex-direction:column; gap:14px; }
+.tf-col-right{ display:flex; flex-direction:column; gap:14px; }
+
+.tf-card{
+  background: rgba(0,0,0,0.70);
+  border:1px solid rgba(255,204,0,0.12);  /* SOLID: remove pontilhado */
+  border-radius:16px;
+  padding:14px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+}
+
+.tf-card-head{
+  display:flex; align-items:center; gap:10px; margin-bottom:10px;
+  padding-bottom:6px; border-bottom:1px solid rgba(255,255,255,0.08);
+}
+.tf-card-head h3{ margin:0; font-size:1.05rem; font-weight:800; color:#ffcc00; }
+.tf-ico{ display:inline-flex; align-items:center; justify-content:center; color:#ffcc00; }
+.tf-ico-vsl{ filter: drop-shadow(0 0 6px rgba(255,204,0,0.25)); }
+
+.tf-field-label{
+  display:flex; gap:8px; align-items:center;
+  font-size:.92rem; color:#cfcfcf; margin-bottom:6px;
+}
+
+.tf-input, .tf-textarea{
+  width:100%; border-radius:12px; outline:none;
+  border:1px solid rgba(255,255,255,0.22);
+  background:rgba(255,255,255,0.06);
+  color:#fff; padding:10px 12px; font-size:.95rem;
+  transition:border-color .2s, box-shadow .2s;
+}
+.tf-input:focus, .tf-textarea:focus{
+  border-color:#ffcc00; box-shadow:0 0 0 2px rgba(255,204,0,0.28);
+}
+
+/* Switch CTA */
+.tf-switch-line{ display:flex; align-items:center; gap:10px; margin:2px 0 10px; }
+.tf-switch{ position:relative; width:42px; height:24px; display:inline-block; }
+.tf-switch input{ display:none; }
+.tf-switch .slider{
+  position:absolute; inset:0; background:rgba(255,255,255,0.14);
+  border:1px solid rgba(255,255,255,0.22);
+  border-radius:999px; transition:.18s ease;
+}
+.tf-switch .slider:before{
+  content:""; position:absolute; height:18px; width:18px; left:3px; top:2px;
+  background:#fff; border-radius:50%; transition:.18s ease;
+}
+.tf-switch input:checked + .slider{
+  background:linear-gradient(90deg,#ffcc00,#d4a100);
+  border-color:rgba(255,204,0,0.45);
+}
+.tf-switch input:checked + .slider:before{ transform:translateX(18px); }
+
+.btn-xs{ padding:8px 12px; font-size:.85rem; border-radius:10px; }
+
+/* Planos (placeholder simples por enquanto) */
+.tf-hint{ color:#cfcfcf; font-size:.92rem; }
+.tf-plans-list{ display:flex; flex-direction:column; gap:8px; margin-top:8px; }
+
+/* Deixe o subtab Front com mesmo destaque do Principal quando ativo */
+.tf-subtabs .subtab.active{
+  background:rgba(255,255,255,0.10);
+  border-color:rgba(255,255,255,0.22);
+  color:#fff;
+  box-shadow:0 0 18px rgba(255,204,0,0.18);
+}
+@media (max-width: 1100px){
+  .tf-front-grid{ grid-template-columns: 1fr; }
+}
+
 </style>
+
+<script>
+(function(){
+  window.tfDraftSettings = window.tfDraftSettings || {};
+  const S = window.tfDraftSettings;
+  function setFront(k,v){ S.front = S.front || {}; S.front[k]=v; }
+
+  const elLink = document.getElementById('front_vsl_link');
+  const elCopy = document.getElementById('front_vsl_copy');
+  const elCtaOn = document.getElementById('front_cta_enabled');
+  const elCtaLbl = document.getElementById('front_cta_label');
+
+  // Prefill a partir da etapa atual, se existir
+  try{
+    const cur = (window.currentStep && window.currentStep.settings) ? window.currentStep.settings : {};
+    if (cur.front){
+      if (cur.front.vsl_link) elLink.value = cur.front.vsl_link;
+      if (cur.front.vsl_copy) elCopy.value = cur.front.vsl_copy;
+      if (typeof cur.front.cta_enabled === 'boolean'){ elCtaOn.checked = cur.front.cta_enabled; elCtaLbl.disabled = !elCtaOn.checked; }
+      if (cur.front.cta_label) elCtaLbl.value = cur.front.cta_label;
+    }
+  }catch(_){}
+
+  // Bind
+  elLink && elLink.addEventListener('input', e => setFront('vsl_link', e.target.value));
+  elCopy && elCopy.addEventListener('input', e => setFront('vsl_copy', e.target.value));
+  if (elCtaOn){
+    elCtaOn.addEventListener('change', () => {
+      elCtaLbl.disabled = !elCtaOn.checked;
+      setFront('cta_enabled', elCtaOn.checked);
+    });
+  }
+  elCtaLbl && elCtaLbl.addEventListener('input', e => setFront('cta_label', e.target.value));
+})();
+</script>
 
 <script>
 (function(){
