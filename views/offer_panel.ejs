@@ -82,9 +82,101 @@
       </div>
     </div>
 
-    <section class="tf-content-placeholder"></section>
+<!-- ===== TIGERFY • PRINCIPAL > FRONT • V6 BÁSICO ===== -->
+<section class="tf-front-v6" id="frontV6" hidden>
+  <div class="tf-front-grid">
+    <!-- COLUNA ESQUERDA (65%) -->
+    <div class="tf-col-left">
+      <!-- BLOCO 1: Link da VSL principal -->
+      <div class="tf-card">
+        <div class="tf-card-head">
+          <span class="tf-card-icon" aria-hidden="true">
+            <!-- vídeo / VSL -->
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="13" height="14" rx="2"/><path d="M16 8l5-3v14l-5-3z"/></svg>
+          </span>
+          <div class="tf-card-titles">
+            <h3>Link da VSL principal</h3>
+            <small>Insira o link da mídia principal no Telegram.</small>
+          </div>
+        </div>
+
+        <div class="tf-row tight">
+          <span class="tf-drag-mini" title="Arrastar (visual)"><svg viewBox="0 0 20 20" width="14" height="14" fill="currentColor"><circle cx="6" cy="5" r="1.3"/><circle cx="10" cy="5" r="1.3"/><circle cx="14" cy="5" r="1.3"/><circle cx="6" cy="10" r="1.3"/><circle cx="10" cy="10" r="1.3"/><circle cx="14" cy="10" r="1.3"/></svg></span>
+          <input class="tf-input" name="front_vsl_url" placeholder="https://t.me/..." autocomplete="off">
+          <button class="tf-icon-btn danger" type="button" title="Remover">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- BLOCO 2: Copy da VSL principal -->
+      <div class="tf-card">
+        <div class="tf-card-head">
+          <span class="tf-card-icon" aria-hidden="true">
+            <!-- script / texto -->
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
+          </span>
+          <div class="tf-card-titles">
+            <h3>Copy da VSL principal</h3>
+            <small>Mensagem exibida junto à VSL.</small>
+          </div>
+        </div>
+
+        <textarea class="tf-textarea" name="front_vsl_copy" rows="4" placeholder="Descreva aqui a copy da sua VSL..."></textarea>
+      </div>
+
+      <!-- BLOCO 3: CTA para Planos (opcional) -->
+      <div class="tf-card">
+        <div class="tf-card-head">
+          <span class="tf-card-icon" aria-hidden="true">
+            <!-- ação / CTA -->
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z"/></svg>
+          </span>
+          <div class="tf-card-titles">
+            <h3>Botão de CTA para planos (opcional)</h3>
+            <small>Exibido logo abaixo da VSL.</small>
+          </div>
+          <div class="tf-toggle" id="ctaToggle" role="group" aria-label="Ativar CTA">
+            <button type="button" data-on="1" class="active">Sim</button>
+            <button type="button" data-on="0">Não</button>
+          </div>
+        </div>
+
+        <label class="tf-label" for="ctaText">Nome do botão</label>
+        <input class="tf-input" id="ctaText" name="front_cta_text" placeholder="Ex.: Quero minha vaga">
+      </div>
+    </div>
+
+    <!-- COLUNA DIREITA (35%) -->
+    <div class="tf-col-right">
+      <!-- BLOCO 4: Planos -->
+      <div class="tf-card">
+        <div class="tf-card-head">
+          <span class="tf-card-icon" aria-hidden="true">
+            <!-- planos / pricing -->
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="7" height="16" rx="2"/><rect x="14" y="8" width="7" height="12" rx="2"/></svg>
+          </span>
+          <div class="tf-card-titles">
+            <h3>Planos exibidos no front</h3>
+            <small>Organize os planos que o lead verá para escolher.</small>
+          </div>
+          <button class="btn-primary btn-small" id="btnAddPlan" type="button">+ Novo plano</button>
+        </div>
+
+        <ul class="tf-plan-list" id="planList">
+          <li class="tf-plan-row">
+            <span class="tf-drag-mini" title="Arrastar (visual)"><svg viewBox="0 0 20 20" width="14" height="14" fill="currentColor"><circle cx="6" cy="5" r="1.3"/><circle cx="10" cy="5" r="1.3"/><circle cx="14" cy="5" r="1.3"/><circle cx="6" cy="10" r="1.3"/><circle cx="10" cy="10" r="1.3"/><circle cx="14" cy="10" r="1.3"/></svg></span>
+            <input class="tf-input" name="plan_name[]" placeholder="Nome do plano">
+            <input class="tf-input tf-price" name="plan_price[]" placeholder="R$ 29,90">
+            <button class="tf-icon-btn" type="button" data-role="delete-plan" title="Excluir">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+            </button>
+          </li>
+        </ul>
+      </div>
+    </div>
   </div>
-</div>
+</section>
 
 <!-- MODAL -->
 <div class="tf-steps-overlay" id="stepsUnifiedModal" hidden>
@@ -119,6 +211,159 @@
     </div>
   </div>
 </div>
+
+<style>
+  /* ====== ESTILOS FRONT V6 (compacto, translúcido, dourado sutil) ====== */
+  .tf-front-v6{ margin-top:16px; }
+  .tf-front-grid{
+    display:grid; grid-template-columns: 65% 35%; gap:16px;
+  }
+  .tf-col-left, .tf-col-right{ display:flex; flex-direction:column; gap:14px; }
+
+  .tf-card{
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.10);
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+    padding:14px;
+  }
+  .tf-card-head{ display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+  .tf-card-icon{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:28px; height:28px; border-radius:10px;
+    border:1px solid rgba(255,255,255,0.14); background: rgba(255,255,255,0.06);
+    color:#ffcc00;
+  }
+  .tf-card-titles h3{ margin:0; font-size:1.05rem; font-weight:800; letter-spacing:.2px; }
+  .tf-card-titles small{ color:#c9c9c9; display:block; margin-top:2px; }
+
+  .tf-row{ display:flex; align-items:center; gap:10px; }
+  .tf-row.tight{ gap:8px; }
+
+  .tf-drag-mini{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:30px; height:34px; border-radius:9px;
+    border:1px solid rgba(255,255,255,0.12); background:rgba(255,255,255,0.06);
+    color:#ddd; user-select:none;
+  }
+
+  .tf-input, .tf-textarea{
+    width:100%; border-radius:12px; outline:none;
+    border:1px solid rgba(255,255,255,0.16);
+    background: rgba(0,0,0,0.35); color:#fff;
+    padding:10px 12px; font-size:.95rem;
+    transition: border-color .15s, box-shadow .15s;
+  }
+  .tf-input::placeholder, .tf-textarea::placeholder{ color:#bfbfbf; }
+  .tf-input:focus, .tf-textarea:focus{
+    border-color: rgba(255,204,0,0.55);
+    box-shadow: 0 0 0 2px rgba(255,204,0,0.20);
+  }
+  .tf-textarea{ resize: vertical; min-height:84px; }
+
+  .tf-label{ display:block; margin:8px 0 6px; color:#dcdcdc; font-weight:700; font-size:.9rem; }
+
+  .tf-icon-btn{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:34px; height:34px; border-radius:10px; padding:0;
+    border:1px solid rgba(255,255,255,0.12); background:rgba(255,255,255,0.06);
+    color:#eee; cursor:pointer; transition:.15s ease;
+  }
+  .tf-icon-btn:hover{ background:rgba(255,255,255,0.10); }
+  .tf-icon-btn.danger{ border-color: rgba(255,115,115,.35); }
+
+  /* Toggle Sim/Não */
+  .tf-toggle{ margin-left:auto; display:inline-flex; padding:3px; border:1px solid rgba(255,255,255,0.14); border-radius:999px; background:rgba(255,255,255,0.06); gap:4px; }
+  .tf-toggle button{
+    height:28px; padding:0 12px; border-radius:999px; border:none; cursor:pointer;
+    background:transparent; color:#e8e8e8; font-weight:800;
+  }
+  .tf-toggle button.active{ background: linear-gradient(90deg,#ffcc00,#d4a100); color:#1a1400; }
+
+  /* Planos */
+  .tf-plan-list{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:10px; }
+  .tf-plan-row{
+    display:grid; grid-template-columns: 34px 1fr 140px 38px; gap:8px; align-items:center;
+    padding:8px; border-radius:12px;
+    border:1px solid rgba(255,255,255,0.12); background:rgba(255,255,255,0.04);
+  }
+  .tf-price{ max-width:140px; }
+
+  /* Desabilitado */
+  .is-disabled{ opacity:.55; pointer-events:none; }
+
+  @media (max-width: 980px){
+    .tf-front-grid{ grid-template-columns: 1fr; }
+  }
+</style>
+
+<script>
+(function(){
+  // Mostrar a UI somente quando Principal > Front estiver ativo
+  var frontSection = document.getElementById('frontV6');
+  var placeholder  = document.querySelector('.tf-content-placeholder');
+  function showFront(on){
+    if (!frontSection || !placeholder) return;
+    if (on){ frontSection.hidden = false; placeholder.style.display = 'none'; }
+    else   { frontSection.hidden = true;  placeholder.style.display = ''; }
+  }
+  // estado inicial: já entramos em Principal > Front por padrão
+  showFront(true);
+
+  // Troca de sub-abas
+  document.querySelectorAll('.tf-subtabs .subtab').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      showFront(btn.dataset.subtab === 'front' && document.querySelector('.tf-tabs-main .tab.active')?.dataset.tab === 'principal');
+    });
+  });
+  // Troca de abas principais
+  document.querySelectorAll('.tf-tabs-main .tab').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var on = btn.dataset.tab === 'principal' && document.querySelector('.tf-subtabs .subtab.active')?.dataset.subtab === 'front';
+      showFront(on);
+    });
+  });
+
+  // Toggle CTA (Sim/Não)
+  var ctaToggle = document.getElementById('ctaToggle');
+  var ctaText   = document.getElementById('ctaText');
+  if (ctaToggle){
+    ctaToggle.addEventListener('click', function(e){
+      if (e.target.tagName !== 'BUTTON') return;
+      Array.from(ctaToggle.children).forEach(function(b){ b.classList.remove('active'); });
+      e.target.classList.add('active');
+      var on = e.target.dataset.on === '1';
+      ctaText.classList.toggle('is-disabled', !on);
+      ctaText.disabled = !on;
+    });
+  }
+
+  // Planos: adicionar/remover linhas (sem modal, sem drag real)
+  var planList  = document.getElementById('planList');
+  var btnAdd    = document.getElementById('btnAddPlan');
+  var dotsSvg   = '<svg viewBox="0 0 20 20" width="14" height="14" fill="currentColor"><circle cx="6" cy="5" r="1.3"/><circle cx="10" cy="5" r="1.3"/><circle cx="14" cy="5" r="1.3"/><circle cx="6" cy="10" r="1.3"/><circle cx="10" cy="10" r="1.3"/><circle cx="14" cy="10" r="1.3"/></svg>';
+  var trashSvg  = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>';
+
+  function addPlanRow(){
+    var li = document.createElement('li');
+    li.className = 'tf-plan-row';
+    li.innerHTML =
+      '<span class="tf-drag-mini" title="Arrastar (visual)">'+dotsSvg+'</span>' +
+      '<input class="tf-input" name="plan_name[]" placeholder="Nome do plano">' +
+      '<input class="tf-input tf-price" name="plan_price[]" placeholder="R$ 29,90">' +
+      '<button class="tf-icon-btn" type="button" data-role="delete-plan" title="Excluir">'+trashSvg+'</button>';
+    planList.appendChild(li);
+  }
+  if (btnAdd) btnAdd.addEventListener('click', addPlanRow);
+  if (planList){
+    planList.addEventListener('click', function(e){
+      var btn = e.target.closest('[data-role="delete-plan"]');
+      if (btn){ e.preventDefault(); btn.closest('.tf-plan-row')?.remove(); }
+    });
+  }
+})();
+</script>
+<!-- ===== /TIGERFY • PRINCIPAL > FRONT • V6 BÁSICO ===== -->
 
 <style>
   :root{
