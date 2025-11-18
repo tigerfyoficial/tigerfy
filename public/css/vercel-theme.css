@@ -1,0 +1,129 @@
+/* ====== Vercel/Supabase Clone – TigerFy minimal ====== */
+:root{
+  --bg:#0a0a0a; --panel:#0f0f0f; --raised:#121212;
+  --text:#eaeaea; --muted:#a1a1a1; --subtle:#8a8a8a;
+  --border:#1b1b1b; --hover:#141414; --active:#161616;
+  --brand:#ffffff; --focus: #ffffff;
+  --radius:12px; --radius-sm:10px; --radius-lg:16px;
+  --shadow:0 10px 30px rgba(0,0,0,.35);
+}
+
+/* Resetzinho decente */
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0; background:var(--bg); color:var(--text);
+  font:14px/1.45 system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial, sans-serif;
+}
+
+/* ===== Topbar ===== */
+.v-topnav{
+  position:sticky; top:0; z-index:1000; height:56px;
+  display:flex; align-items:center; gap:10px; padding:0 16px;
+  background:var(--bg); border-bottom:1px solid var(--border);
+}
+.v-brand{display:inline-flex; align-items:center; justify-content:center; color:#fff; width:28px;height:28px; text-decoration:none; opacity:.95}
+.v-brand:hover{opacity:1}
+.v-tabs{display:flex; gap:4px; margin:0 6px; padding:0; list-style:none}
+.v-tabs a{
+  display:inline-flex; align-items:center; height:32px; padding:0 12px;
+  border-radius:8px; color:#cfcfcf; text-decoration:none;
+}
+.v-tabs a:hover{background:var(--hover); color:#fff}
+.v-tabs a.is-active{color:#fff; background:var(--hover); box-shadow:inset 0 -2px 0 var(--brand)}
+.v-flex{flex:1}
+.v-right{display:flex; align-items:center; gap:12px}
+.v-user{font-size:12px; color:var(--subtle)}
+.v-avatar{width:28px;height:28px;border-radius:999px;border:1px solid var(--border);background:var(--active);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.v-avatar span{width:10px;height:10px;border-radius:999px;background:#2f2f2f}
+
+/* ===== Layout container ===== */
+.v-main{padding:24px 20px 40px}
+@media(min-width:1100px){ .v-main{padding:28px 32px 56px} }
+
+/* ===== Cards / painéis ===== */
+.v-card, .offer-card, .api-pix .gateway-card, .tiger-offers-list .offer-card,
+.tiger-offer-create .card, .tiger-dashboard .stat-card{
+  background:var(--panel); border:1px solid var(--border); border-radius:var(--radius);
+  box-shadow:none; transition:background .15s,border-color .15s, transform .06s;
+}
+.v-card:hover, .tiger-offers-list .offer-card:hover{ background:var(--hover); border-color:#222; transform:translateY(-1px)}
+
+/* Headers de seção */
+.v-section{background:var(--panel); border:1px solid var(--border); border-radius:var(--radius); padding:14px}
+.v-section .v-title{display:flex; align-items:center; gap:10px; font-weight:700}
+.v-section .v-title svg{opacity:.9}
+
+/* ===== Inputs ===== */
+input[type="text"], input[type="email"], input[type="password"], textarea, select{
+  width:100%; color:var(--text); background:var(--active);
+  border:1px solid var(--border); border-radius:10px; outline:none;
+  padding:10px 12px; transition:border-color .15s, background .15s;
+}
+textarea{min-height:110px; resize:vertical}
+input:focus, textarea:focus, select:focus{ border-color:#2a2a2a; box-shadow:0 0 0 2px rgba(255,255,255,.08) inset }
+
+/* Label e subtítulo */
+label{display:block; color:var(--muted); font-size:12px; margin:8px 0 6px}
+
+/* ===== Botões ===== */
+.btn-primary, .v-btn-primary{
+  display:inline-flex; align-items:center; gap:8px; height:34px; padding:0 14px;
+  border-radius:10px; background:#fff; color:#000; border:1px solid #fff; font-weight:600; text-decoration:none; cursor:pointer;
+}
+.btn-primary:hover{filter:brightness(.95)}
+.btn-secondary, .v-btn-secondary{
+  display:inline-flex; align-items:center; gap:8px; height:34px; padding:0 14px; border-radius:10px;
+  background:var(--active); color:#fff; border:1px solid var(--border); cursor:pointer;
+}
+.btn-secondary:hover{background:#1a1a1a}
+
+/* Pills (as suas “abas” internas) */
+.pill, .pills .pill, .tiger-offer-tabs .pill, .tf-pills .pill{
+  display:inline-flex; align-items:center; gap:6px; height:34px; padding:0 12px; border-radius:999px;
+  background:var(--active); color:#cfcfcf; border:1px solid var(--border);
+}
+.pill:hover{color:#fff; background:var(--hover)}
+.pill.is-active{color:#fff; background:var(--hover); box-shadow:inset 0 -2px 0 #fff}
+
+/* Títulos das páginas */
+.tiger-header h1, .tiger-offers-list h1, .api-pix header h1, .v-page-title{
+  font-size:24px; margin:0 0 8px; color:#fff; font-weight:800;
+}
+.tiger-header p, .tiger-offers-list p{color:var(--muted)}
+
+/* Grids */
+.v-grid{display:grid; gap:12px}
+@media(min-width:1100px){
+  .v-grid.two{grid-template-columns:1fr 420px}
+  .v-grid.metrics{grid-template-columns:repeat(4,1fr)}
+}
+
+/* Lista de ofertas – botão “…” minimal */
+.offer-actions-inline{
+  position:absolute; top:10px; right:10px; width:28px; height:28px; border-radius:999px;
+  border:1px solid var(--border); background:var(--active); display:flex; align-items:center; justify-content:center;
+}
+.offer-actions-inline .dots{color:#bbb; font-size:14px}
+
+/* Menus flutuantes/overlay */
+.offer-actions-menu .menu-surface, .tf-confirm-dialog{
+  background:var(--panel); border:1px solid var(--border); border-radius:12px; box-shadow:var(--shadow);
+}
+.tf-confirm-overlay{position:fixed; inset:0; z-index:1300; display:none; align-items:center; justify-content:center; background:rgba(0,0,0,.55); backdrop-filter:blur(10px)}
+.tf-confirm-overlay:not([hidden]){display:flex}
+
+/* Breadcrumb */
+.breadcrumb, .tf-breadcrumb{color:var(--muted); font-size:12px}
+.breadcrumb a{color:var(--muted); text-decoration:none}
+.breadcrumb a:hover{color:#fff}
+
+/* Tabelas genéricas */
+table{width:100%; border-collapse:separate; border-spacing:0; border:1px solid var(--border); border-radius:12px; overflow:hidden}
+th, td{padding:10px 12px; border-bottom:1px solid var(--border)}
+th{color:#cfcfcf; text-align:left; background:var(--panel)}
+tr:hover td{background:var(--hover)}
+
+/* Toasts */
+.tf-toasts{position:fixed; top:16px; right:16px; display:flex; flex-direction:column; gap:8px; z-index:1500}
+.tf-toast{background:var(--panel); border:1px solid var(--border); border-radius:10px; padding:10px 12px; color:#fff; box-shadow:var(--shadow)}
