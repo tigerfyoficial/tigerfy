@@ -297,74 +297,6 @@
   }
 </style>
 
-<script>
-(function(){
-  // Mostrar a UI somente quando Principal > Front estiver ativo
-  var frontSection = document.getElementById('frontV6');
-  var placeholder  = document.querySelector('.tf-content-placeholder');
-  function showFront(on){
-    if (!frontSection || !placeholder) return;
-    if (on){ frontSection.hidden = false; placeholder.style.display = 'none'; }
-    else   { frontSection.hidden = true;  placeholder.style.display = ''; }
-  }
-  // estado inicial: já entramos em Principal > Front por padrão
-  showFront(true);
-
-  // Troca de sub-abas
-  document.querySelectorAll('.tf-subtabs .subtab').forEach(function(btn){
-    btn.addEventListener('click', function(){
-      showFront(btn.dataset.subtab === 'front' && document.querySelector('.tf-tabs-main .tab.active')?.dataset.tab === 'principal');
-    });
-  });
-  // Troca de abas principais
-  document.querySelectorAll('.tf-tabs-main .tab').forEach(function(btn){
-    btn.addEventListener('click', function(){
-      var on = btn.dataset.tab === 'principal' && document.querySelector('.tf-subtabs .subtab.active')?.dataset.subtab === 'front';
-      showFront(on);
-    });
-  });
-
-  // Toggle CTA (Sim/Não)
-  var ctaToggle = document.getElementById('ctaToggle');
-  var ctaText   = document.getElementById('ctaText');
-  if (ctaToggle){
-    ctaToggle.addEventListener('click', function(e){
-      if (e.target.tagName !== 'BUTTON') return;
-      Array.from(ctaToggle.children).forEach(function(b){ b.classList.remove('active'); });
-      e.target.classList.add('active');
-      var on = e.target.dataset.on === '1';
-      ctaText.classList.toggle('is-disabled', !on);
-      ctaText.disabled = !on;
-    });
-  }
-
-  // Planos: adicionar/remover linhas (sem modal, sem drag real)
-  var planList  = document.getElementById('planList');
-  var btnAdd    = document.getElementById('btnAddPlan');
-  var dotsSvg   = '<svg viewBox="0 0 20 20" width="14" height="14" fill="currentColor"><circle cx="6" cy="5" r="1.3"/><circle cx="10" cy="5" r="1.3"/><circle cx="14" cy="5" r="1.3"/><circle cx="6" cy="10" r="1.3"/><circle cx="10" cy="10" r="1.3"/><circle cx="14" cy="10" r="1.3"/></svg>';
-  var trashSvg  = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>';
-
-  function addPlanRow(){
-    var li = document.createElement('li');
-    li.className = 'tf-plan-row';
-    li.innerHTML =
-      '<span class="tf-drag-mini" title="Arrastar (visual)">'+dotsSvg+'</span>' +
-      '<input class="tf-input" name="plan_name[]" placeholder="Nome do plano">' +
-      '<input class="tf-input tf-price" name="plan_price[]" placeholder="R$ 29,90">' +
-      '<button class="tf-icon-btn" type="button" data-role="delete-plan" title="Excluir">'+trashSvg+'</button>';
-    planList.appendChild(li);
-  }
-  if (btnAdd) btnAdd.addEventListener('click', addPlanRow);
-  if (planList){
-    planList.addEventListener('click', function(e){
-      var btn = e.target.closest('[data-role="delete-plan"]');
-      if (btn){ e.preventDefault(); btn.closest('.tf-plan-row')?.remove(); }
-    });
-  }
-})();
-</script>
-<!-- ===== /TIGERFY • PRINCIPAL > FRONT • V6 BÁSICO ===== -->
-
 <style>
   :root{
     --panel:rgba(255,255,255,0.04);
@@ -1074,6 +1006,73 @@
         saveModalBtn.disabled = false;
         saveModalBtn.textContent = 'Salvar Mudanças';
       }
+    });
+  }
+})();
+</script>
+
+<script>
+(function(){
+  // Mostrar a UI somente quando Principal > Front estiver ativo
+  var frontSection = document.getElementById('frontV6');
+  var placeholder  = document.querySelector('.tf-content-placeholder');
+  function showFront(on){
+    if (!frontSection) return;
+    if (on){ frontSection.hidden = false; if(placeholder) placeholder.style.display = 'none'; }
+    else   { frontSection.hidden = true;  if(placeholder) placeholder.style.display = ''; }
+  }
+  // estado inicial: já entramos em Principal > Front por padrão
+  showFront(true);
+
+  // Troca de sub-abas
+  document.querySelectorAll('.tf-subtabs .subtab').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      showFront(btn.dataset.subtab === 'front' && document.querySelector('.tf-tabs-main .tab.active')?.dataset.tab === 'principal');
+    });
+  });
+  // Troca de abas principais
+  document.querySelectorAll('.tf-tabs-main .tab').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var on = btn.dataset.tab === 'principal' && document.querySelector('.tf-subtabs .subtab.active')?.dataset.subtab === 'front';
+      showFront(on);
+    });
+  });
+
+  // Toggle CTA (Sim/Não)
+  var ctaToggle = document.getElementById('ctaToggle');
+  var ctaText   = document.getElementById('ctaText');
+  if (ctaToggle){
+    ctaToggle.addEventListener('click', function(e){
+      if (e.target.tagName !== 'BUTTON') return;
+      Array.from(ctaToggle.children).forEach(function(b){ b.classList.remove('active'); });
+      e.target.classList.add('active');
+      var on = e.target.dataset.on === '1';
+      ctaText.classList.toggle('is-disabled', !on);
+      ctaText.disabled = !on;
+    });
+  }
+
+  // Planos: adicionar/remover linhas (sem modal, sem drag real)
+  var planList  = document.getElementById('planList');
+  var btnAdd    = document.getElementById('btnAddPlan');
+  var dotsSvg   = '<svg viewBox="0 0 20 20" width="14" height="14" fill="currentColor"><circle cx="6" cy="5" r="1.3"/><circle cx="10" cy="5" r="1.3"/><circle cx="14" cy="5" r="1.3"/><circle cx="6" cy="10" r="1.3"/><circle cx="10" cy="10" r="1.3"/><circle cx="14" cy="10" r="1.3"/></svg>';
+  var trashSvg  = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>';
+
+  function addPlanRow(){
+    var li = document.createElement('li');
+    li.className = 'tf-plan-row';
+    li.innerHTML =
+      '<span class="tf-drag-mini" title="Arrastar (visual)">'+dotsSvg+'</span>' +
+      '<input class="tf-input" name="plan_name[]" placeholder="Nome do plano">' +
+      '<input class="tf-input tf-price" name="plan_price[]" placeholder="R$ 29,90">' +
+      '<button class="tf-icon-btn" type="button" data-role="delete-plan" title="Excluir">'+trashSvg+'</button>';
+    planList.appendChild(li);
+  }
+  if (btnAdd) btnAdd.addEventListener('click', addPlanRow);
+  if (planList){
+    planList.addEventListener('click', function(e){
+      var btn = e.target.closest('[data-role="delete-plan"]');
+      if (btn){ e.preventDefault(); btn.closest('.tf-plan-row')?.remove(); }
     });
   }
 })();
