@@ -5,10 +5,11 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title><%= typeof title !== 'undefined' ? title : 'TigerFy' %></title>
 
-  <!-- Tema minimal preto & branco -->
-  <link rel="stylesheet" href="/css/theme.neutral.css">
-  <!-- Top nav estilo Vercel/Supabase -->
-  <link rel="stylesheet" href="/css/ui.topnav.css">
+<!-- ORDEM CERTA -->
+<link rel="stylesheet" href="/css/reset.css">
+<link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/css/theme.gold.css?v=20251118-1"><!-- único tema -->
+<link rel="stylesheet" href="/css/ui.topnav.css?v=20251118-1"><!-- por último -->
 
   <!-- Favicon “silencioso” já está tratado no server -->
   <link rel="stylesheet" href="/css/vercel-theme.css">
