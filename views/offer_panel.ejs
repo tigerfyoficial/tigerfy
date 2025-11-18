@@ -1012,190 +1012,58 @@
 })();
 </script>
 
-<!-- ===================== JS v8 · Apenas UI (sem lógica de salvar) ===================== -->
+<!-- ========================= JS mínimo (UI-only) ========================= -->
 <script>
 (function(){
-  const qs=(s,e=document)=>e.querySelector(s), qsa=(s,e=document)=>Array.from(e.querySelectorAll(s));
-  const el=(t,c)=>{const E=document.createElement(t); if(c) E.className=c; return E;};
-  const svgTrash=`<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M9 3h6M5 7h14M8 7l1 13a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2l1-13M10 11v7M14 11v7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>`;
-  const svgDrag='&#8942;';
+  const $ = (s, r=document)=>r.querySelector(s);
+  const $$ = (s, r=document)=>Array.from(r.querySelectorAll(s));
 
-  /* ========== POP DE REGRAS (padrão) ========== */
-  let pop=null;
-  function closePop(){ if(pop){ pop.remove(); pop=null; } }
-  function openRules(anchor, title, state){
-    closePop();
-    const p=el('div','tfx8-pop'); pop=p;
-    const r=anchor.getBoundingClientRect();
-    p.style.left = (r.left + window.scrollX) + 'px';
-    p.style.top  = (r.bottom + 8 + window.scrollY) + 'px';
-    p.innerHTML = `
-      <h4>${title}</h4>
-      <p class="tfx8-help" style="margin:0 0 6px;">Defina quando essa mensagem deve ser apagada. Você pode combinar regras, exceto "Não apagar".</p>
-      <label class="tfx8-rule"><input type="checkbox" data-k="no"> <span>Não apagar</span></label>
-      <label class="tfx8-rule"><input type="checkbox" data-k="next"> <span>Apagar após clique no próximo botão</span></label>
-      <div class="tfx8-rule">
-        <input type="checkbox" data-k="after">
-        <span>Apagar após X segundos</span>
-        <div class="inline"><input type="number" min="1" step="1" placeholder="5" class="tfx8-input" data-k="sec"></div>
-      </div>
-      <label class="tfx8-rule"><input type="checkbox" data-k="start"> <span>Apagar após próximo /start</span></label>
-      <div class="tfx8-row between tight" style="margin-top:8px;">
-        <button class="tfx8-btn ghost xs" data-act="clear" type="button">Limpar regras</button>
-        <div class="tfx8-inline">
-          <button class="tfx8-btn ghost xs" data-act="cancel" type="button">Cancelar</button>
-          <button class="tfx8-btn ghost xs" data-act="apply" type="button" style="border-color:rgba(255,204,0,.45); box-shadow:0 0 0 1px rgba(255,204,0,.25); color:#ffcc00;">Salvar regras</button>
-        </div>
-      </div>
-    `;
-    document.body.appendChild(p);
-
-    if(state){
-      qsa('input[type="checkbox"]',p).forEach(cb=>cb.checked=!!state[cb.dataset.k]);
-      const sec=qs('input[data-k="sec"]',p); if(state.sec) sec.value=state.sec;
-    }
-
-    function syncNo(){
-      const no=qs('input[data-k="no"]',p);
-      const others=['next','after','start'].map(k=>qs(`input[data-k="${k}"]`,p));
-      if(no.checked){ others.forEach(x=>x.checked=false); }
-      if(others.some(x=>x.checked)) no.checked=false;
-    }
-    p.addEventListener('change', syncNo); syncNo();
-
-    p.addEventListener('click', e=>{
-      const act=e.target.getAttribute && e.target.getAttribute('data-act');
-      if(!act) return;
-      if(act==='clear'){ qsa('input[type="checkbox"]',p).forEach(cb=>cb.checked=false); qs('input[data-k="sec"]',p).value=''; return; }
-      if(act==='cancel'){ closePop(); return; }
-      if(act==='apply'){
-        const payload={
-          no:qs('input[data-k="no"]',p).checked,
-          next:qs('input[data-k="next"]',p).checked,
-          after:qs('input[data-k="after"]',p).checked,
-          start:qs('input[data-k="start"]',p).checked,
-          sec:Number(qs('input[data-k="sec"]',p).value || 0) || null
-        };
-        anchor.dataset.rules = JSON.stringify(payload);
-        anchor.classList.add('is-active');
-        closePop();
-      }
-    });
-
-    document.addEventListener('click', function onDoc(ev){
-      if(!p.contains(ev.target) && ev.target!==anchor){ document.removeEventListener('click', onDoc); closePop(); }
-    }, {capture:true});
-  }
-
-  /* ========== MÍDIAS ========== */
-  const mediaList = qs('#tfx8MediaList');
-  qs('#tfx8AddMedia').addEventListener('click', addMedia);
-  function addMedia(){ mediaList.appendChild(mediaLine()); }
-  function mediaLine(){
-    const idx = mediaList.children.length + 1;
-    const line = el('div','tfx8-line media');
-
-    const handle = el('div','tfx8-handle'); handle.innerHTML = svgDrag; handle.title='Arrastar';
-    const index  = el('div','tfx8-index');  index.textContent = idx;
-
-    const url = el('input','tfx8-input'); url.placeholder='Link da mídia no Telegram…'; url.name=`front_media_url_${idx}`;
-
-    const pos = el('div','tfx8-pills tfx8-pos');
-    const bBefore = el('button','pill is-active'); bBefore.textContent='Antes da copy principal'; bBefore.dataset.val='before';
-    const bAfter  = el('button','pill');           bAfter.textContent='Depois da copy principal'; bAfter.dataset.val='after';
-    const hid=el('input'); hid.type='hidden'; hid.name=`front_media_pos_${idx}`; hid.value='before';
-    pos.appendChild(bBefore); pos.appendChild(bAfter); pos.appendChild(hid);
-    pos.addEventListener('click', ev=>{
-      if(!ev.target.classList.contains('pill')) return;
-      qsa('.pill', pos).forEach(x=>x.classList.remove('is-active'));
-      ev.target.classList.add('is-active'); hid.value=ev.target.dataset.val;
-    });
-
-    const rulesBtn = el('button','tfx8-btn ghost xs'); rulesBtn.textContent='Regras';
-    rulesBtn.addEventListener('click', ()=> openRules(rulesBtn, 'Regras — mídia do Front', rulesBtn.dataset.rules ? JSON.parse(rulesBtn.dataset.rules) : null));
-
-    const del = el('button','tfx8-icon'); del.innerHTML = svgTrash; del.title='Excluir mídia';
-    del.addEventListener('click', ()=> line.remove());
-
-    const actions = el('div','tfx8-actions'); actions.appendChild(rulesBtn);
-
-    line.appendChild(handle);
-    line.appendChild(index);
-    line.appendChild(url);
-    line.appendChild(pos);
-    line.appendChild(actions);
-    line.appendChild(del);
-    return line;
-  }
-  addMedia(); // começa com 1
-
-  /* ========== REGRAS: COPY VSL ========== */
-  qs('#tfx8CopyRulesBtn').addEventListener('click', function(){
-    openRules(this, 'Regras — Copy da VSL', this.dataset.rules ? JSON.parse(this.dataset.rules) : null);
+  // Limpar link da mídia principal
+  $('#tfp9MediaClear')?.addEventListener('click', ()=> {
+    const i = $('#front_media_url'); if(i) i.value = '';
   });
 
-  /* ========== CTA ========== */
-  const ctaToggle = qs('#tfx8CtaToggle');
-  const ctaFields = qs('#tfx8CtaFields');
-  const ctaRules  = qs('#tfx8CtaRulesRow');
-  function setCta(on){
+  // CTA ON/OFF
+  const ctaToggle = $('#tfp9CtaToggle');
+  const ctaFields = $('#tfp9CtaFields');
+  function setCTA(on){
     ctaFields.style.opacity = on ? '1' : '.55';
-    qsa('input', ctaFields).forEach(i=> i.disabled=!on);
-    ctaRules.style.display = on ? 'flex' : 'none';
+    $$('input,textarea,select', ctaFields).forEach(el => el.disabled = !on);
   }
-  ctaToggle.addEventListener('click', e=>{
-    if(!e.target.classList.contains('pill')) return;
-    qsa('.pill', ctaToggle).forEach(x=>x.classList.remove('is-active'));
+  ctaToggle?.addEventListener('click', e=>{
+    if(!e.target.classList.contains('tfp9-pill')) return;
+    $$('.tfp9-pill', ctaToggle).forEach(p=>p.classList.remove('is-active'));
     e.target.classList.add('is-active');
-    setCta(e.target.dataset.val==='on');
+    setCTA(e.target.dataset.val === 'on');
   });
-  setCta(true);
-  qs('#tfx8CtaRulesBtn').addEventListener('click', function(){
-    openRules(this, 'Regras — exclusão do CTA', this.dataset.rules ? JSON.parse(this.dataset.rules) : null);
+  setCTA(true);
+
+  // Planos: criar rápido (UI fake) e excluir
+  $('#tfp9CreatePlan')?.addEventListener('click', ()=>{
+    const wrap = $('#tfp9PlansList');
+    const row = document.createElement('div');
+    row.className = 'tfp9-plan';
+    row.innerHTML = `
+      <button type="button" class="tfp9-handle" title="Arrastar (visual)">
+        <svg width="14" height="14" viewBox="0 0 24 24"><path fill="currentColor" d="M7 6h2v2H7V6m4 0h2v2h-2V6m4 0h2v2h-2V6M7 11h2v2H7v-2m4 0h2v2h-2v-2m4 0h2v2h-2v-2M7 16h2v2H7v-2m4 0h2v2h-2v-2m4 0h2v2h-2v-2"/></svg>
+      </button>
+      <div class="tfp9-plan-main">
+        <div contenteditable="true" class="tfp9-plan-name">Novo plano</div>
+        <div class="tfp9-plan-meta">Valor: R$ 0,00 <span class="dot">•</span> Duração: 30 dias</div>
+      </div>
+      <div class="tfp9-plan-actions">
+        <button class="tfp9-btn ghost s" type="button" data-action="edit">Editar</button>
+        <button class="tfp9-btn danger s" type="button" data-action="remove">Excluir</button>
+      </div>`;
+    wrap.appendChild(row);
   });
 
-  /* ========== PLANOS ========== */
-  const plansList = qs('#tfx8PlansList');
-  qs('#tfx8AddPlan').addEventListener('click', addPlan);
-  function addPlan(){ plansList.appendChild(planLine()); }
-  function planLine(){
-    const idx = plansList.children.length + 1;
-    const line = el('div','tfx8-line plan');
-
-    const handle = el('div','tfx8-handle'); handle.innerHTML = svgDrag; handle.title='Arrastar';
-    const name = el('input','tfx8-input'); name.placeholder='Nome do plano (Ex.: Mensal VIP)'; name.name=`front_plan_name_${idx}`;
-    const price= el('input','tfx8-input'); price.placeholder='R$ 29,90'; price.name=`front_plan_price_${idx}`;
-
-    const rulesBtn = el('button','tfx8-btn ghost xs'); rulesBtn.textContent='Regras';
-    rulesBtn.addEventListener('click', ()=> openRules(rulesBtn, 'Regras — mensagem do plano', rulesBtn.dataset.rules ? JSON.parse(rulesBtn.dataset.rules) : null));
-
-    const del = el('button','tfx8-icon'); del.innerHTML = svgTrash; del.title='Excluir plano';
-    del.addEventListener('click', ()=> line.remove());
-
-    const actions = el('div','tfx8-actions'); actions.appendChild(rulesBtn);
-
-    line.appendChild(handle);
-    line.appendChild(name);
-    line.appendChild(price);
-    line.appendChild(actions);
-    line.appendChild(del);
-    return line;
-  }
-  addPlan(); // começa com 1
-
-  // Copy antes dos botões (toggle + regras)
-  const plansCopyToggle = qs('#tfx8PlansCopySend');
-  const plansCopyArea   = qs('#front_plans_copy');
-  plansCopyToggle.addEventListener('click', e=>{
-    if(!e.target.classList.contains('pill')) return;
-    qsa('.pill', plansCopyToggle).forEach(x=>x.classList.remove('is-active'));
-    e.target.classList.add('is-active');
-    const on = e.target.dataset.val==='on';
-    plansCopyArea.disabled = !on;
-    plansCopyArea.style.opacity = on ? '1' : '.55';
-  });
-  qs('#tfx8PlansCopyRulesBtn').addEventListener('click', function(){
-    openRules(this, 'Regras — copy antes dos planos', this.dataset.rules ? JSON.parse(this.dataset.rules) : null);
+  document.addEventListener('click', e=>{
+    const btn = e.target.closest('.tfp9-btn[data-action="remove"]');
+    if(btn){
+      const row = btn.closest('.tfp9-plan');
+      if(row) row.remove();
+    }
   });
 })();
 </script>
