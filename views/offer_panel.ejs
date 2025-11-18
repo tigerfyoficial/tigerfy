@@ -100,7 +100,7 @@
   </div>
 </div>
 
-<!-- MODAL ETAPAS (inalterado) -->
+<!-- MODAL ETAPAS -->
 <div class="tf-steps-overlay" id="stepsUnifiedModal" hidden>
   <div class="tf-steps-dialog tf-steps-dialog--create-theme" role="dialog" aria-modal="true">
     <div class="tf-steps-head tf-steps-head--center">
@@ -167,6 +167,8 @@
   .tf-tabs .tab{ display:inline-flex; align-items:center; gap:8px; padding:9px 14px; border-radius:999px; border:1px solid var(--border); background:var(--panel); color:#dedede; font-weight:600; font-size:.92rem; height:38px; transition:.18s ease; }
   .tf-tabs .tab.active{ background:rgba(255,255,255,0.10); border-color:rgba(255,255,255,0.22); color:#fff; }
   .tf-subtabs .subtab{ display:inline-flex; align-items:center; gap:8px; padding:7px 12px; border-radius:999px; border:1px solid var(--border); background:var(--panel); color:#dcdcdc; font-weight:600; font-size:.9rem; }
+  /* mesmo destaque quando ativo (Front) */
+  .tf-subtabs .subtab.active{ background:rgba(255,255,255,0.10); border-color:rgba(255,255,255,0.22); color:#fff; }
 
   /* ===== Conteúdo Principal > Front ===== */
   .tf-content{ margin-top:14px; }
@@ -238,6 +240,35 @@
   .plan-row .kill{ height:38px; border-radius:10px; border:1px solid rgba(255,255,255,0.18); background:rgba(255,255,255,0.08); color:#fff; cursor:pointer; }
   .plan-row .kill:hover{ background:rgba(255,255,255,0.12); }
   .muted{ color:#b8b8b8; font-size:.9rem; }
+
+  /* ====== Modal de Etapas ====== */
+  .tf-steps-overlay[hidden]{ display:none !important; }
+  .tf-steps-overlay{ position:fixed; inset:0; z-index:10000; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,0.55); backdrop-filter: blur(10px); }
+  .tf-steps-dialog{ width:min(720px, calc(100vw - 40px)); border-radius:20px; border:1px solid rgba(255,255,255,0.16); background:rgba(0,0,0,0.78); box-shadow:0 0 40px rgba(0,0,0,0.6); overflow:hidden; }
+  .tf-steps-head{ padding:18px 20px; border-bottom:1px solid rgba(255,255,255,0.08); position:relative; text-align:center; }
+  .tf-steps-head h3{ margin:0; font-size:1.2rem; color:#ffcc00; font-weight:800; }
+  .tf-steps-sub{ margin:8px 0 0; color:#cfcfcf; font-size:.92rem; }
+  .tf-steps-close{ position:absolute; right:12px; top:12px; border:none; background:transparent; color:#fff; cursor:pointer; opacity:.8; }
+  .tf-steps-body{ padding:12px 16px; }
+  .tf-steps-toolbar{ display:flex; align-items:center; gap:12px; margin-bottom:10px; }
+  .tf-steps-list{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:8px; }
+  .tf-steps-actions{ display:flex; justify-content:flex-end; gap:12px; padding:16px; border-top:1px solid rgba(255,255,255,0.08); }
+  .tf-step-item{ display:grid; grid-template-columns: 20px 1fr auto auto; gap:8px; align-items:center; padding:8px; border:1px solid rgba(255,255,255,0.12); border-radius:12px; background:rgba(255,255,255,0.05); }
+  .tf-drag-handle{ width:20px; color:#bbb; cursor:grab; }
+  .tf-step-no{ color:#ffcc00; font-weight:800; text-align:center; }
+  .tf-step-name{ width:100%; padding:9px 10px; border-radius:10px; border:1px solid rgba(255,255,255,0.22); background:rgba(255,255,255,0.06); color:#fff; outline:none; }
+  .tf-actions-inline{ display:flex; align-items:center; gap:10px; }
+  .tf-btn-ghost{ border:1px solid rgba(255,255,255,0.18); background:transparent; color:#fff; border-radius:10px; padding:8px 10px; cursor:pointer; }
+  .tf-btn-ghost.tf-access-btn{ background:linear-gradient(90deg,#ffcc00,#d4a100); color:#171300; border-color:rgba(255,204,0,0.45); }
+  .tf-badge{ display:inline-flex; align-items:center; height:28px; padding:0 8px; border-radius:8px; border:1px solid rgba(255,255,255,0.18); color:#ddd; opacity:0; transition:.15s; }
+  .tf-badge.visible{ opacity:1; }
+  .tf-badge.current{ border-color:rgba(255,204,0,0.45); color:#ffcc00; }
+  .tf-select-radio input{ transform:scale(1.15); }
+  .tf-step-btn.danger{ border:1px solid rgba(255,64,96,0.25); background:rgba(255,64,96,0.14); color:#ffb3c2; border-radius:10px; padding:8px 10px; cursor:pointer; }
+  .tf-steps-empty{ padding:10px; color:#cfcfcf; text-align:center; border:1px dashed rgba(255,255,255,0.16); border-radius:10px; }
+  .btn-small{ padding:8px 12px; border:none; border-radius:10px; background:linear-gradient(90deg,#ffcc00,#d4a100); color:#171300; font-weight:700; cursor:pointer; }
+  .btn-secondary{ border:none; border-radius:10px; padding:10px 22px; font-weight:600; cursor:pointer; background:rgba(255,255,255,0.12); color:#fff; border:1px solid rgba(255,255,0,0.10); transition:.18s ease; }
+  .btn-primary{ border:none; border-radius:10px; padding:10px 22px; font-weight:600; cursor:pointer; background:linear-gradient(90deg,#ffcc00,#d4a100); color:#171300; box-shadow:0 0 10px rgba(255,204,0,0.35); }
 </style>
 
 <script>
@@ -459,38 +490,17 @@
   // primeira renderização
   if (isBaseView){ renderFront(); } else { renderPlaceholder('etapa'); }
 
-  /* ===== menu de contexto do botão Etapas ===== */
+  /* ===== botão Etapas abre o modal ===== */
   (function(){
     var tab = document.getElementById('tabEtapas');
     if (!tab) return;
-    var menu;
-    function closeMenu(){ if(menu){ menu.remove(); menu=null; } }
-    document.addEventListener('click', function(ev){ if(menu && !menu.contains(ev.target) && ev.target!==tab) closeMenu(); });
-    tab.addEventListener('contextmenu', function(ev){
-      ev.preventDefault();
-      closeMenu();
-      menu = document.createElement('div');
-      menu.className = 'tf-steps-menu';
-      menu.style.left = (ev.clientX + 4) + 'px';
-      menu.style.top  = (ev.clientY + 4) + 'px';
-      var b1 = document.createElement('button');
-      b1.textContent = 'Gerenciar etapas';
-      b1.addEventListener('click', function(){ closeMenu(); openStepsModal(); });
-      var b2 = document.createElement('button');
-      b2.textContent = 'Sem etapa (visão base da oferta)';
-      b2.addEventListener('click', function(){
-        closeMenu();
-        setBaseView(true);
-        if (offer && offer.id){
-          window.location.href = '/ofertas/painel/' + offer.id;
-        }
-      });
-      menu.appendChild(b1); menu.appendChild(b2);
-      document.body.appendChild(menu);
+    tab.addEventListener('click', function(e){
+      e.preventDefault();
+      openStepsModal();
     });
   })();
 
-  /* ===== Toast genérico + salvar já existentes ===== */
+  /* ===== Toast genérico + salvar ===== */
   function showToast(type, text){
     var host = document.createElement('div');
     host.style.position='fixed'; host.style.top='20px'; host.style.right='20px';
@@ -502,51 +512,40 @@
     card.style.background = (type==='error') ? 'linear-gradient(90deg,#2a0000,#3a0000)' : 'linear-gradient(90deg,#ffcc00,#d4a100)';
     card.style.color = (type==='error') ? '#ffd5d5' : '#171300';
     card.style.fontWeight='800'; card.style.letterSpacing='.3px';
-    card.style.transform='translateY(-10px) scale(.98)'; card.style.opacity='0';
-    card.style.transition='transform .16s ease, opacity .16s ease';
+    var row = document.createElement('div'); row.style.display='flex'; row.style.alignItems='center';
     var icon = document.createElement('span'); icon.style.marginRight='8px'; icon.textContent = (type==='error') ? '⚠️' : '✔️';
     var txt = document.createElement('span'); txt.textContent = text || (type==='error' ? 'Falha' : 'Sucesso');
-    var row = document.createElement('div'); row.style.display='flex'; row.style.alignItems='center'; row.appendChild(icon); row.appendChild(txt);
-    card.appendChild(row); host.appendChild(card); document.body.appendChild(host);
-    requestAnimationFrame(function(){ card.style.transform='translateY(0)'; card.style.opacity='1'; });
-    setTimeout(function(){ card.style.transform='translateY(-10px)'; card.style.opacity='0'; setTimeout(function(){ host.remove(); }, 160); }, 2300);
+    row.appendChild(icon); row.appendChild(txt); card.appendChild(row); host.appendChild(card); document.body.appendChild(host);
+    setTimeout(function(){ host.remove(); }, 2300);
   }
 
   var saveBtn = document.getElementById('btnSaveAll');
-  function setBtnLoading(btn, on){
-    if (!btn) return;
-    if (on){ btn.disabled=true; if(!btn.dataset._txt) btn.dataset._txt=btn.textContent; btn.textContent='Salvando…'; btn.style.filter='brightness(1.03)'; btn.style.boxShadow='0 8px 26px rgba(255,204,0,0.35)'; }
-    else { btn.disabled=false; btn.textContent = btn.dataset._txt || 'Salvar Alterações'; btn.style.filter=''; btn.style.boxShadow=''; }
-  }
   function flashSaved(btn){
     if (!btn) return;
-    btn.classList.remove('tf-pulse-once'); void btn.offsetWidth; btn.classList.add('tf-pulse-once');
-    btn.textContent='Salvo!'; setTimeout(function(){ btn.textContent = btn.dataset._txt || 'Salvar Alterações'; }, 1100);
+    var prev = btn.textContent;
+    btn.textContent='Salvo!';
+    setTimeout(function(){ btn.textContent = prev; }, 1100);
   }
   if (saveBtn){
     saveBtn.addEventListener('click', async function(){
       if (!offer) { showToast('error','Oferta inválida.'); return; }
       if (isBaseView || !currentStep){
-        // por enquanto só feedback local para a oferta base
         flashSaved(saveBtn);
         showToast('success','Configurações salvas (oferta base).');
         return;
       }
       var draft = (window.tfDraftSettings && typeof window.tfDraftSettings === 'object') ? window.tfDraftSettings : {};
       try{
-        setBtnLoading(saveBtn,true);
         const r = await fetch(`/ofertas/${encodeURIComponent(offer.id)}/etapas/${encodeURIComponent(currentStep.id)}/save`, {
           method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ settings: draft })
         });
         const js = await r.json(); if (!js || !js.ok) throw new Error('save_failed');
         flashSaved(saveBtn); showToast('success','Configurações salvas com sucesso.');
       }catch(e){ console.error(e); showToast('error','Não foi possível salvar.'); }
-      finally{ setBtnLoading(saveBtn,false); }
     });
   }
 
-  /* ====== (resto da lógica do modal de etapas permanece no arquivo original) ====== */
-  // Elementos do modal
+  /* ===== Modal de Etapas ===== */
   var modal    = document.getElementById('stepsUnifiedModal');
   var btnClose = document.getElementById('btnCloseStepsUnified');
   var btnCancel= document.getElementById('btnCancelStepsUnified');
@@ -554,16 +553,12 @@
   var btnAdd   = document.getElementById('btnAddStepUnified');
   var listEl   = document.getElementById('tfStepsUnifiedList');
 
-  var memSelectedId = null;
-  var memSelectedTmpKey = null;
-  var tmpCounter = 0;
-
   function openStepsModal(){ hydrateListFromServer(); modal.removeAttribute('hidden'); }
   function closeStepsModal(){ modal.setAttribute('hidden',''); }
 
-  if (btnClose) btnClose.addEventListener('click', closeStepsModal);
-  if (btnCancel)btnCancel.addEventListener('click', closeStepsModal);
-  if (modal){ modal.addEventListener('click', function(e){ if (e.target===modal) closeStepsModal(); }); }
+  btnClose?.addEventListener('click', closeStepsModal);
+  btnCancel?.addEventListener('click', closeStepsModal);
+  modal?.addEventListener('click', function(e){ if (e.target===modal) closeStepsModal(); });
 
   function clearEmptyHint(){
     var el = document.getElementById('tfStepsEmpty'); if (el) el.remove();
@@ -578,7 +573,6 @@
 
   function hydrateListFromServer(){
     listEl.innerHTML = '';
-    memSelectedId = null; memSelectedTmpKey = null;
     var ordered = steps.slice().sort(function(a,b){ return (a.stepNo||0)-(b.stepNo||0); });
     if (!ordered.length) { renderEmptyHint(); return; }
     ordered.forEach(function(s){
@@ -637,9 +631,6 @@
         radio.checked = true;
         selectBtn.textContent = 'Acessar Etapa';
         selectBtn.classList.add('tf-access-btn');
-
-        if (li.dataset.id){ memSelectedId = li.dataset.id; memSelectedTmpKey = null; }
-        else { memSelectedId = null; if (!li.dataset.key){ li.dataset.key = 'tmp-'+(++tmpCounter)+'-'+Date.now(); } memSelectedTmpKey = li.dataset.key; }
 
       } else {
         var sid = li.dataset.id || null;
@@ -741,7 +732,6 @@
       recomputeNos();
     });
   }
-  var listEl = document.getElementById('tfStepsUnifiedList');
   listEl?.addEventListener('dragover', function(e){
     if (!dragContext.draggingLi) return;
     e.preventDefault();
@@ -771,7 +761,7 @@
     recomputeNos();
   });
 
-  // salvar do modal (inalterado a não ser pelos nomes das variáveis já existentes)
+  // salvar do modal
   var saveModalBtn = document.getElementById('btnSaveStepsUnified');
   if (saveModalBtn){
     saveModalBtn.addEventListener('click', async function(){
@@ -780,8 +770,6 @@
       var creates = [];
       var updates = [];
       var deletes = [];
-      var selectedId = null;
-      var selectedIsTmp = false;
 
       Array.from(listEl.children).forEach(function(li){
         if (!li.classList.contains('tf-step-item')) return;
@@ -791,12 +779,6 @@
         var del  = li.dataset.deleted === '1';
         var name = (li.querySelector('.tf-step-name')?.value || '').trim();
         var old  = (li.querySelector('.tf-step-name')?.dataset.oldName || '').trim();
-        var radio= li.querySelector('input[type="radio"]');
-
-        if (radio && radio.checked){
-          if (id){ selectedId = id; }
-          else { selectedIsTmp = true; }
-        }
 
         if (isNew && !del){
           if (name) creates.push({ name: name });
@@ -813,7 +795,6 @@
       });
 
       var payload = { create: creates, update: updates, delete: deletes };
-      if (selectedId) payload.currentStepId = selectedId;
 
       saveModalBtn.disabled = true;
       saveModalBtn.textContent = 'Salvando…';
@@ -839,26 +820,6 @@
           });
         }
 
-        if (!selectedId && selectedIsTmp){
-          var newest = null;
-          steps.forEach(function(s){ if (!newest || (s.stepNo||0) > (newest.stepNo||0)) newest = s; });
-          if (newest && newest.id){
-            await fetch(`/ofertas/${encodeURIComponent(offer.id)}/etapas/batch`, {
-              method:'POST', headers:{'Content-Type':'application/json'},
-              body: JSON.stringify({ currentStepId: newest.id })
-            });
-            currentStep = newest;
-            isBaseView = false;
-          }
-        } else if (selectedId){
-          var cur = steps.find(function(s){ return s.id === selectedId; });
-          if (cur){ currentStep = cur; isBaseView = false; }
-        } else {
-          currentStep = null;
-          isBaseView = true;
-        }
-
-        updateTitleAndBreadcrumb();
         hydrateListFromServer();
         showToast('success','Etapas salvas com sucesso.');
       }catch(e){
