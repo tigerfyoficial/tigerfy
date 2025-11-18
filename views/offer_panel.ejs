@@ -441,7 +441,139 @@
   .tf-front-grid{ grid-template-columns: 1fr; }
 }
 
+/* ===== Aurum Fusion — apenas Principal > Front ===== */
+.tf-front-grid { isolation: isolate; }
+
+/* Cards com borda gradiente + brilho suave */
+.tf-front-grid .tf-card{
+  position: relative;
+  border: 1px solid transparent;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.04)) padding-box,
+    linear-gradient(120deg, rgba(255,204,0,0.32), rgba(255,204,0,0.06) 35%, rgba(255,204,0,0.32)) border-box;
+  box-shadow:
+    0 10px 26px rgba(0,0,0,0.45),
+    inset 0 1px 0 rgba(255,255,255,0.08);
+  overflow: hidden;
+}
+.tf-front-grid .tf-card::after{
+  content:"";
+  position:absolute; inset:0; pointer-events:none; border-radius:16px;
+  box-shadow: inset 0 0 40px rgba(255,204,0,0.06);
+}
+.tf-front-grid .tf-card::before{
+  /* brilho que segue o mouse (ver JS) */
+  content:"";
+  position:absolute; inset:-2px; border-radius:18px; z-index:0; pointer-events:none;
+  background: radial-gradient(140px 80px at var(--mx, 50%) var(--my, -10%),
+              rgba(255,204,0,0.28), transparent 60%);
+  filter: blur(14px);
+  opacity:.0; transition: opacity .25s ease;
+}
+.tf-front-grid .tf-card:hover::before{ opacity:.9; }
+
+/* Cabeçalho com chip dourado no ícone e linha fina */
+.tf-front-grid .tf-card-head{
+  position: relative; z-index:1;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  padding-bottom: 8px;
+}
+.tf-front-grid .tf-card-head .tf-ico{
+  width:30px; height:30px; border-radius:12px;
+  background: linear-gradient(180deg, rgba(255,204,0,0.20), rgba(0,0,0,0));
+  border:1px solid rgba(255,204,0,0.38);
+  box-shadow: inset 0 10px 22px rgba(255,204,0,0.18), 0 0 18px rgba(255,204,0,0.16);
+  display:inline-flex; align-items:center; justify-content:center;
+}
+.tf-front-grid .tf-card-head h3{
+  letter-spacing:.2px; text-shadow:0 0 16px rgba(255,204,0,0.16);
+}
+
+/* Inputs “glass” premium */
+.tf-front-grid .tf-input,
+.tf-front-grid .tf-textarea{
+  background: rgba(10,10,10,0.55);
+  backdrop-filter: blur(6px);
+  border:1px solid rgba(255,255,255,0.16);
+  box-shadow: inset 0 0 0 1px rgba(255,204,0,0);
+}
+.tf-front-grid .tf-input:focus,
+.tf-front-grid .tf-textarea:focus{
+  border-color: rgba(255,204,0,0.45);
+  box-shadow: 0 0 0 3px rgba(255,204,0,0.16), inset 0 0 0 1px rgba(255,204,0,0.25);
+}
+
+/* Switch com brilho */
+.tf-front-grid .tf-switch .slider{
+  background: rgba(255,255,255,0.12);
+  border:1px solid rgba(255,255,255,0.22);
+}
+.tf-front-grid .tf-switch input:checked + .slider{
+  background: linear-gradient(90deg,#ffcc00,#d4a100);
+  border-color: rgba(255,204,0,0.46);
+  box-shadow: 0 0 0 2px rgba(255,204,0,0.18);
+}
+
+/* Botão “Novo Plano” glam sem afetar o resto do site */
+.tf-front-grid .btn-primary.btn-xs{
+  border:1px solid rgba(255,204,0,0.38);
+  box-shadow:
+    0 0 18px rgba(255,204,0,0.28),
+    inset 0 1px 0 rgba(255,255,255,0.35);
+  transition: transform .12s ease, box-shadow .12s ease, filter .12s ease;
+}
+.tf-front-grid .btn-primary.btn-xs:hover{
+  transform: translateY(-1px);
+  filter: brightness(1.06);
+  box-shadow:
+    0 0 22px rgba(255,204,0,0.40),
+    inset 0 1px 0 rgba(255,255,255,0.42);
+}
+
+/* Micro grade pontilhada invisível (sutil) apenas no Front */
+.tf-front-grid .tf-card{
+  background-image:
+    linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.04)),
+    radial-gradient(1px 1px at 10px 10px, rgba(255,204,0,0.06) 1px, transparent 1px);
+  background-size:
+    auto auto,
+    24px 24px;
+  background-repeat: no-repeat, repeat;
+  background-clip: padding-box, border-box;
+}
+
+/* Placeholder mais legível */
+.tf-front-grid ::placeholder{ color: rgba(255,255,255,0.55); }
+
+/* Mantém destaque do subtab Front igual ao “Principal” */
+.tf-subtabs .subtab.active{
+  background: rgba(255,255,255,0.10);
+  border-color: rgba(255,255,255,0.22);
+  color:#fff;
+  box-shadow: 0 0 18px rgba(255,204,0,0.18);
+}
+
 </style>
+
+<script>
+/* efeito visual — não altera nenhuma função */
+(function(){
+  const cards = document.querySelectorAll('.tf-front-grid .tf-card');
+  cards.forEach(card=>{
+    card.addEventListener('pointermove', (e)=>{
+      const r = card.getBoundingClientRect();
+      const x = ((e.clientX - r.left) / r.width) * 100;
+      const y = ((e.clientY - r.top) / r.height) * 100;
+      card.style.setProperty('--mx', x + '%');
+      card.style.setProperty('--my', y + '%');
+    });
+    card.addEventListener('pointerleave', ()=>{
+      card.style.removeProperty('--mx');
+      card.style.removeProperty('--my');
+    });
+  });
+})();
+</script>
 
 <script>
 (function(){
