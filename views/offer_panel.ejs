@@ -82,7 +82,112 @@
       </div>
     </div>
 
-    <section class="tf-content-placeholder"></section>
+    <!-- ===== FRONT / PRINCIPAL (somente conteúdo do card central) ===== -->
+<section class="tf-front-wrap" data-content="front">
+  <!-- Bloco: VSL & Mídias -->
+  <div class="tf-front-card">
+    <header class="tf-front-card-head">
+      <div>
+        <h3>VSL & Mídias do Front</h3>
+        <p>Configure a VSL principal e as mídias que acompanham sua oferta.</p>
+      </div>
+    </header>
+
+    <!-- Quantidade de mídias -->
+    <div class="tf-front-row">
+      <label class="tf-front-label">Quantidade de mídias</label>
+      <div class="tf-front-pills" data-role="media-count">
+        <button type="button" class="pill is-active" data-val="1">1</button>
+        <button type="button" class="pill" data-val="2">2</button>
+        <button type="button" class="pill" data-val="3">3</button>
+        <button type="button" class="pill" data-val="4">4</button>
+        <button type="button" class="pill" data-val="5">5</button>
+      </div>
+    </div>
+
+    <!-- Lista dinâmica de mídias -->
+    <div class="tf-front-media-list" id="frontMediaList">
+      <!-- linhas são geradas via JS; markup base: -->
+      <!--
+      <div class="media-line" data-idx="1">
+        <div class="media-line__title">Mídia 1</div>
+        <input class="tf-front-input" name="front_media_url_1" placeholder="https://..." />
+        <div class="tf-front-pills" data-role="media-pos" data-idx="1">
+          <button type="button" class="pill is-active" data-val="before">Antes da copy principal</button>
+          <button type="button" class="pill" data-val="after">Depois da copy principal</button>
+        </div>
+        <button type="button" class="tf-front-ghost" data-role="rules" data-kind="media" data-idx="1">Regras</button>
+      </div>
+      -->
+    </div>
+
+    <!-- Copy da VSL -->
+    <div class="tf-front-row">
+      <label for="front_vsl_copy" class="tf-front-label">Copy da VSL</label>
+      <textarea id="front_vsl_copy" name="front_vsl_copy" class="tf-front-textarea" rows="4" placeholder="Descreva aqui a copy da sua VSL..."></textarea>
+      <small class="tf-front-hint">Use este espaço para a copy principal que aparece junto à VSL.</small>
+    </div>
+  </div>
+
+  <!-- Bloco: Botão de CTA -->
+  <div class="tf-front-card">
+    <header class="tf-front-card-head">
+      <h3>Botão de CTA</h3>
+    </header>
+
+    <div class="tf-front-grid2">
+      <div class="tf-front-col">
+        <label class="tf-front-label">Texto do botão</label>
+        <input class="tf-front-input" name="front_cta_text" placeholder="Ex.: Obter vaga, Acessar conteúdo VIP..." />
+      </div>
+      <div class="tf-front-col">
+        <label class="tf-front-label">URL de destino</label>
+        <input class="tf-front-input" name="front_cta_url" placeholder="https://..." />
+      </div>
+    </div>
+
+    <div class="tf-front-row">
+      <small class="tf-front-hint">Esse botão controla a ação principal do front da oferta.</small>
+    </div>
+
+    <div class="tf-front-row">
+      <button type="button" class="tf-front-ghost" data-role="rules" data-kind="cta">Regras</button>
+    </div>
+  </div>
+
+  <!-- Bloco: Planos exibidos no Front -->
+  <div class="tf-front-card">
+    <header class="tf-front-card-head">
+      <h3>Planos exibidos no Front</h3>
+    </header>
+
+    <!-- Quantidade de planos -->
+    <div class="tf-front-row">
+      <label class="tf-front-label">Quantidade de planos</label>
+      <div class="tf-front-pills" data-role="plans-count">
+        <button type="button" class="pill is-active" data-val="1">1</button>
+        <button type="button" class="pill" data-val="2">2</button>
+        <button type="button" class="pill" data-val="3">3</button>
+        <button type="button" class="pill" data-val="4">4</button>
+        <button type="button" class="pill" data-val="5">5</button>
+        <button type="button" class="pill pill--more" data-val="+">+</button>
+      </div>
+    </div>
+
+    <!-- Lista de planos (dinâmica) -->
+    <div class="tf-front-plans" id="frontPlansList">
+      <!-- linhas são geradas via JS; markup base:
+      <div class="plan-line" data-idx="1">
+        <div class="plan-line__idx">1</div>
+        <input class="tf-front-input" name="front_plan_name_1" placeholder="Nome do plano (Ex.: Mensal VIP)" />
+        <input class="tf-front-input w-120" name="front_plan_price_1" placeholder="R$ 29,90" />
+        <input class="tf-front-input" name="front_plan_desc_1" placeholder="Descrição opcional" />
+      </div>
+      -->
+    </div>
+  </div>
+</section>
+
   </div>
 </div>
 
@@ -344,6 +449,100 @@
     .tf-steps-dialog{ width:calc(100vw - 28px); }
     .tf-step-item{ grid-template-columns: 28px 36px 1fr auto auto; }
   }
+</style>
+
+<style>
+/* ====== FRONT / PRINCIPAL (escopado) ====== */
+.tf-front-wrap{ 
+  border:1px solid rgba(255,255,255,0.12);
+  border-radius:14px; 
+  background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
+  box-shadow:0 8px 24px rgba(0,0,0,0.45);
+  padding:16px; 
+  margin-top:14px;
+}
+
+.tf-front-card{
+  background:rgba(255,255,255,0.05);
+  border:1px solid rgba(255,255,255,0.10);
+  border-radius:14px;
+  padding:16px;
+  margin-bottom:12px;
+}
+.tf-front-card-head{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:12px; }
+.tf-front-card-head h3{ margin:0; font-size:1.08rem; color:#ffcc00; letter-spacing:.2px; }
+.tf-front-card-head p{ margin:4px 0 0; color:#cfcfcf; }
+
+.tf-front-row{ display:flex; align-items:flex-start; gap:12px; margin-bottom:12px; flex-wrap:wrap; }
+.tf-front-grid2{ display:grid; grid-template-columns: 1fr 1fr; gap:12px; }
+.tf-front-col{ display:flex; flex-direction:column; gap:6px; }
+
+.tf-front-label{ min-width:180px; color:#dcdcdc; font-weight:700; margin-top:7px; }
+.tf-front-input{
+  width:100%; padding:10px 12px; border-radius:10px;
+  border:1px solid rgba(255,255,255,0.22); background:rgba(255,255,255,0.06);
+  color:#fff; outline:none; font-size:.95rem; transition:border-color .2s, box-shadow .2s;
+}
+.tf-front-input:focus{ border-color:#ffcc00; box-shadow:0 0 0 2px rgba(255,204,0,0.28); }
+.tf-front-textarea{ width:100%; min-height:100px; resize:vertical; }
+.tf-front-hint{ color:#b8b8b8; }
+
+.tf-front-pills{ display:flex; gap:8px; flex-wrap:wrap; }
+.tf-front-pills .pill{
+  padding:8px 12px; height:36px; border-radius:999px; cursor:pointer;
+  border:1px solid rgba(255,255,255,0.14); background:rgba(255,255,255,0.07); color:#eee; font-weight:700;
+  transition:.16s ease;
+}
+.tf-front-pills .pill:hover{ background:rgba(255,255,255,0.12); }
+.tf-front-pills .pill.is-active{
+  background:rgba(255,204,0,0.16); color:#fff; border-color:rgba(255,204,0,0.45); box-shadow:0 0 0 2px rgba(255,204,0,0.18) inset;
+}
+.pill--more{ min-width:42px; }
+
+.tf-front-ghost{
+  border:1px solid rgba(255,255,255,0.14);
+  background:rgba(255,255,255,0.07); color:#eee;
+  padding:8px 12px; border-radius:10px; font-weight:700; height:36px;
+}
+.tf-front-ghost:hover{ background:rgba(255,255,255,0.12); }
+
+.tf-front-media-list{ display:flex; flex-direction:column; gap:10px; }
+.media-line{
+  display:grid; gap:10px; align-items:center;
+  grid-template-columns: 110px 1fr minmax(260px, 420px) auto;
+  padding:10px; border-radius:12px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08);
+}
+.media-line__title{ color:#fff; font-weight:800; }
+
+.tf-front-plans{ display:flex; flex-direction:column; gap:10px; }
+.plan-line{
+  display:grid; gap:10px; align-items:center;
+  grid-template-columns: 38px 1fr 120px 1fr;
+  padding:10px; border-radius:12px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08);
+}
+.plan-line__idx{ width:34px; height:34px; display:flex; align-items:center; justify-content:center; border-radius:10px; font-weight:800;
+  border:1px solid rgba(255,255,255,0.14); background:rgba(255,255,255,0.06); color:#fff; }
+.w-120{ width:120px; }
+
+/* Mini popover de Regras */
+.tf-rules-pop{
+  position:fixed; z-index:3500; min-width:280px;
+  background:rgba(0,0,0,0.86); border:1px solid rgba(255,204,0,0.22);
+  border-radius:12px; box-shadow:0 10px 40px rgba(0,0,0,0.6); padding:10px; backdrop-filter: blur(10px);
+}
+.tf-rules-pop h4{ margin:4px 0 10px; font-size:1rem; color:#ffcc00; }
+.tf-rule{ display:flex; align-items:center; gap:10px; padding:8px; border-radius:10px; }
+.tf-rule:hover{ background:rgba(255,255,255,0.06); }
+.tf-rule input[type="checkbox"]{ width:18px; height:18px; }
+.tf-rule .inline{ display:flex; align-items:center; gap:8px; margin-left:auto; }
+.tf-rule .inline input{ width:80px; }
+
+@media (max-width:980px){
+  .media-line{ grid-template-columns: 90px 1fr 1fr auto; }
+  .plan-line{ grid-template-columns: 30px 1fr 120px 1fr; }
+  .tf-front-grid2{ grid-template-columns: 1fr; }
+  .tf-front-label{ min-width:unset; }
+}
 </style>
 
 <script>
@@ -833,3 +1032,171 @@
   }
 })();
 </script>
+
+<script>
+(function(){
+  // Mostra/oculta conteúdo conforme subtab (por via das dúvidas)
+  document.querySelectorAll('.tf-subtabs .subtab').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      document.querySelectorAll('[data-content]').forEach(function(sec){ sec.style.display = 'none'; });
+      var key = btn.dataset.subtab;
+      var target = document.querySelector('[data-content="'+key+'"]');
+      if (target) target.style.display = 'block';
+      document.querySelectorAll('.tf-subtabs .subtab').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+    });
+  });
+  // Deixa a FRONT visível inicialmente
+  var firstFront = document.querySelector('[data-content="front"]');
+  if (firstFront) firstFront.style.display = 'block';
+
+  // ====== Helpers ======
+  function setActivePill(groupEl, value){
+    groupEl.querySelectorAll('.pill').forEach(p=>{
+      p.classList.toggle('is-active', p.dataset.val === String(value));
+    });
+  }
+  function buildMediaLine(idx){
+    var line = document.createElement('div');
+    line.className = 'media-line'; line.dataset.idx = idx;
+
+    var title = document.createElement('div');
+    title.className = 'media-line__title';
+    title.textContent = 'Mídia ' + idx;
+
+    var input = document.createElement('input');
+    input.className = 'tf-front-input';
+    input.name = 'front_media_url_' + idx;
+    input.placeholder = 'https://...';
+
+    var pills = document.createElement('div');
+    pills.className = 'tf-front-pills';
+    pills.dataset.role = 'media-pos';
+    pills.dataset.idx = idx;
+
+    var b1 = document.createElement('button'); b1.type='button'; b1.className='pill is-active'; b1.dataset.val='before'; b1.textContent='Antes da copy principal';
+    var b2 = document.createElement('button'); b2.type='button'; b2.className='pill';          b2.dataset.val='after';  b2.textContent='Depois da copy principal';
+    pills.appendChild(b1); pills.appendChild(b2);
+
+    var rules = document.createElement('button');
+    rules.type='button'; rules.className='tf-front-ghost'; rules.textContent='Regras';
+    rules.dataset.role='rules'; rules.dataset.kind='media'; rules.dataset.idx=idx;
+
+    line.appendChild(title); line.appendChild(input); line.appendChild(pills); line.appendChild(rules);
+    return line;
+  }
+  function ensureMediaCount(n){
+    var host = document.getElementById('frontMediaList');
+    if (!host) return;
+    var cur = host.querySelectorAll('.media-line').length;
+    // remove excesso
+    while (cur > n){ host.removeChild(host.lastElementChild); cur--; }
+    // adiciona faltantes
+    while (cur < n){ host.appendChild(buildMediaLine(cur+1)); cur++; }
+  }
+  function buildPlanLine(idx){
+    var line = document.createElement('div');
+    line.className = 'plan-line'; line.dataset.idx = idx;
+
+    var idxBox = document.createElement('div'); idxBox.className='plan-line__idx'; idxBox.textContent = idx;
+
+    var name = document.createElement('input'); name.className='tf-front-input'; name.name='front_plan_name_'+idx; name.placeholder='Nome do plano (Ex.: Mensal VIP)';
+    var price= document.createElement('input'); price.className='tf-front-input w-120'; price.name='front_plan_price_'+idx; price.placeholder='R$ 29,90';
+    var desc = document.createElement('input'); desc.className='tf-front-input'; desc.name='front_plan_desc_'+idx; desc.placeholder='Descrição opcional';
+
+    line.appendChild(idxBox); line.appendChild(name); line.appendChild(price); line.appendChild(desc);
+    return line;
+  }
+  function ensurePlanCount(n){
+    var host = document.getElementById('frontPlansList');
+    if (!host) return;
+    var cur = host.querySelectorAll('.plan-line').length;
+    while (cur > n){ host.removeChild(host.lastElementChild); cur--; }
+    while (cur < n){ host.appendChild(buildPlanLine(cur+1)); cur++; }
+  }
+
+  // Inicializações
+  ensureMediaCount(1);
+  ensurePlanCount(1);
+
+  // Pílulas: quantidade de mídias
+  var mediaCount = document.querySelector('[data-role="media-count"]');
+  mediaCount?.addEventListener('click', function(e){
+    var btn = e.target.closest('.pill'); if(!btn) return;
+    var n = parseInt(btn.dataset.val || '1', 10);
+    setActivePill(mediaCount, n);
+    ensureMediaCount(Math.max(1, Math.min(5, n)));
+  });
+
+  // Pílulas: posição da mídia (before/after)
+  document.addEventListener('click', function(e){
+    var group = e.target.closest('[data-role="media-pos"]'); if(!group) return;
+    var btn = e.target.closest('.pill'); if(!btn) return;
+    group.querySelectorAll('.pill').forEach(p=>p.classList.remove('is-active'));
+    btn.classList.add('is-active');
+  });
+
+  // Pílulas: quantidade de planos (1..5 + “+” até 10)
+  var plansCount = document.querySelector('[data-role="plans-count"]');
+  var plansMax = 10; var currentPlans = 1;
+  plansCount?.addEventListener('click', function(e){
+    var btn = e.target.closest('.pill'); if(!btn) return;
+    var val = btn.dataset.val;
+    if (val === '+'){ currentPlans = Math.min(plansMax, currentPlans + 1); }
+    else { currentPlans = Math.max(1, Math.min(5, parseInt(val||'1',10))); }
+    // visual: marca 1..5, mas respeita incremento interno
+    plansCount.querySelectorAll('.pill').forEach(p=>p.classList.remove('is-active'));
+    var mark = plansCount.querySelector('.pill[data-val="'+Math.min(currentPlans,5)+'"]');
+    if (mark) mark.classList.add('is-active');
+    ensurePlanCount(currentPlans);
+  });
+
+  // ====== Mini “Regras” (popover) ======
+  var rulesPop;
+  function closeRules(){ if(rulesPop){ rulesPop.remove(); rulesPop=null; } }
+  document.addEventListener('click', function(e){
+    if (rulesPop && !rulesPop.contains(e.target) && !e.target.closest('[data-role="rules"]')) closeRules();
+  });
+  function openRules(anchor, kind, idx){
+    closeRules();
+    var rect = anchor.getBoundingClientRect();
+    rulesPop = document.createElement('div');
+    rulesPop.className = 'tf-rules-pop';
+    var title = kind === 'media' ? ('Regras da Mídia ' + (idx||'')) : 'Regras do CTA';
+    rulesPop.innerHTML = `
+      <h4>${title}</h4>
+      <label class="tf-rule"><input type="checkbox" data-rule="afterNextBtn"><span>Após clique no próximo botão</span></label>
+      <label class="tf-rule"><input type="checkbox" data-rule="afterSeconds"><span>Após X segundos</span>
+        <span class="inline"><input type="text" data-rule="secondsVal" placeholder="Ex.: 5s"></span>
+      </label>
+      <label class="tf-rule"><input type="checkbox" data-rule="noDelete"><span>Não apagar</span></label>
+      <label class="tf-rule"><input type="checkbox" data-rule="delAfterStart"><span>Apagar após próximo /start</span></label>
+    `;
+    document.body.appendChild(rulesPop);
+    var left = Math.min(window.innerWidth - rulesPop.offsetWidth - 12, rect.left + window.scrollX);
+    var top  = rect.bottom + window.scrollY + 8;
+    rulesPop.style.left = left + 'px';
+    rulesPop.style.top = top + 'px';
+
+    // Exclusão: "Não apagar" é exclusivo
+    rulesPop.addEventListener('change', function(ev){
+      var t = ev.target;
+      if (t && t.matches('input[type="checkbox"][data-rule="noDelete"]')){
+        if (t.checked){
+          rulesPop.querySelectorAll('input[type="checkbox"]').forEach(ch=>{
+            if (ch !== t) ch.checked = false;
+          });
+        }
+      } else if (t && t.matches('input[type="checkbox"]')){
+        var noDel = rulesPop.querySelector('input[data-rule="noDelete"]');
+        if (noDel && t.checked) noDel.checked = false;
+      }
+    });
+  }
+  document.addEventListener('click', function(e){
+    var btn = e.target.closest('[data-role="rules"]'); if(!btn) return;
+    openRules(btn, btn.dataset.kind, btn.dataset.idx);
+  });
+})();
+</script>
+
