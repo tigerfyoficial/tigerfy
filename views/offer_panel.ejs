@@ -553,6 +553,138 @@
   box-shadow: 0 0 18px rgba(255,204,0,0.18);
 }
 
+/* ============================
+   TIGERFY MONOGOLD — UNIFICAÇÃO VISUAL (só estilização)
+   Escopo: tela do painel da oferta
+   ============================ */
+
+.offer-panel-container .tf-offer-panel{
+  --tg-bg:        rgba(12,12,12,0.88);
+  --tg-surface:   rgba(20,20,20,0.72);
+  --tg-surface-2: rgba(16,16,16,0.62);
+  --tg-border:    rgba(255,255,255,0.12);
+  --tg-border-hi: rgba(255,204,0,0.42);
+  --tg-gold:      #ffcc00;
+  --tg-gold-2:    #d4a100;
+  --tg-text:      #ffffff;
+  --tg-muted:     #b6b6b6;
+  --tg-radius:    16px;
+}
+
+/* ---------- PILLS (tabs/subtabs) - padronizadas ---------- */
+.offer-panel-container .tf-tabs .tab,
+.offer-panel-container .tf-subtabs .subtab{
+  background: var(--tg-surface-2) !important;
+  border: 1px solid var(--tg-border) !important;
+  color: var(--tg-text);
+  height: 38px;
+  padding: 9px 14px;
+  border-radius: 999px;
+  box-shadow: none !important;
+}
+.offer-panel-container .tf-tabs .tab.active,
+.offer-panel-container .tf-subtabs .subtab.active{
+  background: linear-gradient(180deg, rgba(255,204,0,0.12), rgba(255,204,0,0.08)) !important;
+  border-color: var(--tg-border-hi) !important;
+  box-shadow: 0 0 0 1px rgba(255,204,0,0.18) inset, 0 0 22px rgba(255,204,0,0.14) !important;
+  color: #fff !important;
+}
+
+/* ---------- CARDS (esquerda e direita) ---------- */
+.offer-panel-container .tf-front-grid .tf-card,
+.offer-panel-container .tf-card{
+  position: relative;
+  border-radius: var(--tg-radius);
+  background: var(--tg-surface);
+  border: 1px solid var(--tg-border);
+  box-shadow: 0 10px 26px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.06);
+  backdrop-filter: blur(6px) saturate(110%);
+  overflow: hidden;
+}
+
+/* remove padrões antigos/dash/bolinhas */
+.offer-panel-container .tf-front-grid .tf-card{ background-image: none; }
+.offer-panel-container .tf-front-grid .tf-card::after,
+.offer-panel-container .tf-front-grid .tf-card::before{ opacity:0 !important; }
+
+/* Cabeçalho do card */
+.offer-panel-container .tf-card-head{
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.offer-panel-container .tf-card-head h3{
+  margin:0; letter-spacing:.2px;
+  color: var(--tg-text);
+  text-shadow: 0 0 8px rgba(255,204,0,0.14);
+}
+.offer-panel-container .tf-card-head .tf-ico{
+  width:30px;height:30px;border-radius:12px;
+  display:inline-flex;align-items:center;justify-content:center;
+  background: transparent;
+  border:1px solid var(--tg-border-hi);
+  box-shadow: inset 0 6px 16px rgba(255,204,0,0.14);
+}
+
+/* ---------- INPUTS/TEXTAREAS ---------- */
+.offer-panel-container .tf-input,
+.offer-panel-container .tf-textarea{
+  background: rgba(0,0,0,0.40) !important;
+  border: 1px solid rgba(255,255,255,0.16) !important;
+  color: var(--tg-text) !important;
+  box-shadow: inset 0 0 0 1px rgba(255,204,0,0) !important;
+}
+.offer-panel-container .tf-input:focus,
+.offer-panel-container .tf-textarea:focus{
+  border-color: var(--tg-border-hi) !important;
+  box-shadow: 0 0 0 3px rgba(255,204,0,0.16), inset 0 0 0 1px rgba(255,204,0,0.25) !important;
+}
+.offer-panel-container ::placeholder{ color: rgba(255,255,255,0.55) !important; }
+
+/* ---------- SWITCH CTA ---------- */
+.offer-panel-container .tf-switch .slider{
+  background: rgba(255,255,255,0.12) !important;
+  border: 1px solid rgba(255,255,255,0.22) !important;
+}
+.offer-panel-container .tf-switch input:checked + .slider{
+  background: linear-gradient(90deg, var(--tg-gold), var(--tg-gold-2)) !important;
+  border-color: var(--tg-border-hi) !important;
+  box-shadow: 0 0 0 2px rgba(255,204,0,0.18) !important;
+}
+
+/* ---------- BOTÕES ---------- */
+.offer-panel-container .btn-primary,
+.offer-panel-container .tf-btn-primary{
+  background: linear-gradient(90deg, var(--tg-gold), var(--tg-gold-2)) !important;
+  color: #1a1300 !important;
+  border: 1px solid var(--tg-border-hi) !important;
+  box-shadow: 0 0 12px rgba(255,204,0,0.35), inset 0 1px 0 rgba(255,255,255,0.35) !important;
+  transition: transform .12s ease, filter .12s ease, box-shadow .12s ease;
+}
+.offer-panel-container .btn-primary:hover,
+.offer-panel-container .tf-btn-primary:hover{
+  transform: translateY(-1px);
+  filter: brightness(1.06);
+  box-shadow: 0 0 18px rgba(255,204,0,0.42), inset 0 1px 0 rgba(255,255,255,0.42) !important;
+}
+
+/* ---------- TITULOS/BREADCRUMB (apenas cor) ---------- */
+.offer-panel-container .tf-offer-title{ color:#fff !important; -webkit-text-fill-color: initial; }
+
+/* ---------- ESPAÇAMENTO PADRÃO ENTRE CARDS ESQUERDA ---------- */
+.offer-panel-container .tf-front-grid .tf-card + .tf-card{ margin-top: 12px; }
+
+/* ---------- PLANOS (card da direita) harmonizado ---------- */
+.offer-panel-container .tf-plans,
+.offer-panel-container .tf-right-col .tf-card{
+  border:1px solid var(--tg-border);
+  background: var(--tg-surface);
+  box-shadow: 0 10px 26px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.06);
+}
+
+/* ---------- PILLS ICONS equilíbrio ---------- */
+.offer-panel-container .tf-tabs svg,
+.offer-panel-container .tf-subtabs svg{ opacity:.9; }
+
 </style>
 
 <script>
