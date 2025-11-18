@@ -82,141 +82,106 @@
       </div>
     </div>
 
-<!-- ===== PRINCIPAL / FRONT — v6 (TigerFy compact premium, 2 col) ===== -->
-<section class="tfg6-front" data-content="front">
-  <div class="tfg6-grid">
-
-    <!-- COL ESQUERDA: VSL · COPY · CTA -->
-    <div class="tfg6-col-left">
+<!-- ===================== PRINCIPAL / FRONT — TigerFy v7 (novo visual) ===================== -->
+<section class="tfx7-front" data-content="front">
+  <div class="tfx7-grid">
+    <!-- ESQUERDA: VSL / COPY / CTA -->
+    <div class="tfx7-col-left">
 
       <!-- CARD 1 · VSL & MÍDIA PRINCIPAL -->
-      <div class="tfg6-card">
-        <header class="tfg6-head">
-          <div class="tfg6-titles">
+      <article class="tfx7-card">
+        <header class="tfx7-bar">
+          <div class="tfx7-titles">
             <h3>VSL & Mídia principal do Front</h3>
-            <p>Defina o link da mídia no Telegram, a posição em relação à copy e regras.</p>
+            <span>Configure a mídia do Telegram, posição e regras.</span>
           </div>
-          <button type="button" class="tfg6-btn ghost xs" id="tfg6AddMedia">+ Adicionar mídia</button>
+          <button type="button" class="tfx7-btn ghost xs" id="tfx7AddMedia">+ Adicionar mídia</button>
         </header>
 
-        <div class="tfg6-list" id="tfg6MediaList"><!-- linhas via JS --></div>
-      </div>
+        <div class="tfx7-list" id="tfx7MediaList"><!-- itens via JS --></div>
+      </article>
 
       <!-- CARD 2 · COPY DA VSL -->
-      <div class="tfg6-card">
-        <header class="tfg6-head">
-          <div class="tfg6-titles">
+      <article class="tfx7-card">
+        <header class="tfx7-bar">
+          <div class="tfx7-titles">
             <h3>Copy da VSL</h3>
-            <p>Mensagem principal exibida junto à VSL.</p>
+            <span>Mensagem principal exibida junto à VSL.</span>
           </div>
-          <button type="button" class="tfg6-btn ghost xs" id="tfg6CopyRulesBtn">Regras</button>
+          <button type="button" class="tfx7-btn ghost xs" id="tfx7CopyRulesBtn">Regras</button>
         </header>
 
-        <div class="tfg6-row">
-          <textarea id="front_vsl_copy" name="front_vsl_copy" class="tfg6-input textarea compact" rows="3" placeholder="Descreva aqui a copy da sua VSL..."></textarea>
+        <div class="tfx7-row">
+          <textarea id="front_vsl_copy" name="front_vsl_copy" class="tfx7-input ta compact" rows="3" placeholder="Descreva aqui a copy da sua VSL..."></textarea>
         </div>
-      </div>
+      </article>
 
-      <!-- CARD 3 · BOTÃO DE CTA (OPCIONAL) -->
-      <div class="tfg6-card">
-        <header class="tfg6-head">
-          <div class="tfg6-titles">
+      <!-- CARD 3 · CTA (OPCIONAL) -->
+      <article class="tfx7-card">
+        <header class="tfx7-bar">
+          <div class="tfx7-titles">
             <h3>Botão de CTA (opcional)</h3>
           </div>
-          <div class="tfg6-pills" id="tfg6CtaToggle">
-            <button type="button" class="pill is-active" data-val="on">Sim</button>
-            <button type="button" class="pill" data-val="off">Não</button>
+          <div class="tfx7-pills" id="tfx7CtaToggle">
+            <button class="pill is-active" type="button" data-val="on">Sim</button>
+            <button class="pill" type="button" data-val="off">Não</button>
           </div>
         </header>
 
-        <div class="tfg6-grid2 tight" id="tfg6CtaFields">
-          <div class="tfg6-col">
-            <label class="tfg6-label">Texto do botão</label>
-            <input class="tfg6-input" name="front_cta_text" id="front_cta_text" placeholder="Ex.: Quero minha vaga, Acessar conteúdo VIP..." />
+        <div class="tfx7-grid2 tight" id="tfx7CtaFields">
+          <div class="tfx7-col">
+            <label class="tfx7-label">Texto do botão</label>
+            <input class="tfx7-input" id="front_cta_text" name="front_cta_text" placeholder="Ex.: Quero minha vaga, Acessar conteúdo VIP..." />
           </div>
-          <div class="tfg6-col">
-            <label class="tfg6-label">URL da VSL</label>
-            <input class="tfg6-input" name="front_cta_url" id="front_cta_url" placeholder="https://..." />
+          <div class="tfx7-col">
+            <label class="tfx7-label">URL da VSL</label>
+            <input class="tfx7-input" id="front_cta_url" name="front_cta_url" placeholder="https://..." />
           </div>
-          <div class="tfg6-col span2">
-            <label class="tfg6-label">Copy do CTA (opcional)</label>
-            <input class="tfg6-input" name="front_cta_copy" id="front_cta_copy" placeholder="Mensagem curta que acompanha o CTA..." />
+          <div class="tfx7-col span2">
+            <label class="tfx7-label">Copy do CTA (opcional)</label>
+            <input class="tfx7-input" id="front_cta_copy" name="front_cta_copy" placeholder="Mensagem curta que acompanha o CTA..." />
           </div>
         </div>
 
-        <div class="tfg6-row tight" id="tfg6CtaRulesRow">
-          <span class="tfg6-label">Regras de exclusão do CTA</span>
-          <button type="button" class="tfg6-btn ghost xs" id="tfg6CtaRulesBtn">Regras</button>
+        <div class="tfx7-row tight" id="tfx7CtaRulesRow">
+          <span class="tfx7-label">Regras de exclusão do CTA</span>
+          <button type="button" class="tfx7-btn ghost xs" id="tfx7CtaRulesBtn">Regras</button>
         </div>
-      </div>
+      </article>
+
     </div>
 
-    <!-- COL DIREITA: PLANOS -->
-    <div class="tfg6-col-right">
-
-      <!-- CARD 4 · PLANOS DO FRONT -->
-      <div class="tfg6-card">
-        <header class="tfg6-head">
-          <div class="tfg6-titles">
+    <!-- DIREITA: PLANOS -->
+    <div class="tfx7-col-right">
+      <article class="tfx7-card">
+        <header class="tfx7-bar">
+          <div class="tfx7-titles">
             <h3>Planos exibidos no Front</h3>
           </div>
-          <button type="button" class="tfg6-btn ghost xs" id="tfg6AddPlan">+ Adicionar plano</button>
+          <button type="button" class="tfx7-btn ghost xs" id="tfx7AddPlan">+ Adicionar plano</button>
         </header>
 
-        <!-- 4.1 Copy antes dos botões -->
-        <div class="tfg6-sub">
-          <div class="tfg6-sub-head">
+        <!-- Copy antes dos botões -->
+        <section class="tfx7-sub">
+          <div class="tfx7-subbar">
             <h4>Copy antes dos botões</h4>
-            <div class="tfg6-inline">
-              <div class="tfg6-pills" id="tfg6PlansCopySend">
-                <button type="button" class="pill is-active" data-val="on">Enviar</button>
-                <button type="button" class="pill" data-val="off">Não enviar</button>
+            <div class="tfx7-inline">
+              <div class="tfx7-pills" id="tfx7PlansCopySend">
+                <button class="pill is-active" type="button" data-val="on">Enviar</button>
+                <button class="pill" type="button" data-val="off">Não enviar</button>
               </div>
-              <button type="button" class="tfg6-btn ghost xs" id="tfg6PlansCopyRulesBtn">Regras</button>
+              <button type="button" class="tfx7-btn ghost xs" id="tfx7PlansCopyRulesBtn">Regras</button>
             </div>
           </div>
-          <textarea id="front_plans_copy" name="front_plans_copy" class="tfg6-input textarea compact" rows="2" placeholder="Texto curto antes dos botões dos planos..."></textarea>
-        </div>
+          <textarea id="front_plans_copy" name="front_plans_copy" class="tfx7-input ta compact" rows="2" placeholder="Texto curto antes dos botões dos planos..."></textarea>
+        </section>
 
-        <!-- 4.2 Lista de planos -->
-        <div class="tfg6-list" id="tfg6PlansList"><!-- linhas via JS --></div>
-      </div>
+        <!-- Lista de planos -->
+        <div class="tfx7-list" id="tfx7PlansList"><!-- itens via JS --></div>
+      </article>
     </div>
-
   </div>
 </section>
-
-<!-- ===== Mini-Modal Unificado de Regras ===== -->
-<div class="tfx5-rules-overlay" id="rulesOverlay" hidden>
-  <div class="tfx5-rules-dialog" role="dialog" aria-modal="true">
-    <header class="r-head">
-      <h4 id="rulesTitle">Regras</h4>
-      <button type="button" class="iconbtn" id="rulesClose" aria-label="Fechar">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-      </button>
-    </header>
-
-    <div class="r-body">
-      <label class="chip"><input type="checkbox" data-rule="noDelete"><span>Não apagar</span></label>
-      <label class="chip"><input type="checkbox" data-rule="afterNextBtn"><span>Apagar após clique no próximo botão</span></label>
-      <label class="chip r-seconds">
-        <input type="checkbox" data-rule="afterSeconds"><span>Apagar após X segundos</span>
-        <input type="text" class="inp xs" data-rule="secondsVal" placeholder="ex.: 5s">
-      </label>
-      <label class="chip"><input type="checkbox" data-rule="delAfterStart"><span>Apagar após próximo /start</span></label>
-    </div>
-
-    <footer class="r-actions">
-      <button type="button" class="ghost xs" id="rulesClear">Limpar regras</button>
-      <div class="spacer"></div>
-      <button type="button" class="btn-secondary btn-small" id="rulesCancel">Cancelar</button>
-      <button type="button" class="btn-primary btn-small" id="rulesApply">Aplicar regras</button>
-    </footer>
-  </div>
-</div>
-
-  </div>
-</div>
 
 <!-- MODAL -->
 <div class="tf-steps-overlay" id="stepsUnifiedModal" hidden>
