@@ -82,126 +82,140 @@
       </div>
     </div>
 
-<!-- ===== PRINCIPAL / FRONT — v4 compact/premium ===== -->
-<section class="tf-front-v4" data-content="front">
+<!-- ===== PRINCIPAL / FRONT — v5 (compact/premium + rules modal unificado) ===== -->
+<section class="tf-front-v5" data-content="front">
+  <div class="tf-front-grid">
+    <!-- CARD 1 — VSL & Mídia principal -->
+    <div class="tfx5-card">
+      <header class="tfx5-head">
+        <div>
+          <h3>VSL & Mídia principal do Front</h3>
+          <p class="sub">Configure a mídia principal e quando ela será exibida.</p>
+        </div>
+        <button type="button" class="ghost xs" id="btnAddMedia">+ Adicionar mídia</button>
+      </header>
 
-  <!-- CARD 1 — VSL principal & copy -->
-  <div class="tfx-card">
-    <header class="tfx-head">
-      <h3>VSL principal & copy do front</h3>
-    </header>
-
-    <div class="tfx-body">
-      <div class="row">
-        <label for="front_vsl_copy" class="lbl">Copy da VSL</label>
-        <textarea id="front_vsl_copy" name="front_vsl_copy" class="inp textarea s-compact" rows="3" placeholder="Descreva aqui a copy da sua VSL..."></textarea>
-        <small class="hint one-line">Copy principal exibida junto à VSL.</small>
+      <div class="tfx5-body">
+        <div class="mlist" id="frontMediaList"><!-- linhas via JS --></div>
       </div>
+    </div>
 
-      <div class="row align-center gap8">
-        <label class="toggle">
+    <!-- CARD 2 — Copy da VSL -->
+    <div class="tfx5-card">
+      <header class="tfx5-head">
+        <div>
+          <h3>Copy da VSL</h3>
+          <p class="sub">Mensagem principal exibida junto à VSL.</p>
+        </div>
+        <button type="button" class="ghost xs" data-open-rules="vsl">Regras</button>
+      </header>
+
+      <div class="tfx5-body">
+        <textarea id="front_vsl_copy" name="front_vsl_copy" class="inp textarea s-compact" rows="3" placeholder="Descreva aqui a copy da sua VSL..."></textarea>
+
+        <label class="toggle mt6">
           <input type="checkbox" id="vslDeleteToggle">
           <span>Apagar mensagem da VSL</span>
         </label>
+      </div>
+    </div>
 
-        <div id="vslRules" class="rulesbar" hidden>
-          <label class="chip">
-            <input type="checkbox" data-rule="noDelete">
-            <span>Não apagar</span>
-          </label>
-          <label class="chip">
-            <input type="checkbox" data-rule="afterNextBtn">
-            <span>Após clique no próximo botão</span>
-          </label>
-          <label class="chip">
-            <input type="checkbox" data-rule="afterSeconds">
-            <span>Após X segundos</span>
-          </label>
-          <input type="text" class="inp xs" placeholder="ex.: 5s" data-rule="secondsVal">
-          <label class="chip">
-            <input type="checkbox" data-rule="delAfterStart">
-            <span>Após próximo /start</span>
-          </label>
+    <!-- CARD 3 — Botão de CTA (opcional) -->
+    <div class="tfx5-card">
+      <header class="tfx5-head">
+        <div>
+          <h3>Botão de CTA (opcional)</h3>
+          <p class="sub">Define o botão principal do front.</p>
+        </div>
+        <div class="seg">
+          <button class="seg-btn is-active" type="button" data-cta-enable="yes">Sim</button>
+          <button class="seg-btn" type="button" data-cta-enable="no">Não</button>
+        </div>
+      </header>
 
-          <button type="button" class="ghost xs ml-auto" id="vslRulesClear">Limpar regras</button>
+      <div class="tfx5-body" id="ctaFields">
+        <div class="grid2 gap8">
+          <div class="col">
+            <label class="lbl">Texto do botão</label>
+            <input class="inp" name="front_cta_text" placeholder="Ex.: Quero minha vaga, Acessar conteúdo VIP..." />
+          </div>
+          <div class="col">
+            <label class="lbl">URL da VSL</label>
+            <input class="inp" name="front_cta_url" placeholder="https://..." />
+          </div>
+        </div>
+
+        <div class="row align-center gap8 mt6">
+          <label class="toggle">
+            <input type="checkbox" id="ctaDeleteToggle">
+            <span>Apagar mensagem do CTA</span>
+          </label>
+          <button type="button" class="ghost xs" data-open-rules="cta">Regras</button>
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- CARD 2 — Mídias de apoio -->
-  <div class="tfx-card">
-    <header class="tfx-head">
-      <h3>Mídias de apoio do front</h3>
-      <button type="button" class="ghost xs" id="btnAddMedia">+ Adicionar mídia</button>
-    </header>
-
-    <div class="tfx-body">
-      <div class="mlist" id="frontMediaList"><!-- linhas via JS --></div>
-    </div>
-  </div>
-
-  <!-- CARD 3 — Botão de CTA principal -->
-  <div class="tfx-card">
-    <header class="tfx-head">
-      <h3>Botão de CTA principal</h3>
-    </header>
-
-    <div class="tfx-body">
-      <div class="grid2 gap8">
-        <div class="col">
-          <label class="lbl">Texto do botão</label>
-          <input class="inp" name="front_cta_text" placeholder="Ex.: Obter vaga, Acessar conteúdo VIP..." />
+    <!-- CARD 4 — Planos exibidos no Front -->
+    <div class="tfx5-card tfx5-card--plans">
+      <header class="tfx5-head">
+        <div>
+          <h3>Planos exibidos no Front</h3>
+          <p class="sub">Organize e reordene os planos exibidos.</p>
         </div>
-        <div class="col">
-          <label class="lbl">URL da VSL</label>
-          <input class="inp" name="front_cta_url" placeholder="https://..." />
+        <button type="button" class="ghost xs" id="btnAddPlan">+ Adicionar plano</button>
+      </header>
+
+      <div class="tfx5-body">
+        <!-- Copy antes dos planos -->
+        <div class="copy-before">
+          <div class="row">
+            <label class="lbl">Copy antes dos planos</label>
+            <textarea class="inp textarea s-compact" rows="2" name="front_plans_intro" placeholder="Mensagem curta antes dos botões de plano..."></textarea>
+          </div>
+          <div class="row align-center gap8 mt4">
+            <label class="toggle">
+              <input type="checkbox" id="plansIntroEnable">
+              <span>Enviar essa copy?</span>
+            </label>
+            <button type="button" class="ghost xs" data-open-rules="plansIntro">Regras</button>
+          </div>
         </div>
+
+        <!-- Lista de planos -->
+        <div class="plist" id="frontPlansList"><!-- linhas via JS --></div>
       </div>
-
-      <div class="row align-center gap8">
-        <label class="toggle">
-          <input type="checkbox" id="ctaDeleteToggle">
-          <span>Apagar mensagem do CTA</span>
-        </label>
-
-        <div id="ctaRules" class="rulesbar" hidden>
-          <label class="chip">
-            <input type="checkbox" data-rule="noDelete">
-            <span>Não apagar</span>
-          </label>
-          <label class="chip">
-            <input type="checkbox" data-rule="afterNextBtn">
-            <span>Após clique no próximo botão</span>
-          </label>
-          <label class="chip">
-            <input type="checkbox" data-rule="afterSeconds">
-            <span>Após X segundos</span>
-          </label>
-          <input type="text" class="inp xs" placeholder="ex.: 5s" data-rule="secondsVal">
-          <label class="chip">
-            <input type="checkbox" data-rule="delAfterStart">
-            <span>Após próximo /start</span>
-          </label>
-
-          <button type="button" class="ghost xs ml-auto" id="ctaRulesClear">Limpar regras</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- CARD 4 — Planos exibidos no front -->
-  <div class="tfx-card">
-    <header class="tfx-head">
-      <h3>Planos exibidos no front</h3>
-      <button type="button" class="ghost xs" id="btnAddPlan">+ Adicionar plano</button>
-    </header>
-
-    <div class="tfx-body">
-      <div class="plist" id="frontPlansList"><!-- linhas via JS --></div>
     </div>
   </div>
 </section>
+
+<!-- ===== Mini-Modal Unificado de Regras ===== -->
+<div class="tfx5-rules-overlay" id="rulesOverlay" hidden>
+  <div class="tfx5-rules-dialog" role="dialog" aria-modal="true">
+    <header class="r-head">
+      <h4 id="rulesTitle">Regras</h4>
+      <button type="button" class="iconbtn" id="rulesClose" aria-label="Fechar">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </header>
+
+    <div class="r-body">
+      <label class="chip"><input type="checkbox" data-rule="noDelete"><span>Não apagar</span></label>
+      <label class="chip"><input type="checkbox" data-rule="afterNextBtn"><span>Apagar após clique no próximo botão</span></label>
+      <label class="chip r-seconds">
+        <input type="checkbox" data-rule="afterSeconds"><span>Apagar após X segundos</span>
+        <input type="text" class="inp xs" data-rule="secondsVal" placeholder="ex.: 5s">
+      </label>
+      <label class="chip"><input type="checkbox" data-rule="delAfterStart"><span>Apagar após próximo /start</span></label>
+    </div>
+
+    <footer class="r-actions">
+      <button type="button" class="ghost xs" id="rulesClear">Limpar regras</button>
+      <div class="spacer"></div>
+      <button type="button" class="btn-secondary btn-small" id="rulesCancel">Cancelar</button>
+      <button type="button" class="btn-primary btn-small" id="rulesApply">Aplicar regras</button>
+    </footer>
+  </div>
+</div>
 
   </div>
 </div>
@@ -467,88 +481,87 @@
 </style>
 
 <style>
-/* ===== PRINCIPAL / FRONT — v4 compact/premium ===== */
-.tf-front-v4{ padding:12px; border:1px solid rgba(255,255,255,0.12); border-radius:14px; background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02)); box-shadow:0 8px 24px rgba(0,0,0,0.45); }
+/* ===== v5 layout ===== */
+.tf-front-v5{ padding:10px; border:1px solid rgba(255,255,255,0.12); border-radius:14px;
+  background:linear-gradient(180deg,rgba(255,255,255,0.03),rgba(255,255,255,0.02)); box-shadow:0 8px 24px rgba(0,0,0,0.45);}
+.tf-front-grid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+@media(max-width:1100px){ .tf-front-grid{ grid-template-columns:1fr; } }
 
-.tfx-card{ background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.10); border-radius:14px; padding:10px 12px; margin-bottom:10px; }
-.tfx-head{ display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:8px; }
-.tfx-head h3{ margin:0; font-size:1.02rem; color:#ffcc00; letter-spacing:.2px; }
-.tfx-body{ display:flex; flex-direction:column; gap:8px; }
-
-.row{ display:flex; flex-direction:column; gap:6px; }
-.row.align-center{ flex-direction:row; align-items:center; flex-wrap:wrap; }
-.gap8{ gap:8px; }
-.grid2{ display:grid; grid-template-columns:1fr 1fr; }
-.col{ display:flex; flex-direction:column; gap:6px; }
+.tfx5-card{ background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.10);
+  border-radius:16px; backdrop-filter:blur(8px); padding:12px; }
+.tfx5-head{ display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:8px;}
+.tfx5-head h3{ margin:0; font-size:1.02rem; color:#ffcc00; letter-spacing:.2px; }
+.tfx5-head .sub{ margin:2px 0 0; color:#b8b8b8; font-size:.86rem;}
+.tfx5-body{ display:flex; flex-direction:column; gap:8px; }
+.tfx5-card--plans{ grid-column:span 2; } /* ocupa linha toda quando houver espaço */
 
 .lbl{ color:#e9e9e9; font-weight:700; font-size:.92rem; }
-.hint{ color:#b8b8b8; font-size:.86rem; }
-.hint.one-line{ white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-
-.inp{ width:100%; padding:8px 10px; border-radius:10px; border:1px solid rgba(255,255,255,0.22); background:rgba(255,255,255,0.06); color:#fff; outline:none; font-size:.92rem; transition:border-color .2s, box-shadow .2s; }
+.inp{ width:100%; padding:8px 10px; border-radius:10px; border:1px solid rgba(255,255,255,0.22); background:rgba(255,255,255,0.06); color:#fff; outline:none; font-size:.92rem; }
 .inp:focus{ border-color:#ffcc00; box-shadow:0 0 0 2px rgba(255,204,0,0.26); }
 .textarea.s-compact{ min-height:58px; resize:vertical; }
 .inp.xs{ width:84px; padding:6px 8px; font-size:.86rem; }
+.mt4{ margin-top:4px; } .mt6{ margin-top:6px; }
 
 .toggle{ display:inline-flex; align-items:center; gap:8px; font-weight:700; color:#e9e9e9; }
 .toggle input{ width:16px; height:16px; accent-color:#ffcc00; }
 
-.ghost{ border:1px solid rgba(255,255,255,0.14); background:rgba(255,255,255,0.07); color:#eee; padding:6px 10px; border-radius:10px; font-weight:700; height:30px; font-size:.88rem; }
+.ghost{ border:1px solid rgba(255,255,255,0.14); background:rgba(255,255,255,0.07); color:#eee; padding:6px 10px; border-radius:10px; font-weight:700; height:30px; font-size:.86rem; }
 .ghost:hover{ background:rgba(255,255,255,0.12); }
-.ghost.xs{ height:28px; padding:6px 10px; font-size:.86rem; }
-.ml-auto{ margin-left:auto; }
+.btn-small{ height:34px; padding:8px 14px; font-size:.9rem; border-radius:10px; }
 
-/* Regras inline (VSL e CTA) */
-.rulesbar{ display:flex; align-items:center; gap:6px; flex-wrap:wrap; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.10); border-radius:10px; padding:6px; }
-.chip{ display:inline-flex; align-items:center; gap:6px; padding:6px 10px; border-radius:999px; border:1px solid rgba(255,255,255,0.14); background:rgba(255,255,255,0.07); color:#eee; font-weight:700; font-size:.86rem; }
-.chip input{ width:16px; height:16px; accent-color:#ffcc00; }
+/* Segmented toggle CTA */
+.seg{ display:inline-flex; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.12); border-radius:999px; }
+.seg-btn{ border:0; padding:6px 12px; font-weight:800; color:#eaeaea; cursor:pointer; background:transparent; border-radius:999px; }
+.seg-btn.is-active{ background:rgba(255,204,0,0.16); color:#fff; border:1px solid rgba(255,204,0,0.45); }
 
-/* Mídias */
+/* MÍDIAS */
 .mlist{ display:flex; flex-direction:column; gap:6px; }
 .media-line{
   display:grid; gap:6px; align-items:center;
-  grid-template-columns:28px 150px 1fr minmax(240px, 360px) auto 28px;
-  padding:8px; border-radius:12px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08);
+  grid-template-columns:28px 150px 1fr minmax(220px, 360px) auto auto 28px;
+  padding:8px; border-radius:12px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.10);
 }
-.drag{ width:28px; height:28px; border-radius:10px; display:flex; align-items:center; justify-content:center; border:1px solid rgba(255,255,255,0.14); background:rgba(255,255,255,0.06); cursor:grab; }
+.drag{ width:28px; height:28px; border-radius:10px; display:flex; align-items:center; justify-content:center; border:1px solid rgba(255,255,255,0.14); background:rgba(255,255,255,0.07); cursor:grab;}
 .drag:active{ cursor:grabbing; }
 .drag svg{ width:14px; height:14px; opacity:.85; }
 .media-title{ color:#eaeaea; font-weight:800; font-size:.9rem; }
 .pills{ display:flex; gap:6px; flex-wrap:wrap; }
 .pill{
   padding:6px 10px; height:28px; border-radius:999px; cursor:pointer;
-  border:1px solid rgba(255,255,255,0.14); background:rgba(255,255,255,0.07); color:#eee; font-weight:700; font-size:.86rem; transition:.16s ease;
+  border:1px solid rgba(255,255,255,0.14); background:rgba(255,255,255,0.07); color:#eee; font-weight:700; font-size:.86rem;
 }
 .pill.is-active{ background:rgba(255,204,0,0.16); color:#fff; border-color:rgba(255,204,0,0.45); box-shadow:0 0 0 2px rgba(255,204,0,0.18) inset; }
 .iconbtn{ width:28px; height:28px; border-radius:10px; display:flex; align-items:center; justify-content:center; border:1px solid rgba(255,255,255,0.14); background:rgba(255,255,255,0.07); color:#eee; cursor:pointer; }
 .iconbtn:hover{ background:rgba(255,255,255,0.12); }
 
-/* Popover de Regras (mídia) */
-.rules-pop{
-  position:fixed; z-index:3500; min-width:260px;
-  background:rgba(0,0,0,0.86); border:1px solid rgba(255,204,0,0.22);
-  border-radius:12px; box-shadow:0 10px 40px rgba(0,0,0,0.6); padding:10px; backdrop-filter: blur(10px);
-}
-.rules-pop h4{ margin:2px 0 8px; font-size:.98rem; color:#ffcc00; }
-.rline{ display:flex; align-items:center; gap:8px; padding:6px; border-radius:10px; }
-.rline:hover{ background:rgba(255,255,255,0.06); }
-.rline input{ width:16px; height:16px; accent-color:#ffcc00; }
-.rline .inline{ display:flex; align-items:center; gap:6px; margin-left:auto; }
-.rline .inline input{ width:72px; }
-
-/* Planos */
+/* PLANOS */
 .plist{ display:flex; flex-direction:column; gap:6px; }
 .plan-line{
   display:grid; gap:6px; align-items:center;
-  grid-template-columns:28px 28px 1fr 120px 28px;
-  padding:8px; border-radius:12px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08);
+  grid-template-columns:28px 28px 1fr 120px auto 28px;
+  padding:8px; border-radius:12px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.10);
 }
-.idx{ width:28px; height:28px; display:flex; align-items:center; justify-content:center; border-radius:10px; font-weight:800; font-size:.92rem; border:1px solid rgba(255,255,255,0.14); background:rgba(255,255,255,0.06); color:#fff; }
+.idx{ width:28px; height:28px; display:flex; align-items:center; justify-content:center; border-radius:10px; font-weight:800; font-size:.92rem; border:1px solid rgba(255,255,255,0.14); background:rgba(255,255,255,0.07); color:#fff; }
 
+/* MODAL DE REGRAS */
+.tfx5-rules-overlay[hidden]{ display:none !important; }
+.tfx5-rules-overlay{ position:fixed; inset:0; z-index:3500; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,0.55); backdrop-filter: blur(10px); }
+.tfx5-rules-dialog{ width:min(560px, calc(100vw - 32px)); border-radius:16px; border:1px solid rgba(255,204,0,0.18);
+  background:rgba(0,0,0,0.82); box-shadow:0 10px 40px rgba(0,0,0,0.6); }
+.r-head{ display:flex; align-items:center; justify-content:space-between; padding:10px 12px; border-bottom:1px solid rgba(255,255,255,0.08); }
+.r-head h4{ margin:0; color:#ffcc00; font-size:1rem; }
+.r-body{ display:flex; gap:8px; flex-wrap:wrap; padding:10px; }
+.chip{ display:inline-flex; align-items:center; gap:6px; padding:6px 10px; border-radius:999px; border:1px solid rgba(255,255,255,0.14); background:rgba(255,255,255,0.07); color:#eee; font-weight:700; font-size:.86rem; }
+.chip input{ width:16px; height:16px; accent-color:#ffcc00; }
+.r-seconds .inp.xs{ width:72px; }
+.r-actions{ display:flex; align-items:center; gap:8px; padding:10px; border-top:1px solid rgba(255,255,255,0.08); }
+.r-actions .spacer{ flex:1; }
+
+/* Responsivo */
 @media (max-width:980px){
-  .grid2{ grid-template-columns:1fr; }
-  .media-line{ grid-template-columns:28px 120px 1fr 1fr auto 28px; }
-  .plan-line{ grid-template-columns:28px 28px 1fr 120px 28px; }
+  .tfx5-card--plans{ grid-column:span 1; }
+  .media-line{ grid-template-columns:28px 120px 1fr 1fr auto auto 28px; }
+  .plan-line{ grid-template-columns:28px 28px 1fr 100px auto 28px; }
 }
 </style>
 
@@ -1041,12 +1054,12 @@
 </script>
 
 <script>
-/* ===== PRINCIPAL / FRONT — v4 (UI) ===== */
+/* ===== v5 JS — drag, adicionar linhas e modal de regras ===== */
 (function(){
-  // Utils
-  const $ = (s, r=document) => r.querySelector(s);
-  const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+  const $ = (s, r=document)=>r.querySelector(s);
+  const $$ = (s, r=document)=>Array.from(r.querySelectorAll(s));
 
+  /* ---------- Helpers ---------- */
   function makeDrag(){
     const h = document.createElement('div');
     h.className = 'drag';
@@ -1056,9 +1069,7 @@
   }
   function makeTrash(){
     const b = document.createElement('button');
-    b.type = 'button';
-    b.className = 'iconbtn';
-    b.title = 'Remover';
+    b.type='button'; b.className='iconbtn'; b.title='Remover';
     b.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>';
     return b;
   }
@@ -1069,8 +1080,7 @@
     container.addEventListener('dragover', (e)=>{
       if (!ctx.dragging) return; e.preventDefault();
       const after = getAfter(container, e.clientY);
-      if (after==null) container.appendChild(ctx.dragging);
-      else container.insertBefore(ctx.dragging, after);
+      if (after==null) container.appendChild(ctx.dragging); else container.insertBefore(ctx.dragging, after);
     });
     function getAfter(cont, y){
       const els = [...cont.children].filter(el=>!el.classList.contains('dragging'));
@@ -1082,42 +1092,63 @@
     }
   }
 
-  /* ---------- VSL/CTA rules (inline) ---------- */
-  function setupInlineRules(sectionIdPrefix){
-    const toggle = $('#' + sectionIdPrefix + 'DeleteToggle');
-    const bar    = $('#' + sectionIdPrefix.replace('Delete','') + 'Rules');
-    const clear  = $('#' + sectionIdPrefix.replace('DeleteToggle','RulesClear'));
+  /* ---------- Modal de Regras (unificado) ---------- */
+  const rules = { target:null, type:null, idx:null, state:{} };
+  const overlay = $('#rulesOverlay');
+  const titleEl = $('#rulesTitle');
+  const btnClose = $('#rulesClose'), btnCancel=$('#rulesCancel'), btnApply=$('#rulesApply'), btnClear=$('#rulesClear');
 
-    toggle?.addEventListener('change', ()=>{
-      bar.hidden = !toggle.checked;
-      if (!toggle.checked) { // desligou -> limpa
-        $$('input[type="checkbox"]', bar).forEach(i=>i.checked=false);
-        const sec = $('[data-rule="secondsVal"]', bar); if (sec) sec.value='';
-      }
+  function openRules(opts){
+    rules.target = opts.target || null;
+    rules.type   = opts.type   || '';
+    rules.idx    = opts.idx    || null;
+    rules.state  = opts.state  || {};
+
+    titleEl.textContent = opts.title || 'Regras';
+    // reset UI
+    $$('[data-rule]', overlay).forEach(i=>{
+      if (i.type==='checkbox') i.checked = !!rules.state[i.dataset.rule];
+      if (i.dataset.rule==='secondsVal') i.value = rules.state.secondsVal || '';
     });
 
-    // Exclusividade “Não apagar”
-    bar?.addEventListener('change', (e)=>{
-      const t = e.target;
-      if (!t.matches('input[type="checkbox"]')) return;
-      if (t.dataset.rule === 'noDelete' && t.checked){
-        $$('input[type="checkbox"]', bar).forEach(ch=>{ if(ch!==t) ch.checked=false; });
-      } else {
-        const noDel = $('[data-rule="noDelete"]', bar);
-        if (noDel && t.checked) noDel.checked = false;
-      }
-    });
-
-    clear?.addEventListener('click', ()=>{
-      $$('input[type="checkbox"]', bar).forEach(ch=>ch.checked=false);
-      const sec = $('[data-rule="secondsVal"]', bar); if (sec) sec.value='';
-    });
+    overlay.hidden = false;
   }
-  setupInlineRules('vslDeleteToggle'); // VSL
-  setupInlineRules('ctaDeleteToggle'); // CTA
+  function closeRules(){ overlay.hidden = true; }
 
-  /* ---------- MÍDIAS ---------- */
-  const mediaHost   = $('#frontMediaList');
+  // Exclusividade "Não apagar"
+  overlay.addEventListener('change', (e)=>{
+    const t = e.target;
+    if (!t.matches('[data-rule]')) return;
+    if (t.dataset.rule==='noDelete' && t.checked){
+      $$('input[type="checkbox"][data-rule]', overlay).forEach(ch=>{ if(ch!==t) ch.checked=false; });
+    } else if (t.type==='checkbox' && t.checked){
+      const noDel = overlay.querySelector('input[type="checkbox"][data-rule="noDelete"]');
+      if (noDel) noDel.checked = false;
+    }
+  });
+
+  btnClear.addEventListener('click', ()=>{
+    $$('input[type="checkbox"][data-rule]', overlay).forEach(ch=>ch.checked=false);
+    const sv = overlay.querySelector('[data-rule="secondsVal"]'); if (sv) sv.value='';
+  });
+  btnApply.addEventListener('click', ()=>{
+    // coleta estado
+    const state = {};
+    $$('[data-rule]', overlay).forEach(i=>{
+      if (i.type==='checkbox') state[i.dataset.rule] = i.checked;
+      if (i.dataset.rule==='secondsVal') state.secondsVal = i.value.trim();
+    });
+    // propaga pro alvo (só guarda em dataset por enquanto)
+    if (rules.target){
+      rules.target.dataset.rules = JSON.stringify(state);
+    }
+    closeRules();
+  });
+  [btnCancel, btnClose].forEach(b=>b.addEventListener('click', closeRules));
+  overlay.addEventListener('click', (e)=>{ if (e.target===overlay) closeRules(); });
+
+  /* ---------- CARD 1 — Mídias ---------- */
+  const mediaHost = $('#frontMediaList');
   const btnAddMedia = $('#btnAddMedia');
 
   function buildMedia(idx){
@@ -1135,45 +1166,48 @@
 
     const pills = document.createElement('div'); pills.className='pills'; pills.dataset.role='media-pos'; pills.dataset.idx=idx;
     const p1 = document.createElement('button'); p1.type='button'; p1.className='pill is-active'; p1.dataset.val='before'; p1.textContent='Antes da copy principal';
-    const p2 = document.createElement('button'); p2.type='button'; p2.className='pill';        p2.dataset.val='after';  p2.textContent='Depois da copy principal';
+    const p2 = document.createElement('button'); p2.type='button'; p2.className='pill'; p2.dataset.val='after'; p2.textContent='Depois da copy principal';
     pills.appendChild(p1); pills.appendChild(p2);
 
-    // hidden para posição (útil quando ligar backend)
-    const posHidden = document.createElement('input');
-    posHidden.type='hidden'; posHidden.name='front_media_pos_'+idx; posHidden.value='before';
+    const hiddenPos = document.createElement('input');
+    hiddenPos.type='hidden'; hiddenPos.name='front_media_pos_'+idx; hiddenPos.value='before';
 
-    // apagar + regras (popover)
-    const toggleWrap = document.createElement('label'); toggleWrap.className='toggle';
-    const toggle = document.createElement('input'); toggle.type='checkbox'; toggle.dataset.role='media-del';
-    const tspan  = document.createElement('span'); tspan.textContent='Apagar mensagem';
-    toggleWrap.appendChild(toggle); toggleWrap.appendChild(tspan);
+    const delToggleWrap = document.createElement('label'); delToggleWrap.className='toggle';
+    const delToggle = document.createElement('input'); delToggle.type='checkbox'; delToggle.dataset.role='media-del';
+    delToggleWrap.appendChild(delToggle); delToggleWrap.appendChild(document.createTextNode('Apagar mensagem'));
 
     const rulesBtn = document.createElement('button');
     rulesBtn.type='button'; rulesBtn.className='ghost xs'; rulesBtn.textContent='Regras';
-    rulesBtn.dataset.role='rules'; rulesBtn.dataset.kind='media'; rulesBtn.dataset.idx=idx;
-    rulesBtn.hidden = true;
+    rulesBtn.dataset.kind='media'; rulesBtn.dataset.idx=idx; rulesBtn.hidden = true;
 
     const del = makeTrash();
 
-    // eventos
     pills.addEventListener('click', (e)=>{
       const b = e.target.closest('.pill'); if(!b) return;
       $$('.pill', pills).forEach(x=>x.classList.remove('is-active'));
-      b.classList.add('is-active');
-      posHidden.value = b.dataset.val || 'before';
+      b.classList.add('is-active'); hiddenPos.value = b.dataset.val || 'before';
     });
-    toggle.addEventListener('change', ()=>{ rulesBtn.hidden = !toggle.checked; });
+    delToggle.addEventListener('change', ()=>{ rulesBtn.hidden = !delToggle.checked; });
     del.addEventListener('click', ()=>{ line.remove(); renumberMedia(); });
+
+    rulesBtn.addEventListener('click', ()=>{
+      openRules({
+        target: rulesBtn,
+        type: 'media',
+        idx,
+        title: 'Regras de apagar — Mídia ' + idx,
+        state: rulesBtn.dataset.rules ? JSON.parse(rulesBtn.dataset.rules) : {}
+      });
+    });
 
     line.appendChild(handle);
     line.appendChild(label);
     line.appendChild(url);
     line.appendChild(pills);
-    line.appendChild(toggleWrap);
+    line.appendChild(delToggleWrap);
+    line.appendChild(rulesBtn);
     line.appendChild(del);
-
-    // guardamos o hidden no line
-    line.appendChild(posHidden);
+    line.appendChild(hiddenPos);
 
     initDrag(mediaHost, line, handle, renumberMedia);
     return line;
@@ -1185,8 +1219,7 @@
       l.querySelector('input[name^="front_media_label_"]')?.setAttribute('name','front_media_label_'+i);
       l.querySelector('input[name^="front_media_url_"]')?.setAttribute('name','front_media_url_'+i);
       l.querySelector('input[name^="front_media_pos_"]')?.setAttribute('name','front_media_pos_'+i);
-      const rules = l.querySelector('[data-role="rules"]'); if (rules) rules.dataset.idx=i;
-      const pills = l.querySelector('[data-role="media-pos"]'); if (pills) pills.dataset.idx=i;
+      const rb = l.querySelector('[data-kind="media"]'); if (rb) { rb.dataset.idx=i; }
     });
   }
   function addMedia(){
@@ -1194,72 +1227,96 @@
     mediaHost.appendChild(buildMedia(idx));
   }
   btnAddMedia?.addEventListener('click', addMedia);
-  addMedia(); // inicial 1
+  addMedia(); // inicia com 1
 
-  // Popover regras de mídia
-  let pop;
-  function closePop(){ if(pop){ pop.remove(); pop=null; } }
-  document.addEventListener('click',(e)=>{
-    if (pop && !pop.contains(e.target) && !e.target.closest('[data-role="rules"]')) closePop();
-  });
-  document.addEventListener('click',(e)=>{
-    const btn = e.target.closest('[data-role="rules"]'); if(!btn) return;
-    closePop();
-    const r = btn.getBoundingClientRect();
-    pop = document.createElement('div');
-    pop.className='rules-pop';
-    pop.innerHTML = `
-      <h4>Regras de apagar — Mídia ${btn.dataset.idx||''}</h4>
-      <label class="rline"><input type="checkbox" data-rule="noDelete"><span>Não apagar</span></label>
-      <label class="rline"><input type="checkbox" data-rule="afterNextBtn"><span>Após clique no próximo botão</span></label>
-      <label class="rline"><input type="checkbox" data-rule="afterSeconds"><span>Após X segundos</span>
-        <span class="inline"><input type="text" class="inp xs" data-rule="secondsVal" placeholder="ex.: 5s"></span>
-      </label>
-      <label class="rline"><input type="checkbox" data-rule="delAfterStart"><span>Apagar após próximo /start</span></label>
-    `;
-    document.body.appendChild(pop);
-    pop.style.left = Math.min(window.innerWidth - pop.offsetWidth - 12, r.left + window.scrollX) + 'px';
-    pop.style.top  = r.bottom + window.scrollY + 8 + 'px';
-
-    // exclusividade do Não apagar
-    pop.addEventListener('change',(ev)=>{
-      const t = ev.target;
-      if (!t.matches('input[type="checkbox"]')) return;
-      if (t.dataset.rule==='noDelete' && t.checked){
-        $$('input[type="checkbox"]', pop).forEach(c=>{ if(c!==t) c.checked=false; });
-      } else {
-        const noDel = $('[data-rule="noDelete"]', pop);
-        if (noDel && t.checked) noDel.checked=false;
-      }
+  /* ---------- CARD 2 — Copy VSL Regras ---------- */
+  document.querySelector('[data-open-rules="vsl"]')?.addEventListener('click', (e)=>{
+    openRules({
+      target: e.currentTarget,
+      type: 'vsl',
+      title: 'Regras da Copy da VSL',
+      state: e.currentTarget.dataset.rules ? JSON.parse(e.currentTarget.dataset.rules) : {}
     });
   });
 
-  /* ---------- PLANOS ---------- */
-  const plansHost   = $('#frontPlansList');
-  const btnAddPlan  = $('#btnAddPlan');
+  /* ---------- CARD 3 — CTA ---------- */
+  const segYes = document.querySelector('[data-cta-enable="yes"]');
+  const segNo  = document.querySelector('[data-cta-enable="no"]');
+  const ctaFields = $('#ctaFields');
+
+  function setCtaEnabled(on){
+    [segYes, segNo].forEach(b=>b.classList.remove('is-active'));
+    (on ? segYes : segNo).classList.add('is-active');
+    ctaFields.style.opacity = on ? '1' : '.55';
+    $$('input,textarea,button', ctaFields).forEach(el=>{
+      if (el.hasAttribute('data-open-rules')) return; // botão regras continua clicável
+      el.disabled = !on;
+    });
+  }
+  segYes?.addEventListener('click', ()=>setCtaEnabled(true));
+  segNo?.addEventListener('click', ()=>setCtaEnabled(false));
+  setCtaEnabled(true);
+
+  document.querySelector('[data-open-rules="cta"]')?.addEventListener('click', (e)=>{
+    openRules({
+      target: e.currentTarget,
+      type: 'cta',
+      title: 'Regras do CTA',
+      state: e.currentTarget.dataset.rules ? JSON.parse(e.currentTarget.dataset.rules) : {}
+    });
+  });
+
+  /* ---------- CARD 4 — Planos ---------- */
+  const plansHost = $('#frontPlansList');
+  const btnAddPlan = $('#btnAddPlan');
 
   function buildPlan(idx){
-    const line = document.createElement('div'); line.className='plan-line'; line.dataset.idx=idx;
+    const line = document.createElement('div');
+    line.className='plan-line'; line.dataset.idx=idx;
 
     const handle = makeDrag();
-    const idxB   = document.createElement('div'); idxB.className='idx'; idxB.textContent=idx;
+    const no = document.createElement('span'); no.className='idx'; no.textContent = idx;
 
-    const name   = document.createElement('input'); name.className='inp'; name.name='front_plan_name_'+idx; name.placeholder='Nome do plano (Ex.: Mensal VIP)';
-    const price  = document.createElement('input'); price.className='inp'; price.style.maxWidth='120px'; price.name='front_plan_price_'+idx; price.placeholder='R$ 29,90';
+    const name = document.createElement('input');
+    name.className='inp'; name.name='front_plan_name_'+idx; name.placeholder='Nome do plano (Ex.: Mensal VIP)';
 
-    const del = makeTrash(); del.addEventListener('click', ()=>{ line.remove(); renumberPlans(); });
+    const value = document.createElement('input');
+    value.className='inp'; value.name='front_plan_value_'+idx; value.placeholder='R$ 29,90';
 
-    line.appendChild(handle); line.appendChild(idxB); line.appendChild(name); line.appendChild(price); line.appendChild(del);
+    const rulesBtn = document.createElement('button');
+    rulesBtn.type='button'; rulesBtn.className='ghost xs'; rulesBtn.textContent='Regras'; rulesBtn.dataset.kind='plan'; rulesBtn.dataset.idx=idx;
+
+    const del = makeTrash();
+
+    rulesBtn.addEventListener('click', ()=>{
+      openRules({
+        target: rulesBtn,
+        type: 'plan',
+        idx,
+        title: 'Regras — Plano ' + idx,
+        state: rulesBtn.dataset.rules ? JSON.parse(rulesBtn.dataset.rules) : {}
+      });
+    });
+    del.addEventListener('click', ()=>{ line.remove(); renumberPlans(); });
+
+    line.appendChild(handle);
+    line.appendChild(no);
+    line.appendChild(name);
+    line.appendChild(value);
+    line.appendChild(rulesBtn);
+    line.appendChild(del);
+
     initDrag(plansHost, line, handle, renumberPlans);
     return line;
   }
   function renumberPlans(){
     let i=0;
     $$('.plan-line', plansHost).forEach(l=>{
-      l.dataset.idx=++i;
-      l.querySelector('.idx').textContent=i;
+      l.dataset.idx = ++i;
+      l.querySelector('.idx').textContent = i;
       l.querySelector('input[name^="front_plan_name_"]')?.setAttribute('name','front_plan_name_'+i);
-      l.querySelector('input[name^="front_plan_price_"]')?.setAttribute('name','front_plan_price_'+i);
+      l.querySelector('input[name^="front_plan_value_"]')?.setAttribute('name','front_plan_value_'+i);
+      const rb = l.querySelector('[data-kind="plan"]'); if (rb) { rb.dataset.idx=i; }
     });
   }
   function addPlan(){
@@ -1267,7 +1324,17 @@
     plansHost.appendChild(buildPlan(idx));
   }
   btnAddPlan?.addEventListener('click', addPlan);
-  addPlan(); // inicial 1
+  addPlan(); // inicia com 1
+
+  /* ---------- Regras: copy antes dos planos ---------- */
+  document.querySelector('[data-open-rules="plansIntro"]')?.addEventListener('click', (e)=>{
+    openRules({
+      target: e.currentTarget,
+      type: 'plansIntro',
+      title: 'Regras — Copy antes dos planos',
+      state: e.currentTarget.dataset.rules ? JSON.parse(e.currentTarget.dataset.rules) : {}
+    });
+  });
+
 })();
 </script>
-
