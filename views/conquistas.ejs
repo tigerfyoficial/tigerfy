@@ -1,6 +1,6 @@
-<%- include('partials/topnav') %>
+<!-- NÃO inclua partials/topnav aqui. O layout já renderiza o topo. -->
 
-<main class="journey">
+<section class="journey">
   <h1 class="journey-title">Jornada de Conquistas</h1>
   <p class="journey-sub">Acompanhe seus marcos e veja seu progresso evoluir.</p>
 
@@ -18,7 +18,7 @@
 
     <% conquistas.forEach((c,i)=>{ %>
       <div class="achievement <%= i % 2 === 0 ? 'left' : 'right' %>">
-        <div class="achievement-content">
+        <div class="achievement-content tf-card">
           <div class="achievement-text">
             <h2><%= c.titulo %></h2>
             <span class="badge"><%= c.valor %></span>
@@ -34,191 +34,135 @@
               </div>
             </div>
           </div>
-          <img src="<%= c.imagem %>" alt="<%= c.titulo %>" class="achievement-img">
+
+          <img src="<%= c.imagem %>" alt="<%= c.titulo %>" class="achievement-img" loading="lazy">
         </div>
       </div>
     <% }) %>
   </div>
-</main>
+</section>
 
 <style>
-  html,body{
-    background:#0a0a0a;
-    color:#fff;
-    font-family:'Inter',sans-serif;
-    -webkit-font-smoothing:antialiased;
-    margin:0;padding:0;
+  /* usa as vars do layout; define fallbacks PB */
+  :root{
+    --bg: var(--bg, #0a0a0a);
+    --fg: var(--fg, #fff);
+    --muted: var(--muted, #9aa0a6);
+    --card-bg: var(--card-bg, #111213);
+    --card-border: var(--card-border, rgba(255,255,255,0.10));
   }
 
-  /* 🔹 Centralização e alinhamento ajustados */
-  main.journey {
-    max-width:1200px;
-    margin:0 auto;
-    padding:60px 20px 80px 20px; /* ↓ distância igual à dashboard */
-    transform:translateX(-38px); /* mesma centralização da dashboard */
-    transform-origin:top center;
+  /* container dentro do .tf-root já existente no layout */
+  .journey{
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 28px 0 70px 0;
   }
 
-  .journey-title {
+  .journey-title{
     text-align:center;
-    color:#ffcc00;
-    font-size:2.2rem;
-    margin:0 0 6px 0;
+    color: var(--fg);
+    font-size: 2.1rem;
+    margin: 0 0 6px 0;
+    letter-spacing: .2px;
   }
-
-  .journey-sub {
+  .journey-sub{
     text-align:center;
-    color:#a0a0a0;
-    margin-bottom:40px; /* espaçamento equilibrado */
+    color: var(--muted);
+    margin: 0 0 36px 0;
+    font-size: .98rem;
   }
 
-  .timeline {
+  .timeline{
     position:relative;
     display:flex;
     flex-direction:column;
     align-items:center;
-    padding-top:10px;
   }
-
-  .line {
+  .timeline .line{
     position:absolute;
-    top:0;
-    width:3px;
-    height:100%;
-    background:linear-gradient(180deg,rgba(255,204,0,0.6),rgba(255,204,0,0.1));
+    top:0; bottom:0;
+    width:2px;
+    background: linear-gradient(180deg, rgba(255,255,255,.25), rgba(255,255,255,.06));
     z-index:0;
   }
 
-  .achievement {
+  .achievement{
     position:relative;
     width:100%;
     max-width:1000px;
     display:flex;
     justify-content:flex-start;
-    margin-bottom:80px;
-    opacity:0;
-    transform:translateY(40px);
-    transition:all 0.6s ease;
+    margin-bottom:72px;
+    opacity:0; transform: translateY(26px);
+    transition: opacity .5s ease, transform .5s ease;
   }
+  .achievement.right{ flex-direction: row-reverse; }
+  .achievement.show{ opacity:1; transform:none; }
 
-  .achievement.right { flex-direction:row-reverse; }
-  .achievement.show { opacity:1; transform:translateY(0); }
-
-  .achievement-content {
-    background:linear-gradient(90deg,rgba(255,255,255,0.04),rgba(255,255,255,0.02));
-    border:1px solid rgba(255,204,0,0.15);
-    border-radius:12px;
-    padding:32px 38px;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    box-shadow:0 0 20px rgba(255,204,0,0.05);
-    width:47%;
+  .achievement-content{
+    background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+    border: 1px solid var(--card-border);
+    border-radius: 14px;
+    padding: 28px 32px;
+    display: flex; align-items: center; justify-content: space-between;
+    width: 47%;
     z-index:1;
-    transition:.3s;
+  }
+  .achievement.left .achievement-content{ margin-right:auto; }
+  .achievement.right .achievement-content{ margin-left:auto; }
+
+  .achievement-content:hover{ border-color: rgba(255,255,255,0.22); }
+
+  .achievement-text{
+    max-width: 56%;
+    display:flex; flex-direction:column; justify-content:center;
+  }
+  .achievement-text h2{
+    margin:0 0 6px 0; font-size:1.28rem; color: var(--fg);
+  }
+  .achievement-text p{
+    margin:10px 0 14px 0; color: var(--muted); line-height:1.5; font-size:.96rem;
   }
 
-  .achievement-content:hover {
-    border-color:rgba(255,204,0,0.35);
-    box-shadow:0 0 30px rgba(255,204,0,0.15);
-  }
-
-  .achievement.left .achievement-content { margin-right:auto; }
-  .achievement.right .achievement-content { margin-left:auto; }
-
-  .achievement-text {
-    max-width:55%;
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-  }
-
-  .achievement-text h2 {
-    color:#ffcc00;
-    font-size:1.35rem;
-    margin:0 0 6px 0;
-  }
-
-  .achievement-text p {
-    color:#b5b5b5;
-    font-size:.95rem;
-    line-height:1.5;
-    margin:10px 0 15px 0;
-  }
-
-  .badge {
-    display:inline-block;
-    background:rgba(255,204,0,0.15);
-    color:#ffcc00;
-    font-weight:600;
-    border-radius:20px;
-    padding:5px 14px;
-    font-size:.9rem;
+  .badge{
+    display:inline-block; padding:6px 14px; border-radius:999px;
+    background: rgba(255,255,255,.10); color: var(--fg);
+    border:1px solid rgba(255,255,255,.18);
+    font-size:.88rem; font-weight:600;
     margin-bottom:4px;
   }
 
-  .achievement-img {
-    width:200px;
-    height:auto;
-    border-radius:8px;
-    object-fit:contain;
-    align-self:center;
-    margin-left:20px;
-    margin-right:20px;
-    display:flex;
+  .achievement-img{
+    width:200px; height:auto; object-fit:contain; border-radius:10px;
+    margin-left:20px; margin-right:20px; filter: grayscale(30%);
   }
 
-  .progress-box { margin-top:8px; }
-  .progress-info {
-    display:flex;
-    justify-content:space-between;
-    font-size:0.85rem;
-    color:#b5b5b5;
-    margin-bottom:4px;
+  .progress-box{ margin-top:6px; }
+  .progress-info{
+    display:flex; justify-content:space-between; color: var(--muted); font-size:.85rem; margin-bottom:6px;
   }
-
-  .progress-bar {
-    width:100%;
-    height:8px;
-    background:rgba(255,255,255,0.07);
-    border-radius:6px;
-    overflow:hidden;
+  .progress-bar{
+    width:100%; height:8px; background: rgba(255,255,255,.08); border-radius:6px; overflow:hidden;
   }
-
-  .progress {
+  .progress{
     height:100%;
-    background:linear-gradient(90deg,#ffcc00,#ffd84a);
-    transition:width 0.6s ease;
+    background: linear-gradient(90deg, #fff, rgba(255,255,255,.75));
+    transition: width .6s ease;
   }
 
-  @media(max-width:950px){
-    .achievement-content{
-      width:100%!important;
-      flex-direction:column;
-      align-items:center;
-      gap:18px;
-      text-align:center;
-    }
-    .achievement-img{
-      width:100%;
-      max-width:250px;
-      margin:0;
-    }
-    .achievement-text{
-      max-width:100%;
-      align-items:center;
-    }
+  @media (max-width: 950px){
+    .achievement-content{ width:100%!important; flex-direction:column; text-align:center; gap:18px; }
+    .achievement-text{ max-width:100%; align-items:center; }
+    .achievement-img{ margin:0; max-width:260px; width:100%; }
   }
-
 </style>
 
 <script>
-  const observer = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-      if(entry.isIntersecting){
-        entry.target.classList.add('show');
-      }
-    });
+  // anima cards ao entrar na viewport
+  const observer = new IntersectionObserver((entries)=>{
+    entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('show'); });
   }, { threshold: 0.2 });
+
   document.querySelectorAll('.achievement').forEach(el => observer.observe(el));
 </script>
