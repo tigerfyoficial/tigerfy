@@ -5,158 +5,121 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title><%= typeof title !== 'undefined' ? title : 'TigerFy' %></title>
 
-  <!-- Tema base (mantém sua estrutura, só que agora vamos forçar B&W abaixo) -->
-  <link rel="stylesheet" href="/css/vercel-theme.css">
-  <link rel="stylesheet" href="/css/ui.topnav.css?v=20251118-1">
+  <!-- Fonte "Vercel-like". Se quiser usar Geist, basta trocar esta linha pelo CDN de Geist -->
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 
-  <!-- Overrides B&W (estilo Vercel/Supabase) -->
+  <!-- Seu tema base, se precisar manter utilitários -->
+  <link rel="stylesheet" href="/css/vercel-theme.css">
+
   <style>
     :root{
-      /* Paleta PB */
       --bg: #0a0a0a;
       --fg: #ffffff;
-      --muted: #9aa0a6;
+      --muted: #a1a1a1;
       --border: rgba(255,255,255,0.10);
-      --card-bg: #111213;
-      --card-border: rgba(255,255,255,0.08);
-      --pill-bg: rgba(255,255,255,0.06);
-      --pill-border: rgba(255,255,255,0.10);
+      --pill: rgba(255,255,255,0.06);
+      --pill-border: rgba(255,255,255,0.12);
       --pill-active-bg: #ffffff;
       --pill-active-fg: #000000;
-      --btn-bg: #111213;
-      --btn-fg: #ffffff;
       --btn-border: rgba(255,255,255,0.16);
-      --btn-bg-hover: #ffffff;
-      --btn-fg-hover: #000000;
-      --shadow-soft: 0 0 0 1px var(--card-border), 0 8px 30px rgba(0,0,0,0.35);
+      --maxw: 1200px;
+    }
+    html,body{
+      background:var(--bg); color:var(--fg);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif;
+      -webkit-font-smoothing:antialiased; margin:0;
     }
 
-    html, body { background: var(--bg); color: var(--fg); }
-
-    /* Topbar */
-    .tf-topbar{
-      position: sticky; top: 0; z-index: 50;
-      display: flex; align-items: center; justify-content: space-between;
-      height: 56px; padding: 0 16px;
-      background: rgba(10,10,10,0.8); backdrop-filter: blur(8px);
+    /* ===== TOPNAV (estilo Vercel) ===== */
+    .v-topnav{
+      position: sticky; top: 0; z-index: 1000;
+      backdrop-filter: blur(8px);
+      background: rgba(10,10,10,0.8);
       border-bottom: 1px solid var(--border);
     }
-    .tf-brand{ display:flex; align-items:center; gap:10px; color:var(--fg); text-decoration:none; }
-    .tf-brand svg{ color: var(--fg); }
-    .tf-brand-text{ display:none; } /* só o ícone, como você pediu */
-
-    .tf-nav{ display:flex; align-items:center; gap:8px; }
-    .tf-nav a{
-      display:inline-flex; align-items:center; gap:8px;
-      height:32px; padding:0 12px; border-radius:999px;
-      text-decoration:none; font-size:13px; color:var(--fg);
-      background: var(--pill-bg); border:1px solid var(--pill-border);
-      transition: background .15s ease, color .15s ease, border-color .15s ease;
+    .v-topnav .wrap{
+      max-width: var(--maxw);
+      margin: 0 auto;
+      padding: 10px 16px;
+      display:flex; align-items:center; justify-content:space-between;
+      gap: 16px;
     }
-    .tf-nav a:hover{ border-color: rgba(255,255,255,0.25); }
-    .tf-nav a.active{
-      background: var(--pill-active-bg); color: var(--pill-active-fg);
-      border-color: transparent;
-    }
+    .v-brand{ display:flex; align-items:center; gap:16px; min-width:0; }
+    .v-brand .brand{ display:inline-flex; align-items:center; justify-content:center; width:28px; height:28px; border-radius:6px; text-decoration:none; }
+    .v-brand .brand svg{ display:block; }
 
-    .tf-right{ display:flex; align-items:center; gap:10px; }
-    .tf-user{ color: var(--muted); font-size: 12.5px; }
-
-    .btn-primary.btn-xs{
-      height:30px; padding:0 12px; border-radius:8px;
-      background: var(--btn-bg); color: var(--btn-fg);
-      border:1px solid var(--btn-border);
-      text-decoration:none; display:inline-flex; align-items:center; gap:8px;
-      font-size:12.5px; font-weight:600;
-      transition: background .15s ease, color .15s ease, border-color .15s ease;
+    .v-nav{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+    .v-nav a{
+      display:inline-flex; align-items:center; height:32px; padding:0 12px;
+      border-radius:999px; text-decoration:none; font-size:13px;
+      color:var(--fg); background:var(--pill); border:1px solid var(--pill-border);
+      transition:background .15s ease, color .15s ease, border-color .15s ease;
+      white-space: nowrap;
     }
-    .btn-primary.btn-xs:hover{
-      background: var(--btn-bg-hover); color: var(--btn-fg-hover); border-color: transparent;
+    .v-topnav .v-nav a:hover{ border-color: rgba(255,255,255,0.22); }
+    /* ativo: vale para 'active' vinda do server OU adicionada via JS */
+    .v-topnav .v-nav a.active{
+      background:var(--pill-active-bg); color:var(--pill-active-fg); border-color:transparent;
     }
 
-    /* Conteúdo raiz */
-    .tf-root{
-      max-width: 1200px; margin: 0 auto; padding: 28px 20px 60px 20px;
-    }
+    .v-right{ display:flex; align-items:center; gap:10px; min-width:0; }
+    .v-right .email{ color:var(--muted); font-size:12.5px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:38vw; }
+    .btn{ display:inline-flex; align-items:center; height:30px; padding:0 12px; border-radius:8px; text-decoration:none; font-size:12.5px; font-weight:600; }
+    .btn-ghost{ color:var(--fg); border:1px solid var(--btn-border); background:transparent; }
+    .btn-ghost:hover{ background:#fff; color:#000; border-color:transparent; }
 
-    /* Cards padrão do app */
-    .tf-card{
-      background: var(--card-bg); border:1px solid var(--card-border);
-      border-radius: 14px; box-shadow: var(--shadow-soft);
-    }
+    /* ===== CONTEÚDO ===== */
+    .v-container{ max-width:var(--maxw); margin:0 auto; padding:28px 16px 60px 16px; }
 
-    /* Burger mobile (mantido, PB) */
-    .tf-burger{ display:none; background:transparent; border:0; padding:6px; }
-    .tf-burger span{ display:block; width:20px; height:2px; background:var(--fg); margin:3px 0; }
-    @media (max-width: 980px){
-      .tf-burger{ display:block; }
-      .tf-nav{ display:none; }
-      body.nav-open .tf-nav{
-        display:flex; position: absolute; top:56px; left:0; right:0;
-        padding:10px; background: rgba(10,10,10,0.95); gap:8px; border-bottom:1px solid var(--border);
-      }
-    }
+    /* Evita que qualquer .active global afete fora do topnav */
+    :where(.v-topnav) :where(.active){ /* escopo apenas no topnav */ }
   </style>
 </head>
 <body>
-  <div class="tf-app">
 
-    <!-- ===== TOP NAV / HEADER ===== -->
-    <header class="tf-topbar" role="navigation" aria-label="Navegação principal">
-      <a href="/dashboard" class="tf-brand" aria-label="Home">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <path d="M12 2l9 16H3L12 2z" stroke="currentColor" stroke-width="1.2" fill="currentColor"/>
-        </svg>
-        <span class="tf-brand-text">TigerFy</span>
-      </a>
-
-      <nav class="tf-nav">
-        <a href="/dashboard"   data-nav="dashboard">Dashboard</a>
-        <a href="/ofertas"     data-nav="ofertas">Ofertas</a>
-        <a href="/adquirentes" data-nav="adquirentes">API PIX</a>
-        <a href="/conquistas"  data-nav="conquistas">Conquistas</a>
-        <a href="/suporte"     data-nav="suporte" class="hide-mobile">Suporte</a>
-      </nav>
-
-      <div class="tf-right">
-        <% if (userEmail) { %>
-          <span class="tf-user"><%= userEmail %></span>
-        <% } %>
-        <a href="/logout" class="btn-primary btn-xs">Sair</a>
-
-        <button class="tf-burger" aria-label="Abrir menu" aria-expanded="false">
-          <span></span><span></span><span></span>
-        </button>
+  <!-- ===== TOPNAV QUE VOCÊ PEDIU ===== -->
+  <nav class="v-topnav">
+    <div class="wrap">
+      <div class="v-brand">
+        <a href="/dashboard" class="brand" aria-label="Home">
+          <svg viewBox="0 0 1155 1000" width="16" height="16" fill="#fff" aria-hidden="true"><path d="M577.3 0L1154.6 1000H0z"/></svg>
+        </a>
+        <div class="v-nav">
+          <a href="/dashboard"   class="<%= typeof active !== 'undefined' && active === 'dashboard' ? 'active' : '' %>">Dashboard</a>
+          <a href="/ofertas"     class="<%= typeof active !== 'undefined' && active === 'ofertas'    ? 'active' : '' %>">Ofertas</a>
+          <a href="/adquirentes" class="<%= typeof active !== 'undefined' && active === 'api_pix'    ? 'active' : '' %>">API PIX</a>
+          <a href="/conquistas"  class="<%= typeof active !== 'undefined' && active === 'conquistas' ? 'active' : '' %>">Conquistas</a>
+          <a href="/suporte"     class="<%= typeof active !== 'undefined' && active === 'suporte'    ? 'active' : '' %>">Suporte</a>
+        </div>
       </div>
-    </header>
+      <div class="v-right">
+        <% if (userEmail) { %>
+          <span class="email"><%= userEmail %></span>
+          <a class="btn btn-ghost" href="/logout">Sair</a>
+        <% } else { %>
+          <a class="btn btn-ghost" href="/login">Entrar</a>
+        <% } %>
+      </div>
+    </div>
+  </nav>
 
-    <!-- ===== CONTEÚDO ===== -->
-    <main class="tf-root" id="app-main" role="main">
-      <%- body %>
-    </main>
+  <!-- ===== CONTEÚDO DA PÁGINA ===== -->
+  <main class="v-container" role="main">
+    <%- body %>
+  </main>
 
-  </div>
-
-  <!-- ===== JS mínimo p/ ativar item atual e menu mobile ===== -->
+  <!-- Ativo automático por URL (funciona mesmo sem setar 'active' no server) -->
   <script>
     (function(){
-      const path = location.pathname.replace(/\/+$/, '') || '/';
-      document.querySelectorAll('.tf-nav a').forEach(a=>{
+      const path = location.pathname.replace(/\/+$/,'') || '/';
+      document.querySelectorAll('.v-topnav .v-nav a').forEach(a=>{
         try{
           const href = new URL(a.getAttribute('href'), location.origin)
-            .pathname.replace(/\/+$/, '');
+            .pathname.replace(/\/+$/,'');
           const isActive = (path === href) || (href !== '/' && path.startsWith(href + '/'));
-          if (isActive){
-            a.classList.add('active');
-            a.setAttribute('aria-current','page');
-          }
+          if(isActive) a.classList.add('active');
         }catch(_){}
-      });
-
-      const burger = document.querySelector('.tf-burger');
-      burger && burger.addEventListener('click', ()=>{
-        const open = document.body.classList.toggle('nav-open');
-        burger.setAttribute('aria-expanded', open ? 'true' : 'false');
       });
     })();
   </script>
